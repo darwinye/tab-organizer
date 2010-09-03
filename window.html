@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+    <title>Tab Organizer</title>
+
+    <link rel="stylesheet" type="text/css" href="lib/Options.css" />
+    <link rel="stylesheet" type="text/css" href="window.css" />
+</head>
+<body>
+    <script src="lib/Options.js"></script>
+    <script src="lib/Global%20Helper.js"></script>
+    <script src="lib/UI%20Helper.js"></script>
+    <script src="lib/Event%20Helper.js"></script>
+    <script src="Tab%20Organizer.js"></script>
+    <script>
+        "use strict";
+        /*global action, chrome, events, Options, UI, Window */
+
+        if (Options.get("popup.bubble")) {
+            document.body.style.width = Options.get("popup.width") + "px";
+            document.body.style.height = Options.get("popup.height") + "px";
+            document.body.style.overflowY = "hidden";
+        }
+
+        var state = {
+            windows: {},
+            tabs: {},
+            queues: {
+                moveAllTabs: function (id, index) {
+                    state.list.forEach(function (item) {
+                        item.tabList.queue.moveTabs(id, index);
+                    });
+                },
+                resetAll: function () {
+                    state.list.forEach(function (item) {
+                        item.tabList.queue.reset();
+                        delete item.tabList.queue.shiftNode;
+                    });
+                }
+            },
+            list: [],
+            urlBar: UI.create("div", function (container) {
+                container.id = "URL-bar";
+
+                /*container.show = function () {
+                    container.style.display = "";
+                };
+                container.hide = function () {
+                    container.style.display = "none !important";
+                };
+                container.hide();*/
+                container.setAttribute("hidden", "");
+
+                document.body.appendChild(container);
+            }),
+            placeholder: UI.create("div", function (container) {
+                container.id = "placeholder";
+            })
+        };
+
+        Options.setDefaults({
+            titles: []
+        });
+
+
+//        addEventListener("contextmenu", events.disable, true);
+//        addEventListener("contextmenu", function (event) {
+//            if (event.target.localName !== "input") {
+//                event.preventDefault();
+//            }
+//        }, true);
+
+        /*document.body.addEventListener("focus", function (event) {
+            console.log(event.target);
+        }, true);*/
+
+        document.body.tabIndex = -1;
+
+        addEventListener("focus", function (event) {
+            //console.log(event.type);
+            //console.log(document.activeElement, event.target);
+            if (event.target.setAttribute) {
+                event.target.setAttribute("focused", "");
+                //if (event.target.className === "window") {
+                    state.focused = event.target;
+                //}
+            }
+        }, true);
+        addEventListener("blur", function (event) {
+            //console.log(document.activeElement, event.target);
+            //console.log(event.type);
+            if (state.focused) {
+                if (event.target === this) {
+                    if (state.focused.className === "window") {
+                        //console.log(state.focused);
+                        //this.focus();
+                        //state.focused.setAttribute("focused", "");
+                        //state.focused.setWindowFocus();
+                        //state.focused.blur();
+                        //state.focused.focus();
+                        state.focused.triggerEvent("focus", true, false);
+                    }
+                } else if (event.target.removeAttribute) {
+                    event.target.removeAttribute("focused");
+                }
+                //delete state.focused;
+            }
+        }, true);
+
+        addEventListener("dragstart", function () {
+            state.dragging = true;
+        }, true);
+        addEventListener("dragover", function (event) {
+            if (!event.defaultPrevented) {
+                document.activeElement.blur();
+            }
+        }, false);
+        addEventListener("dragend", function () {
+            state.placeholder.remove();
+            state.dragging = false;
+        }, true);
+
+
+        var fragment = document.createDocumentFragment();
+
+        fragment.appendChild(UI.create("div", function (element) {
+            element.id = "container-buttons";
+
+            element.appendChild(UI.create("button", function (button) {
+                button.id = "button-new-window";
+                button.className = "custom";
+                button.textContent = "New Window";
+                button.tabIndex = 1;
+
+                button.addEventListener("click", function (event) {
+                    chrome.windows.create({/* url: "chrome://newtab/" */});
+                }, true);
+
+                button.addEventListener("dragover", events.disable, true);
+                button.addEventListener("dragenter", button.focus, true);
+
+                button.addEventListener("drop", function (event) {
+                    chrome.windows.create({ url: "lib/remove.html" }, function (win) {
+                        state.currentQueue.moveTabs(win.id);
+                        state.currentQueue.reset();
+                        delete state.currentQueue.shiftNode;
+                    });
+                }, true);
+            }));
+/*!
+            element.appendChild(UI.create("button", function (button) {
+                button.className = "custom";
+                button.textContent = "Reopen Closed Tab";
+                button.tabIndex = 1;
+            }));
+
+            element.appendChild(UI.create("button", function (button) {
+                button.className = "custom";
+                button.textContent = "Foo";
+                button.tabIndex = 1;
+            }));
+*/
+            element.appendChild(UI.create("span", function (span) {
+                span.id = "search-box";
+                span.textContent = "Search: ";
+
+                var input = document.createElement("input");
+                input.type = "text";
+                input.tabIndex = 1;
+
+                var lastinput = Options.get("search.lastinput");
+                if (typeof lastinput === "string") {
+                    input.value = lastinput;
+                }
+                addEventListener("unload", function () {
+                    Options.set("search.lastinput", input.value, {
+                        verbatim: true
+                    });
+                    //alert(Options.get("search.lastinput"));
+                }, true);
+
+                var info = {
+                    //windows: document.getElementsByClassName("window"),
+                    //tabs: document.getElementsByClassName("tab"),
+                    title: document.title
+                };
+
+                function search(array) {
+                    //var self = this;
+
+                    /*if (search.stop) {
+                        console.warn("Stop!");
+                        return;
+                    }
+                    search.stop = true;*/
+
+                    var tabs = Array.slice(document.getElementsByClassName("tab"));
+                    //var list = [];
+
+                    tabs = action.search(tabs, input.value);
+
+                    var list = array.filter(function (item) {
+                        var children = item.tabList.children;
+                        item.setAttribute("hidden", "");
+                        item.removeAttribute("last");
+
+                        Array.slice(children).forEach(function (child) {
+                            if (child.hasAttribute("data-selected")) {
+                                /*setTimeout(function () {
+                                    UI.scrollTo(child, item.tabList.scroll);
+                                }, 0);*/
+                                item.selected = child;
+                            }
+                            if (tabs.indexOf(child) !== -1) {
+                                child.removeAttribute("hidden");
+                                item.removeAttribute("hidden");
+                            } else {
+                                child.setAttribute("hidden", "");
+                            }
+                        });
+
+                        if (!item.hasAttribute("hidden")) {
+                            //list.push(item);
+                            //var child = item.querySelector("[data-selected]");
+                            UI.scrollTo(item.selected, item.tabList.scroll);
+                            return true;
+                        }
+                    });
+
+                    if (list.length) {
+                        list[list.length - 1].setAttribute("last", "");
+                    }
+
+                    /*var list = info.windows.length,
+                        tabs = info.tabs.length;*/
+
+                    var string = [ info.title, " (" ];
+
+                    if (tabs.length === 1) {
+                        string.push(tabs.length, " tab in ");
+                    } else {
+                        string.push(tabs.length, " tabs in ");
+                    }
+
+                    if (list.length === 1) {
+                        string.push(list.length, " window)");
+                    } else {
+                        string.push(list.length, " windows)");
+                    }
+
+                    document.title = string.join("");
+
+                    //search.stop = false;
+                }
+
+                state.search = function (array) {
+                    console.log("Searching.");
+
+                    /*if (array instanceof Array) {
+                        search(array);
+                    } else {*/
+                        search(state.list);
+                    //}
+                };
+                input.addEventListener("keyup", state.search, true);
+
+                setTimeout(function () {
+                    input.select();
+                }, 0);
+
+                addEventListener("keydown", function (event) {
+                    if (event.which === 70 && (event.ctrlKey || event.metaKey)) {
+                        if (!event.altKey && !event.shiftKey) {
+                            event.preventDefault();
+                            input.select();
+                        }
+                    }
+                }, true);
+
+                span.appendChild(input);
+            }));
+        }));
+
+        fragment.appendChild(UI.create("table", function (element) {
+            element.id = "window-list";
+            element.className = "stretch";
+            //element.style.display = "none !important";
+
+            action.attachEvents(element);
+
+//            state.update = function anon(event) {
+//                //if (event.target.className) {
+//                    clearTimeout(anon.timeout);
+//                    anon.timeout = setTimeout(state.search, 50);
+//                //}
+//            };
+
+            //var windowlist = document.getElementById("window-list");
+
+            chrome.windows.getAll({ populate: true }, function (windows) {
+                element.appendChild(UI.create("td"));
+
+                windows.forEach(function (win) {
+                    if (win.type === "normal") {
+                        element.appendChild(Window.create(win));
+                    }
+                });
+                state.search();
+
+                element.appendChild(UI.create("td"));
+
+                Options.addEventListener("change", function (event) {
+                    if (event.name === "window.lastfocused") {
+                        state.windows[event.value].setWindowFocus();
+                        state.search();
+                    }
+                }, true);
+
+                addEventListener("beforeunload", function () {
+//                    Options.removeEventListener("change", update, true);
+
+                    Options.set("titles", state.list.map(function (item) {
+                        return item.tabIcon.indexText.value;
+                    }));
+                }, true);
+
+//                element.addEventListener("DOMSubtreeModified", state.update, true);
+                //element.addEventListener("DOMNodeInserted", state.update, true);
+                //element.addEventListener("DOMNodeRemoved", state.update, true);
+            });
+        }));
+
+        document.body.appendChild(fragment);
+    </script>
+</body>
+</html>

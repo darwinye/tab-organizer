@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+    <title>Remover Page</title>
+
+    <script>
+        "use strict";
+        /*global chrome */
+
+        chrome.tabs.getSelected(null, function (tab) {
+            chrome.tabs.remove(tab.id);
+        });
+    </script>
+</head>
+</html>

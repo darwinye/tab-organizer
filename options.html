@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+        <title>Tab Organizer Options</title>
+        <link rel="stylesheet" type="text/css" href="lib/Options.css" />
+        <style type="text/css">
+            .char4 {
+                width: 2.5em;
+            }
+            .char5 {
+                width: 3em;
+            }
+            .align-right {
+                text-align: right !important;
+            }
+
+            hr {
+                border-top: none;
+            }
+            table tr td {
+                padding: 5px !important;
+            }
+            /*input {
+                margin-right: 5px !important;
+            }*/
+            input.center {
+                display: block;
+                margin: 2px auto !important;
+            }
+
+            #Options-inner {
+                /*width: 785px;
+                height: 480px;*/
+
+                /*width: 755px;
+                height: 465px;*/
+            }
+        </style>
+    </head>
+    <body>
+        <!--<div id="container">
+            <div id="contents">
+                <h2>Tab Organizer Options</h2>
+                Your options are automatically saved when you exit the page
+                <table id="table">
+                    <tr>
+                        <td id="size-info" colspan="2"></td>
+                    </tr>
+                </table>
+                <table>
+                    <tr>
+                        <td class="align-right">
+                            <div>Left: <input type="text" class="char4" /> %</div>
+                            <div>Top: <input type="text" class="char4" /> %</div>
+                        </td>
+                        <td class="align-right">
+                            <div>Width: <input type="text" class="char5" /> px</div>
+                            <div>Height: <input type="text" class="char5" /> px</div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>-->
+        <script src="lib/Options.js"></script>
+        <script src="lib/UI%20Helper.js"></script>
+        <script>
+            "use strict";
+            /*global Options, UI */
+
+            Options.createContainer(function (container) {
+                container.addCategory("Keyboard", function (container) {
+                    container.header("Open popup with: ");
+
+                    /*container.addCell(function (cell) {
+                        cell["DOM.Element"].
+
+                    });*/
+
+                    container.indent(function (container) {
+                        container.input("checkbox", {
+                            option: "popup.hotkey.ctrl",
+                            text: "Ctrl (⌘)"
+                        });
+
+                        container.input("checkbox", {
+                            option: "popup.hotkey.shift",
+                            text: "Shift"
+                        });
+
+                        container.input("checkbox", {
+                            option: "popup.hotkey.alt",
+                            text: "Alt"
+                        });
+
+                        container.input("text", {
+                            option: "popup.hotkey.letter",
+                            maxlength: 1,
+                            width: "2em"
+                        }).addEventListener("change", function (event) {
+                            this.value = this.value.toUpperCase();
+                            Options.set("popup.hotkey.letter", this.value);
+                        }, true);
+                    });
+
+//                    container.seperator();
+
+//                    container.input("checkbox", {
+//                        option: "popup.close.esc",
+//                        text: "Close popup with Esc."
+//                    });
+/*
+                    container.addCell(function (cell) {
+                    });
+
+                    container.appendChild(UI.create("table", function (element) {
+                        element.appendChild(UI.create("tr", function (element) {
+                            element.appendChild(UI.create("td", function (element) {
+                                element.appendChild(UI.create("span", function (element) {
+                                    element.textContent = "Open popup with: ";
+                                }));
+                            }));
+                            element.appendChild(UI.create("td", function (element) {
+                                element.appendChild(UI.create("div", function (element) {
+                                    element.textContent = "Ctrl (⌘)";
+                                }));
+                                element.appendChild(UI.create("input", function (element) {
+                                    element.type = "checkbox";
+                                    element.className = "center";
+
+                                    Options.on("change")("popup.hotkey.ctrl", element, "checked");
+                                }));
+                            }));
+                            element.appendChild(UI.create("td", function (element) {
+                                element.appendChild(UI.create("div", function (element) {
+                                    element.textContent = "Shift";
+                                }));
+                                element.appendChild(UI.create("input", function (element) {
+                                    element.type = "checkbox";
+                                    element.className = "center";
+
+                                    Options.on("change")("popup.hotkey.shift", element, "checked");
+                                }));
+                            }));
+                            element.appendChild(UI.create("td", function (element) {
+                                element.appendChild(UI.create("div", function (element) {
+                                    element.textContent = "Alt";
+                                }));
+                                element.appendChild(UI.create("input", function (element) {
+                                    element.type = "checkbox";
+                                    element.className = "center";
+
+                                    Options.on("change")("popup.hotkey.alt", element, "checked");
+                                }));
+                            }));
+                            element.appendChild(UI.create("td", function (element) {
+                                element.appendChild(UI.create("input", function (element) {
+                                    element.style.width = "2em";
+                                    element.maxLength = 1;
+
+                                    element.addEventListener("change", function (event) {
+                                        this.value = this.value.toUpperCase();
+                                    }, true);
+
+                                    Options.on("change")("popup.hotkey.letter", element);
+
+//                                    var sync = Options.sync("popup.hotkey.code", element, function (name, property) {
+//                                        console.log(name, property);
+//                                    });
+//                                    element.addEventListener("change", sync, true);
+                                }));
+                            }));
+                        }));
+
+                        //element.appendChild(UI.create("tr", function (element) {
+                            element.appendChild(UI.create("td", function (element) {
+                                element.colSpan = 5;
+
+                                element.appendChild(UI.create("hr"));
+                            }));
+                        //}));
+
+                        element.appendChild(UI.create("tr", function (element) {
+                            //element.appendChild(UI.create("td", function (element) {
+                                //element.colSpan = 5;
+
+                                element.appendChild(UI.create("div", function (element) {
+                                    element.appendChild(UI.create("input", function (element) {
+                                        element.type = "checkbox";
+
+                                        //Options.on("change")("popup.hotkey.esc", element, "checked");
+                                    }));
+                                    element.appendChild(UI.create("span", function (element) {
+                                        element.textContent = "Close popup with Esc.";
+                                    }));
+                                }));
+                            //}));
+                        }));
+                    });
+*/
+                });
+                container.addCategory("Popup", function (container) {
+                    var height = 375;
+
+                    container.input("checkbox", {
+                        option: "popup.bubble",
+                        text: "Show popup in a bubble (some things may be broken)"
+                    });
+
+                    //container.space({ height: "5px" });
+                    container.seperator();
+                    container.space({ height: "10px" });
+
+                    container["DOM.Element"].appendChild(UI.create("table", function (element) {
+                        element.style.backgroundColor = "slategray";
+                        element.style.borderSpacing = "0px";
+                        element.style.border = "2px solid black";
+                        element.style.width = height * (screen.width / screen.height) + "px";
+
+                        element.appendChild(UI.create("td", function (element) {
+                            element.style.height = height + "px";
+                            element.style.padding = "0px !important";
+
+                            element.appendChild(UI.create("div", function (element) {
+                                element.style.position = "relative";
+                                element.style.width = "100%";
+                                element.style.height = "100%";
+
+                                element.appendChild(UI.create("div", function (element) {
+                                    element.style.position = "absolute";
+                                    element.style.width = "1px";
+                                    element.style.height = "100%";
+                                    element.style.backgroundColor = "red";
+
+                                    element.style.left = Options.get("popup.offsetX") + 50 + "%";
+
+                                    Options.addEventListener("change", function (event) {
+                                        if (event.name === "popup.offsetX") {
+                                            element.style.left = event.value + 50 + "%";
+                                        }
+                                    }, true);
+                                }));
+
+                                element.appendChild(UI.create("div", function (element) {
+                                    element.style.position = "absolute";
+                                    element.style.width = "100%";
+                                    element.style.height = "1px";
+                                    element.style.backgroundColor = "red";
+
+                                    element.style.top = Options.get("popup.offsetY") + 50 + "%";
+
+                                    Options.addEventListener("change", function (event) {
+                                        if (event.name === "popup.offsetY") {
+                                            element.style.top = event.value + 50 + "%";
+                                        }
+                                    }, true);
+                                }));
+
+                                element.appendChild(UI.create("table", function (element) {
+                                    element.style.position = "absolute";
+                                    element.style.margin = "0px";
+                                    element.style.border = "1px solid darkgreen";
+                                    element.style.fontSize = "16px";
+                                    element.style.backgroundColor = "honeydew";
+
+                                    Options.addEventListener("change", (function () {
+                                        function update() {
+                                            var popup = {
+                                                offsetX: Options.get("popup.offsetX"),
+                                                offsetY: Options.get("popup.offsetY"),
+                                                width: Options.get("popup.width"),
+                                                height: Options.get("popup.height")
+                                            };
+
+                                            var width = popup.width / screen.width * 100;
+                                            var height = popup.height / screen.height * 100;
+
+                                            this.style.left = popup.offsetX - width / 2 + 50 + "%";
+                                            this.style.top = popup.offsetY - height / 2 + 50 + "%";
+                                            this.style.width = width + "%";
+                                            this.style.height = height + "%";
+                                        }
+                                        update.call(element);
+
+                                        return update.bind(element);
+                                    }()), true);
+
+                                    element.appendChild(UI.create("td", function (element) {
+                                        element.style.padding = "0px";
+                                        element.style.border = "none";
+                                        element.style.textAlign = "center";
+                                        element.style.verticalAlign = "middle";
+
+                                        element.textContent = "POPUP";
+                                    }));
+                                }));
+                            }));
+                        }));
+                    }));
+
+                    container["DOM.Element"].appendChild(UI.create("table", function (element) {
+                        element.style.position = "relative";
+                        element.style.margin = "10px auto 0px";
+                        //element.style.marginTop = "10px";
+                        element.style.borderSpacing = "30px 0px";
+
+                        element.appendChild(UI.create("td", function (element) {
+                            element.className = "align-right";
+
+                            element.appendChild(UI.create("div", function (element) {
+                                element.appendChild(document.createTextNode("Left: "));
+                                element.appendChild(UI.create("input", function (element) {
+                                    element.className = "char4";
+
+                                    Options.on("keyup")("popup.offsetX", element);
+                                }));
+                                element.appendChild(document.createTextNode(" %"));
+                            }));
+                            element.appendChild(UI.create("div", function (element) {
+                                element.appendChild(document.createTextNode("Top: "));
+                                element.appendChild(UI.create("input", function (element) {
+                                    element.className = "char4";
+
+                                    Options.on("keyup")("popup.offsetY", element);
+                                }));
+                                element.appendChild(document.createTextNode(" %"));
+                            }));
+                        }));
+                        element.appendChild(UI.create("td", function (element) {
+                            element.className = "align-right";
+
+                            function numberCap(event) {
+                                if (+this.value < 200) {
+                                    Options.set(this.id, (this.value = 200));
+                                }
+                            }
+
+                            element.appendChild(UI.create("div", function (element) {
+                                element.appendChild(document.createTextNode("Width: "));
+                                element.appendChild(UI.create("input", function (element) {
+                                    element.className = "char5";
+                                    element.id = "popup.width";
+
+                                    element.addEventListener("change", numberCap, true);
+                                    Options.on("keyup")(element.id, element);
+                                }));
+                                element.appendChild(document.createTextNode(" px"));
+                            }));
+                            element.appendChild(UI.create("div", function (element) {
+                                element.appendChild(document.createTextNode("Height: "));
+                                element.appendChild(UI.create("input", function (element) {
+                                    element.className = "char5";
+                                    element.id = "popup.height";
+
+                                    element.addEventListener("change", numberCap, true);
+                                    Options.on("keyup")(element.id, element);
+                                }));
+                                element.appendChild(document.createTextNode(" px"));
+                            }));
+                        }));
+                    }));
+                });
+            });
+        </script>
+    </body>
+</html>
