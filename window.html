@@ -22,6 +22,7 @@
             document.body.style.width = Options.get("popup.width") + "px";
             document.body.style.height = Options.get("popup.height") + "px";
             document.body.style.overflowY = "hidden";
+            document.body.style.maxWidth = "100%";
         }
 
         var state = {
@@ -183,7 +184,7 @@
                     };
                     element.hide();
 
-                    setTimeout(element.show, 2000);
+                    //setTimeout(element.show, 2000);
                     //setTimeout(element.hide, 4000);
 
                     /*addEventListener("focus", function (event) {

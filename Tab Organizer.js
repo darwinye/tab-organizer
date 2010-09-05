@@ -158,21 +158,21 @@ var Tab = {
                             this.queueAdd();
                         }
                     } else if (event.altKey) {
-                        Tab.close(tab);
+                        Platform.tabs.remove(tab.id);
                     } else {
                         if (!parent.queue.has(this)) {
                             parent.queue.reset();
                             delete parent.queue.shiftNode;
                         }
-                        Tab.select(tab);
+                        Platform.tabs.focus(tab);
                     }
                 } else if (event.button === 1) {
-                    Tab.close(tab);
+                    Platform.tabs.remove(tab.id);
                 }
             }, false);
             /*container.addEventListener("click", function (event) {
                 if (event.button === 1) {
-                    Tab.close(tab);
+                    Platform.tabs.remove(tab.id);
                 }
             }, false);*/
             /*container.addEventListener("focus", function (event) {
@@ -365,7 +365,7 @@ var Tab = {
 
                     element.addEventListener("click", function (event) {
                         event.stopPropagation();
-                        Tab.close(tab);
+                        Platform.tabs.remove(tab.id);
                     }, true);
 
                     /*element.appendChild(UI.create("img", function (element) {
@@ -376,56 +376,49 @@ var Tab = {
             }));
         });
     },
-    select: function (tab) {
-        Platform.tabs.update(tab.id, { selected: true });
-        Platform.windows.update(tab.windowId, { selected: true, focused: true });
-    },
-    close: function (tab) {
-        Platform.tabs.remove(tab.id);
-    },
-    gotoURL: function (tab, url) {
-        if (url !== tab.url) {
-            if (!/^[^:]+:\/\//.test(url)) {
-                url = "http://" + url;
-            }
-            Platform.tabs.update(tab.id, { url: url });
-        }
-    },
-    editURL: function (tab) {
-        var container = state.tabs[tab.id];
+//    gotoURL: function (tab, url) {
+//        if (url !== tab.url) {
+//            if (!/^[^:]+:\/\//.test(url)) {
+//                url = "http://" + url;
+//            }
+//            Platform.tabs.update(tab.id, { url: url });
+//        }
+//    },
+//    editURL: function (tab) {
+//        var container = state.tabs[tab.id];
 
-        var span = container.tabText;
-        var parent = span.parentNode;
+//        var span = container.tabText;
+//        var parent = span.parentNode;
 
-        container.draggable = !container.draggable;
+//        container.draggable = !container.draggable;
 
-        var input = document.createElement("input");
-        input.className = "url-input";
-        input.type = "text";
+//        var input = document.createElement("input");
+//        input.className = "url-input";
+//        input.type = "text";
 
-        input.value = tab.url;
-        input.tabIndex = -1;
+//        input.value = tab.url;
+//        input.tabIndex = -1;
 
-        input.addEventListener("keyup", function (event) {
-            if (event.which === 13 || event.which === 27) {
-                if (event.which === 13) {
-                    Tab.gotoURL(tab, this.value);
-                }
-                container.parentNode.focus();
-            }
-        }, true);
-        input.addEventListener("blur", function (event) {
-            parent.replaceChild(span, input);
+//        input.addEventListener("keyup", function (event) {
+//            if (event.which === 13 || event.which === 27) {
+//                if (event.which === 13) {
+//                    Tab.gotoURL(tab, this.value);
+//                }
+//                container.parentNode.focus();
+//            }
+//        }, true);
+//        input.addEventListener("blur", function (event) {
+//            parent.replaceChild(span, input);
 
-            container.draggable = !container.draggable;
-        }, true);
+//            container.draggable = !container.draggable;
+//        }, true);
 
-        //input.addEventListener("mousedown", events.stop, true);
-        input.addEventListener("click", events.stop, true);
+//        //input.addEventListener("mousedown", events.stop, true);
+//        input.addEventListener("click", events.stop, true);
 
-        parent.replaceChild(input, span);
-        input.select();
-    }
+//        parent.replaceChild(input, span);
+//        input.select();
+//    }
 };
 
 var Window = {
@@ -517,7 +510,7 @@ var Window = {
                             //UI.scrollTo(query, this.tabList.scroll);
                             //UI.scrollIntoView(element, this.tabList.scroll, 110);
 
-                            Tab.select(element.tab);
+                            Platform.tabs.focus(element.tab);
                         }
                     }
                 } else if (event.which === 32 || event.which === 13) {
