@@ -1,5 +1,5 @@
 "use strict";
-/*global action, chrome, events, state, UI */
+/*global action, events, Options, Platform, state, UI, window */
 
 var Tab = {
     create: function (tab) {
@@ -501,8 +501,10 @@ var Window = {
 
 
             container.addEventListener("keydown", function (event) {
+                var query;
+
                 if (event.which === 38 || event.which === 40) {
-                    var query = this.querySelector(".tab[data-selected]");
+                    query = this.querySelector(".tab[data-selected]");
                     if (query) {
                         var element = (event.which === 38) ?
                             query.previousSibling :
@@ -521,7 +523,7 @@ var Window = {
                 } else if (event.which === 32 || event.which === 13) {
                     event.preventDefault();
 
-                    var query = this.querySelector(".tab[data-selected]");
+                    query = this.querySelector(".tab[data-selected]");
                     if (query) {
                         var info = document.createEvent("MouseEvents");
                         info.initMouseEvent("click", true, false, window, 0, 0, 0, 0, 0,

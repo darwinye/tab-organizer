@@ -16,7 +16,7 @@
     <script src="Tab%20Organizer.js"></script>
     <script>
         "use strict";
-        /*global action, chrome, events, Options, UI, Window */
+        /*global action, events, Options, Platform, UI, Window */
 
         if (Options.get("popup.bubble")) {
             document.body.style.width = Options.get("popup.width") + "px";
@@ -84,7 +84,7 @@
             if (event.target.setAttribute) {
                 event.target.setAttribute("focused", "");
                 //if (event.target.className === "window") {
-                    state.focused = event.target;
+                state.focused = event.target;
                 //}
             }
         }, true);
@@ -304,7 +304,7 @@
                     /*if (array instanceof Array) {
                         search(array);
                     } else {*/
-                        search(state.list);
+                    search(state.list);
                     //}
                 };
                 input.addEventListener("keyup", state.search, true);
