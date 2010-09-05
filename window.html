@@ -8,6 +8,7 @@
     <link rel="stylesheet" type="text/css" href="window.css" />
 </head>
 <body>
+    <script src="lib/Platform.js"></script>
     <script src="lib/Options.js"></script>
     <script src="lib/Global%20Helper.js"></script>
     <script src="lib/UI%20Helper.js"></script>
@@ -134,14 +135,14 @@
                 button.tabIndex = 1;
 
                 button.addEventListener("click", function (event) {
-                    chrome.windows.create({/* url: "chrome://newtab/" */});
+                    Platform.windows.create({/* url: "chrome://newtab/" */});
                 }, true);
 
                 button.addEventListener("dragover", events.disable, true);
                 button.addEventListener("dragenter", button.focus, true);
 
                 button.addEventListener("drop", function (event) {
-                    chrome.windows.create({ url: "lib/remove.html" }, function (win) {
+                    Platform.windows.create({ url: "lib/remove.html" }, function (win) {
                         state.currentQueue.moveTabs(win.id);
                         state.currentQueue.reset();
                         delete state.currentQueue.shiftNode;
@@ -161,6 +162,49 @@
                 button.tabIndex = 1;
             }));
 */
+            element.appendChild(UI.create("span", function (element) {
+                element.id = "Undo-bar";
+
+                element.appendChild(UI.create("div", function (element) {
+                    element.id = "Undo-bar-div";
+                    element.textContent = "You moved 50 tabs.";
+
+                    state.undoBar = element;
+
+                    element.hide = function () {
+                        element.style.opacity = "0 !important";
+                        element.style.visibility = "hidden !important";
+                    };
+                    element.show = function () {
+                        element.style.opacity = "";
+                        element.style.visibility = "";
+
+                        setTimeout(element.hide, 10000);
+                    };
+                    element.hide();
+
+                    setTimeout(element.show, 2000);
+                    //setTimeout(element.hide, 4000);
+
+                    /*addEventListener("focus", function (event) {
+                        if (event.target !== document.body) {
+                            element.hide();
+                        }
+                    }, true);*/
+
+                    element.appendChild(UI.create("span", function (element) {
+                        element.id = "Undo-bar-button";
+                        element.textContent = "Undo";
+
+                        element.addEventListener("click", function (event) {
+                            if (typeof state.undoAction === "function") {
+                                state.undoAction();
+                            }
+                        }, true);
+                    }));
+                }));
+            }));
+
             element.appendChild(UI.create("span", function (span) {
                 span.id = "search-box";
                 span.textContent = "Search: ";
@@ -298,7 +342,7 @@
 
             //var windowlist = document.getElementById("window-list");
 
-            chrome.windows.getAll({ populate: true }, function (windows) {
+            Platform.windows.getAll({ populate: true }, function (windows) {
                 element.appendChild(UI.create("td"));
 
                 windows.forEach(function (win) {

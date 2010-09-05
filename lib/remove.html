@@ -4,12 +4,13 @@
     <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
     <title>Remover Page</title>
 
+    <script src="lib/Platform.js"></script>
     <script>
         "use strict";
         /*global chrome */
 
-        chrome.tabs.getSelected(null, function (tab) {
-            chrome.tabs.remove(tab.id);
+        Platform.tabs.getSelected(null, function (tab) {
+            Platform.tabs.remove(tab.id);
         });
     </script>
 </head>

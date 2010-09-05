@@ -61,6 +61,34 @@ table {
     white-space: nowrap;
     z-index: 9001;
 }
+#Undo-bar {
+    position: fixed;
+    top: 17px;
+    left: 46%;
+    margin: auto;
+}
+#Undo-bar-div {
+    -webkit-transition-property: opacity, visibility;
+    -webkit-transition-duration: 0.5s;
+    -webkit-transition-timing-function: ease;
+
+    position: relative;
+    left: -50%;
+    background-color: #FFF1A8;
+    padding: 2px 5px;
+    font-weight: bold;
+    border: 1px solid dimgray;
+    border-radius: 5px;
+}
+#Undo-bar-button {
+    display: inline-block;
+    color: #00C;
+    cursor: pointer;
+    text-decoration: underline;
+    white-space: nowrap;
+    margin-left: 10px;
+}
+
 #placeholder {
     display: block !important;
     /*height: 0px;*/ /* 16px */

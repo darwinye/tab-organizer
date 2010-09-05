@@ -5,6 +5,7 @@
     <title>Background Page</title>
 </head>
 <body>
+    <script src="lib/Platform.js"></script>
     <script src="lib/Options.js"></script>
     <script>
         "use strict";
@@ -24,11 +25,11 @@
         });
 
         if (Options.get("popup.bubble")) {
-            chrome.browserAction.setPopup({ popup: "window.html" });
+            Platform.icon.setPopup({ popup: "window.html" });
         }
         Options.addEventListener("change", function (event) {
             if (event.name === "popup.bubble") {
-                chrome.browserAction.setPopup({
+                Platform.icon.setPopup({
                     popup: (event.value) ? "window.html" : ""
                 });
             }
@@ -49,7 +50,7 @@
 
             title.push(Options.get("popup.hotkey.letter"), ")");
 
-            chrome.browserAction.setTitle({ title: title.join("") });
+            Platform.icon.setTitle({ title: title.join("") });
         }
         updateTitle();
 
@@ -84,17 +85,7 @@
             };
         }());
 
-        chrome.browserAction.onClicked.addListener(openPopup);
-
-/*
-        chrome.extension.onRequest.addListener(function (json, port, reply) {
-            console.log(json.type);
-            if (json.type === "keyup") {
-                console.log(json.which);
-            }
-            reply();
-        });
-*/
+        Platform.icon.addEventListener("click", openPopup, true);
 
 /*
         function keycheck(event, input) {
@@ -104,9 +95,9 @@
         }
 */
 
-        chrome.windows.onFocusChanged.addListener(function (win) {
-            if (win !== chrome.windows.WINDOW_ID_NONE) {
-                chrome.windows.get(win, function (win) {
+        Platform.windows.addEventListener("focus", function (win) {
+            if (win !== Platform.windows.ID_NONE) {
+                Platform.windows.get(win, function (win) {
                     if (win.type === "normal") {
                         Options.set("window.lastfocused", win.id);
                         //state.windows[win.id].setWindowFocus();
@@ -118,43 +109,39 @@
 
                 state.search();
             }*/
-        });
+        }, true);
 
-        chrome.extension.onConnect.addListener(function (port) {
-            port.onMessage.addListener(function (event) {
-                if (port.name === "lib.keyboard") {
-                    if (event.type === "keyup") {
-                        /*
-                        if (keycheck(event, {
-                            ctrlKey: Options.get("popup.hotkey.ctrl"),
-                            shiftKey: Options.get("popup.hotkey.shift"),
-                            altKey: Options.get("popup.hotkey.alt"),
-                            which: Options.get("popup.hotkey.code")
-                        })) {
-                            openPopup()
-                        }
-                        */
+        Platform.message.addEventListener("lib.keyboard", function (event) {
+            if (event.type === "keyup") {
+                /*
+                if (keycheck(event, {
+                    ctrlKey: Options.get("popup.hotkey.ctrl"),
+                    shiftKey: Options.get("popup.hotkey.shift"),
+                    altKey: Options.get("popup.hotkey.alt"),
+                    which: Options.get("popup.hotkey.code")
+                })) {
+                    openPopup()
+                }
+                */
 
-                        //console.log(event.which);
+                //console.log(event.which);
 
-                        var ctrl = Options.get("popup.hotkey.ctrl");
-                        var letter = String.fromCharCode(event.which);
+                var ctrl = Options.get("popup.hotkey.ctrl");
+                var letter = String.fromCharCode(event.which);
 
-                        //console.log(event);
+                //console.log(event);
 
-                        if (event.ctrlKey === ctrl || event.metaKey === ctrl) {
-                            if (event.shiftKey === Options.get("popup.hotkey.shift")) {
-                                if (event.altKey === Options.get("popup.hotkey.alt")) {
-                                    if (letter === Options.get("popup.hotkey.letter")) {
-                                        openPopup();
-                                    }
-                                }
+                if (event.ctrlKey === ctrl || event.metaKey === ctrl) {
+                    if (event.shiftKey === Options.get("popup.hotkey.shift")) {
+                        if (event.altKey === Options.get("popup.hotkey.alt")) {
+                            if (letter === Options.get("popup.hotkey.letter")) {
+                                openPopup();
                             }
                         }
                     }
                 }
-            });
-        });
+            }
+        }, true);
     </script>
 </body>
 </html>

@@ -377,18 +377,18 @@ var Tab = {
         });
     },
     select: function (tab) {
-        chrome.tabs.update(tab.id, { selected: true });
-        chrome.windows.update(tab.windowId, { selected: true, focused: true });
+        Platform.tabs.update(tab.id, { selected: true });
+        Platform.windows.update(tab.windowId, { selected: true, focused: true });
     },
     close: function (tab) {
-        chrome.tabs.remove(tab.id);
+        Platform.tabs.remove(tab.id);
     },
     gotoURL: function (tab, url) {
         if (url !== tab.url) {
             if (!/^[^:]+:\/\//.test(url)) {
                 url = "http://" + url;
             }
-            chrome.tabs.update(tab.id, { url: url });
+            Platform.tabs.update(tab.id, { url: url });
         }
     },
     editURL: function (tab) {
@@ -747,7 +747,7 @@ var Window = {
                                                     menu.addItem("New <u>T</u>ab", {
                                                         keys: ["T"],
                                                         action: function () {
-                                                            chrome.tabs.create({
+                                                            Platform.tabs.create({
                                                                 //url: "chrome://newtab/",
                                                                 windowId: win.id
                                                             }/*, function (tab) {
@@ -823,7 +823,7 @@ var Window = {
                                                         keys: ["C"],
                                                         action: function () {
                                                             container.tabList.queue.forEach(function (item) {
-                                                                chrome.tabs.remove(item.tab.id);
+                                                                Platform.tabs.remove(item.tab.id);
                                                             });
                                                             container.tabList.queue.reset();
                                                             delete container.tabList.queue.shiftNode;
@@ -831,7 +831,7 @@ var Window = {
                                                             var text = "Do you want to close " + length + " tabs?";
 
                                                             if (length === 1 || confirm(text)) {
-                                                                chrome.windows.remove(win.id);
+                                                                Platform.windows.remove(win.id);
                                                             }*/
                                                         }
                                                     });
@@ -913,7 +913,7 @@ var Window = {
 ////                                                            var text = "Do you want to close " + length + " tabs?";
 
 ////                                                            if (length === 1 || confirm(text)) {
-////                                                                chrome.windows.remove(win.id);
+////                                                                Platform.windows.remove(win.id);
 ////                                                            }
 ////                                                        }, true);
 ////                                                    }));*/
