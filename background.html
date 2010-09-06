@@ -96,7 +96,7 @@
 */
 
         Platform.windows.addEventListener("focus", function (win) {
-            if (win !== Platform.windows.ID_NONE) {
+            if (win !== null) {
                 Platform.windows.get(win, function (win) {
                     if (win.type === "normal") {
                         Options.set("window.lastfocused", win.id);
