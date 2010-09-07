@@ -8,6 +8,7 @@
     <link rel="stylesheet" type="text/css" href="window.css" />
 </head>
 <body>
+    <script src="lib/Undo.js"></script>
     <script src="lib/Platform.js"></script>
     <script src="lib/Options.js"></script>
     <script src="lib/Global%20Helper.js"></script>
@@ -168,19 +169,34 @@
 
                 element.appendChild(UI.create("div", function (element) {
                     element.id = "Undo-bar-div";
-                    element.textContent = "You moved 50 tabs.";
 
                     state.undoBar = element;
 
-                    element.hide = function () {
+                    element.hide = function (transition) {
+                        if (transition === false) {
+                            element.style.webkitTransitionDuration = "0s";
+
+                            setTimeout(function () {
+                                element.style.webkitTransitionDuration = "";
+                            }, 0);
+                        }
                         element.style.opacity = "0 !important";
                         element.style.visibility = "hidden !important";
+
+/*                        state.undoBar.addEventListener("webkitTransitionEnd", function anon(event) {
+                            this.removeEventListener(event.type, anon, true);
+                            this.style.webkitTransition = "";
+                        }, true);*/
                     };
+
+                    var timeout;
                     element.show = function () {
+                        clearTimeout(timeout);
+
                         element.style.opacity = "";
                         element.style.visibility = "";
 
-                        setTimeout(element.hide, 10000);
+                        timeout = setTimeout(element.hide, 10000);
                     };
                     element.hide();
 
@@ -194,13 +210,23 @@
                     }, true);*/
 
                     element.appendChild(UI.create("span", function (element) {
+                        Object.defineProperty(state.undoBar, "text", {
+                            get: function () {
+                                return element.textContent;
+                            },
+                            set: function (value) {
+                                element.textContent = value;
+                            }
+                        });
+                    }));
+
+                    element.appendChild(UI.create("span", function (element) {
                         element.id = "Undo-bar-button";
                         element.textContent = "Undo";
 
-                        element.addEventListener("click", function (event) {
-                            if (typeof state.undoAction === "function") {
-                                state.undoAction();
-                            }
+                        element.addEventListener("click", function () {
+                            state.undoBar.hide(false);
+                            Undo.pop();
                         }, true);
                     }));
                 }));

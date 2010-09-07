@@ -376,6 +376,17 @@ var Tab = {
             }));
         });
     },
+    move: function (item, info, action) {
+        var tab = item.tab;
+        Platform.tabs.move(tab.id, info, function () {
+            Platform.tabs.get(tab.id, function (tab) {
+                item.tab = tab;
+                if (typeof action === "function") {
+                    action();
+                }
+            });
+        });
+    }
 //    gotoURL: function (tab, url) {
 //        if (url !== tab.url) {
 //            if (!/^[^:]+:\/\//.test(url)) {
