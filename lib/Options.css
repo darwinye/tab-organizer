@@ -42,8 +42,9 @@ button.custom:active {
         to(rgba(0, 0, 0, 0.1)));
 }
 
-input[data-options-changed], select[data-options-changed] {
-    border-color: mediumblue !important;
+input[data-options-changed],
+select[data-options-changed] {
+    border-color: blue !important;
 }
 /*input[type="checkbox"] + span {
     display: inline-block;
@@ -58,7 +59,7 @@ input[type="checkbox"][data-options-changed] + span {
     text-decoration: under-line;*/
     /*background-color: mediumblue !important;
     border-color: rgba(0, 0, 205, 0.25);*/
-    color: mediumblue;
+    color: blue !important;
 }
 
 #Options-contents input {
@@ -68,20 +69,23 @@ input[type="checkbox"][data-options-changed] + span {
     z-index: 9001;
 
     margin: 0px 3px;
+    /*margin: 0px;
+    margin-left: 3px;*/
     text-align: center;
     border: 1px solid dimgray;
     border-radius: 3px;
 }
 #Options-contents select {
-    /*-webkit-box-shadow: lightgray 0px 0px 5px;*/
+    -webkit-box-shadow: lightgray 0px 0px 5px;
 
     position: relative;
     z-index: 9001;
 
     padding: 1px 2px;
+    margin: 0px;
     margin-left: 5px;
 
-    border: 1px inset dimgray;
+    border: 1px solid dimgray;
     border-radius: 3px;
 
     background-color: #feffff;

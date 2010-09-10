@@ -218,9 +218,11 @@
                         }]
                     });
 
-                    //container.space({ height: "5px" });
+                    //container.space({ height: "1px" });
                     container.seperator();
-                    container.space({ height: "8px" });
+                    container.space({ height: "10px" });
+
+                    //container.space({ height: "10px" });
 
                     container["DOM.Element"].appendChild(UI.create("table", function (element) {
                         element.style.backgroundColor = "slategray";
@@ -311,7 +313,7 @@
 
                     container["DOM.Element"].appendChild(UI.create("table", function (element) {
                         element.style.position = "relative";
-                        element.style.margin = "5px auto 0px";
+                        element.style.margin = "12px auto 0px";
                         //element.style.marginTop = "10px";
                         element.style.borderSpacing = "30px 0px";
 
@@ -322,9 +324,10 @@
                                 //input.appendChild(document.createTextNode(" %"));
                                 element.appendChild(container.input("text", {
                                     option: "popup.offsetX",
-                                    on: "keyup",
-                                    text: [ "Left: ", "%" ],
+                                    text: "Left: ",
+                                    unit: "%",
                                     width: "2.5em"
+                                    //on: "keyup"
                                 }));
                                 /*element.appendChild(document.createTextNode("Left: "));
                                 element.appendChild(UI.create("input", function (element) {
@@ -338,9 +341,10 @@
                             element.appendChild(UI.create("div", function (element) {
                                 element.appendChild(container.input("text", {
                                     option: "popup.offsetY",
-                                    on: "keyup",
-                                    text: [ "Top: ", "%" ],
+                                    text: "Top: ",
+                                    unit: "%",
                                     width: "2.5em"
+                                    //on: "keyup"
                                 }));
                                 /*element.appendChild(document.createTextNode());
                                 element.appendChild(UI.create("input", function (element) {
@@ -356,16 +360,19 @@
                         element.appendChild(UI.create("td", function (element) {
                             element.className = "align-right";
 
-                            function numberCap() {
-                                return (+this.value < 200) ? 200 : this.value;
+                            function numberCap(info) {
+                                var value = (+this.value < 200) ? 200 : this.value;
+                                Options.set(info.option, null);
+                                return value;
                             }
 
                             element.appendChild(UI.create("div", function (element) {
                                 element.appendChild(container.input("text", {
                                     option: "popup.width",
-                                    on: "keyup",
-                                    text: [ "Width: ", "px" ],
+                                    text: "Width: ",
+                                    unit: "px",
                                     width: "3em",
+                                    //on: "keyup",
                                     modify: numberCap
                                 }));
                                 /*element.appendChild(document.createTextNode());
@@ -383,9 +390,10 @@
                             element.appendChild(UI.create("div", function (element) {
                                 element.appendChild(container.input("text", {
                                     option: "popup.height",
-                                    on: "keyup",
-                                    text: [ "Height: ", "px" ],
+                                    text: "Height: ",
+                                    unit: "px",
                                     width: "3em",
+                                    //on: "keyup",
                                     modify: numberCap
                                 }));
                                 /*element.appendChild(document.createTextNode("Height: "));

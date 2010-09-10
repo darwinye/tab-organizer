@@ -103,7 +103,9 @@
             case "tab":
                 if (state.opened) {
                     Platform.tabs.focus(state.opened);
-                } else {
+                } else if (state.opened !== null) {
+                    state.opened = null;
+
                     Platform.tabs.create({
                         url: "window.html"
                     }, function (tab) {
