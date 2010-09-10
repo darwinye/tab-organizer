@@ -19,7 +19,7 @@
         "use strict";
         /*global action, events, Options, Platform, UI, Undo, Window */
 
-        if (Options.get("popup.bubble")) {
+        if (Options.get("popup.type") === "bubble") {
             document.body.style.width = Options.get("popup.width") + "px";
             document.body.style.height = Options.get("popup.height") + "px";
             document.body.style.overflowY = "hidden";

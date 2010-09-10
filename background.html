@@ -12,7 +12,7 @@
         /*global Options, Platform */
 
         Options.setDefaults({
-            "popup.bubble": false,
+            "popup.type": "popup",
             "popup.offsetX": 0,
             "popup.offsetY": 0,
             "popup.width": 920,  //! screen.width - 520, // 100 // 916 // 1336
@@ -24,13 +24,15 @@
             "popup.hotkey.letter": "O"
         });
 
-        if (Options.get("popup.bubble")) {
+        var state = {};
+
+        if (Options.get("popup.type") === "bubble") {
             Platform.icon.setPopup({ popup: "window.html" });
         }
         Options.addEventListener("change", function (event) {
-            if (event.name === "popup.bubble") {
+            if (event.name === "popup.type") {
                 Platform.icon.setPopup({
-                    popup: (event.value) ? "window.html" : ""
+                    popup: (event.value === "bubble") ? "window.html" : ""
                 });
             }
         }, true);
@@ -71,11 +73,12 @@
                 return open(url, "TabOrganizer", options);
             }
 
-            return function anon(tab) {
-                if (anon.win) {
-                    anon.win.close();
-                }
-                anon.win = popup("window.html", {
+            return function () {
+                /*if (state.opened) {
+                    Platform.tabs.focus(state.opened);
+                }*/
+
+                return popup("window.html", {
                     offsetX: Options.get("popup.offsetX"),
                     offsetY: Options.get("popup.offsetY"),
                     width: Options.get("popup.width"),
@@ -85,7 +88,37 @@
             };
         }());
 
-        Platform.icon.addEventListener("click", openPopup, true);
+        var showTabOrganizer = function anon() {
+            if (anon.popup) {
+                anon.popup.close();
+            }
+
+            switch (Options.get("popup.type")) {
+            case "popup":
+                if (state.opened) {
+                    Platform.tabs.remove(state.opened.id);
+                }
+                anon.popup = openPopup();
+                break;
+            case "tab":
+                if (state.opened) {
+                    Platform.tabs.focus(state.opened);
+                } else {
+                    Platform.tabs.create({
+                        url: "window.html"
+                    }, function (tab) {
+                        state.opened = tab;
+                    });
+                }
+            }
+        };
+        Platform.tabs.addEventListener("remove", function (id) {
+            if (id === state.opened.id) {
+                delete state.opened;
+            }
+        }, true);
+
+        Platform.icon.addEventListener("click", showTabOrganizer, true);
 
 /*
         function keycheck(event, input) {
@@ -120,7 +153,7 @@
                     altKey: Options.get("popup.hotkey.alt"),
                     which: Options.get("popup.hotkey.code")
                 })) {
-                    openPopup()
+                    showTabOrganizer()
                 }
                 */
 
@@ -135,7 +168,7 @@
                     if (event.shiftKey === Options.get("popup.hotkey.shift")) {
                         if (event.altKey === Options.get("popup.hotkey.alt")) {
                             if (letter === Options.get("popup.hotkey.letter")) {
-                                openPopup();
+                                showTabOrganizer();
                             }
                         }
                     }

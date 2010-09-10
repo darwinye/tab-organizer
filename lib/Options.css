@@ -42,7 +42,7 @@ button.custom:active {
         to(rgba(0, 0, 0, 0.1)));
 }
 
-input[data-options-changed] {
+input[data-options-changed], select[data-options-changed] {
     border-color: mediumblue !important;
 }
 /*input[type="checkbox"] + span {
@@ -60,6 +60,38 @@ input[type="checkbox"][data-options-changed] + span {
     border-color: rgba(0, 0, 205, 0.25);*/
     color: mediumblue;
 }
+
+#Options-contents input {
+    -webkit-box-shadow: lightgray 0px 0px 5px;
+
+    position: relative;
+    z-index: 9001;
+
+    margin: 0px 3px;
+    text-align: center;
+    border: 1px solid dimgray;
+    border-radius: 3px;
+}
+#Options-contents select {
+    /*-webkit-box-shadow: lightgray 0px 0px 5px;*/
+
+    position: relative;
+    z-index: 9001;
+
+    padding: 1px 2px;
+    margin-left: 5px;
+
+    border: 1px inset dimgray;
+    border-radius: 3px;
+
+    background-color: #feffff;
+    background-image: -webkit-gradient(linear, 0% 0%, 0% 100%,
+        from(transparent),
+        color-stop(0.2, rgba(0, 0, 0, 0.04)),
+        color-stop(0.7, rgba(0, 0, 0, 0.05)),
+        to(rgba(0, 0, 0, 0.1)));
+}
+
 
 #Options-container {
     position: absolute;
@@ -82,14 +114,6 @@ input[type="checkbox"][data-options-changed] + span {
 }
 #Options-contents {
     vertical-align: middle;
-}
-#Options-contents input {
-    -webkit-box-shadow: lightgray 0px 0px 5px;
-
-    margin-left: 3px;
-    text-align: center;
-    border: 1px solid dimgray;
-    border-radius: 3px;
 }
 #Options-outer {
     -webkit-box-shadow: dimgray 1px 1px 10px;
@@ -138,6 +162,9 @@ input[type="checkbox"][data-options-changed] + span {
     margin-right: auto;
 }*/
 #Options-list {
+    position: relative;
+    z-index: 9001;
+
     height: 100%;
     padding: 0px;
     margin: 0px;
