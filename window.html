@@ -17,7 +17,7 @@
     <script src="Tab%20Organizer.js"></script>
     <script>
         "use strict";
-        /*global action, events, Options, Platform, UI, Window */
+        /*global action, events, Options, Platform, UI, Undo, Window */
 
         if (Options.get("popup.bubble")) {
             document.body.style.width = Options.get("popup.width") + "px";
@@ -25,6 +25,13 @@
             document.body.style.overflowY = "hidden";
             document.body.style.maxWidth = "100%";
         }
+
+        Undo.setRule("move-tabs", function (info) {
+            info.queue.forEach(function (item) {
+                Tab.move(item, item.undoState, item.queueAdd);
+            });
+            Undo.reset();
+        });
 
         var state = {
             windows: {},
@@ -172,14 +179,13 @@
 
                     state.undoBar = element;
 
-                    element.hide = function (transition) {
-                        if (transition === false) {
-                            element.style.webkitTransitionDuration = "0s";
-
-                            setTimeout(function () {
-                                element.style.webkitTransitionDuration = "";
-                            }, 0);
-                        }
+                    element.hide = function () {
+                        //if (transition === false) {
+                        element.style.webkitTransitionDuration = "0s";
+                        setTimeout(function () {
+                            element.style.webkitTransitionDuration = "";
+                        }, 0);
+                        //}
                         element.style.opacity = "0 !important";
                         element.style.visibility = "hidden !important";
 
@@ -190,8 +196,10 @@
                     };
 
                     var timeout;
-                    element.show = function () {
+                    element.show = function (name) {
                         clearTimeout(timeout);
+
+                        state.undoBar.text = name;
 
                         element.style.opacity = "";
                         element.style.visibility = "";
@@ -225,7 +233,7 @@
                         element.textContent = "Undo";
 
                         element.addEventListener("click", function () {
-                            state.undoBar.hide(false);
+                            state.undoBar.hide();
                             Undo.pop();
                         }, true);
                     }));
