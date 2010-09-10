@@ -756,13 +756,19 @@ var Window = {
                                                             Platform.tabs.create({
                                                                 //url: "chrome://newtab/",
                                                                 windowId: win.id
-                                                            }/*, function (tab) {
+                                                            }, function (tab) {
+                                                                if (Options.get("undo.new-tab")) {
+                                                                    Undo.push("new-tab", {
+                                                                        id: tab.id
+                                                                    });
+                                                                    state.undoBar.show("You created a new tab.");
+                                                                }
                                                                 //console.log("onEnded!", state.tabs[tab.id].parentNode);
                                                                 //console.log(state.tabs[tab.id].parentNode);
-                                                                setTimeout(function () {
-                                                                    Tab.editURL(tab);//state.tabs[tab.id].editURL();
-                                                                }, 1000);
-                                                            }*/);
+//                                                                setTimeout(function () {
+//                                                                    Tab.editURL(tab);//state.tabs[tab.id].editURL();
+//                                                                }, 1000);
+                                                            });
                                                         }
                                                     });
 

@@ -178,6 +178,7 @@ input[type="checkbox"][data-options-changed] + span {
     background-color: white;
     border: 1px inset grey;
 
+    white-space: nowrap;
     list-style: none;
 }
 #Options-list > li {

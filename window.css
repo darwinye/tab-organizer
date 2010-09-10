@@ -69,7 +69,7 @@ table {
 }
 #Undo-bar-div {
     -webkit-transition-property: opacity, visibility;
-    -webkit-transition-duration: 0.5s;
+    -webkit-transition-duration: 1s;
     -webkit-transition-timing-function: ease;
 
     position: relative;

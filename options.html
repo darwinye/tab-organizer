@@ -37,6 +37,8 @@
                 height: 465px;*/
             }
         </style>
+
+        <script src="lib/Analytics.js"></script>
     </head>
     <body>
         <!--<div id="container">
@@ -200,6 +202,108 @@
                     });
 */
                 });
+
+
+                container.addCategory("Theme", function (container) {
+                    container.input("dropdown-list", {
+                        option: "color.theme",
+                        text: "Window theme: ",
+                        list: [{
+                            group: "Color:",
+                            list: [{
+                                value: "blue",
+                                text: "Blue"
+                            }, {
+                                value: "green",
+                                text: "Green"
+                            }, {
+                                value: "yellow",
+                                text: "Yellow"
+                            }, {
+                                value: "orange",
+                                text: "Orange"
+                            }, {
+                                value: "red",
+                                text: "Red"
+                            }, {
+                                value: "pink",
+                                text: "Pink"
+                            }, {
+                                value: "purple",
+                                text: "Purple"
+                            }]
+                        }, {
+                            group: "Grayscale:",
+                            list: [{
+                                value: "black",
+                                text: "Black"
+                            }, {
+                                value: "grey",
+                                text: "Grey"
+                            }, {
+                                value: "white",
+                                text: "White"
+                            }]
+                        }]
+                    });
+
+                    //container.indent(function (container) {
+                        container["DOM.Element"].appendChild(UI.create("iframe", function (element) {
+                            element.style.border = "1px solid black";
+                            element.style.width = "600px";
+                            element.style.height = "447px";
+                            element.style.margin = "0px";
+                            element.style.padding = "0px";
+                            element.style.marginTop = "10px";
+                            element.src = "theme/window-viewer.html";
+                        }));
+                    //});
+                    /*container.input("dropdown-list", {
+                        list: [{
+                            text: "Window"
+                        }, {
+                            group: "Normal tabs:",
+                            list: [{
+                                text: "Tab (selected)"
+                            }, {
+                                text: "Tab (queue)"
+                            }, {
+                                text: "Tab (selected + queue)"
+                            }]
+                        }, {
+                            group: "Hovered tabs:",
+                            list: [{
+                                text: "Tab (hover)"
+                            }, {
+                                text: "Tab (selected + hover)"
+                            }, {
+                                text: "Tab (queue + hover)"
+                            }, {
+                                text: "Tab (selected + queue + hover)"
+                            }]
+                        }]
+                    });
+
+                    container.input("slider", {
+                        text: "Red",
+                        min: 0,
+                        max: 255
+                    });
+
+                    container.input("slider", {
+                        text: "Green",
+                        min: 0,
+                        max: 255
+                    });
+
+                    container.input("slider", {
+                        text: "Blue",
+                        min: 0,
+                        max: 255
+                    });*/
+                });
+
+
                 container.addCategory("Popup", function (container) {
                     var height = 375;
 
@@ -208,13 +312,13 @@
                         text: "Display in a...",
                         list: [{
                             value: "popup",
-                            text: "popup"
+                            text: "Popup"
                         }, {
                             value: "bubble",
-                            text: "bubble"
+                            text: "Bubble"
                         }, {
                             value: "tab",
-                            text: "tab"
+                            text: "Tab"
                         }]
                     });
 
@@ -410,6 +514,39 @@
                             }));
                         }));
                     }));
+                });
+
+                container.addCategory("Undo", function (container) {
+                    container.header("Allow for undoing:");
+
+                    container.indent(function (container) {
+                        container.input("checkbox", {
+                            option: "undo.new-tab",
+                            text: "New Tab"
+                        });
+
+                        container.input("checkbox", {
+                            option: "undo.rename-window",
+                            text: "Rename window"
+                        });
+
+                        container.input("checkbox", {
+                            option: "undo.select-tabs",
+                            text: "De/select tabs"
+                        });
+
+                        container.input("checkbox", {
+                            option: "undo.move-tabs",
+                            text: "Move tabs",
+                            disabled: true
+                        });
+
+                        container.input("checkbox", {
+                            option: "undo.close-tabs",
+                            text: "Close tabs",
+                            disabled: true
+                        });
+                    });
                 });
             });
         </script>
