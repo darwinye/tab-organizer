@@ -102,7 +102,7 @@
             //console.log(event.type);
             if (state.focused) {
                 if (event.target === this) {
-                    if (state.focused.className === "window") {
+                    if (state.windowList.contains(state.focused)) {
                         //console.log(state.focused);
                         //this.focus();
                         //state.focused.setAttribute("focused", "");
@@ -365,6 +365,8 @@
             element.id = "window-list";
             element.className = "stretch";
             //element.style.display = "none !important";
+
+            state.windowList = element;
 
             action.attachEvents(element);
 
