@@ -4,13 +4,37 @@
     <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
     <title>Tab Organizer</title>
 
+    <script src="lib/Platform.js"></script>
+    <script src="lib/Options.js"></script>
+    <script>
+        "use strict";
+        /*global Options */
+
+        (function () {
+            var link = document.createElement("link");
+            link.rel = "stylesheet";
+            link.type = "text/css";
+
+            function href(value) {
+                link.href = "themes/" + value + ".css";
+            }
+            href(Options.get("color.theme"));
+
+            Options.addEventListener("change", function (event) {
+                if (event.name === "color.theme") {
+                    href(event.value);
+                }
+            }, true);
+
+            document.getElementsByTagName("head")[0].appendChild(link);
+        }());
+    </script>
+
     <link rel="stylesheet" type="text/css" href="lib/Options.css" />
     <link rel="stylesheet" type="text/css" href="window.css" />
 </head>
 <body>
     <script src="lib/Undo.js"></script>
-    <script src="lib/Platform.js"></script>
-    <script src="lib/Options.js"></script>
     <script src="lib/Global%20Helper.js"></script>
     <script src="lib/UI%20Helper.js"></script>
     <script src="lib/Event%20Helper.js"></script>

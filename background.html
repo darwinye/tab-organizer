@@ -56,15 +56,15 @@
             if (key in defaults) {
                 if (Options.get(code) || key === code) {
                     _gaq.push(['_trackEvent', key, user[key]]);
-                    console.log("tracked -", key, user[key]);
+                    //console.log("tracked -", key, user[key]);
                 } else {
-                    console.log(true, key, user[key]);
+                    //console.log(true, key, user[key]);
                 }
             } else {
-                console.log(false, key, user[key]);
+                //console.log(false, key, user[key]);
             }
         });
-        console.log(_gaq);
+        //console.log(_gaq);
 
         //_gaq.push(['_trackEvent', "name", "value]);
 

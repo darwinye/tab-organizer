@@ -165,32 +165,16 @@ table {
     -webkit-box-shadow: gainsboro 0px 1px 7px;
 
     /*border: 1px outset #333333;*/
-    border: 1px outset darkblue;
 }
 .tab-icon-border, .tab-icon {
     height: 29px;
 }
 .tab-icon, .tab-list {
     /*border: 1px inset #666666;*/
-    border: 1px inset steelblue;
     /*border: 1px inset slategray;*/
     margin: 7px;
 }
 
-
-.tab-icon-border {
-    background-color: #97c3f7;
-}
-.tab-list-border {
-    background-image: -webkit-gradient(linear, 0% 0%, 5% 100%, from(#97c3f7), to(#cce4ff));
-}
-
-.window[data-selected] .tab-icon-border {
-    background-color: #cce4ff;
-}
-.window[data-selected] .tab-list-border {
-    background-image: -webkit-gradient(linear, 0% 0%, 5% 100%, from(#cce4ff), to(#97c3f7));
-}
 
 .window[focused] .tab-icon-border,
 .window[focused] .tab-list-border {
@@ -279,7 +263,6 @@ table {
     border: none;
     outline: none;
 
-    color: royalblue;
     font-variant: small-caps;
 }
 .window:not([data-selected]) .tab-icon-text {
@@ -294,6 +277,8 @@ table {
 }
 
 .tab-icon-dropdown {
+    /*-webkit-mask-image: url(images/button-menu-mask.png);*/
+
     display: none;
     /*padding: 1px 2px 0px 1px;*/
     margin-right: 1px;
@@ -301,6 +286,7 @@ table {
     width: 17px;
     height: 16px;
 
+    /*background-color: red;*/
     background-image: url('images/button-menu.png');
 
     border: 1px solid transparent;

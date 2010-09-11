@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+    <title>Theme Viewer</title>
+
+    <script src="../lib/Platform.js"></script>
+    <script src="../lib/Options.js"></script>
+    <script>
+        "use strict";
+        /*global Options */
+
+        (function () {
+            var link = document.createElement("link");
+            link.rel = "stylesheet";
+            link.type = "text/css";
+
+            function href(value) {
+                link.href = value + ".css";
+            }
+            href(Options.get("color.theme"));
+
+            Options.addEventListener("change", function (event) {
+                if (event.name === "color.theme") {
+                    href(event.value);
+                }
+            }, true);
+
+            document.getElementsByTagName("head")[0].appendChild(link);
+        }());
+    </script>
+
+    <link rel="stylesheet" type="text/css" href="../lib/Options.css" />
+    <link rel="stylesheet" type="text/css" href="../window.css" />
+
+    <style type="text/css">
+        body {
+            background-color: transparent;
+        }
+        #window-list {
+            padding: 10px;
+            padding-bottom: 21px;
+        }
+    </style>
+</head>
+<body>
+    <script src="../lib/UI%20Helper.js"></script>
+    <script>
+        (function () {
+            var table = document.createElement("table");
+            table.id = "window-list";
+            table.className = "stretch";
+
+            table.appendChild(UI.create("td"));
+
+
+            function makeWindow(info) {
+                info = Object(info);
+
+                table.appendChild(UI.create("td", function (element) {
+                    element.className = "window";
+                    if (info.selected) {
+                        element.setAttribute("data-selected", "");
+                    }
+                    if (info.last) {
+                        element.setAttribute("last", "");
+                    }
+                    element.appendChild(UI.create("div", function (element) {
+                        element.className = "window-div";
+                        element.appendChild(UI.create("table", function (element) {
+                            element.className = "stretch";
+                            element.appendChild(UI.create("tr", function (element) {
+                                element.appendChild(UI.create("div", function (element) {
+                                    element.className = "tab-icon-border";
+                                    element.appendChild(UI.create("div", function (element) {
+                                        element.className = "tab-icon-container";
+                                        element.appendChild(UI.create("div", function (element) {
+                                            element.className = "tab-icon";
+                                            element.appendChild(UI.create("table", function (element) {
+                                                element.className = "tab-icon-table";
+                                                element.appendChild(UI.create("tr", function (element) {
+                                                    element.appendChild(UI.create("td", function (element) {
+                                                        element.appendChild(UI.create("input", function (element) {
+                                                            element.className = "tab-icon-text";
+                                                            if (info.selected) {
+                                                                element.value = "Testing";
+                                                                element.addEventListener("blur", function () {
+                                                                    this.value = "Testing";
+                                                                }, true);
+                                                            }
+                                                        }));
+                                                    }));
+                                                    element.appendChild(UI.create("td", function (element) {
+                                                        element.appendChild(UI.create("div", function (element) {
+                                                            element.className = "tab-icon-dropdown";
+                                                        }));
+                                                    }));
+                                                }));
+                                            }));
+                                        }));
+                                    }));
+                                }));
+                            }));
+                            element.appendChild(UI.create("tr", function (element) {
+                                element.className = "stretch";
+                                element.appendChild(UI.create("div", function (element) {
+                                    element.className = "stretch";
+                                    element.appendChild(UI.create("div", function (element) {
+                                        element.className = "tab-list-border";
+                                        element.appendChild(UI.create("div", function (element) {
+                                            element.className = "tab-list";
+                                            element.appendChild(UI.create("div"));
+                                        }));
+                                    }));
+                                }));
+                            }));
+                        }));
+                    }));
+                }));
+            }
+            makeWindow({ selected: true });
+            makeWindow({ last: true });
+
+
+            table.appendChild(UI.create("td"));
+            document.body.appendChild(table);
+        }());
+    </script>
+</body>
+</html>
