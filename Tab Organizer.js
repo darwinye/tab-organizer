@@ -13,18 +13,27 @@ var Tab = {
             state.tabs[tab.id] = container;
             container.tab = tab;
 
+            container.undoState = {};
+
             container.queueAdd = function () {
-                container.parentNode.queue.add(container);
+                var is = container.parentNode.queue.add(container);
+                container.undoState.selected = !is;
+
                 container.setAttribute("data-queued", "");
                 //state.search();
             };
             container.queueRemove = function () {
-                container.parentNode.queue.remove(container);
+                var is = container.parentNode.queue.remove(container);;
+                container.undoState.selected = is;
+
                 container.removeAttribute("data-queued");
                 //state.search();
             };
             container.queueToggle = function () {
-                if (container.parentNode.queue.toggle(container)) {
+                var toggle = container.parentNode.queue.toggle(container);
+                container.undoState.selected = toggle;
+
+                if (toggle) {
                     container.setAttribute("data-queued", "");
                 } else {
                     container.removeAttribute("data-queued");
@@ -121,6 +130,18 @@ var Tab = {
                         } else {
                             delete parent.queue.shiftNode;
                         }
+
+//                        if (Options.get("undo.select-tabs")) {
+//                            Undo.push("select-tabs", {
+//                                list: [ this ]
+//                            });
+
+//                            if (this.undoState.selected) {
+//                                state.undoBar.show("You selected 1 tab.");
+//                            } else {
+//                                state.undoBar.show("You unselected 1 tab.");
+//                            }
+//                        }
                     } else if (event.shiftKey) {
                         parent.queue.reset();
 //                        if (parent.shiftRange) {
@@ -148,6 +169,18 @@ var Tab = {
                                         item.queueAdd();
                                     }
                                 });
+
+                                if (Options.get("undo.select-tabs")) {
+                                    Undo.push("select-tabs", {
+                                        list: range
+                                    });
+
+                                    if (range.length === 1) {
+                                        state.undoBar.show("You selected " + range.length + " tab.");
+                                    } else {
+                                        state.undoBar.show("You selected " + range.length + " tabs.");
+                                    }
+                                }
                             } else {
                                 delete parent.queue.shiftNode;
                             }
@@ -156,6 +189,13 @@ var Tab = {
                         //if (!parent.shiftNode) {
                             parent.queue.shiftNode = this;
                             this.queueAdd();
+
+//                            if (Options.get("undo.select-tabs")) {
+//                                Undo.push("select-tabs", {
+//                                    list: [ this ]
+//                                });
+//                                state.undoBar.show("You selected 1 tab.");
+//                            }
                         }
                     } else if (event.altKey) {
                         Platform.tabs.remove(tab.id);
@@ -457,7 +497,7 @@ var Window = {
                 container.setAttribute("data-selected", "");
             };
 
-            container.deselect = function () {
+            container.unselect = function () {
                 var id = Options.get("window.lastfocused");
                 state.windows[id].select();
             };
@@ -487,7 +527,7 @@ var Window = {
             container.addEventListener("blur", function (event) {
                 this.removeAttribute("focused");
 
-                container.deselect();
+                container.unselect();
             }, true);
             container.addEventListener("focus", function (event) {
                 //console.log(event.type);
@@ -644,6 +684,18 @@ var Window = {
                                                 element.addEventListener("blur", function (event) {
                                                     this.value = this.value || index + 1;
 
+                                                    if (this.value !== value) {
+                                                        if (Options.get("undo.rename-window")) {
+                                                            Undo.push("rename-window", {
+                                                                focus: container.tabList.scroll,
+                                                                value: value,
+                                                                node: this
+                                                            });
+                                                            state.undoBar.show("You renamed the window \""/* <span style='font-variant: small-caps;'>" */
+                                                                + this.value.toUpperCase() + "\".");
+                                                        }
+                                                    }
+
                                                     container.tabList.scroll.focus();
                                                 }, true);
                                                 element.addEventListener("keyup", function (event) {
@@ -791,22 +843,60 @@ var Window = {
                                                     menu.addItem("Select <u>a</u>ll", {
                                                         keys: ["A"],
                                                         action: function () {
+                                                            var range = [];
+
                                                             Array.slice(container.tabList.children).forEach(function (item) {
                                                                 if (!item.hasAttribute("hidden")) {
-                                                                    item.queueAdd();
+                                                                    if (!item.hasAttribute("data-queued")) {
+                                                                        range.push(item);
+                                                                        item.queueAdd();
+                                                                    }
                                                                 }
                                                             });
+
+                                                            if (Options.get("undo.select-tabs")) {
+                                                                if (range.length) {
+                                                                    Undo.push("select-tabs", {
+                                                                        list: range
+                                                                    });
+
+                                                                    if (range.length === 1) {
+                                                                        state.undoBar.show("You selected " + range.length + " tab.");
+                                                                    } else {
+                                                                        state.undoBar.show("You selected " + range.length + " tabs.");
+                                                                    }
+                                                                }
+                                                            }
                                                             delete container.tabList.queue.shiftNode;
                                                         }
                                                     });
                                                     menu.addItem("Select <u>n</u>one", {
                                                         keys: ["N"],
                                                         action: function () {
+                                                            var range = [];
+
                                                             Array.slice(container.tabList.children).forEach(function (item) {
                                                                 if (!item.hasAttribute("hidden")) {
-                                                                    item.queueRemove();
+                                                                    if (item.hasAttribute("data-queued")) {
+                                                                        range.push(item);
+                                                                        item.queueRemove();
+                                                                    }
                                                                 }
                                                             });
+
+                                                            if (Options.get("undo.select-tabs")) {
+                                                                if (range.length) {
+                                                                    Undo.push("select-tabs", {
+                                                                        list: range
+                                                                    });
+
+                                                                    if (range.length === 1) {
+                                                                        state.undoBar.show("You unselected " + range.length + " tab.");
+                                                                    } else {
+                                                                        state.undoBar.show("You unselected " + range.length + " tabs.");
+                                                                    }
+                                                                }
+                                                            }
                                                             delete container.tabList.queue.shiftNode;
                                                         }
                                                     });

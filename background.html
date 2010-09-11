@@ -125,7 +125,7 @@
             }
         };
         Platform.tabs.addEventListener("remove", function (id) {
-            if (id === state.opened.id) {
+            if (state.opened && state.opened.id === id) {
                 delete state.opened;
             }
         }, true);

@@ -28,8 +28,34 @@
             document.body.style.maxWidth = "100%";
         }
 
+
         Undo.setRule("new-tab", function (info) {
             Platform.tabs.remove(info.id);
+            Undo.reset();
+        });
+
+        Undo.setRule("rename-window", function (info) {
+            /*addEventListener("blur", function anon(event) {
+                //this.removeEventListener(event.type, anon, true);
+                event.preventDefault();
+                event.stopPropagation();
+            }, true);*/
+
+            info.node.value = info.value;
+            info.node.select();
+            //info.focus.focus();
+            Undo.reset();
+        });
+
+        Undo.setRule("select-tabs", function (info) {
+            info.list.forEach(function (item) {
+                //console.log(item.undoState.selected);
+                if (item.undoState.selected) {
+                    item.queueAdd();
+                } else {
+                    item.queueRemove();
+                }
+            });
             Undo.reset();
         });
 
@@ -39,6 +65,11 @@
             });
             Undo.reset();
         });
+
+//        Undo.setRule("close-tabs", function (info) {
+//            Undo.reset();
+//        });
+
 
         var state = {
             windows: {},
@@ -186,13 +217,15 @@
 
                     state.undoBar = element;
 
-                    element.hide = function () {
-                        //if (transition === false) {
-                        element.style.webkitTransitionDuration = "0s";
-                        setTimeout(function () {
-                            element.style.webkitTransitionDuration = "";
-                        }, 0);
-                        //}
+                    element.hide = function (transition) {
+                        if (transition !== true) {
+                            element.style.webkitTransitionDuration = "0s";
+
+                            setTimeout(function () {
+                                element.style.webkitTransitionDuration = "";
+                            }, 0);
+                        }
+
                         element.style.opacity = "0 !important";
                         element.style.visibility = "hidden !important";
 
@@ -201,6 +234,7 @@
                             this.style.webkitTransition = "";
                         }, true);*/
                     };
+                    element.hide();
 
                     var timeout;
                     element.show = function (name) {
@@ -211,9 +245,10 @@
                         element.style.opacity = "";
                         element.style.visibility = "";
 
-                        timeout = setTimeout(element.hide, 10000);
+                        timeout = setTimeout(function () {
+                            element.hide(true);
+                        }, 10000);
                     };
-                    element.hide();
 
                     //setTimeout(element.show, 2000);
                     //setTimeout(element.hide, 4000);
@@ -227,10 +262,10 @@
                     element.appendChild(UI.create("span", function (element) {
                         Object.defineProperty(state.undoBar, "text", {
                             get: function () {
-                                return element.textContent;
+                                return element.innerHTML;
                             },
                             set: function (value) {
-                                element.textContent = value;
+                                element.innerHTML = value;
                             }
                         });
                     }));
