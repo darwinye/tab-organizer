@@ -5,14 +5,15 @@
         <title>Tab Organizer Options</title>
         <link rel="stylesheet" type="text/css" href="lib/Options.css" />
         <style type="text/css">
-            .char4 {
+            .align-right {
+                text-align: right !important;
+            }
+
+            /*.char4 {
                 width: 2.5em;
             }
             .char5 {
                 width: 3em;
-            }
-            .align-right {
-                text-align: right !important;
             }
 
             hr {
@@ -20,25 +21,23 @@
             }
             table tr td {
                 padding: 5px !important;
-            }
+            }*/
             /*input {
                 margin-right: 5px !important;
             }*/
-            input.center {
+            /*input.center {
                 display: block;
                 margin: 2px auto !important;
-            }
+            }*/
 
-            #Options-inner {
-                /*width: 785px;
-                height: 480px;*/
+            /*#Options-inner {
+                width: 785px;
+                height: 480px;
 
-                /*width: 755px;
-                height: 465px;*/
-            }
+                width: 755px;
+                height: 465px;
+            }*/
         </style>
-
-        <script src="lib/Analytics.js"></script>
     </head>
     <body>
         <!--<div id="container">
@@ -67,12 +66,14 @@
         <script src="lib/Platform.js"></script>
         <script src="lib/Options.js"></script>
         <script src="lib/UI%20Helper.js"></script>
+
+        <script src="lib/Analytics.js"></script>
         <script>
             "use strict";
             /*global Options, UI */
 
             Options.createContainer(function (container) {
-                container.addCategory("Keyboard", function (container) {
+                container.category("Keyboard", function (container) {
                     container.header("Open popup with: ");
 
                     /*container.addCell(function (cell) {
@@ -106,7 +107,7 @@
                         });
                     });
 
-//                    container.seperator();
+//                    container.separator();
 
 //                    container.input("checkbox", {
 //                        option: "popup.close.esc",
@@ -204,7 +205,7 @@
                 });
 
 
-                container.addCategory("Theme", function (container) {
+                container.category("Theme", function (container) {
                     container.input("dropdown-list", {
                         option: "color.theme",
                         text: "Window theme: ",
@@ -304,7 +305,7 @@
                 });
 
 
-                container.addCategory("Popup", function (container) {
+                container.category("Popup", function (container) {
                     var height = 375;
 
                     container.input("dropdown-list", {
@@ -323,7 +324,7 @@
                     });
 
                     //container.space({ height: "1px" });
-                    container.seperator();
+                    container.separator();
                     container.space({ height: "10px" });
 
                     //container.space({ height: "10px" });
@@ -516,35 +517,56 @@
                     }));
                 });
 
-                container.addCategory("Undo", function (container) {
-                    container.header("Allow for undoing:");
+                //container.separator();
+
+                container.category("Undo", function (container) {
+                    container.header("Show undo bar after:");
 
                     container.indent(function (container) {
                         container.input("checkbox", {
                             option: "undo.new-tab",
-                            text: "New Tab"
+                            text: "Creating a new tab"
                         });
 
                         container.input("checkbox", {
                             option: "undo.rename-window",
-                            text: "Rename window"
+                            text: "Renaming a window"
                         });
 
                         container.input("checkbox", {
                             option: "undo.select-tabs",
-                            text: "Un/select tabs"
+                            text: "Un/selecting tabs"
                         });
 
                         container.input("checkbox", {
                             option: "undo.move-tabs",
-                            text: "Move tabs",
+                            text: "Moving tabs",
                             disabled: true
                         });
 
                         container.input("checkbox", {
                             option: "undo.close-tabs",
-                            text: "Close tabs",
+                            text: "Closing tabs",
                             disabled: true
+                        });
+                    });
+                });
+
+                container.category("Privacy", function (container) {
+                    container.header("Usage tracking:");
+
+                    container.indent(function (container) {
+                        container.text("By default, we track how frequently you open the popup and options page, and also what settings you have chosen in the options page.");
+
+                        container.space({ height: "1em" });
+
+                        container.text("No personal information is tracked, and this information is used solely to improve Tab Organizer.");
+
+                        container.space({ height: "1.25em" });
+
+                        container.input("checkbox", {
+                            text: "Allow for usage tracking",
+                            option: "usage-tracking"
                         });
                     });
                 });

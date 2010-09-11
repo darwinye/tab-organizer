@@ -3,17 +3,17 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
     <title>Background Page</title>
-
-    <script src="lib/Analytics.js"></script>
 </head>
 <body>
     <script src="lib/Platform.js"></script>
     <script src="lib/Options.js"></script>
+
+    <script src="lib/Analytics.js"></script>
     <script>
         "use strict";
         /*global Options, Platform */
 
-        Options.setDefaults({
+        var defaults = {
             "popup.type": "popup",
             "popup.offsetX": 0,
             "popup.offsetY": 0,
@@ -31,8 +31,42 @@
             "undo.move-tabs": false,
             "undo.close-tabs": false,
 
-            "color.theme": "blue"
+            "color.theme": "blue",
+
+            "usage-tracking": true
+        };
+        Options.setDefaults(defaults);
+
+        //Options.set("usage-tracking", true);
+
+/*
+        Object.values = function (object) {
+            if (typeof action === "function") {
+                Object.keys(object).forEach(function (item, i, array) {
+                    action(object[item], i, array);
+                });
+            }
+        };
+*/
+
+        var user = Options.snapshot().user;
+        var code = "usage-tracking";
+
+        Object.keys(user).forEach(function (key) {
+            if (key in defaults) {
+                if (Options.get(code) || key === code) {
+                    _gaq.push(['_trackEvent', key, user[key]]);
+                    console.log("tracked -", key, user[key]);
+                } else {
+                    console.log(true, key, user[key]);
+                }
+            } else {
+                console.log(false, key, user[key]);
+            }
         });
+        console.log(_gaq);
+
+        //_gaq.push(['_trackEvent', "name", "value]);
 
         var state = {};
 

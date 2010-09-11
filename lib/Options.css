@@ -62,7 +62,7 @@ input[type="checkbox"][data-options-changed] + span {
     color: blue !important;
 }
 
-#Options-contents input {
+#Options-wrapper input {
     -webkit-box-shadow: lightgray 0px 0px 5px;
 
     position: relative;
@@ -75,7 +75,7 @@ input[type="checkbox"][data-options-changed] + span {
     border: 1px solid dimgray;
     border-radius: 3px;
 }
-#Options-contents select {
+#Options-wrapper select {
     -webkit-box-shadow: lightgray 0px 0px 5px;
 
     position: relative;
@@ -97,7 +97,7 @@ input[type="checkbox"][data-options-changed] + span {
 }
 
 
-#Options-container {
+#Options-root {
     position: absolute;
     top: 0px;
     left: 0px;
@@ -113,10 +113,10 @@ input[type="checkbox"][data-options-changed] + span {
 
     cursor: default;
 }
-#Options-contents img {
+#Options-wrapper img {
     vertical-align: text-bottom;
 }
-#Options-contents {
+#Options-wrapper {
     vertical-align: middle;
 }
 #Options-outer {
@@ -160,6 +160,11 @@ input[type="checkbox"][data-options-changed] + span {
 
     vertical-align: top;
 }
+#Options-inner hr {
+    /*border-bottom: 1px solid #eeeeee;*/
+    border-top: none;
+    border-left: none;
+}
 /*#Options-inner * {
     margin: inherit;
     margin-left: auto;
@@ -189,6 +194,14 @@ input[type="checkbox"][data-options-changed] + span {
 
     cursor: pointer;
 }
+#Options-list > hr {
+    /*display: none;*/
+    border-color: lightgrey;
+    /*border: 1px outset lightgrey;
+    border-bottom: none;
+    border-right: none;*/
+    margin: 5px 0px;
+}
 #Options-list > li[data-selected] {
     background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(rgb(153, 197, 251)), to(rgb(95, 160, 240)));
     /*border: 1px solid dimgray;*/
@@ -196,6 +209,10 @@ input[type="checkbox"][data-options-changed] + span {
     color: white;
 
     cursor: default;
+}
+#Options-content {
+    width: 100%;
+    padding: 5px 0px;
 }
 /*#Options-inner > .tab > div {
     visibility: hidden;
