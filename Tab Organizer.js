@@ -315,7 +315,6 @@ var Tab = {
                 event.dataTransfer.effectAllowed = "move";
                 event.dataTransfer.setData("text/uri-list", tab.url);
                 event.dataTransfer.setData("text/plain", tab.url);
-                event.dataTransfer.setDragImage(this, 0, 0);
 
                 state.highlighted = this;
                 state.currentQueue = this.parentNode.queue;
@@ -323,6 +322,28 @@ var Tab = {
                 if (!state.currentQueue.length) {
                     state.currentQueue.add(state.highlighted);
                 }
+
+//                this.setAttribute("data-queued", "");
+
+//                state.dragBox.innerHTML = "";
+
+//                var fragment = document.createDocumentFragment();
+
+//                state.currentQueue.forEach(function (item, i) {
+//                    var clone = item.cloneNode(true);
+//                    clone.setAttribute("data-queue", "");
+//                    fragment.appendChild(clone);
+//                });
+
+//                console.log(fragment);
+
+//                event.dataTransfer.setDragImage(this, 0, 0);
+
+                //document.body.appendChild(state.dragBox);
+
+//                console.log(state.dragBox);
+
+
             }, true);
             /*! container.addEventListener("dragend", function (event) {
                 container.addEventListener("dragover", events.disable, true);
