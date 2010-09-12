@@ -244,10 +244,10 @@
 
         var fragment = document.createDocumentFragment();
 
-        fragment.appendChild(UI.create("div", function (element) {
-            element.id = "container-buttons";
+        fragment.appendChild(UI.create("div", function (container) {
+            container.id = "container-buttons";
 
-            element.appendChild(UI.create("button", function (button) {
+            container.appendChild(UI.create("button", function (button) {
                 button.id = "button-new-window";
                 button.className = "custom";
                 button.textContent = "New Window";
@@ -269,19 +269,19 @@
                 }, true);
             }));
 /*!
-            element.appendChild(UI.create("button", function (button) {
+            container.appendChild(UI.create("button", function (button) {
                 button.className = "custom";
                 button.textContent = "Reopen Closed Tab";
                 button.tabIndex = 1;
             }));
 
-            element.appendChild(UI.create("button", function (button) {
+            container.appendChild(UI.create("button", function (button) {
                 button.className = "custom";
                 button.textContent = "Foo";
                 button.tabIndex = 1;
             }));
 */
-            element.appendChild(UI.create("span", function (element) {
+            container.appendChild(UI.create("span", function (element) {
                 element.id = "Undo-bar";
 
                 element.appendChild(UI.create("div", function (element) {
@@ -308,18 +308,47 @@
                     };
                     element.hide();
 
-                    var timeout;
+                    var timer = {
+                        reset: function () {
+                            //console.log("Not timing!");
+                            clearTimeout(timer.id);
+                        },
+                        set: function () {
+                            //console.log("Timing!");
+                            timer.id = setTimeout(function () {
+                                element.hide(true);
+                            }, 10000);
+                        }
+                    };
+
+                    addEventListener("mouseover", function (event) {
+                        //var element = document.elementFromPoint(event.clientX, event.clientY);
+                        //console.log(container.contains(element));
+
+                        var element = event.target;
+
+                        if (container.contains(element)) {
+                            if (!timer.mouseover) {
+                                timer.mouseover = true;
+                                timer.reset();
+                            }
+                        } else if (timer.mouseover) {
+                            timer.mouseover = false;
+                            timer.set();
+                        }
+                    }, true);
+
                     element.show = function (name) {
-                        clearTimeout(timeout);
+                        timer.reset();
 
                         state.undoBar.text = name;
 
                         element.style.opacity = "";
                         element.style.visibility = "";
 
-                        timeout = setTimeout(function () {
-                            element.hide(true);
-                        }, 10000);
+                        if (!timer.mouseover) {
+                            timer.set();
+                        }
                     };
 
                     //setTimeout(element.show, 2000);
@@ -354,7 +383,7 @@
                 }));
             }));
 
-            element.appendChild(UI.create("span", function (span) {
+            container.appendChild(UI.create("span", function (span) {
                 span.id = "search-box";
                 span.textContent = "Search: ";
 
@@ -507,8 +536,11 @@
 
                 Options.addEventListener("change", function (event) {
                     if (event.name === "window.lastfocused") {
-                        state.windows[event.value].setWindowFocus();
-                        state.search();
+                        var item = state.windows[event.value];
+                        if (item) {
+                            item.setWindowFocus();
+                            state.search();
+                        }
                     }
                 }, true);
 
