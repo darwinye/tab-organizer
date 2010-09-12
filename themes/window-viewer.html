@@ -46,6 +46,7 @@
 <body>
     <script src="../lib/UI%20Helper.js"></script>
     <script>
+        //console.log(Platform.getBackgroundPage() === this);
         (function () {
             var table = document.createElement("table");
             table.id = "window-list";
@@ -125,6 +126,10 @@
             table.appendChild(UI.create("td"));
             document.body.appendChild(table);
         }());
+
+//        addEventListener("beforeunload", function () {
+//            console.log("Hiya!!");
+//        }, true);
     </script>
 </body>
 </html>
