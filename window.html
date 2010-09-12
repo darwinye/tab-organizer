@@ -315,9 +315,10 @@
                         },
                         set: function () {
                             //console.log("Timing!");
+                            var ms = Options.get("undo.timer") * 1000;
                             timer.id = setTimeout(function () {
                                 element.hide(true);
-                            }, 10000);
+                            }, ms);
                         }
                     };
 

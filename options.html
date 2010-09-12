@@ -550,6 +550,15 @@
                             disabled: true
                         });
                     });
+
+                    container.space({ height: "5px" });
+
+                    container.input("text", {
+                        text: "Show undo bar for ",
+                        option: "undo.timer",
+                        unit: "seconds",
+                        width: "2em"
+                    });
                 });
 
                 container.category("Privacy", function (container) {
