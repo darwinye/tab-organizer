@@ -599,7 +599,7 @@ var Window = {
             container.addEventListener("dragenter", function (event) {
                 var list = this.tabList;
                 var coords = list.getBoundingClientRect();
-                console.log(event.clientX, coords.left, coords.right);
+                //console.log(event.clientX, coords.left, coords.right);
                 if (!list.contains(event.target)) {
                     if (event.clientX > coords.left && event.clientX < coords.right) {
                         if (event.clientY < coords.top) {

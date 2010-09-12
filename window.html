@@ -38,6 +38,7 @@
     <script src="lib/Global%20Helper.js"></script>
     <script src="lib/UI%20Helper.js"></script>
     <script src="lib/Event%20Helper.js"></script>
+    <script src="lib/Queue.js"></script>
     <script src="Tab%20Organizer.js"></script>
 
     <script src="lib/Analytics.js"></script>
@@ -84,8 +85,27 @@
         });
 
         Undo.setRule("move-tabs", function (info) {
-            info.queue.forEach(function (item) {
-                Tab.move(item, item.undoState, item.queueAdd);
+            var proxy = {};
+
+            info.list.forEach(function (item) {
+                Queue.push(function (queue) {
+                    var undo = item.undoState;
+                    var info = {
+                        windowId: state.windows[undo.windowId] || proxy[undo.windowId],
+                        index: undo.index
+                    };
+
+                    if (info.windowId) {
+                        Tab.move(item, info, item.queueAdd);
+                        queue.next();
+                    } else {
+                        Platform.windows.create({ url: "lib/remove.html" }, function (win) {
+                            info.windowId = proxy[undo.windowId] = win.id;
+                            Tab.move(item, info, item.queueAdd);
+                            queue.next();
+                        });
+                    }
+                });
             });
             Undo.reset();
         });
@@ -100,9 +120,23 @@
             tabs: {},
             queues: {
                 moveAllTabs: function (id, index) {
+                    var queue = [];
                     state.list.forEach(function (item) {
-                        item.tabList.queue.moveTabs(id, index);
+                        queue = queue.concat(item.tabList.queue);
+                        item.tabList.queue.moveTabs(id, index, false);
                     });
+
+                    if (queue.length && Options.get("undo.move-tabs")) {
+                        Undo.push("move-tabs", {
+                            list: queue
+                        });
+
+                        if (queue.length === 1) {
+                            state.undoBar.show("You moved " + queue.length + " tab.");
+                        } else {
+                            state.undoBar.show("You moved " + queue.length + " tabs.");
+                        }
+                    }
                 },
                 resetAll: function () {
                     state.list.forEach(function (item) {
