@@ -375,9 +375,25 @@
                         element.id = "Undo-bar-button";
                         element.textContent = "Undo";
 
-                        element.addEventListener("click", function () {
+                        function undo() {
                             state.undoBar.hide();
                             Undo.pop();
+                        }
+                        element.addEventListener("click", undo, true);
+
+                        addEventListener("keyup", function (event) {
+                            var target = event.target;
+                            if (target.localName === "input" && target.type === "text") {
+                                return;
+                            }
+
+                            if (event.which === 90) {
+                                if (event.ctrlKey || event.metaKey) {
+                                    if (!event.shiftKey && !event.altKey) {
+                                        undo();
+                                    }
+                                }
+                            }
                         }, true);
                     }));
                 }));
