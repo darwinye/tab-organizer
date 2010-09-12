@@ -91,9 +91,14 @@
                 Queue.push(function (queue) {
                     var undo = item.undoState;
                     var info = {
-                        windowId: state.windows[undo.windowId] || proxy[undo.windowId],
                         index: undo.index
                     };
+
+                    if (state.windows[undo.windowId]) {
+                        info.windowId = undo.windowId;
+                    } else {
+                        info.windowId = proxy[undo.windowId];
+                    }
 
                     if (info.windowId) {
                         Tab.move(item, info, item.queueAdd);

@@ -499,7 +499,9 @@ var Window = {
 
             container.unselect = function () {
                 var id = Options.get("window.lastfocused");
-                state.windows[id].select();
+                if (state.windows[id]) {
+                    state.windows[id].select();
+                }
             };
 
             container.setWindowFocus = function () {
