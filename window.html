@@ -119,11 +119,27 @@
 //            Undo.reset();
 //        });
 
-        console.log(localStorage["titles"]);
+//        delete localStorage["search.lastinput"];
+//        delete localStorage["window.titles"];
+
+//        Options.set("titles", []);
+//        Options.set("search.lastinput", "window:foob");
+
+//        Options.set("titles", null);
+//        Options.set("search.lastinput", null);
+
+
+        //!CLEANUP:
+        if (!"window.titles" in localStorage) {
+            localStorage["window.titles"] = JSON.stringify(Options.get("titles"));// || "";
+        }
+        if (!"search.lastinput" in localStorage) {
+            localStorage["search.lastinput"] = Options.get("search.lastinput") || "";
+        }
 
 
         var state = {
-            titles: Options.getObject(localStorage["titles"]),
+            titles: Options.getObject(localStorage["window.titles"]),
             windows: {},
             tabs: {},
             queues: {
@@ -565,9 +581,11 @@
                 addEventListener("beforeunload", function () {
 //                    Options.removeEventListener("change", update, true);
 
-                    localStorage["titles"] = JSON.stringify(state.list.map(function (item) {
+                    var list = state.list.map(function (item) {
                         return item.tabIcon.indexText.value;
-                    }));
+                    });
+
+                    localStorage["window.titles"] = JSON.stringify(list);
                 }, true);
 
 //                element.addEventListener("DOMSubtreeModified", state.update, true);
