@@ -411,14 +411,12 @@
                 input.type = "text";
                 input.tabIndex = 1;
 
-                var lastinput = Options.get("search.lastinput");
+                var lastinput = localStorage["search.lastinput"];
                 if (typeof lastinput === "string") {
                     input.value = lastinput;
                 }
-                addEventListener("unload", function () {
-                    Options.set("search.lastinput", input.value, {
-                        verbatim: true
-                    });
+                addEventListener("beforeunload", function () {
+                    localStorage["search.lastinput"] = input.value;
                     //alert(Options.get("search.lastinput"));
                 }, true);
 
@@ -567,9 +565,9 @@
                 addEventListener("beforeunload", function () {
 //                    Options.removeEventListener("change", update, true);
 
-                    localStorage["titles"] = state.list.map(function (item) {
+                    localStorage["titles"] = JSON.stringify(state.list.map(function (item) {
                         return item.tabIcon.indexText.value;
-                    });
+                    }));
                 }, true);
 
 //                element.addEventListener("DOMSubtreeModified", state.update, true);
