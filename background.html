@@ -223,6 +223,10 @@
                 }
             }
         }, true);
+
+        Platform.message.addEventListener("lib.remover", function (json, port) {
+            Platform.tabs.remove(port.tab.id);
+        }, true);
     </script>
 </body>
 </html>

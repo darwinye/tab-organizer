@@ -2,15 +2,15 @@
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
-    <title>Remover Page</title>
+    <title>`</title>
 
     <script src="Platform.js"></script>
     <script>
         "use strict";
         /*global Platform */
 
-        Platform.tabs.getSelected(null, function (tab) {
-            Platform.tabs.remove(tab.id);
+        Platform.message.connect("lib.remover", function (port) {
+            port.sendMessage({});
         });
     </script>
 </head>

@@ -119,8 +119,11 @@
 //            Undo.reset();
 //        });
 
+        console.log(localStorage["titles"]);
+
 
         var state = {
+            titles: Options.getObject(localStorage["titles"]),
             windows: {},
             tabs: {},
             queues: {
@@ -179,9 +182,9 @@
             })*/
         };
 
-        Options.setDefaults({
-            titles: []
-        });
+//        Options.setDefaults({
+//            titles: []
+//        });
 
 
 //        addEventListener("contextmenu", events.disable, true);
@@ -564,9 +567,9 @@
                 addEventListener("beforeunload", function () {
 //                    Options.removeEventListener("change", update, true);
 
-                    Options.set("titles", state.list.map(function (item) {
+                    localStorage["titles"] = state.list.map(function (item) {
                         return item.tabIcon.indexText.value;
-                    }));
+                    });
                 }, true);
 
 //                element.addEventListener("DOMSubtreeModified", state.update, true);
