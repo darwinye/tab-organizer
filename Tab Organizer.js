@@ -349,6 +349,34 @@ var Tab = {
                 container.addEventListener("dragover", events.disable, true);
             }, true);*/
 
+            function makeCloseButton() {
+                container.appendChild(UI.create("td", function (element) {
+                    element.className = "tab-button-close";
+                    element.title = "Close (Alt Click)";
+                    //element.appendChild(UI.create("img", function (element) {
+                        //element.src = "images/button-close.png";
+                        element.draggable = true;
+
+                        //element.addEventListener("mousedown", events.stop, true);
+                        element.addEventListener("dragstart", events.disable, true);
+
+                        element.addEventListener("click", function (event) {
+                            event.stopPropagation();
+                            Platform.tabs.remove(tab.id);
+                        }, true);
+
+                        /*element.appendChild(UI.create("img", function (element) {
+                            element.src = "images/button-close.png";
+
+                        }));*/
+                    //}));
+                }));
+            }
+
+            if (Options.get("tabs.close.location") === "left") {
+                makeCloseButton();
+            }
+
             var text = tab.title || tab.url;
 
             container.appendChild(UI.create("td", function (element) {
@@ -414,27 +442,9 @@ var Tab = {
                 }));
             }));
 
-            container.appendChild(UI.create("td", function (element) {
-                element.className = "tab-button-close";
-                element.title = "Close (Alt Click)";
-                //element.appendChild(UI.create("img", function (element) {
-                    //element.src = "images/button-close.png";
-                    element.draggable = true;
-
-                    //element.addEventListener("mousedown", events.stop, true);
-                    element.addEventListener("dragstart", events.disable, true);
-
-                    element.addEventListener("click", function (event) {
-                        event.stopPropagation();
-                        Platform.tabs.remove(tab.id);
-                    }, true);
-
-                    /*element.appendChild(UI.create("img", function (element) {
-                        element.src = "images/button-close.png";
-
-                    }));*/
-                //}));
-            }));
+            if (Options.get("tabs.close.location") === "right") {
+                makeCloseButton();
+            }
         });
     },
     move: function (item, info, action) {

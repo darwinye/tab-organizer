@@ -95,6 +95,9 @@ input[type="checkbox"][data-options-changed] + span {
         color-stop(0.7, rgba(0, 0, 0, 0.05)),
         to(rgba(0, 0, 0, 0.1)));
 }
+/*#Options-wrapper img {
+    vertical-align: text-bottom;
+}*/
 
 
 #Options-root {
@@ -112,9 +115,6 @@ input[type="checkbox"][data-options-changed] + span {
     background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(rgba(0, 0, 0, 0.1)), to(transparent));
 
     cursor: default;
-}
-#Options-wrapper img {
-    vertical-align: text-bottom;
 }
 #Options-wrapper {
     vertical-align: middle;
