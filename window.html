@@ -424,12 +424,15 @@
                 }));
             }));
 
-            container.appendChild(UI.create("form", function (span) {
+            container.appendChild(UI.create("div", function (span) {
                 span.id = "search-box";
                 //span.textContent = "Search: ";
 
                 var input = document.createElement("input");
-                input.placeholder = "Search";
+                input.setAttribute("results", "");
+                input.setAttribute("incremental", "");
+                input.setAttribute("placeholder", "Search");
+                //input.setAttribute("autosave", Platform.getURL(""));
                 input.type = "search";
                 input.tabIndex = 1;
 
@@ -525,10 +528,12 @@
                     search(state.list);
                     //}
                 };
-                input.addEventListener("keyup", state.search, true);
-                input.addEventListener("click", state.search, true);
+                //input.addEventListener("keyup", state.search, true);
+                //input.addEventListener("click", state.search, true);
+                input.addEventListener("search", state.search, true);
 
                 setTimeout(function () {
+                    input.focus();
                     input.select();
                 }, 0);
 
@@ -536,6 +541,7 @@
                     if (event.which === 70 && (event.ctrlKey || event.metaKey)) {
                         if (!event.altKey && !event.shiftKey) {
                             event.preventDefault();
+                            input.focus();
                             input.select();
                         }
                     }
