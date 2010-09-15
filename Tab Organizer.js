@@ -353,6 +353,36 @@ var Tab = {
                 container.appendChild(UI.create("td", function (element) {
                     element.className = "tab-button-close";
                     element.title = "Close (Alt Click)";
+
+                    switch (Options.get("tabs.close.display")) {
+                    case "hover":
+//                        element.setAttribute("hidden", "");
+
+//                        container.addEventListener("mouseover", function () {
+//                            element.removeAttribute("hidden");
+//                        }, true);
+//                        container.addEventListener("mouseout", function () {
+//                            element.setAttribute("hidden", "");
+//                        }, true);
+                        element.setAttribute("data-display-hover", "");
+                        break;
+                    case "selected":
+                        if (!tab.selected) {
+                            element.setAttribute("hidden", "");
+                        }
+                        container.addEventListener("Platform-blur", function () {
+                            element.setAttribute("hidden", "");
+                        }, true);
+                        container.addEventListener("Platform-focus", function () {
+                            //var parent = container.parentNode;
+                            //var query = parent.querySelector(".tab[data-selected]");
+                            element.removeAttribute("hidden");
+                        }, true);
+//                        break;
+//                    case "always":
+//                        element.style.display = "table-cell !important";
+                    }
+
                     //element.appendChild(UI.create("img", function (element) {
                         //element.src = "images/button-close.png";
                         element.draggable = true;
@@ -385,6 +415,7 @@ var Tab = {
 
                 element.appendChild(UI.create("img", function (element) {
                     element.className = "stretch";
+                    element.setAttribute("alt", "");
 
                     if (tab.favIconUrl) {
                         element.src = tab.favIconUrl;

@@ -520,10 +520,25 @@
 
                 //container.separator();
 
-                /*container.category("Tabs", function (container) {
+                container.category("Tabs", function (container) {
                     container.input("dropdown-list", {
+                        option: "tabs.close.display",
+                        text: "Show the <img src='images/button-close.png' alt='close' /> button ",
+                        list: [{
+                            value: "hover",
+                            text: "while hovering"
+                        }, {
+                            value: "selected",
+                            text: "on the selected tab"
+                        }, {
+                            value: "always",
+                            text: "on every tab"
+                        }]
+                    });
+
+                    /*container.input("dropdown-list", {
                         option: "tabs.close.location",
-                        text: "Show the <img src='images/button-close.png' /> button on the ",
+                        text: "Show the <img src='images/button-close.png' alt='close' /> button on the ",
                         list: [{
                             value: "right",
                             text: "right"
@@ -532,8 +547,8 @@
                             text: "left"
                         }],
                         unit: " side of the tab."
-                    });
-                });*/
+                    });*/
+                });
 
                 container.category("Undo", function (container) {
                     container.header("Show undo bar after:");

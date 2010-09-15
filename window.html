@@ -238,7 +238,7 @@
                         //state.focused.setWindowFocus();
                         //state.focused.blur();
                         //state.focused.focus();
-                        state.focused.triggerEvent("focus", true, false);
+                        state.focused.triggerEvent("focus", false, false);
                     }
                 } else if (event.target.removeAttribute) {
                     event.target.removeAttribute("focused");
@@ -393,6 +393,7 @@
 
                     element.appendChild(UI.create("span", function (element) {
                         element.id = "Undo-bar-button";
+                        element.title = "(Ctrl Z)";
                         element.textContent = "Undo";
 
                         function undo() {
