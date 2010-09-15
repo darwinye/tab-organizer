@@ -23,3 +23,11 @@
 .tab-icon-text {
     color: #4169e1;
 }
+
+.tab-icon-dropdown {
+    background-image: url('Blue-button-menu.png');
+}
+
+#URL-bar {
+    color: #000080;
+}

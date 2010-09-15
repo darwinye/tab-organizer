@@ -38,8 +38,14 @@
             background-color: transparent;
         }
         #window-list {
+            /*padding: 15px;
+            padding-top: 10px;*/
             padding: 10px;
             padding-bottom: 21px;
+        }
+        #URL-bar {
+            border-left: 1px solid black;
+            border-bottom: 1px solid black;
         }
     </style>
 </head>
@@ -126,6 +132,37 @@
             table.appendChild(UI.create("td"));
             document.body.appendChild(table);
         }());
+/*
+        document.body.appendChild(UI.create("div", function (element) {
+            element.id = "URL-bar";
+
+            element.appendChild(UI.create("span", function (element) {
+                element.appendChild(UI.create("span", function (element) {
+                    element.className = "protocol";
+                    element.setAttribute("data-secure", "");
+                    element.textContent = "https";
+                }));
+
+                element.appendChild(document.createTextNode("://"));
+
+                element.appendChild(UI.create("span", function (element) {
+                    element.className = "domain";
+                    element.textContent = "example.com";
+                }));
+
+                element.appendChild(document.createTextNode("/foo/bar/"));
+
+                element.appendChild(UI.create("span", function (element) {
+                    element.className = "query";
+                    element.textContent = "search?query=qux";
+                }));
+                element.appendChild(UI.create("span", function (element) {
+                    element.className = "fragment";
+                    element.textContent = "#corge";
+                }));
+            }));
+        }));
+*/
 
 //        addEventListener("beforeunload", function () {
 //            console.log("Hiya!!");

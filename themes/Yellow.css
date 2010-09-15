@@ -23,3 +23,15 @@
 .tab-icon-text {
     color: #907f4b;
 }
+
+.tab-icon-dropdown {
+    background-image: url('Yellow-button-menu.png');
+}
+
+#URL-bar {
+    color: #291b00;
+}
+
+button.custom:active, button.custom:hover {
+    background-color: #ffffeb !important;
+}

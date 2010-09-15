@@ -25,3 +25,11 @@
 .tab-icon-text {
     color: dimgray;
 }
+
+.tab-icon-dropdown {
+    background-image: url('Black-button-menu.png');
+}
+
+button.custom:active, button.custom:hover {
+    background-color: #eaeaea !important;
+}

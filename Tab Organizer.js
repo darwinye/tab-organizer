@@ -63,15 +63,16 @@ var Tab = {
 //                    } else {
                         if (match[1] !== "http") {
                             element.appendChild(UI.create("span", function (element) {
+                                element.className = "protocol";
                                 if (secure[match[1]]) {
-                                    element.style.color = "darkgreen";
+                                    element.setAttribute("data-secure", "");
                                 }
                                 element.textContent = match[1]/* + ":"*/;
                             }));
                             element.appendChild(document.createTextNode(match[2]/* + ""*/));
                         }
                         element.appendChild(UI.create("span", function (element) {
-                            element.style.fontWeight = "bold";
+                            element.className = "domain";
                             element.textContent = match[3];
                         }));
 
@@ -86,15 +87,13 @@ var Tab = {
 //                        //}
                         if (match[5]) {
                             element.appendChild(UI.create("span", function (element) {
-                                element.style.color = "darkred";
-                                element.style.fontWeight = "bold";
+                                element.className = "query";
                                 element.textContent = /*"" + */match[5];
                             }));
                         }
                         if (match[6]) {
                             element.appendChild(UI.create("span", function (element) {
-                                element.style.color = "black";
-                                element.style.fontWeight = "bold";
+                                element.className = "fragment";
                                 element.textContent = /*"" + */match[6];
                             }));
                         }

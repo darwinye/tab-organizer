@@ -263,7 +263,7 @@
 
         var fragment = document.createDocumentFragment();
 
-        fragment.appendChild(UI.create("div", function (container) {
+        fragment.appendChild(UI.create("table", function (container) {
             container.id = "container-buttons";
 
             container.appendChild(UI.create("button", function (button) {
@@ -300,132 +300,137 @@
                 button.tabIndex = 1;
             }));
 */
-            container.appendChild(UI.create("span", function (element) {
-                element.id = "Undo-bar";
+            container.appendChild(UI.create("td", function (element) {
+                element.className = "stretch";
 
                 element.appendChild(UI.create("div", function (element) {
-                    element.id = "Undo-bar-div";
+                    element.id = "Undo-bar";
 
-                    state.undoBar = element;
+                    element.appendChild(UI.create("div", function (element) {
+                        element.id = "Undo-bar-div";
 
-                    element.hide = function (transition) {
-                        if (transition !== true) {
-                            element.style.webkitTransitionDuration = "0s";
+                        state.undoBar = element;
 
-                            setTimeout(function () {
-                                element.style.webkitTransitionDuration = "";
-                            }, 0);
-                        }
+                        element.hide = function (transition) {
+                            if (transition !== true) {
+                                element.style.webkitTransitionDuration = "0s";
 
-                        element.style.opacity = "0 !important";
-                        element.style.visibility = "hidden !important";
-
-/*                        state.undoBar.addEventListener("webkitTransitionEnd", function anon(event) {
-                            this.removeEventListener(event.type, anon, true);
-                            this.style.webkitTransition = "";
-                        }, true);*/
-                    };
-                    element.hide();
-
-                    var timer = {
-                        reset: function () {
-                            //console.log("Not timing!");
-                            clearTimeout(timer.id);
-                        },
-                        set: function () {
-                            //console.log("Timing!");
-                            var ms = Options.get("undo.timer") * 1000;
-                            timer.id = setTimeout(function () {
-                                element.hide(true);
-                            }, ms);
-                        }
-                    };
-
-                    addEventListener("mouseover", function (event) {
-                        //var element = document.elementFromPoint(event.clientX, event.clientY);
-                        //console.log(container.contains(element));
-
-                        var element = event.target;
-
-                        if (container.contains(element)) {
-                            if (!timer.mouseover) {
-                                timer.mouseover = true;
-                                timer.reset();
+                                setTimeout(function () {
+                                    element.style.webkitTransitionDuration = "";
+                                }, 0);
                             }
-                        } else if (timer.mouseover) {
-                            timer.mouseover = false;
-                            timer.set();
-                        }
-                    }, true);
 
-                    element.show = function (name) {
-                        timer.reset();
+                            element.style.opacity = "0 !important";
+                            element.style.visibility = "hidden !important";
 
-                        state.undoBar.text = name;
+    /*                        state.undoBar.addEventListener("webkitTransitionEnd", function anon(event) {
+                                this.removeEventListener(event.type, anon, true);
+                                this.style.webkitTransition = "";
+                            }, true);*/
+                        };
+                        element.hide();
 
-                        element.style.opacity = "";
-                        element.style.visibility = "";
-
-                        if (!timer.mouseover) {
-                            timer.set();
-                        }
-                    };
-
-                    //setTimeout(element.show, 2000);
-                    //setTimeout(element.hide, 4000);
-
-                    /*addEventListener("focus", function (event) {
-                        if (event.target !== document.body) {
-                            element.hide();
-                        }
-                    }, true);*/
-
-                    element.appendChild(UI.create("span", function (element) {
-                        Object.defineProperty(state.undoBar, "text", {
-                            get: function () {
-                                return element.innerHTML;
+                        var timer = {
+                            reset: function () {
+                                //console.log("Not timing!");
+                                clearTimeout(timer.id);
                             },
-                            set: function (value) {
-                                element.innerHTML = value;
+                            set: function () {
+                                //console.log("Timing!");
+                                var ms = Options.get("undo.timer") * 1000;
+                                timer.id = setTimeout(function () {
+                                    element.hide(true);
+                                }, ms);
                             }
-                        });
-                    }));
+                        };
 
-                    element.appendChild(UI.create("span", function (element) {
-                        element.id = "Undo-bar-button";
-                        element.title = "(Ctrl Z)";
-                        element.textContent = "Undo";
+                        addEventListener("mouseover", function (event) {
+                            //var element = document.elementFromPoint(event.clientX, event.clientY);
+                            //console.log(container.contains(element));
 
-                        function undo() {
-                            state.undoBar.hide();
-                            Undo.pop();
-                        }
-                        element.addEventListener("click", undo, true);
+                            var element = event.target;
 
-                        addEventListener("keyup", function (event) {
-                            var target = event.target;
-                            if (target.localName === "input" && target.type === "text") {
-                                return;
-                            }
-
-                            if (event.which === 90) {
-                                if (event.ctrlKey || event.metaKey) {
-                                    if (!event.shiftKey && !event.altKey) {
-                                        undo();
-                                    }
+                            if (container.contains(element)) {
+                                if (!timer.mouseover) {
+                                    timer.mouseover = true;
+                                    timer.reset();
                                 }
+                            } else if (timer.mouseover) {
+                                timer.mouseover = false;
+                                timer.set();
                             }
                         }, true);
+
+                        element.show = function (name) {
+                            timer.reset();
+
+                            state.undoBar.text = name;
+
+                            element.style.opacity = "";
+                            element.style.visibility = "";
+
+                            if (!timer.mouseover) {
+                                timer.set();
+                            }
+                        };
+
+                        //setTimeout(element.show, 2000);
+                        //setTimeout(element.hide, 4000);
+
+                        /*addEventListener("focus", function (event) {
+                            if (event.target !== document.body) {
+                                element.hide();
+                            }
+                        }, true);*/
+
+                        element.appendChild(UI.create("span", function (element) {
+                            Object.defineProperty(state.undoBar, "text", {
+                                get: function () {
+                                    return element.innerHTML;
+                                },
+                                set: function (value) {
+                                    element.innerHTML = value;
+                                }
+                            });
+                        }));
+
+                        element.appendChild(UI.create("span", function (element) {
+                            element.id = "Undo-bar-button";
+                            element.title = "(Ctrl Z)";
+                            element.textContent = "Undo";
+
+                            function undo() {
+                                state.undoBar.hide();
+                                Undo.pop();
+                            }
+                            element.addEventListener("click", undo, true);
+
+                            addEventListener("keyup", function (event) {
+                                var target = event.target;
+                                if (target.localName === "input" && target.type === "text") {
+                                    return;
+                                }
+
+                                if (event.which === 90) {
+                                    if (event.ctrlKey || event.metaKey) {
+                                        if (!event.shiftKey && !event.altKey) {
+                                            undo();
+                                        }
+                                    }
+                                }
+                            }, true);
+                        }));
                     }));
                 }));
             }));
 
-            container.appendChild(UI.create("span", function (span) {
+            container.appendChild(UI.create("form", function (span) {
                 span.id = "search-box";
-                span.textContent = "Search: ";
+                //span.textContent = "Search: ";
 
                 var input = document.createElement("input");
-                input.type = "text";
+                input.placeholder = "Search";
+                input.type = "search";
                 input.tabIndex = 1;
 
                 var lastinput = localStorage["search.lastinput"];
@@ -521,6 +526,7 @@
                     //}
                 };
                 input.addEventListener("keyup", state.search, true);
+                input.addEventListener("click", state.search, true);
 
                 setTimeout(function () {
                     input.select();

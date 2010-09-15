@@ -46,13 +46,12 @@ table {
     overflow: hidden;
     text-overflow: ellipsis;
 
-    color: navy;
-
     /*background-color: #e6edff;
     background-color: #f0f2f2;
     background-color: #edf0f0;*/
     /*! background-color: #eff2f2; */
     background-color: #fafafa;
+
     border: 1px solid dimgray;
     border-bottom: none;
     border-left: none;
@@ -61,19 +60,42 @@ table {
     white-space: nowrap;
     z-index: 9001;
 }
+#URL-bar .protocol[data-secure] {
+    color: darkgreen;
+}
+#URL-bar .domain {
+    font-weight: bold;
+}
+#URL-bar .query {
+    color: darkred;
+    font-weight: bold;
+}
+#URL-bar .fragment {
+    color: black;
+    font-weight: bold;
+}
+
 #Undo-bar {
-    position: fixed;
-    top: 17px;
-    left: 46%;
-    margin: auto;
+    float: left;
+    /*width: 100%;*/
+    position: relative;
+    left: 50%;
+    /*top: 5px;*/
+    /*top: 17px;
+    left: 46.8%;*/
+    /*margin: auto;*/
 }
 #Undo-bar-div {
     -webkit-transition-property: opacity, visibility;
     -webkit-transition-duration: 1s;
     -webkit-transition-timing-function: ease;
 
+    /*display: inline-block;*/
+    /*margin: auto;*/
+
     position: relative;
     left: -50%;
+
     background-color: #FFF1A8;
     padding: 2px 5px;
     font-weight: bold;
@@ -105,6 +127,10 @@ table {
 
     white-space: nowrap;
     z-index: 1;
+
+    vertical-align: top;
+    /*border: none;
+    border-spacing: 0px 0px;*/
 }
 #container-buttons button {
     width: 150px;
@@ -112,10 +138,15 @@ table {
 
     white-space: normal;
 }
+#button-new-window {
+    display: table-cell;
+}
 #search-box {
-    position: fixed;
+    /*position: fixed;
     top: 15px;
-    right: 15px;
+    right: 15px;*/
+
+    display: table-cell;
 
     text-shadow: white 0px 1px 0px;
     white-space: nowrap;
@@ -123,7 +154,10 @@ table {
 #search-box > input {
     /*-webkit-box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 1px;*/
 
-    width: 200px;
+    position: relative;
+    top: -3px;
+
+    width: 225px; /*! 200px */
     padding: 0px 2px;
 
     border-color: #e1e1e1;
@@ -287,7 +321,7 @@ table {
     height: 16px;
 
     /*background-color: red;*/
-    background-image: url('images/button-menu.png');
+    /*background-image: url('images/button-menu.png');*/
 
     border: 1px solid transparent;
     border-radius: 5px;

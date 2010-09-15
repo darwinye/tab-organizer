@@ -23,3 +23,15 @@
 .tab-icon-text {
     color: #6f3400;
 }
+
+.tab-icon-dropdown {
+    background-image: url('Orange-button-menu.png');
+}
+
+#URL-bar {
+    color: #291b00;
+}
+
+button.custom:active, button.custom:hover {
+    background-color: #fffceb !important;
+}
