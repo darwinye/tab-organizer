@@ -732,7 +732,7 @@ var Window = {
                                                 var value;
 
                                                 element.addEventListener("mousedown", function (event) {
-                                                    if (container.hasAttribute("focused")) {
+                                                    if (container.hasAttribute("data-selected")) {
                                                         element.addEventListener("click", element.select, true);
                                                     } else {
                                                         element.removeEventListener("click", element.select, true);
@@ -755,7 +755,7 @@ var Window = {
                                                                 node: this
                                                             });
                                                             state.undoBar.show("You renamed the window \""/* <span style='font-variant: small-caps;'>" */
-                                                                + this.value.toUpperCase() + "\".");
+                                                                + this.value + "\".");
                                                         }
                                                     }
 

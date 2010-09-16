@@ -432,9 +432,19 @@
                 input.setAttribute("results", "");
                 input.setAttribute("incremental", "");
                 input.setAttribute("placeholder", "Search");
+                //input.setAttribute("autocomplete", "on");
                 //input.setAttribute("autosave", Platform.getURL(""));
+
+                //input.setAttribute("autofocus", "");
+                //input.setAttribute("autosave", "foobarqux");
+                //input.setAttribute("accessKey", "f");
+                //input.name = "search";
                 input.type = "search";
                 input.tabIndex = 1;
+
+//                addEventListener("submit", function (event) {
+//                    alert();
+//                }, true);
 
                 var lastinput = localStorage["search.lastinput"];
                 if (typeof lastinput === "string") {
@@ -530,6 +540,7 @@
                 };
                 //input.addEventListener("keyup", state.search, true);
                 //input.addEventListener("click", state.search, true);
+                //input.addEventListener("input", state.search, true);
                 input.addEventListener("search", state.search, true);
 
                 setTimeout(function () {
