@@ -119,6 +119,9 @@
 //            Undo.reset();
 //        });
 
+
+//        Options.triggerEvent("change");
+
 //        delete localStorage["search.lastinput"];
 //        delete localStorage["window.titles"];
 
@@ -579,6 +582,11 @@
 //            };
 
             //var windowlist = document.getElementById("window-list");
+
+//            setTimeout(function () {
+//                Options.addEventListener("change", function () {
+//                }, true);
+//            }, 0);
 
             Platform.windows.getAll({ populate: true }, function (windows) {
                 element.appendChild(UI.create("td"));
