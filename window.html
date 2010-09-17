@@ -130,12 +130,12 @@
 
 
         //!CLEANUP:
-        if (!"window.titles" in localStorage) {
-            localStorage["window.titles"] = JSON.stringify(Options.get("titles"));// || "";
-        }
-        if (!"search.lastinput" in localStorage) {
-            localStorage["search.lastinput"] = Options.get("search.lastinput") || "";
-        }
+//        if (!"window.titles" in localStorage) {
+//            localStorage["window.titles"] = JSON.stringify(Options.get("titles"));// || "";
+//        }
+//        if (!"search.lastinput" in localStorage) {
+//            localStorage["search.lastinput"] = Options.get("search.lastinput") || "";
+//        }
 
 
         var state = {
@@ -450,7 +450,7 @@
                 if (typeof lastinput === "string") {
                     input.value = lastinput;
                 }
-                addEventListener("beforeunload", function () {
+                addEventListener("unload", function () {
                     localStorage["search.lastinput"] = input.value;
                     //alert(Options.get("search.lastinput"));
                 }, true);
@@ -602,7 +602,7 @@
                     }
                 }, true);
 
-                addEventListener("beforeunload", function () {
+                addEventListener("unload", function () {
 //                    Options.removeEventListener("change", update, true);
 
                     var list = state.list.map(function (item) {
