@@ -419,7 +419,7 @@ fragment.appendChild(UI.create("table", function (container) {
             title: document.title
         };
 
-        function search(array) {
+        function search(array, flags) {
             //var self = this;
 
             /*if (search.stop) {
@@ -456,7 +456,9 @@ fragment.appendChild(UI.create("table", function (container) {
                 if (!item.hasAttribute("hidden")) {
                     //list.push(item);
                     //var child = item.querySelector("[data-selected]");
-                    UI.scrollTo(item.selected, item.tabList.scroll);
+                    if (flags.scroll) {
+                        UI.scrollTo(item.selected, item.tabList.scroll);
+                    }
                     return true;
                 }
             });
@@ -487,13 +489,13 @@ fragment.appendChild(UI.create("table", function (container) {
             //search.stop = false;
         }
 
-        state.search = function (array) {
+        state.search = function (info) {
             console.log("Searching.");
 
             /*if (array instanceof Array) {
                 search(array);
             } else {*/
-            search(state.list);
+            search(state.list, Object(info));
             //}
         };
         //input.addEventListener("keyup", state.search, true);
@@ -551,7 +553,7 @@ fragment.appendChild(UI.create("table", function (element) {
                 element.appendChild(Window.create(win));
             }
         });
-        state.search();
+        state.search({ scroll: true });
 
         element.appendChild(UI.create("td"));
 
