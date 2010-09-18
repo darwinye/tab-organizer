@@ -226,6 +226,7 @@ fragment.appendChild(UI.create("table", function (container) {
 
     container.appendChild(UI.create("button", function (button) {
         button.id = "button-new-window";
+        button.title = "(Ctrl N)";
         button.className = "custom";
         button.textContent = "New Window";
         button.tabIndex = 1;
@@ -397,6 +398,7 @@ fragment.appendChild(UI.create("table", function (container) {
         //input.setAttribute("autosave", "foobarqux");
         //input.setAttribute("accessKey", "f");
         //input.name = "search";
+        input.title = "(Ctrl F)";
         input.type = "search";
         input.tabIndex = 1;
 
