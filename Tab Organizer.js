@@ -205,15 +205,13 @@ var Tab = {
                         }
                         Platform.tabs.focus(tab);
                     }
-                } else if (event.button === 1) {
-                    Platform.tabs.remove(tab.id);
                 }
             }, false);
-            /*container.addEventListener("click", function (event) {
+            container.addEventListener("mouseup", function (event) {
                 if (event.button === 1) {
                     Platform.tabs.remove(tab.id);
                 }
-            }, false);*/
+            }, false);
             /*container.addEventListener("focus", function (event) {
                 this.draggable = false;
             }, true);
@@ -387,6 +385,8 @@ var Tab = {
                         element.draggable = true;
 
                         //element.addEventListener("mousedown", events.stop, true);
+                        //element.addEventListener("click", events.stop, true);
+                        //element.addEventListener("mouseup", events.stop, true);
                         element.addEventListener("dragstart", events.disable, true);
 
                         element.addEventListener("click", function (event) {
