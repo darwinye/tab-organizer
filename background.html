@@ -126,6 +126,10 @@
                     Platform.tabs.focus(state.opened);
                 }*/
 
+                if (state.opened) {
+                    Platform.tabs.remove(state.opened.id);
+                }
+
                 return popup("window.html", {
                     offsetX: Options.get("popup.offsetX"),
                     offsetY: Options.get("popup.offsetY"),
@@ -142,10 +146,10 @@
             }
 
             switch (Options.get("popup.type")) {
+            case "bubble":
+                anon.popup = openPopup();
+                break;
             case "popup":
-                if (state.opened) {
-                    Platform.tabs.remove(state.opened.id);
-                }
                 anon.popup = openPopup();
                 break;
             case "tab":
