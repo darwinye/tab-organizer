@@ -363,7 +363,7 @@ var Tab = {
 //                        }, true);
                         element.setAttribute("data-display-hover", "");
                         break;
-                    case "selected":
+                    case "focused":
                         if (!tab.selected) {
                             element.setAttribute("hidden", "");
                         }
@@ -376,7 +376,7 @@ var Tab = {
                             element.removeAttribute("hidden");
                         }, true);
 //                        break;
-//                    case "always":
+//                    case "every":
 //                        element.style.display = "table-cell !important";
                     }
 
@@ -402,27 +402,33 @@ var Tab = {
                 }));
             }
 
-            if (Options.get("tabs.close.location") === "left") {
-                makeCloseButton();
-            }
-
             var text = tab.title || tab.url;
 
-            container.appendChild(UI.create("td", function (element) {
-                element.className = "tab-favicon";
-                element.title = text;
+            function makeFavicon() {
+                container.appendChild(UI.create("td", function (element) {
+                    element.className = "tab-favicon";
+                    element.title = text;
 
-                element.appendChild(UI.create("img", function (element) {
-                    element.className = "stretch";
-                    element.setAttribute("alt", "");
+                    element.appendChild(UI.create("img", function (element) {
+                        element.className = "stretch";
+                        element.setAttribute("alt", "");
 
-                    if (tab.favIconUrl) {
-                        element.src = tab.favIconUrl;
-                    } else {
-                        element.src = "images/blank.png";
-                    }
+                        if (tab.favIconUrl) {
+                            element.src = tab.favIconUrl;
+                        } else {
+                            element.src = "images/blank.png";
+                        }
+                    }));
                 }));
-            }));
+            }
+
+            switch (Options.get("tabs.close.location")) {
+            case "left":
+                makeCloseButton();
+                break;
+            case "right":
+                makeFavicon();
+            }
 
             container.appendChild(UI.create("td", function (element) {
                 element.className = "tab-text";
@@ -472,8 +478,12 @@ var Tab = {
                 }));
             }));
 
-            if (Options.get("tabs.close.location") === "right") {
+            switch (Options.get("tabs.close.location")) {
+            case "right":
                 makeCloseButton();
+                break;
+            case "left":
+                makeFavicon();
             }
         });
     },

@@ -266,22 +266,22 @@
                         }, {
                             group: "Normal tabs:",
                             list: [{
+                                text: "Tab (focused)"
+                            }, {
                                 text: "Tab (selected)"
                             }, {
-                                text: "Tab (queue)"
-                            }, {
-                                text: "Tab (selected + queue)"
+                                text: "Tab (focused + selected)"
                             }]
                         }, {
                             group: "Hovered tabs:",
                             list: [{
                                 text: "Tab (hover)"
                             }, {
-                                text: "Tab (selected + hover)"
+                                text: "Tab (focused)"
                             }, {
-                                text: "Tab (queue + hover)"
+                                text: "Tab (selected)"
                             }, {
-                                text: "Tab (selected + queue + hover)"
+                                text: "Tab (focused + selected)"
                             }]
                         }]
                     });
@@ -521,33 +521,35 @@
                 //container.separator();
 
                 container.category("Tabs", function (container) {
-                    container.input("dropdown-list", {
-                        option: "tabs.close.display",
-                        text: "Show the <img src='images/button-close.png' alt='close' /> button ",
-                        list: [{
-                            value: "hover",
-                            text: "while hovering"
-                        }, {
-                            value: "selected",
-                            text: "on the selected tab"
-                        }, {
-                            value: "always",
-                            text: "on every tab"
-                        }]
-                    });
+                    container.group(function (container) {
+                        container.input("dropdown-list", {
+                            option: "tabs.close.location",
+                            text: "Show the <img src='images/button-close.png' alt='close' /> button on the ",
+                            list: [{
+                                value: "right",
+                                text: "right"
+                            }, {
+                                value: "left",
+                                text: "left"
+                            }],
+                            //unit: " side "
+                        });
 
-                    /*container.input("dropdown-list", {
-                        option: "tabs.close.location",
-                        text: "Show the <img src='images/button-close.png' alt='close' /> button on the ",
-                        list: [{
-                            value: "right",
-                            text: "right"
-                        }, {
-                            value: "left",
-                            text: "left"
-                        }],
-                        unit: " side of the tab."
-                    });*/
+                        container.input("dropdown-list", {
+                            option: "tabs.close.display",
+                            text: " side ",
+                            list: [{
+                                value: "hover",
+                                text: "while hovering"
+                            }, {
+                                value: "focused",
+                                text: "of the focused tab"
+                            }, {
+                                value: "every",
+                                text: "of every tab"
+                            }]
+                        });
+                    });
                 });
 
                 container.category("Undo", function (container) {

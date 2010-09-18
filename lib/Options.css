@@ -62,6 +62,10 @@ input[type="checkbox"][data-options-changed] + span {
     color: blue !important;
 }
 
+.Options-group div {
+    display: inline-block;
+}
+
 #Options-wrapper input {
     -webkit-box-shadow: lightgray 0px 0px 5px;
 
@@ -82,8 +86,7 @@ input[type="checkbox"][data-options-changed] + span {
     z-index: 9001;
 
     padding: 1px 2px;
-    margin: 0px;
-    margin-left: 5px;
+    margin: 0 5px;
 
     border: 1px solid dimgray;
     border-radius: 3px;
