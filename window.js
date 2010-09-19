@@ -410,10 +410,6 @@ fragment.appendChild(UI.create("table", function (container) {
         if (typeof lastinput === "string") {
             input.value = lastinput;
         }
-        addEventListener("unload", function () {
-            localStorage["search.lastinput"] = input.value;
-            //alert(Options.get("search.lastinput"));
-        }, true);
 
         var info = {
             //windows: document.getElementsByClassName("window"),
@@ -422,6 +418,8 @@ fragment.appendChild(UI.create("table", function (container) {
         };
 
         function search(array, flags) {
+            localStorage["search.lastinput"] = input.value;
+
             //var self = this;
 
             /*if (search.stop) {

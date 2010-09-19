@@ -15,7 +15,7 @@ Platform.windows.getAll = (function () {
             })
         };
     }
-    Window.index = 9001;
+    Window.index = 9000;
 
     var saved = Platform.windows.getAll;
 
@@ -74,7 +74,14 @@ Platform.windows.getAll = (function () {
 //            action(windows);
 //        });
 //        return;
+
+            var titles = state.titles;
+            addEventListener("beforeunload", function () {
+                state.titles = titles;
+            }, true);
+
             state.titles = ["Main", "Wikipedia", "Mozilla", "YouTube"];
+
             action([
                 Window({}, [{
                     favIconUrl: icon["http://wordsmith.org/favicon.ico"],

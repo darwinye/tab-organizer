@@ -141,8 +141,12 @@
         }());
 
         var showTabOrganizer = function anon() {
-            if (anon.popup) {
-                anon.popup.close();
+            var popup = anon.popup;
+            if (popup && !popup.closed) {
+                popup.addEventListener("unload", showTabOrganizer, false);
+                popup.close();
+                delete anon.popup;
+                return null;
             }
 
             switch (Options.get("popup.type")) {
