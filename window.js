@@ -175,32 +175,51 @@ var state = {
 document.body.tabIndex = -1;
 
 addEventListener("focus", function (event) {
+    var target = event.target;
+
+    //console.log(event.type, target);
+
     //console.log(event.type);
-    //console.log(document.activeElement, event.target);
-    if (event.target.setAttribute) {
-        event.target.setAttribute("focused", "");
-        //if (event.target.className === "window") {
-        state.focused = event.target;
+    //console.log(document.activeElement, target);
+    if (target.setAttribute) {
+        target.setAttribute("focused", "");
+        //if (target.className === "window") {
+        //delete state.focused;
         //}
+
+        if (state.focused) {
+            state.focused.triggerEvent("blur", false, false);
+        }
     }
 }, true);
 addEventListener("blur", function (event) {
-    //console.log(document.activeElement, event.target);
-    //console.log(event.type);
-    if (state.focused) {
-        if (event.target === this) {
-            if (state.windowList.contains(state.focused)) {
-                //console.log(state.focused);
-                //this.focus();
-                //state.focused.setAttribute("focused", "");
-                //state.focused.setWindowFocus();
-                //state.focused.blur();
-                //state.focused.focus();
-                state.focused.triggerEvent("focus", false, false);
-            }
-        } else if (event.target.removeAttribute) {
-            event.target.removeAttribute("focused");
+    var target = event.target;
+
+    //console.log(event.type, target);
+
+    if (target.removeAttribute) {
+        target.removeAttribute("focused");
+
+        if (state.windowList.contains(target)) {
+            state.focused = target;
+        } else {
+            delete state.focused;
         }
+    }
+
+    //console.log("FOCUSED", state.focused);
+
+    //console.log(document.activeElement, target);
+    //console.log(event.type);
+    if (target === this && state.focused) {
+
+        //console.log(state.focused);
+        //this.focus();
+        //state.focused.setAttribute("focused", "");
+        //state.focused.setWindowFocus();
+        //state.focused.blur();
+        //state.focused.focus();
+        state.focused.triggerEvent("focus", false, false);
         //delete state.focused;
     }
 }, true);
