@@ -182,7 +182,7 @@ addEventListener("focus", function (event) {
     //console.log(event.type);
     //console.log(document.activeElement, target);
     if (target.setAttribute) {
-        target.setAttribute("focused", "");
+        target.setAttribute("data-focused", "");
         //if (target.className === "window") {
         //delete state.focused;
         //}
@@ -198,7 +198,7 @@ addEventListener("blur", function (event) {
     //console.log(event.type, target);
 
     if (target.removeAttribute) {
-        target.removeAttribute("focused");
+        target.removeAttribute("data-focused");
 
         if (state.windowList.contains(target)) {
             state.focused = target;
@@ -215,7 +215,7 @@ addEventListener("blur", function (event) {
 
         //console.log(state.focused);
         //this.focus();
-        //state.focused.setAttribute("focused", "");
+        //state.focused.setAttribute("data-focused", "");
         //state.focused.setWindowFocus();
         //state.focused.blur();
         //state.focused.focus();
@@ -455,7 +455,7 @@ fragment.appendChild(UI.create("table", function (container) {
             var list = array.filter(function (item) {
                 var children = item.tabList.children;
                 item.setAttribute("hidden", "");
-                item.removeAttribute("last");
+                item.removeAttribute("data-last");
 
                 Array.slice(children).forEach(function (child) {
                     if (child.hasAttribute("data-selected")) {
@@ -483,7 +483,7 @@ fragment.appendChild(UI.create("table", function (container) {
             });
 
             if (list.length) {
-                list[list.length - 1].setAttribute("last", "");
+                list[list.length - 1].setAttribute("data-last", "");
             }
 
             /*var list = info.windows.length,

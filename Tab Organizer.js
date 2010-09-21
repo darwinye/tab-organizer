@@ -580,11 +580,11 @@ var Window = {
 
                 container.select();
 
-//                container.setAttribute("focused", "");
+//                container.setAttribute("data-focused", "");
 //                addEventListener("blur", function anon(event) {
 //                    this.removeEventListener(event.type, anon, true);
 
-//                    container.removeAttribute("focused");
+//                    container.removeAttribute("data-focused");
 //                }, true);
 
                 setTimeout(function () {
@@ -598,7 +598,7 @@ var Window = {
 
 
             container.addEventListener("blur", function (event) {
-                this.removeAttribute("focused");
+                this.removeAttribute("data-focused");
 
                 container.unselect();
             }, true);
@@ -611,7 +611,7 @@ var Window = {
                         scrollTo.call(this);
                     }*/
                 //}
-                this.setAttribute("focused", "");
+                this.setAttribute("data-focused", "");
 
                 container.select();
             }, true);
