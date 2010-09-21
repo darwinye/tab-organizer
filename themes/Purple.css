@@ -6,10 +6,10 @@
     background-image: -webkit-gradient(linear, 0% 0%, 5% 100%, from(#d4b4ff), to(#f2ebff));
 }
 
-.window[data-selected] .tab-icon-border {
+.window[data-focused] .tab-icon-border {
     background-color: #f2ebff;
 }
-.window[data-selected] .tab-list-border {
+.window[data-focused] .tab-list-border {
     background-image: -webkit-gradient(linear, 0% 0%, 5% 100%, from(#f2ebff), to(#d4b4ff));
 }
 

@@ -182,7 +182,7 @@ addEventListener("focus", function (event) {
     //console.log(event.type);
     //console.log(document.activeElement, target);
     if (target.setAttribute) {
-        target.setAttribute("data-focused", "");
+        target.setAttribute("data-selected", "");
         //if (target.className === "window") {
         //delete state.focused;
         //}
@@ -198,7 +198,7 @@ addEventListener("blur", function (event) {
     //console.log(event.type, target);
 
     if (target.removeAttribute) {
-        target.removeAttribute("data-focused");
+        target.removeAttribute("data-selected");
 
         if (state.windowList.contains(target)) {
             state.focused = target;
@@ -215,7 +215,7 @@ addEventListener("blur", function (event) {
 
         //console.log(state.focused);
         //this.focus();
-        //state.focused.setAttribute("data-focused", "");
+        //state.focused.setAttribute("data-selected", "");
         //state.focused.setWindowFocus();
         //state.focused.blur();
         //state.focused.focus();
@@ -458,7 +458,7 @@ fragment.appendChild(UI.create("table", function (container) {
                 item.removeAttribute("data-last");
 
                 Array.slice(children).forEach(function (child) {
-                    if (child.hasAttribute("data-selected")) {
+                    if (child.hasAttribute("data-focused")) {
                         /*setTimeout(function () {
                             UI.scrollTo(child, item.tabList.scroll);
                         }, 0);*/
@@ -474,7 +474,7 @@ fragment.appendChild(UI.create("table", function (container) {
 
                 if (!item.hasAttribute("hidden")) {
                     //list.push(item);
-                    //var child = item.querySelector("[data-selected]");
+                    //var child = item.querySelector("[data-focused]");
                     if (flags.scroll) {
                         UI.scrollTo(item.selected, item.tabList.scroll);
                     }

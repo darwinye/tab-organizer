@@ -19,14 +19,14 @@ var Tab = {
                 var is = container.parentNode.queue.add(container);
                 container.undoState.selected = !is;
 
-                container.setAttribute("data-queued", "");
+                container.setAttribute("data-selected", "");
                 //state.search();
             };
             container.queueRemove = function () {
                 var is = container.parentNode.queue.remove(container);;
                 container.undoState.selected = is;
 
-                container.removeAttribute("data-queued");
+                container.removeAttribute("data-selected");
                 //state.search();
             };
             container.queueToggle = function () {
@@ -34,15 +34,15 @@ var Tab = {
                 container.undoState.selected = toggle;
 
                 if (toggle) {
-                    container.setAttribute("data-queued", "");
+                    container.setAttribute("data-selected", "");
                 } else {
-                    container.removeAttribute("data-queued");
+                    container.removeAttribute("data-selected");
                 }
                 //state.search();
             };
 
             if (tab.selected) {
-                container.setAttribute("data-selected", "");
+                container.setAttribute("data-focused", "");
             }
 
             var url = UI.create("span", function (element) {
@@ -124,7 +124,7 @@ var Tab = {
                     if (event.ctrlKey || event.metaKey) {
                         this.queueToggle();
 
-                        if (this.hasAttribute("data-queued")) {
+                        if (this.hasAttribute("data-selected")) {
                             parent.queue.shiftNode = this;
                         } else {
                             delete parent.queue.shiftNode;
@@ -320,7 +320,7 @@ var Tab = {
                     state.currentQueue.add(state.highlighted);
                 }
 
-//                this.setAttribute("data-queued", "");
+//                this.setAttribute("data-selected", "");
 
 //                state.dragBox.innerHTML = "";
 
@@ -372,7 +372,7 @@ var Tab = {
                         }, true);
                         container.addEventListener("Platform-focus", function () {
                             //var parent = container.parentNode;
-                            //var query = parent.querySelector(".tab[data-selected]");
+                            //var query = parent.querySelector(".tab[data-focused]");
                             element.removeAttribute("hidden");
                         }, true);
 //                        break;
@@ -445,7 +445,7 @@ var Tab = {
 
                     /*! container.addEventListener("dblclick", function (event) {
                         if (false) {
-                        //! if (event.button === 0 && container.hasAttribute("data-selected")) {
+                        //! if (event.button === 0 && container.hasAttribute("data-focused")) {
                             container.draggable = false;
 
                             element.replaceChild(UI.create("input", function (input) {
@@ -565,7 +565,7 @@ var Window = {
             container.select = function () {
                 action.unselectWindow();
 
-                container.setAttribute("data-selected", "");
+                container.setAttribute("data-focused", "");
             };
 
             container.unselect = function () {
@@ -580,11 +580,11 @@ var Window = {
 
                 container.select();
 
-//                container.setAttribute("data-focused", "");
+//                container.setAttribute("data-selected", "");
 //                addEventListener("blur", function anon(event) {
 //                    this.removeEventListener(event.type, anon, true);
 
-//                    container.removeAttribute("data-focused");
+//                    container.removeAttribute("data-selected");
 //                }, true);
 
                 setTimeout(function () {
@@ -598,7 +598,7 @@ var Window = {
 
 
             container.addEventListener("blur", function (event) {
-                this.removeAttribute("data-focused");
+                this.removeAttribute("data-selected");
 
                 container.unselect();
             }, true);
@@ -611,7 +611,7 @@ var Window = {
                         scrollTo.call(this);
                     }*/
                 //}
-                this.setAttribute("data-focused", "");
+                this.setAttribute("data-selected", "");
 
                 container.select();
             }, true);
@@ -621,7 +621,7 @@ var Window = {
                 var query;
 
                 if (event.which === 38 || event.which === 40) {
-                    query = this.querySelector(".tab[data-selected]");
+                    query = this.querySelector(".tab[data-focused]");
                     if (query) {
                         var element = (event.which === 38) ?
                             query.previousSibling :
@@ -640,7 +640,7 @@ var Window = {
                 } else if (event.which === 32 || event.which === 13) {
                     event.preventDefault();
 
-                    query = this.querySelector(".tab[data-selected]");
+                    query = this.querySelector(".tab[data-focused]");
                     if (query) {
                         var info = document.createEvent("MouseEvents");
                         info.initMouseEvent("click", true, false, window, 0, 0, 0, 0, 0,
@@ -742,7 +742,7 @@ var Window = {
                                                 var value;
 
                                                 element.addEventListener("mousedown", function (event) {
-                                                    if (container.hasAttribute("data-selected")) {
+                                                    if (container.hasAttribute("data-focused")) {
                                                         element.addEventListener("click", element.select, true);
                                                     } else {
                                                         element.removeEventListener("click", element.select, true);
@@ -920,7 +920,7 @@ var Window = {
 
                                                             Array.slice(container.tabList.children).forEach(function (item) {
                                                                 if (!item.hasAttribute("hidden")) {
-                                                                    if (!item.hasAttribute("data-queued")) {
+                                                                    if (!item.hasAttribute("data-selected")) {
                                                                         range.push(item);
                                                                         item.queueAdd();
                                                                     }
@@ -950,7 +950,7 @@ var Window = {
 
                                                             Array.slice(container.tabList.children).forEach(function (item) {
                                                                 if (!item.hasAttribute("hidden")) {
-                                                                    if (item.hasAttribute("data-queued")) {
+                                                                    if (item.hasAttribute("data-selected")) {
                                                                         range.push(item);
                                                                         item.queueRemove();
                                                                     }
