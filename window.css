@@ -289,7 +289,7 @@ table {
 .tab-icon-text {
     width: 100%;
     padding: 0px;
-    padding-bottom: 2px;
+    /*padding-bottom: 2px;*/
     /*margin: 0px;*/
 
     background-color: transparent;

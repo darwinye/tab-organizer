@@ -520,7 +520,9 @@ fragment.appendChild(UI.create("table", function (container) {
         //input.addEventListener("keyup", state.search, true);
         //input.addEventListener("click", state.search, true);
         //input.addEventListener("input", state.search, true);
-        input.addEventListener("search", state.search, true);
+        input.addEventListener("search", function () {
+            state.search({ scroll: true });
+        }, true);
 
         setTimeout(function () {
             input.focus();
