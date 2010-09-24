@@ -290,14 +290,15 @@ table {
     width: 100%;
     padding: 0px;
     padding-bottom: 2px;
-    margin: 0px;
+    /*margin: 0px;*/
 
     background-color: transparent;
 
     border: none;
     outline: none;
 
-    font-variant: small-caps;
+    font-size: 0.9em;
+    /*font-variant: small-caps;*/
 }
 .window:not([data-focused]) .tab-icon-text {
     cursor: default;
