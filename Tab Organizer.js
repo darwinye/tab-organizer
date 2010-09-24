@@ -822,9 +822,12 @@ var Window = {
 //                                                            top: event.clientY + 7 + "px"
 //                                                        });
 
+                                                        var x = event.clientX,
+                                                            y = event.clientY;
+
                                                         contextMenu.style.position = "fixed";
-                                                        contextMenu.style.left = event.clientX + 5 + "px";
-                                                        contextMenu.style.top = event.clientY + 7 + "px";
+                                                        contextMenu.style.left = x + 5 + "px";
+                                                        contextMenu.style.top = y + 7 + "px";
 
                                                         //document.body.appendChild(contextMenu);
 
@@ -845,6 +848,11 @@ var Window = {
                                                             //element.appendChild(contextMenu);
                                                             //container.focus();
                                                         });
+
+                                                        var height = contextMenu.offsetHeight;
+                                                        if (height + y > document.documentElement.clientHeight) {
+                                                            contextMenu.style.top = y - height + "px";
+                                                        }
                                                     }, false);
 
                                                     container.addEventListener("keypress", function (event) {
