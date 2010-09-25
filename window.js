@@ -540,6 +540,252 @@ fragment.appendChild(UI.create("table", function (container) {
         }, true);
 
         span.appendChild(input);
+
+
+        span.appendChild(UI.create("ul", function (element) {
+            element.id = "search-past";
+            element.tabIndex = -1;
+
+
+            element.add = function (name, special) {
+                element.removeAttribute("hidden");
+                element.appendChild(UI.create("li", function (element) {
+                    if (special) {
+                        element.className = "special";
+                    }
+                    element.textContent = name;
+                }));
+            };
+
+            element.reset = function () {
+                element.setAttribute("hidden", "");
+                element.innerHTML = "";
+            };
+            element.reset();
+
+
+            element.addEventListener("focus", function (event) {
+                input.focus();
+            }, true);
+
+            element.addEventListener("mouseover", function (event) {
+                event.target.setAttribute("data-selected", "");
+            }, true);
+            element.addEventListener("mouseout", function (event) {
+                event.target.removeAttribute("data-selected");
+            }, true);
+
+            element.addEventListener("click", function (event) {
+                var target = event.target;
+                if (target.localName !== "li") {
+                    return;
+                }
+                input.value = target.textContent;
+                input.triggerEvent("search", false, false);
+
+                element.reset();
+            }, true);
+
+
+            input.addEventListener("blur", function () {
+                element.setAttribute("hidden", "");
+            }, true);
+
+            input.addEventListener("focus", function () {
+                if (element.children.length) {
+                    element.removeAttribute("hidden");
+                }
+            }, true);
+
+
+            //delete localStorage["search.past-queries"];
+
+            var saved = Options.getObject(localStorage["search.past-queries"]);
+
+            addEventListener("unload", function () {
+                localStorage["search.past-queries"] = JSON.stringify(saved);
+            }, true);
+
+            input.addEventListener("keydown", function anon(event) {
+                //console.log(event.which, event.keyIdentifier);
+                if (event.which === 38 || event.which === 40) { //* Up/Down
+                    event.preventDefault();
+
+                    var next, query = element.querySelector("[data-selected]");
+
+                    if (query) {
+                        next = (event.which === 38) ?
+                            query.previousSibling :
+                            query.nextSibling;
+
+                    } else if (event.which === 40) {
+                        next = element.children[0];
+                    }
+
+                    if (next) {
+                        next.setAttribute("data-selected", "");
+
+                        if (query) {
+                            query.removeAttribute("data-selected");
+                        }
+                    }
+                } else if (event.which === 27) { //* Escape
+                    element.reset();
+                } else if (event.which === 13) { //* Enter
+                    var query = element.querySelector("[data-selected]");
+                    if (query) {
+                        query.triggerEvent("click", false, false);
+                    }
+                } else if (event.which === 46) { //* Delete
+                    var query = element.querySelector("[data-selected]");
+                    if (query) {
+                        var index = Array.indexOf(element.children, query);
+                        //console.log(index);
+//                        var next = query.nextSibling;
+//                        if (next) {
+//                            //next.setAttribute("data-selected", "");
+////                            anon({ which: 40, preventDefault: function () {} });
+////                            var custom = document.createEvent("KeyboardEvent");
+////                            custom.initKeyboardEvent("keydown", false, false, null, "Down", 0, "");
+////                            //custom.initKeyEvent("keydown", false, false, null, false, false, false, false, 40, 0);
+////                            next.dispatchEvent(custom);
+//                            //next.setAttribute("data-selected", "");
+//                        }
+                        //console.log(next);
+
+                        var text = query.textContent;
+                        saved[text[0]].remove(text);
+
+                        //var old = this.value;
+                        //this.value = text;
+                        input.triggerEvent("input", false, false);
+                        //this.value = old;
+                        //query.remove();
+
+                        var next, children = element.children;
+                        if (children[index]) {
+                            next = children[index];
+                        } else if (children[index - 1]) {
+                            next = children[index - 1];
+                        }
+
+                        if (next) {
+                            next.setAttribute("data-selected", "");
+                        }
+                    }
+                }
+            }, true);
+
+//            input.addEventListener("keydown", function () {
+//
+//            }, true);
+
+            input.addEventListener("search", function () {
+                if (!this.value) {
+                    element.reset();
+                    return;
+                } else if (this.value.length < 2) {
+                    return;
+                }
+
+                var letter = this.value[0];
+                if (!saved[letter]) {
+                    saved[letter] = [];
+                }
+
+                saved[letter].push(this.value);
+            }, true);
+
+            input.addEventListener("input", function anon() {
+                if (!this.value) {
+                    return;
+                }
+
+                var letter = this.value[0];
+                if (!saved[letter]) {
+                    saved[letter] = [];
+                }
+
+//                for (var i = 1; i < this.value.length; i += 1) {
+//                    var slice = this.value.slice(0, i);
+//                    if (saved[letter][slice]) {
+//                        delete saved[letter][slice];
+//                    }
+//                }
+
+                element.reset();
+
+                var value = this.value;
+                var regexp = new RegExp("^" + value, "i");
+                var keys = saved[letter];//Object.keys(saved[letter]);
+
+//                keys.sort(function (a, b) {
+//                    return a.length - b.length || a.localeCompare(b);
+//                });
+
+//                keys.sort(function (a, b) {
+//                    return b.localeCompare(a);
+//                    //return b.length - a.length || a.localeCompare(b);
+//                });
+
+                //console.log(keys);
+
+                keys.sort().forEach(function anon(key, i) {
+                    //console.log(key, value);
+//                    if (key === value) {
+//                        saved[letter].splice(i, 1);
+//                    }
+                    if (anon.key) {
+                        //console.warn(anon.key, key, anon.key.indexOf(key));
+                        if (anon.key.indexOf(key) === 0) {
+                            saved[letter].splice(i, 1);
+                            //delete saved[letter][key];
+                        }
+                    }
+                    anon.key = key;
+                    //console.log(anon.key, key);
+                    //var index =  || key.indexOf(value) === 0;
+//                    if (key.length > value.length) {
+//                        if (value.indexOf(key) === 0) {
+//                            delete saved[letter][key];
+//                        }
+//                    } else {
+//                        if (key.indexOf(value) === 0) {
+//                            delete saved[letter][value];
+//                        }
+//                    }
+                });
+
+//                var keys = saved[letter];//Object.keys(saved[letter]);
+
+                keys.sort(function (a, b) {
+                    return a.length - b.length || a.localeCompare(b);
+                });
+
+                keys.forEach(function (key) {
+                    if (key === value || element.children.length >= 5) {
+                        return;
+                    }
+
+                    if (regexp.test(key)) {
+                        element.add(key);
+                    }
+                });
+
+//                anon.old = this.value;
+
+//                if (element.children.length) {
+//                    console.log(anon.old);
+//                    var text = element.children[0].textContent;
+//                    this.value = text;
+//                    //this.setSelectionRange(anon.old.length, text.length);
+//                }
+
+//                if (!element.children.length) {
+//                    element.setAttribute("hidden", "");
+//                }
+            }, true);
+        }));
     }));
 }));
 
