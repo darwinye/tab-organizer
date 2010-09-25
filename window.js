@@ -591,11 +591,13 @@ fragment.appendChild(UI.create("table", function (container) {
                 element.setAttribute("hidden", "");
             }, true);
 
-            input.addEventListener("focus", function () {
-                if (element.children.length) {
-                    element.removeAttribute("hidden");
-                }
-            }, true);
+//            input.addEventListener("focus", function () {
+////                if (!this.value) {
+////                    element.reset();
+////                } else if (element.children.length) {
+////                    element.removeAttribute("hidden");
+////                }
+//            }, true);
 
 
             //delete localStorage["search.past-queries"];
@@ -605,6 +607,54 @@ fragment.appendChild(UI.create("table", function (container) {
             addEventListener("unload", function () {
                 localStorage["search.past-queries"] = JSON.stringify(saved);
             }, true);
+
+
+            function filter(value, info) {
+                info = Object(info);
+
+                if (!info.list) {
+                    var letter = value[0];
+                    if (!saved[letter]) {
+                        saved[letter] = [];
+                    }
+                    info.list = saved[letter];//Object.keys(saved[letter]);
+                }
+    //                var keys = saved[letter];//Object.keys(saved[letter]);
+                //}
+
+                element.reset();
+
+                var regexp = new RegExp("^" + value, "i");
+
+                //if (info.list) {
+                    info.list.sort(function (a, b) {
+                        return a.length - b.length || a.localeCompare(b);
+                    });
+
+                    info.list.forEach(function (key) {
+                        if (key === value || element.children.length >= 5) {
+                            return;
+                        }
+
+                        if (info.list || regexp.test(key)) {
+                            element.add(key);
+                        }
+                    });
+                //}
+
+//                anon.old = value;
+
+//                if (element.children.length) {
+//                    console.log(anon.old);
+//                    var text = element.children[0].textContent;
+//                    this.value = text;
+//                    //this.setSelectionRange(anon.old.length, text.length);
+//                }
+
+//                if (!element.children.length) {
+//                    element.setAttribute("hidden", "");
+//                }
+            }
 
             input.addEventListener("keydown", function anon(event) {
                 //console.log(event.which, event.keyIdentifier);
@@ -654,11 +704,17 @@ fragment.appendChild(UI.create("table", function (container) {
                         //console.log(next);
 
                         var text = query.textContent;
-                        saved[text[0]].remove(text);
+                        var array = saved[text[0]];
+
+                        array.remove(text);
+                        if (!array.length) {
+                            delete saved[text[0]];
+                        }
 
                         //var old = this.value;
                         //this.value = text;
-                        input.triggerEvent("input", false, false);
+                        filter(this.value);
+                        //input.triggerEvent("input", false, false);
                         //this.value = old;
                         //query.remove();
 
@@ -676,13 +732,46 @@ fragment.appendChild(UI.create("table", function (container) {
                 }
             }, true);
 
+            input.addEventListener("keyup", function (event) {
+                if (!element.hasAttribute("hidden")) {
+                    return;
+                }
+
+                if (event.which === 40 || event.which === 46) {
+                    if (this.value) {
+                        filter(this.value);
+                    } else {
+                        var keys = [];
+
+                        Object.keys(saved).forEach(function (key) {
+                            keys = keys.concat(saved[key]);
+                        });
+
+                        filter("", { list: keys });
+                    }
+                }
+
+//                element.reset();
+
+//                keys.sort(function (a, b) {
+//                    return a.length - b.length || a.localeCompare(b);
+//                });
+
+//                keys.forEach(function (item) {
+//                    if (element.children.length >= 5) {
+//                        return;
+//                    }
+//                    element.add(item);
+//                });
+            }, true);
+
 //            input.addEventListener("keydown", function () {
 //
 //            }, true);
 
             input.addEventListener("search", function () {
                 if (!this.value) {
-                    element.reset();
+                    //element.reset();
                     return;
                 } else if (this.value.length < 2) {
                     return;
@@ -692,45 +781,31 @@ fragment.appendChild(UI.create("table", function (container) {
                 if (!saved[letter]) {
                     saved[letter] = [];
                 }
+                var keys = saved[letter];
 
-                saved[letter].push(this.value);
-            }, true);
+                keys.push(this.value);
 
-            input.addEventListener("input", function anon() {
-                if (!this.value) {
-                    return;
-                }
-
-                var letter = this.value[0];
-                if (!saved[letter]) {
-                    saved[letter] = [];
-                }
-
-//                for (var i = 1; i < this.value.length; i += 1) {
-//                    var slice = this.value.slice(0, i);
+                            //if (value) {
+//                for (var i = 1; i < value.length; i += 1) {
+//                    var slice = value.slice(0, i);
 //                    if (saved[letter][slice]) {
 //                        delete saved[letter][slice];
 //                    }
 //                }
 
-                element.reset();
-
-                var value = this.value;
-                var regexp = new RegExp("^" + value, "i");
-                var keys = saved[letter];//Object.keys(saved[letter]);
-
 //                keys.sort(function (a, b) {
 //                    return a.length - b.length || a.localeCompare(b);
 //                });
 
-//                keys.sort(function (a, b) {
-//                    return b.localeCompare(a);
-//                    //return b.length - a.length || a.localeCompare(b);
-//                });
+                keys.sort(function (a, b) {
+                    return b.localeCompare(a);
+                    //return b.length - a.length || a.localeCompare(b);
+                });
 
-                //console.log(keys);
+//                console.log(keys);
+//                console.log(keys.sort());
 
-                keys.sort().forEach(function anon(key, i) {
+                keys.forEach(function anon(key, i) {
                     //console.log(key, value);
 //                    if (key === value) {
 //                        saved[letter].splice(i, 1);
@@ -738,7 +813,7 @@ fragment.appendChild(UI.create("table", function (container) {
                     if (anon.key) {
                         //console.warn(anon.key, key, anon.key.indexOf(key));
                         if (anon.key.indexOf(key) === 0) {
-                            saved[letter].splice(i, 1);
+                            keys.splice(i, 1);
                             //delete saved[letter][key];
                         }
                     }
@@ -756,34 +831,13 @@ fragment.appendChild(UI.create("table", function (container) {
 //                    }
                 });
 
-//                var keys = saved[letter];//Object.keys(saved[letter]);
+                if (!keys.length) {
+                    delete saved[letter];
+                }
+            }, true);
 
-                keys.sort(function (a, b) {
-                    return a.length - b.length || a.localeCompare(b);
-                });
-
-                keys.forEach(function (key) {
-                    if (key === value || element.children.length >= 5) {
-                        return;
-                    }
-
-                    if (regexp.test(key)) {
-                        element.add(key);
-                    }
-                });
-
-//                anon.old = this.value;
-
-//                if (element.children.length) {
-//                    console.log(anon.old);
-//                    var text = element.children[0].textContent;
-//                    this.value = text;
-//                    //this.setSelectionRange(anon.old.length, text.length);
-//                }
-
-//                if (!element.children.length) {
-//                    element.setAttribute("hidden", "");
-//                }
+            input.addEventListener("input", function () {
+                filter(this.value);
             }, true);
         }));
     }));

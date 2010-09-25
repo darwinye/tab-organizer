@@ -169,10 +169,13 @@ table {
     background-position: right 1px;*/
 }
 #search-past {
-    -webkit-box-shadow: dimgray 0px 1px 5px;
+    -webkit-box-shadow: dimgray 0px 2px 5px;
+
+    position: relative;
+    z-index: 9001;
 
     padding: 0px;
-    margin: -3px 1px 0px;
+    margin: -4px 2px 0px;
 
     background-color: white;
     border: 1px solid dimgray;
