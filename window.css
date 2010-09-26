@@ -174,24 +174,30 @@ table {
     position: relative;
     z-index: 9001;
 
+    max-height: 7.8em;
     padding: 0px;
-    margin: -4px 2px 0px;
+    margin: -4px 1px 0px;
 
     background-color: white;
     border: 1px solid dimgray;
 
     list-style: none;
+
+    overflow-x: hidden;
+    overflow-y: auto;
+
+    outline: none;
 }
 /*#search-past:empty {
     display: none;
 }*/
 #search-past > li {
     padding: 1px 6px 3px;
-    margin: -1px;
+    /*margin: -1px;
 
-    border: 1px solid transparent;
+    border: 1px solid transparent;*/
 }
-#search-past > li.special {
+input[special], #search-past > li.special {
     color: darkred;
 }
 #search-past > li[data-selected] {
@@ -199,8 +205,9 @@ table {
     font-weight: bold;
 
     background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#99c5fb), to(#5fa0f0));
-    border-color: #375C89;
-    outline: none;
+    outline: 1px solid #375C89;
+    /*border-color: #375C89;*/
+    /*outline: none;*/
 }
 
 #window-list {

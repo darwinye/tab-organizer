@@ -984,6 +984,21 @@ var Window = {
 
                                                     menu.separator();
 
+                                                    menu.addItem("Re<u>l</u>oad selected", {
+                                                        keys: ["L"],
+                                                        action: function () {
+                                                            container.tabList.queue.forEach(function (item) {
+                                                                Platform.tabs.update(item.tab.id, {
+                                                                    url: item.tab.url
+                                                                });
+                                                            });
+
+                                                            container.tabList.queue.reset();
+                                                        }
+                                                    });
+
+                                                    menu.separator();
+
                                                     menu.addItem("<u>M</u>ove all selected", {
                                                         keys: ["M"],
                                                         action: function () {
@@ -991,14 +1006,6 @@ var Window = {
                                                             state.queues.resetAll();
                                                         }
                                                     });
-
-//                                                    menu.separator();
-
-//                                                    menu.addItem("Re<u>l</u>oad selected", {
-//                                                        keys: ["L"],
-//                                                        action: function () {
-//                                                        }
-//                                                    });
 
                                                     menu.separator();
 

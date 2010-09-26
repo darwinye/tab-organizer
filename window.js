@@ -565,15 +565,20 @@ fragment.appendChild(UI.create("table", function (container) {
 
 
             element.addEventListener("focus", function (event) {
+                this.removeAttribute("hidden");
                 input.focus();
             }, true);
 
             element.addEventListener("mouseover", function (event) {
+                var query = this.querySelector("[data-selected]");
+                if (query) {
+                    query.removeAttribute("data-selected");
+                }
                 event.target.setAttribute("data-selected", "");
             }, true);
-            element.addEventListener("mouseout", function (event) {
-                event.target.removeAttribute("data-selected");
-            }, true);
+//            element.addEventListener("mouseout", function (event) {
+//                event.target.removeAttribute("data-selected");
+//            }, true);
 
             element.addEventListener("click", function (event) {
                 var target = event.target;
@@ -608,38 +613,89 @@ fragment.appendChild(UI.create("table", function (container) {
                 localStorage["search.past-queries"] = JSON.stringify(saved);
             }, true);
 
+            var precoded = {
+                "i": ["inurl:", "intitle:", "is:image", "is:selected"],
+                "s": ["same:url", "same:title"],
+                "w": ["window:", "window:focused"]
+            };
+
 
             function filter(value, info) {
                 info = Object(info);
+                value = value.toLowerCase();
 
-                if (!info.list) {
-                    var letter = value[0];
-                    if (!saved[letter]) {
-                        saved[letter] = [];
-                    }
-                    info.list = saved[letter];//Object.keys(saved[letter]);
-                }
+                var keys, letter, regexp, special;
     //                var keys = saved[letter];//Object.keys(saved[letter]);
                 //}
 
                 element.reset();
 
-                var regexp = new RegExp("^" + value, "i");
+                if (info.all) {
+                    keys = [];
+
+                    Object.keys(saved).forEach(function (key) {
+                        keys = keys.concat(saved[key]);
+                    });
+                } else {
+                    letter = value[0];
+                    if (!saved[letter]) {
+                        saved[letter] = [];
+                    }
+                    keys = saved[letter];//Object.keys(saved[letter]);
+                }
+
+                if (letter === '"') {
+                    regexp = new RegExp("^" + value);
+                } else {
+                    regexp = new RegExp("^" + value, "i");
+                }
+
+                if (precoded[letter]) {
+                    special = precoded[letter];
+                } else if (info.all) {
+                    special = [];
+
+                    Object.keys(precoded).forEach(function (key) {
+                        special = special.concat(precoded[key]);
+                    });
+                }
 
                 //if (info.list) {
-                    info.list.sort(function (a, b) {
-                        return a.length - b.length || a.localeCompare(b);
+                keys.sort(function (a, b) {
+                    return a.length - b.length || a.localeCompare(b);
+                });
+
+                keys.forEach(function (key) {
+//                    if (element.children.length >= 5) {
+//                        return;
+//                    }
+
+                    if (regexp.test(key)) {
+                        element.add(key);
+                    }
+                });
+
+                if (special) {
+                    var is = special.some(function (item) {
+                        return item === value;
                     });
 
-                    info.list.forEach(function (key) {
-                        if (key === value || element.children.length >= 5) {
-                            return;
-                        }
+                    if (is) {
+                        input.setAttribute("special", "");
+                    } else {
+                        input.removeAttribute("special");
+                    }
+
+                    special.forEach(function (key) {
+//                        if (element.children.length >= 5) {
+//                            return;
+//                        }
 
                         if (info.list || regexp.test(key)) {
-                            element.add(key);
+                            element.add(key, true);
                         }
                     });
+                }
                 //}
 
 //                anon.old = value;
@@ -655,6 +711,16 @@ fragment.appendChild(UI.create("table", function (container) {
 //                    element.setAttribute("hidden", "");
 //                }
             }
+
+            input.addEventListener("click", function (event) {
+                if (event.offsetX < 20) {
+                    if (this.value) {
+                        filter(this.value);
+                    } else {
+                        filter("", { all: true });
+                    }
+                }
+            }, true);
 
             input.addEventListener("keydown", function anon(event) {
                 //console.log(event.which, event.keyIdentifier);
@@ -674,6 +740,7 @@ fragment.appendChild(UI.create("table", function (container) {
 
                     if (next) {
                         next.setAttribute("data-selected", "");
+                        next.scrollIntoViewIfNeeded(false);
 
                         if (query) {
                             query.removeAttribute("data-selected");
@@ -741,13 +808,7 @@ fragment.appendChild(UI.create("table", function (container) {
                     if (this.value) {
                         filter(this.value);
                     } else {
-                        var keys = [];
-
-                        Object.keys(saved).forEach(function (key) {
-                            keys = keys.concat(saved[key]);
-                        });
-
-                        filter("", { list: keys });
+                        filter("", { all: true });
                     }
                 }
 
@@ -770,20 +831,25 @@ fragment.appendChild(UI.create("table", function (container) {
 //            }, true);
 
             input.addEventListener("search", function () {
-                if (!this.value) {
+                if (!this.value || this.value.length < 2) {
                     //element.reset();
-                    return;
-                } else if (this.value.length < 2) {
                     return;
                 }
 
-                var letter = this.value[0];
+                var value = this.value.toLowerCase();
+
+                var letter = value[0];
                 if (!saved[letter]) {
                     saved[letter] = [];
                 }
                 var keys = saved[letter];
 
-                keys.push(this.value);
+//                if (letter === '"') {
+//                    keys.push(value.trim());
+//                } else {
+                    keys.push(value.trim());
+//                }
+
 
                             //if (value) {
 //                for (var i = 1; i < value.length; i += 1) {
@@ -810,6 +876,13 @@ fragment.appendChild(UI.create("table", function (container) {
 //                    if (key === value) {
 //                        saved[letter].splice(i, 1);
 //                    }
+//                    console.log(key, special[letter].indexOf(key));
+                    if (precoded[letter]) {
+                        if (precoded[letter].indexOf(key) !== -1) {
+                            keys.splice(i, 1);
+                        }
+                    }
+
                     if (anon.key) {
                         //console.warn(anon.key, key, anon.key.indexOf(key));
                         if (anon.key.indexOf(key) === 0) {
@@ -837,6 +910,7 @@ fragment.appendChild(UI.create("table", function (container) {
             }, true);
 
             input.addEventListener("input", function () {
+                //console.log("input");
                 filter(this.value);
             }, true);
         }));
