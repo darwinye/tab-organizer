@@ -272,11 +272,20 @@ fragment.appendChild(UI.create("table", function (container) {
 //            //element.textContent = "-";
 //        }));
 
-        element.appendChild(UI.create("a", function (element) {
+        element.appendChild(UI.create("button", function (element) {
             element.href = "options.html";
+            element.target = "_blank";
+
             element.className = "link";
-            element.textContent = element.target = "Options";
+            element.textContent = "Options";
             element.tabIndex = 1;
+
+            element.addEventListener("click", function anon() {
+//                if (anon.popup) {
+//                    anon.popup.close();
+//                }
+                anon.popup = open(element.href, element.target);
+            }, true);
         }));
 
         element.appendChild(UI.create("span", function (element) {
@@ -284,12 +293,20 @@ fragment.appendChild(UI.create("table", function (container) {
             element.textContent = "|";
         }));
 
-        element.appendChild(UI.create("a", function (element) {
+        element.appendChild(UI.create("button", function (element) {
             element.href = "http://documentation.tab-organizer.googlecode.com/hg/Tab%20Organizer%20FAQ.html";
-            element.target = "help";
+            element.target = "_blank";
+
             element.className = "link";
-            element.textContent = /*element.target = */"Help";
+            element.textContent = "Help";
             element.tabIndex = 1;
+
+            element.addEventListener("click", function anon() {
+//                if (anon.popup) {
+//                    anon.popup.close();
+//                }
+                anon.popup = open(element.href, element.target);
+            }, true);
         }));
     }));
 

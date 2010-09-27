@@ -40,8 +40,16 @@ table {
     cursor: pointer;
     text-decoration: underline;
     white-space: nowrap;
-    outline: none;
 }
+button.link {
+    padding: 0px;
+    margin: 0px;
+    background-color: transparent;
+    border: none;
+}
+/*.link:active {
+    outline: none;
+}*/
 
 #URL-bar {
     -webkit-box-shadow: gainsboro 1px 1px 5px;
