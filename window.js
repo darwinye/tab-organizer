@@ -243,41 +243,57 @@ var fragment = document.createDocumentFragment();
 fragment.appendChild(UI.create("table", function (container) {
     container.id = "container-buttons";
 
-    container.appendChild(UI.create("button", function (button) {
-        button.id = "button-new-window";
-        button.title = "(Ctrl N)";
-        button.className = "custom";
-        button.textContent = "New Window";
-        button.tabIndex = 1;
+    container.appendChild(UI.create("td", function (element) {
+        element.appendChild(UI.create("button", function (element) {
+            element.id = "button-new-window";
+            element.title = "(Ctrl N)";
+            element.className = "custom";
+            element.textContent = "New Window";
+            element.tabIndex = 1;
 
-        button.addEventListener("click", function (event) {
-            Platform.windows.create({/* url: "chrome://newtab/" */});
-        }, true);
+            element.addEventListener("click", function (event) {
+                Platform.windows.create({/* url: "chrome://newtab/" */});
+            }, true);
 
-        button.addEventListener("dragover", events.disable, true);
-        button.addEventListener("dragenter", button.focus, true);
+            element.addEventListener("dragover", events.disable, true);
+            element.addEventListener("dragenter", element.focus, true);
 
-        button.addEventListener("drop", function (event) {
-            Platform.windows.create({ url: "lib/remove.html" }, function (win) {
-                state.currentQueue.moveTabs(win.id);
-                state.currentQueue.reset();
-                delete state.currentQueue.shiftNode;
-            });
-        }, true);
+            element.addEventListener("drop", function (event) {
+                Platform.windows.create({ url: "lib/remove.html" }, function (win) {
+                    state.currentQueue.moveTabs(win.id);
+                    state.currentQueue.reset();
+                    delete state.currentQueue.shiftNode;
+                });
+            }, true);
+        }));
+
+//        element.appendChild(UI.create("span", function (element) {
+//            element.className = "separator";
+//            //element.textContent = "-";
+//        }));
+
+        element.appendChild(UI.create("a", function (element) {
+            element.href = "options.html";
+            element.className = "link";
+            element.textContent = element.target = "Options";
+            element.tabIndex = 1;
+        }));
+
+        element.appendChild(UI.create("span", function (element) {
+            element.className = "separator";
+            element.textContent = "|";
+        }));
+
+        element.appendChild(UI.create("a", function (element) {
+            element.href = "http://documentation.tab-organizer.googlecode.com/hg/Tab%20Organizer%20FAQ.html";
+            element.target = "help";
+            element.className = "link";
+            element.textContent = /*element.target = */"Help";
+            element.tabIndex = 1;
+        }));
     }));
-/*!
-    container.appendChild(UI.create("button", function (button) {
-        button.className = "custom";
-        button.textContent = "Reopen Closed Tab";
-        button.tabIndex = 1;
-    }));
 
-    container.appendChild(UI.create("button", function (button) {
-        button.className = "custom";
-        button.textContent = "Foo";
-        button.tabIndex = 1;
-    }));
-*/
+
     container.appendChild(UI.create("td", function (element) {
         element.className = "stretch";
 
@@ -374,6 +390,7 @@ fragment.appendChild(UI.create("table", function (container) {
 
                 element.appendChild(UI.create("span", function (element) {
                     element.id = "Undo-bar-button";
+                    element.className = "link";
                     element.title = "(Ctrl Z)";
                     element.textContent = "Undo";
 
@@ -402,519 +419,535 @@ fragment.appendChild(UI.create("table", function (container) {
         }));
     }));
 
-    container.appendChild(UI.create("div", function (span) {
-        span.id = "search-box";
-        //span.textContent = "Search: ";
 
-        var input = document.createElement("input");
-        input.setAttribute("results", "");
-        input.setAttribute("incremental", "");
-        input.setAttribute("placeholder", "Search");
-        //input.setAttribute("autocomplete", "on");
-        //input.setAttribute("autosave", Platform.getURL(""));
+    container.appendChild(UI.create("td", function (element) {
+        element.appendChild(UI.create("div", function (span) {
+            span.id = "search-box";
+            //span.textContent = "Search: ";
 
-        //input.setAttribute("autofocus", "");
-        //input.setAttribute("autosave", "foobarqux");
-        //input.setAttribute("accessKey", "f");
-        //input.name = "search";
-        input.title = "(Ctrl F)";
-        input.type = "search";
-        input.tabIndex = 1;
+            var input = document.createElement("input");
+            input.setAttribute("results", "");
+            input.setAttribute("incremental", "");
+            input.setAttribute("placeholder", "Search");
+            //input.setAttribute("autocomplete", "on");
+            //input.setAttribute("autosave", Platform.getURL(""));
 
-//                addEventListener("submit", function (event) {
-//                    alert();
-//                }, true);
+            //input.setAttribute("autofocus", "");
+            //input.setAttribute("autosave", "foobarqux");
+            //input.setAttribute("accessKey", "f");
+            //input.name = "search";
+            input.title = "(Ctrl F)";
+            input.type = "search";
+            input.tabIndex = 1;
 
-        var lastinput = localStorage["search.lastinput"];
-        if (typeof lastinput === "string") {
-            input.value = lastinput;
-        }
+    //                addEventListener("submit", function (event) {
+    //                    alert();
+    //                }, true);
 
-        var info = {
-            //windows: document.getElementsByClassName("window"),
-            //tabs: document.getElementsByClassName("tab"),
-            title: document.title
-        };
-
-        function search(array, flags) {
-            localStorage["search.lastinput"] = input.value;
-
-            //var self = this;
-
-            /*if (search.stop) {
-                console.warn("Stop!");
-                return;
-            }
-            search.stop = true;*/
-
-            var tabs = Array.slice(document.getElementsByClassName("tab"));
-            //var list = [];
-
-            tabs = action.search(tabs, input.value);
-
-            var list = array.filter(function (item) {
-                var children = item.tabList.children;
-                item.setAttribute("hidden", "");
-                item.removeAttribute("data-last");
-
-                Array.slice(children).forEach(function (child) {
-                    if (child.hasAttribute("data-focused")) {
-                        /*setTimeout(function () {
-                            UI.scrollTo(child, item.tabList.scroll);
-                        }, 0);*/
-                        item.selected = child;
-                    }
-                    if (tabs.indexOf(child) !== -1) {
-                        child.removeAttribute("hidden");
-                        item.removeAttribute("hidden");
-                    } else {
-                        child.setAttribute("hidden", "");
-                    }
-                });
-
-                if (!item.hasAttribute("hidden")) {
-                    //list.push(item);
-                    //var child = item.querySelector("[data-focused]");
-                    if (flags.scroll) {
-                        UI.scrollTo(item.selected, item.tabList.scroll);
-                    }
-                    return true;
-                }
-            });
-
-            if (list.length) {
-                list[list.length - 1].setAttribute("data-last", "");
+            var lastinput = localStorage["search.lastinput"];
+            if (typeof lastinput === "string") {
+                input.value = lastinput;
             }
 
-            /*var list = info.windows.length,
-                tabs = info.tabs.length;*/
-
-            var string = [ info.title, " (" ];
-
-            if (tabs.length === 1) {
-                string.push(tabs.length, " tab in ");
-            } else {
-                string.push(tabs.length, " tabs in ");
-            }
-
-            if (list.length === 1) {
-                string.push(list.length, " window)");
-            } else {
-                string.push(list.length, " windows)");
-            }
-
-            document.title = string.join("");
-
-            //search.stop = false;
-        }
-
-        state.search = function (info) {
-            console.log("Searching.");
-
-            /*if (array instanceof Array) {
-                search(array);
-            } else {*/
-            search(state.list, Object(info));
-            //}
-        };
-        //input.addEventListener("keyup", state.search, true);
-        //input.addEventListener("click", state.search, true);
-        //input.addEventListener("input", state.search, true);
-        input.addEventListener("search", function () {
-            state.search({ scroll: true });
-        }, true);
-
-        setTimeout(function () {
-            input.focus();
-            input.select();
-        }, 0);
-
-        addEventListener("keydown", function (event) {
-            if (event.which === 70 && (event.ctrlKey || event.metaKey)) {
-                if (!event.altKey && !event.shiftKey) {
-                    event.preventDefault();
-                    input.focus();
-                    input.select();
-                }
-            }
-        }, true);
-
-        span.appendChild(input);
-
-
-        span.appendChild(UI.create("ul", function (element) {
-            element.id = "search-past";
-            element.tabIndex = -1;
-
-
-            element.add = function (name, special) {
-                element.removeAttribute("hidden");
-                element.appendChild(UI.create("li", function (element) {
-                    if (special) {
-                        element.className = "special";
-                    }
-                    element.textContent = name;
-                }));
+            var info = {
+                //windows: document.getElementsByClassName("window"),
+                //tabs: document.getElementsByClassName("tab"),
+                title: document.title
             };
 
-            element.reset = function () {
-                element.setAttribute("hidden", "");
-                element.innerHTML = "";
-            };
-            element.reset();
+            function search(array, flags) {
+                localStorage["search.lastinput"] = input.value;
 
+                //var self = this;
 
-            element.addEventListener("focus", function (event) {
-                this.removeAttribute("hidden");
-                input.focus();
-            }, true);
-
-            element.addEventListener("mouseover", function (event) {
-                var query = this.querySelector("[data-selected]");
-                if (query) {
-                    query.removeAttribute("data-selected");
-                }
-                event.target.setAttribute("data-selected", "");
-            }, true);
-//            element.addEventListener("mouseout", function (event) {
-//                event.target.removeAttribute("data-selected");
-//            }, true);
-
-            element.addEventListener("click", function (event) {
-                var target = event.target;
-                if (target.localName !== "li") {
+                /*if (search.stop) {
+                    console.warn("Stop!");
                     return;
                 }
-                input.value = target.textContent;
-                input.triggerEvent("search", false, false);
+                search.stop = true;*/
 
-                element.reset();
-            }, true);
+                var tabs = Array.slice(document.getElementsByClassName("tab"));
+                //var list = [];
 
+                tabs = action.search(tabs, input.value);
 
-            input.addEventListener("blur", function () {
-                element.setAttribute("hidden", "");
-            }, true);
+                var list = array.filter(function (item) {
+                    var children = item.tabList.children;
+                    item.setAttribute("hidden", "");
+                    item.removeAttribute("data-last");
 
-//            input.addEventListener("focus", function () {
-////                if (!this.value) {
-////                    element.reset();
-////                } else if (element.children.length) {
-////                    element.removeAttribute("hidden");
-////                }
-//            }, true);
-
-
-            //delete localStorage["search.past-queries"];
-
-            var saved = Options.getObject(localStorage["search.past-queries"]);
-
-            addEventListener("unload", function () {
-                localStorage["search.past-queries"] = JSON.stringify(saved);
-            }, true);
-
-            var precoded = {
-                "i": ["inurl:", "intitle:", "is:image", "is:selected"],
-                "s": ["same:url", "same:title"],
-                "w": ["window:", "window:focused"]
-            };
-
-
-            function filter(value, info) {
-                info = Object(info);
-                value = value.toLowerCase();
-
-                var keys, letter, regexp, special;
-    //                var keys = saved[letter];//Object.keys(saved[letter]);
-                //}
-
-                element.reset();
-
-                if (info.all) {
-                    keys = [];
-
-                    Object.keys(saved).forEach(function (key) {
-                        keys = keys.concat(saved[key]);
-                    });
-                } else {
-                    letter = value[0];
-                    if (!saved[letter]) {
-                        saved[letter] = [];
-                    }
-                    keys = saved[letter];//Object.keys(saved[letter]);
-                }
-
-                if (letter === '"') {
-                    regexp = new RegExp("^" + value);
-                } else {
-                    regexp = new RegExp("^" + value, "i");
-                }
-
-                if (precoded[letter]) {
-                    special = precoded[letter];
-                } else if (info.all) {
-                    special = [];
-
-                    Object.keys(precoded).forEach(function (key) {
-                        special = special.concat(precoded[key]);
-                    });
-                }
-
-                //if (info.list) {
-                keys.sort(function (a, b) {
-                    return a.length - b.length || a.localeCompare(b);
-                });
-
-                keys.forEach(function (key) {
-//                    if (element.children.length >= 5) {
-//                        return;
-//                    }
-
-                    if (regexp.test(key)) {
-                        element.add(key);
-                    }
-                });
-
-                if (special) {
-                    var is = special.some(function (item) {
-                        return item === value;
-                    });
-
-                    if (is) {
-                        input.setAttribute("special", "");
-                    } else {
-                        input.removeAttribute("special");
-                    }
-
-                    special.forEach(function (key) {
-//                        if (element.children.length >= 5) {
-//                            return;
-//                        }
-
-                        if (info.list || regexp.test(key)) {
-                            element.add(key, true);
+                    Array.slice(children).forEach(function (child) {
+                        if (child.hasAttribute("data-focused")) {
+                            /*setTimeout(function () {
+                                UI.scrollTo(child, item.tabList.scroll);
+                            }, 0);*/
+                            item.selected = child;
+                        }
+                        if (tabs.indexOf(child) !== -1) {
+                            child.removeAttribute("hidden");
+                            item.removeAttribute("hidden");
+                        } else {
+                            child.setAttribute("hidden", "");
                         }
                     });
+
+                    if (!item.hasAttribute("hidden")) {
+                        //list.push(item);
+                        //var child = item.querySelector("[data-focused]");
+                        if (flags.scroll) {
+                            UI.scrollTo(item.selected, item.tabList.scroll);
+                        }
+                        return true;
+                    }
+                });
+
+                if (list.length) {
+                    list[list.length - 1].setAttribute("data-last", "");
                 }
-                //}
 
-//                anon.old = value;
+                /*var list = info.windows.length,
+                    tabs = info.tabs.length;*/
 
-//                if (element.children.length) {
-//                    console.log(anon.old);
-//                    var text = element.children[0].textContent;
-//                    this.value = text;
-//                    //this.setSelectionRange(anon.old.length, text.length);
-//                }
+                var string = [ info.title, " (" ];
 
-//                if (!element.children.length) {
-//                    element.setAttribute("hidden", "");
-//                }
+                if (tabs.length === 1) {
+                    string.push(tabs.length, " tab in ");
+                } else {
+                    string.push(tabs.length, " tabs in ");
+                }
+
+                if (list.length === 1) {
+                    string.push(list.length, " window)");
+                } else {
+                    string.push(list.length, " windows)");
+                }
+
+                document.title = string.join("");
+
+                //search.stop = false;
             }
 
-            input.addEventListener("click", function (event) {
-                if (event.offsetX < 20) {
-                    if (this.value) {
-                        filter(this.value);
-                    } else {
-                        filter("", { all: true });
+            state.search = function (info) {
+                console.log("Searching.");
+
+                /*if (array instanceof Array) {
+                    search(array);
+                } else {*/
+                search(state.list, Object(info));
+                //}
+            };
+            //input.addEventListener("keyup", state.search, true);
+            //input.addEventListener("click", state.search, true);
+            //input.addEventListener("input", state.search, true);
+            input.addEventListener("search", function () {
+                state.search({ scroll: true });
+            }, true);
+
+            setTimeout(function () {
+                input.focus();
+                input.select();
+            }, 0);
+
+            addEventListener("keydown", function (event) {
+                if (event.which === 70 && (event.ctrlKey || event.metaKey)) {
+                    if (!event.altKey && !event.shiftKey) {
+                        event.preventDefault();
+                        input.focus();
+                        input.select();
                     }
                 }
             }, true);
 
-            input.addEventListener("keydown", function anon(event) {
-                //console.log(event.which, event.keyIdentifier);
-                if (event.which === 38 || event.which === 40) { //* Up/Down
-                    event.preventDefault();
+            span.appendChild(input);
 
-                    var next, query = element.querySelector("[data-selected]");
 
+            span.appendChild(UI.create("ul", function (element) {
+                element.id = "search-past";
+                element.tabIndex = -1;
+
+
+                element.add = function (name, special) {
+                    element.removeAttribute("hidden");
+                    element.appendChild(UI.create("li", function (element) {
+                        if (special) {
+                            element.className = "special";
+                        }
+                        element.textContent = name;
+                    }));
+                };
+
+                element.reset = function () {
+                    element.setAttribute("hidden", "");
+                    element.innerHTML = "";
+                };
+                element.reset();
+
+
+                element.addEventListener("focus", function (event) {
+                    this.removeAttribute("hidden");
+                    input.focus();
+                }, true);
+
+                element.addEventListener("mouseover", function (event) {
+                    var query = this.querySelector("[data-selected]");
                     if (query) {
-                        next = (event.which === 38) ?
-                            query.previousSibling :
-                            query.nextSibling;
+                        query.removeAttribute("data-selected");
+                    }
+                    event.target.setAttribute("data-selected", "");
+                }, true);
+    //            element.addEventListener("mouseout", function (event) {
+    //                event.target.removeAttribute("data-selected");
+    //            }, true);
 
-                    } else if (event.which === 40) {
-                        next = element.children[0];
+                element.addEventListener("click", function (event) {
+                    var target = event.target;
+                    if (target.localName !== "li") {
+                        return;
+                    }
+                    input.value = target.textContent;
+                    input.triggerEvent("search", false, false);
+
+                    element.reset();
+                }, true);
+
+
+                input.addEventListener("blur", function () {
+                    element.setAttribute("hidden", "");
+                }, true);
+
+    //            input.addEventListener("focus", function () {
+    ////                if (!this.value) {
+    ////                    element.reset();
+    ////                } else if (element.children.length) {
+    ////                    element.removeAttribute("hidden");
+    ////                }
+    //            }, true);
+
+
+                //delete localStorage["search.past-queries"];
+
+                var saved = Options.getObject(localStorage["search.past-queries"]);
+
+                addEventListener("unload", function () {
+                    localStorage["search.past-queries"] = JSON.stringify(saved);
+                }, true);
+
+                var precoded = {
+                    "i": ["inurl:", "intitle:", "is:image", "is:selected"],
+                    "s": ["same:url", "same:title"],
+                    "w": ["window:", "window:focused"]
+                };
+
+
+                function filter(value, info) {
+                    info = Object(info);
+                    value = value.toLowerCase();
+
+                    var keys, letter, regexp, special;
+        //                var keys = saved[letter];//Object.keys(saved[letter]);
+                    //}
+
+                    element.reset();
+
+                    if (info.all) {
+                        keys = [];
+
+                        Object.keys(saved).forEach(function (key) {
+                            keys = keys.concat(saved[key]);
+                        });
+                    } else {
+                        letter = value[0];
+                        if (!saved[letter]) {
+                            saved[letter] = [];
+                        }
+                        keys = saved[letter];//Object.keys(saved[letter]);
                     }
 
-                    if (next) {
-                        next.setAttribute("data-selected", "");
-                        next.scrollIntoViewIfNeeded(false);
+                    if (letter === '"') {
+                        regexp = new RegExp("^" + value);
+                    } else {
+                        regexp = new RegExp("^" + value, "i");
+                    }
+
+                    if (precoded[letter]) {
+                        special = precoded[letter];
+                    } else if (info.all) {
+                        special = [];
+
+                        Object.keys(precoded).forEach(function (key) {
+                            special = special.concat(precoded[key]);
+                        });
+                    }
+
+                    //if (info.list) {
+                    keys.sort(function (a, b) {
+                        return a.length - b.length || a.localeCompare(b);
+                    });
+
+                    keys.forEach(function (key) {
+    //                    if (element.children.length >= 5) {
+    //                        return;
+    //                    }
+
+                        if (regexp.test(key)) {
+                            element.add(key);
+                        }
+                    });
+
+                    if (special) {
+                        var is = special.some(function (item) {
+                            return item === value;
+                        });
+
+                        if (is) {
+                            input.setAttribute("special", "");
+                        } else {
+                            input.removeAttribute("special");
+                        }
+
+                        special.forEach(function (key) {
+    //                        if (element.children.length >= 5) {
+    //                            return;
+    //                        }
+
+                            if (info.list || regexp.test(key)) {
+                                element.add(key, true);
+                            }
+                        });
+                    }
+                    //}
+
+    //                anon.old = value;
+
+    //                if (element.children.length) {
+    //                    console.log(anon.old);
+    //                    var text = element.children[0].textContent;
+    //                    this.value = text;
+    //                    //this.setSelectionRange(anon.old.length, text.length);
+    //                }
+
+    //                if (!element.children.length) {
+    //                    element.setAttribute("hidden", "");
+    //                }
+                }
+
+                input.addEventListener("click", function (event) {
+                    if (event.offsetX < 20) {
+                        if (this.value) {
+                            filter(this.value);
+                        } else {
+                            filter("", { all: true });
+                        }
+                    }
+                }, true);
+
+                input.addEventListener("keydown", function anon(event) {
+                    //console.log(event.which, event.keyIdentifier);
+                    if (event.which === 38 || event.which === 40) { //* Up/Down
+                        event.preventDefault();
+
+                        var next, query = element.querySelector("[data-selected]");
 
                         if (query) {
-                            query.removeAttribute("data-selected");
-                        }
-                    }
-                } else if (event.which === 27) { //* Escape
-                    element.reset();
-                } else if (event.which === 13) { //* Enter
-                    var query = element.querySelector("[data-selected]");
-                    if (query) {
-                        query.triggerEvent("click", false, false);
-                    }
-                } else if (event.which === 46) { //* Delete
-                    var query = element.querySelector("[data-selected]");
-                    if (query) {
-                        var index = Array.indexOf(element.children, query);
-                        //console.log(index);
-//                        var next = query.nextSibling;
-//                        if (next) {
-//                            //next.setAttribute("data-selected", "");
-////                            anon({ which: 40, preventDefault: function () {} });
-////                            var custom = document.createEvent("KeyboardEvent");
-////                            custom.initKeyboardEvent("keydown", false, false, null, "Down", 0, "");
-////                            //custom.initKeyEvent("keydown", false, false, null, false, false, false, false, 40, 0);
-////                            next.dispatchEvent(custom);
-//                            //next.setAttribute("data-selected", "");
-//                        }
-                        //console.log(next);
+                            next = (event.which === 38) ?
+                                query.previousSibling :
+                                query.nextSibling;
 
-                        var text = query.textContent;
-                        var array = saved[text[0]];
-
-                        array.remove(text);
-                        if (!array.length) {
-                            delete saved[text[0]];
-                        }
-
-                        //var old = this.value;
-                        //this.value = text;
-                        filter(this.value);
-                        //input.triggerEvent("input", false, false);
-                        //this.value = old;
-                        //query.remove();
-
-                        var next, children = element.children;
-                        if (children[index]) {
-                            next = children[index];
-                        } else if (children[index - 1]) {
-                            next = children[index - 1];
+                        } else if (event.which === 40) {
+                            next = element.children[0];
                         }
 
                         if (next) {
                             next.setAttribute("data-selected", "");
+                            next.scrollIntoViewIfNeeded(false);
+
+                            if (query) {
+                                query.removeAttribute("data-selected");
+                            }
+                        }
+                    } else if (event.which === 27) { //* Escape
+                        element.reset();
+                    } else if (event.which === 13) { //* Enter
+                        var query = element.querySelector("[data-selected]");
+                        if (query) {
+                            query.triggerEvent("click", false, false);
+                        }
+                    } else if (event.which === 46) { //* Delete
+                        var query = element.querySelector("[data-selected]");
+                        if (query) {
+                            var index = Array.indexOf(element.children, query);
+                            //console.log(index);
+    //                        var next = query.nextSibling;
+    //                        if (next) {
+    //                            //next.setAttribute("data-selected", "");
+    ////                            anon({ which: 40, preventDefault: function () {} });
+    ////                            var custom = document.createEvent("KeyboardEvent");
+    ////                            custom.initKeyboardEvent("keydown", false, false, null, "Down", 0, "");
+    ////                            //custom.initKeyEvent("keydown", false, false, null, false, false, false, false, 40, 0);
+    ////                            next.dispatchEvent(custom);
+    //                            //next.setAttribute("data-selected", "");
+    //                        }
+                            //console.log(next);
+
+                            var text = query.textContent;
+                            var array = saved[text[0]];
+
+                            array.remove(text);
+                            if (!array.length) {
+                                delete saved[text[0]];
+                            }
+
+                            //var old = this.value;
+                            //this.value = text;
+                            filter(this.value);
+                            //input.triggerEvent("input", false, false);
+                            //this.value = old;
+                            //query.remove();
+
+                            var next, children = element.children;
+                            if (children[index]) {
+                                next = children[index];
+                            } else if (children[index - 1]) {
+                                next = children[index - 1];
+                            }
+
+                            if (next) {
+                                next.setAttribute("data-selected", "");
+                            }
                         }
                     }
-                }
-            }, true);
+                }, true);
 
-            input.addEventListener("keyup", function (event) {
-                if (!element.hasAttribute("hidden")) {
-                    return;
-                }
-
-                if (event.which === 40 || event.which === 46) {
-                    if (this.value) {
-                        filter(this.value);
-                    } else {
-                        filter("", { all: true });
+                input.addEventListener("keyup", function (event) {
+                    if (!element.hasAttribute("hidden")) {
+                        return;
                     }
-                }
 
-//                element.reset();
-
-//                keys.sort(function (a, b) {
-//                    return a.length - b.length || a.localeCompare(b);
-//                });
-
-//                keys.forEach(function (item) {
-//                    if (element.children.length >= 5) {
-//                        return;
-//                    }
-//                    element.add(item);
-//                });
-            }, true);
-
-//            input.addEventListener("keydown", function () {
-//
-//            }, true);
-
-            input.addEventListener("search", function () {
-                if (!this.value || this.value.length < 2) {
-                    //element.reset();
-                    return;
-                }
-
-                var value = this.value.toLowerCase();
-
-                var letter = value[0];
-                if (!saved[letter]) {
-                    saved[letter] = [];
-                }
-                var keys = saved[letter];
-
-//                if (letter === '"') {
-//                    keys.push(value.trim());
-//                } else {
-                    keys.push(value.trim());
-//                }
-
-
-                            //if (value) {
-//                for (var i = 1; i < value.length; i += 1) {
-//                    var slice = value.slice(0, i);
-//                    if (saved[letter][slice]) {
-//                        delete saved[letter][slice];
-//                    }
-//                }
-
-//                keys.sort(function (a, b) {
-//                    return a.length - b.length || a.localeCompare(b);
-//                });
-
-                keys.sort(function (a, b) {
-                    return b.localeCompare(a);
-                    //return b.length - a.length || a.localeCompare(b);
-                });
-
-//                console.log(keys);
-//                console.log(keys.sort());
-
-                keys.forEach(function anon(key, i) {
-                    //console.log(key, value);
-//                    if (key === value) {
-//                        saved[letter].splice(i, 1);
-//                    }
-//                    console.log(key, special[letter].indexOf(key));
-                    if (precoded[letter]) {
-                        if (precoded[letter].indexOf(key) !== -1) {
-                            keys.splice(i, 1);
+                    if (event.which === 40 || event.which === 46) {
+                        if (this.value) {
+                            filter(this.value);
+                        } else {
+                            filter("", { all: true });
                         }
                     }
 
-                    if (anon.key) {
-                        //console.warn(anon.key, key, anon.key.indexOf(key));
-                        if (anon.key.indexOf(key) === 0) {
-                            keys.splice(i, 1);
-                            //delete saved[letter][key];
-                        }
+    //                element.reset();
+
+    //                keys.sort(function (a, b) {
+    //                    return a.length - b.length || a.localeCompare(b);
+    //                });
+
+    //                keys.forEach(function (item) {
+    //                    if (element.children.length >= 5) {
+    //                        return;
+    //                    }
+    //                    element.add(item);
+    //                });
+                }, true);
+
+    //            input.addEventListener("keydown", function () {
+    //
+    //            }, true);
+
+                input.addEventListener("search", function () {
+                    if (!this.value || this.value.length < 2) {
+                        //element.reset();
+                        return;
                     }
-                    anon.key = key;
-                    //console.log(anon.key, key);
-                    //var index =  || key.indexOf(value) === 0;
-//                    if (key.length > value.length) {
-//                        if (value.indexOf(key) === 0) {
-//                            delete saved[letter][key];
-//                        }
-//                    } else {
-//                        if (key.indexOf(value) === 0) {
-//                            delete saved[letter][value];
-//                        }
-//                    }
-                });
 
-                if (!keys.length) {
-                    delete saved[letter];
-                }
-            }, true);
+                    var value = this.value.toLowerCase();
 
-            input.addEventListener("input", function () {
-                //console.log("input");
-                filter(this.value);
-            }, true);
+                    var letter = value[0];
+                    if (!saved[letter]) {
+                        saved[letter] = [];
+                    }
+                    var keys = saved[letter];
+
+    //                if (letter === '"') {
+    //                    keys.push(value.trim());
+    //                } else {
+                        keys.push(value.trim());
+    //                }
+
+
+                                //if (value) {
+    //                for (var i = 1; i < value.length; i += 1) {
+    //                    var slice = value.slice(0, i);
+    //                    if (saved[letter][slice]) {
+    //                        delete saved[letter][slice];
+    //                    }
+    //                }
+
+    //                keys.sort(function (a, b) {
+    //                    return a.length - b.length || a.localeCompare(b);
+    //                });
+
+                    keys.sort(function (a, b) {
+                        return b.localeCompare(a);
+                        //return b.length - a.length || a.localeCompare(b);
+                    });
+
+    //                console.log(keys);
+    //                console.log(keys.sort());
+
+                    keys.forEach(function anon(key, i) {
+                        //console.log(key, value);
+    //                    if (key === value) {
+    //                        saved[letter].splice(i, 1);
+    //                    }
+    //                    console.log(key, special[letter].indexOf(key));
+                        if (precoded[letter]) {
+                            if (precoded[letter].indexOf(key) !== -1) {
+                                keys.splice(i, 1);
+                            }
+                        }
+
+                        if (anon.key) {
+                            //console.warn(anon.key, key, anon.key.indexOf(key));
+                            if (anon.key.indexOf(key) === 0) {
+                                keys.splice(i, 1);
+                                //delete saved[letter][key];
+                            }
+                        }
+                        anon.key = key;
+                        //console.log(anon.key, key);
+                        //var index =  || key.indexOf(value) === 0;
+    //                    if (key.length > value.length) {
+    //                        if (value.indexOf(key) === 0) {
+    //                            delete saved[letter][key];
+    //                        }
+    //                    } else {
+    //                        if (key.indexOf(value) === 0) {
+    //                            delete saved[letter][value];
+    //                        }
+    //                    }
+                    });
+
+                    if (!keys.length) {
+                        delete saved[letter];
+                    }
+                }, true);
+
+                input.addEventListener("input", function () {
+                    //console.log("input");
+                    filter(this.value);
+                }, true);
+            }));
         }));
     }));
+/*!
+    container.appendChild(UI.create("button", function (button) {
+        button.className = "custom";
+        button.textContent = "Reopen Closed Tab";
+        button.tabIndex = 1;
+    }));
+
+    container.appendChild(UI.create("button", function (button) {
+        button.className = "custom";
+        button.textContent = "Foo";
+        button.tabIndex = 1;
+    }));
+*/
 }));
 
 fragment.appendChild(UI.create("table", function (element) {
