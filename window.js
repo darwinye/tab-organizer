@@ -578,378 +578,385 @@ fragment.appendChild(UI.create("table", function (container) {
             span.appendChild(input);
 
 
-            span.appendChild(UI.create("ul", function (element) {
-                element.id = "search-past";
-                element.tabIndex = -1;
+//            span.appendChild(UI.create("div", function (element) {
+//                element.className = "stretch";
+
+                span.appendChild(UI.create("ul", function (element) {
+                    element.id = "search-past";
+                    element.tabIndex = -1;
 
 
-                element.add = function (name, special) {
-                    element.removeAttribute("hidden");
-                    element.appendChild(UI.create("li", function (element) {
+                    element.add = function (name, special) {
+                        var item = document.createElement("li");
                         if (special) {
-                            element.className = "special";
+                            item.className = "special";
                         }
-                        element.textContent = name;
-                    }));
-                };
+                        item.textContent = name;
+                        element.appendChild(item);
 
-                element.reset = function () {
-                    element.setAttribute("hidden", "");
-                    element.innerHTML = "";
-                };
-                element.reset();
+                        element.style.maxHeight = item.offsetHeight * 5 + "px";
 
+                        element.removeAttribute("hidden");
+                    };
 
-                element.addEventListener("focus", function (event) {
-                    this.removeAttribute("hidden");
-                    input.focus();
-                }, true);
-
-                element.addEventListener("mouseover", function (event) {
-                    var query = this.querySelector("[data-selected]");
-                    if (query) {
-                        query.removeAttribute("data-selected");
-                    }
-                    event.target.setAttribute("data-selected", "");
-                }, true);
-    //            element.addEventListener("mouseout", function (event) {
-    //                event.target.removeAttribute("data-selected");
-    //            }, true);
-
-                element.addEventListener("click", function (event) {
-                    var target = event.target;
-                    if (target.localName !== "li") {
-                        return;
-                    }
-                    input.value = target.textContent;
-                    input.triggerEvent("search", false, false);
-
-                    element.reset();
-                }, true);
-
-
-                input.addEventListener("blur", function () {
-                    element.setAttribute("hidden", "");
-                }, true);
-
-    //            input.addEventListener("focus", function () {
-    ////                if (!this.value) {
-    ////                    element.reset();
-    ////                } else if (element.children.length) {
-    ////                    element.removeAttribute("hidden");
-    ////                }
-    //            }, true);
-
-
-                //delete localStorage["search.past-queries"];
-
-                var saved = Options.getObject(localStorage["search.past-queries"]);
-
-                addEventListener("unload", function () {
-                    localStorage["search.past-queries"] = JSON.stringify(saved);
-                }, true);
-
-                var precoded = {
-                    "i": ["inurl:", "intitle:", "is:image", "is:selected"],
-                    "s": ["same:url", "same:title"],
-                    "w": ["window:", "window:focused"]
-                };
-
-
-                function filter(value, info) {
-                    info = Object(info);
-                    value = value.toLowerCase();
-
-                    var keys, letter, regexp, special;
-        //                var keys = saved[letter];//Object.keys(saved[letter]);
-                    //}
-
+                    element.reset = function () {
+                        element.setAttribute("hidden", "");
+                        element.innerHTML = "";
+                    };
                     element.reset();
 
-                    if (info.all) {
-                        keys = [];
 
-                        Object.keys(saved).forEach(function (key) {
-                            keys = keys.concat(saved[key]);
-                        });
-                    } else {
-                        letter = value[0];
-                        if (!saved[letter]) {
-                            saved[letter] = [];
+                    element.addEventListener("focus", function (event) {
+                        this.removeAttribute("hidden");
+                        input.focus();
+                    }, true);
+
+                    element.addEventListener("mouseover", function (event) {
+                        var query = this.querySelector("[data-selected]");
+                        if (query) {
+                            query.removeAttribute("data-selected");
                         }
-                        keys = saved[letter];//Object.keys(saved[letter]);
-                    }
+                        event.target.setAttribute("data-selected", "");
+                    }, true);
+        //            element.addEventListener("mouseout", function (event) {
+        //                event.target.removeAttribute("data-selected");
+        //            }, true);
 
-                    if (letter === '"') {
-                        regexp = new RegExp("^" + value);
-                    } else {
-                        regexp = new RegExp("^" + value, "i");
-                    }
-
-                    if (precoded[letter]) {
-                        special = precoded[letter];
-                    } else if (info.all) {
-                        special = [];
-
-                        Object.keys(precoded).forEach(function (key) {
-                            special = special.concat(precoded[key]);
-                        });
-                    }
-
-                    //if (info.list) {
-                    keys.sort(function (a, b) {
-                        return a.length - b.length || a.localeCompare(b);
-                    });
-
-                    keys.forEach(function (key) {
-    //                    if (element.children.length >= 5) {
-    //                        return;
-    //                    }
-
-                        if (regexp.test(key)) {
-                            element.add(key);
+                    element.addEventListener("click", function (event) {
+                        var target = event.target;
+                        if (target.localName !== "li") {
+                            return;
                         }
-                    });
+                        input.value = target.textContent;
+                        input.triggerEvent("search", false, false);
 
-                    if (special) {
-                        var is = special.some(function (item) {
-                            return item === value;
-                        });
+                        element.reset();
+                    }, true);
 
-                        if (is) {
-                            input.setAttribute("special", "");
+
+                    input.addEventListener("blur", function () {
+                        element.setAttribute("hidden", "");
+                    }, true);
+
+        //            input.addEventListener("focus", function () {
+        ////                if (!this.value) {
+        ////                    element.reset();
+        ////                } else if (element.children.length) {
+        ////                    element.removeAttribute("hidden");
+        ////                }
+        //            }, true);
+
+
+                    //delete localStorage["search.past-queries"];
+
+                    var saved = Options.getObject(localStorage["search.past-queries"]);
+
+                    addEventListener("unload", function () {
+                        localStorage["search.past-queries"] = JSON.stringify(saved);
+                    }, true);
+
+                    var precoded = {
+                        "i": ["inurl:", "intitle:", "is:image", "is:selected"],
+                        "s": ["same:url", "same:title"],
+                        "w": ["window:", "window:focused"]
+                    };
+
+
+                    function filter(value, info) {
+                        info = Object(info);
+                        value = value.toLowerCase();
+
+                        var keys, letter, regexp, special;
+            //                var keys = saved[letter];//Object.keys(saved[letter]);
+                        //}
+
+                        element.reset();
+
+                        if (info.all) {
+                            keys = [];
+
+                            Object.keys(saved).forEach(function (key) {
+                                keys = keys.concat(saved[key]);
+                            });
                         } else {
-                            input.removeAttribute("special");
+                            letter = value[0];
+                            if (!saved[letter]) {
+                                saved[letter] = [];
+                            }
+                            keys = saved[letter];//Object.keys(saved[letter]);
                         }
 
-                        special.forEach(function (key) {
-    //                        if (element.children.length >= 5) {
-    //                            return;
-    //                        }
+                        if (letter === '"') {
+                            regexp = new RegExp("^" + value);
+                        } else {
+                            regexp = new RegExp("^" + value, "i");
+                        }
 
-                            if (info.list || regexp.test(key)) {
-                                element.add(key, true);
+                        if (precoded[letter]) {
+                            special = precoded[letter];
+                        } else if (info.all) {
+                            special = [];
+
+                            Object.keys(precoded).forEach(function (key) {
+                                special = special.concat(precoded[key]);
+                            });
+                        }
+
+                        //if (info.list) {
+                        keys.sort(function (a, b) {
+                            return a.length - b.length || a.localeCompare(b);
+                        });
+
+                        keys.forEach(function (key) {
+        //                    if (element.children.length >= 5) {
+        //                        return;
+        //                    }
+
+                            if (regexp.test(key)) {
+                                element.add(key);
                             }
                         });
-                    }
-                    //}
 
-    //                anon.old = value;
+                        if (special) {
+                            var is = special.some(function (item) {
+                                return item === value;
+                            });
 
-    //                if (element.children.length) {
-    //                    console.log(anon.old);
-    //                    var text = element.children[0].textContent;
-    //                    this.value = text;
-    //                    //this.setSelectionRange(anon.old.length, text.length);
-    //                }
+                            if (is) {
+                                input.setAttribute("special", "");
+                            } else {
+                                input.removeAttribute("special");
+                            }
 
-    //                if (!element.children.length) {
-    //                    element.setAttribute("hidden", "");
-    //                }
-                }
+                            special.forEach(function (key) {
+        //                        if (element.children.length >= 5) {
+        //                            return;
+        //                        }
 
-                input.addEventListener("click", function (event) {
-                    if (event.offsetX < 20) {
-                        if (this.value) {
-                            filter(this.value);
-                        } else {
-                            filter("", { all: true });
+                                if (info.list || regexp.test(key)) {
+                                    element.add(key, true);
+                                }
+                            });
                         }
+                        //}
+
+        //                anon.old = value;
+
+        //                if (element.children.length) {
+        //                    console.log(anon.old);
+        //                    var text = element.children[0].textContent;
+        //                    this.value = text;
+        //                    //this.setSelectionRange(anon.old.length, text.length);
+        //                }
+
+        //                if (!element.children.length) {
+        //                    element.setAttribute("hidden", "");
+        //                }
                     }
-                }, true);
 
-                input.addEventListener("keydown", function anon(event) {
-                    //console.log(event.which, event.keyIdentifier);
-                    if (event.which === 38 || event.which === 40) { //* Up/Down
-                        event.preventDefault();
-
-                        var next, query = element.querySelector("[data-selected]");
-
-                        if (query) {
-                            next = (event.which === 38) ?
-                                query.previousSibling :
-                                query.nextSibling;
-
-                        } else if (event.which === 40) {
-                            next = element.children[0];
+                    input.addEventListener("click", function (event) {
+                        if (event.offsetX < 20) {
+                            if (this.value) {
+                                filter(this.value);
+                            } else {
+                                filter("", { all: true });
+                            }
                         }
+                    }, true);
 
-                        if (next) {
-                            next.setAttribute("data-selected", "");
-                            next.scrollIntoViewIfNeeded(false);
+                    input.addEventListener("keydown", function anon(event) {
+                        //console.log(event.which, event.keyIdentifier);
+                        if (event.which === 38 || event.which === 40) { //* Up/Down
+                            event.preventDefault();
+
+                            var next, query = element.querySelector("[data-selected]");
 
                             if (query) {
-                                query.removeAttribute("data-selected");
-                            }
-                        }
-                    } else if (event.which === 27) { //* Escape
-                        element.reset();
-                    } else if (event.which === 13) { //* Enter
-                        var query = element.querySelector("[data-selected]");
-                        if (query) {
-                            query.triggerEvent("click", false, false);
-                        }
-                    } else if (event.which === 46) { //* Delete
-                        var query = element.querySelector("[data-selected]");
-                        if (query) {
-                            var index = Array.indexOf(element.children, query);
-                            //console.log(index);
-    //                        var next = query.nextSibling;
-    //                        if (next) {
-    //                            //next.setAttribute("data-selected", "");
-    ////                            anon({ which: 40, preventDefault: function () {} });
-    ////                            var custom = document.createEvent("KeyboardEvent");
-    ////                            custom.initKeyboardEvent("keydown", false, false, null, "Down", 0, "");
-    ////                            //custom.initKeyEvent("keydown", false, false, null, false, false, false, false, 40, 0);
-    ////                            next.dispatchEvent(custom);
-    //                            //next.setAttribute("data-selected", "");
-    //                        }
-                            //console.log(next);
+                                next = (event.which === 38) ?
+                                    query.previousSibling :
+                                    query.nextSibling;
 
-                            var text = query.textContent;
-                            var array = saved[text[0]];
-
-                            array.remove(text);
-                            if (!array.length) {
-                                delete saved[text[0]];
-                            }
-
-                            //var old = this.value;
-                            //this.value = text;
-                            filter(this.value);
-                            //input.triggerEvent("input", false, false);
-                            //this.value = old;
-                            //query.remove();
-
-                            var next, children = element.children;
-                            if (children[index]) {
-                                next = children[index];
-                            } else if (children[index - 1]) {
-                                next = children[index - 1];
+                            } else if (event.which === 40) {
+                                next = element.children[0];
                             }
 
                             if (next) {
                                 next.setAttribute("data-selected", "");
+                                next.scrollIntoViewIfNeeded(false);
+
+                                if (query) {
+                                    query.removeAttribute("data-selected");
+                                }
+                            }
+                        } else if (event.which === 27) { //* Escape
+                            element.reset();
+                        } else if (event.which === 13) { //* Enter
+                            var query = element.querySelector("[data-selected]");
+                            if (query) {
+                                query.triggerEvent("click", false, false);
+                            }
+                        } else if (event.which === 46) { //* Delete
+                            var query = element.querySelector("[data-selected]");
+                            if (query) {
+                                var index = Array.indexOf(element.children, query);
+                                //console.log(index);
+        //                        var next = query.nextSibling;
+        //                        if (next) {
+        //                            //next.setAttribute("data-selected", "");
+        ////                            anon({ which: 40, preventDefault: function () {} });
+        ////                            var custom = document.createEvent("KeyboardEvent");
+        ////                            custom.initKeyboardEvent("keydown", false, false, null, "Down", 0, "");
+        ////                            //custom.initKeyEvent("keydown", false, false, null, false, false, false, false, 40, 0);
+        ////                            next.dispatchEvent(custom);
+        //                            //next.setAttribute("data-selected", "");
+        //                        }
+                                //console.log(next);
+
+                                var text = query.textContent;
+                                var array = saved[text[0]];
+
+                                array.remove(text);
+                                if (!array.length) {
+                                    delete saved[text[0]];
+                                }
+
+                                //var old = this.value;
+                                //this.value = text;
+                                filter(this.value);
+                                //input.triggerEvent("input", false, false);
+                                //this.value = old;
+                                //query.remove();
+
+                                var next, children = element.children;
+                                if (children[index]) {
+                                    next = children[index];
+                                } else if (children[index - 1]) {
+                                    next = children[index - 1];
+                                }
+
+                                if (next) {
+                                    next.setAttribute("data-selected", "");
+                                }
                             }
                         }
-                    }
-                }, true);
+                    }, true);
 
-                input.addEventListener("keyup", function (event) {
-                    if (!element.hasAttribute("hidden")) {
-                        return;
-                    }
-
-                    if (event.which === 40 || event.which === 46) {
-                        if (this.value) {
-                            filter(this.value);
-                        } else {
-                            filter("", { all: true });
+                    input.addEventListener("keyup", function (event) {
+                        if (!element.hasAttribute("hidden")) {
+                            return;
                         }
-                    }
 
-    //                element.reset();
-
-    //                keys.sort(function (a, b) {
-    //                    return a.length - b.length || a.localeCompare(b);
-    //                });
-
-    //                keys.forEach(function (item) {
-    //                    if (element.children.length >= 5) {
-    //                        return;
-    //                    }
-    //                    element.add(item);
-    //                });
-                }, true);
-
-    //            input.addEventListener("keydown", function () {
-    //
-    //            }, true);
-
-                input.addEventListener("search", function () {
-                    if (!this.value || this.value.length < 2) {
-                        //element.reset();
-                        return;
-                    }
-
-                    var value = this.value.toLowerCase();
-
-                    var letter = value[0];
-                    if (!saved[letter]) {
-                        saved[letter] = [];
-                    }
-                    var keys = saved[letter];
-
-    //                if (letter === '"') {
-    //                    keys.push(value.trim());
-    //                } else {
-                        keys.push(value.trim());
-    //                }
-
-
-                                //if (value) {
-    //                for (var i = 1; i < value.length; i += 1) {
-    //                    var slice = value.slice(0, i);
-    //                    if (saved[letter][slice]) {
-    //                        delete saved[letter][slice];
-    //                    }
-    //                }
-
-    //                keys.sort(function (a, b) {
-    //                    return a.length - b.length || a.localeCompare(b);
-    //                });
-
-                    keys.sort(function (a, b) {
-                        return b.localeCompare(a);
-                        //return b.length - a.length || a.localeCompare(b);
-                    });
-
-    //                console.log(keys);
-    //                console.log(keys.sort());
-
-                    keys.forEach(function anon(key, i) {
-                        //console.log(key, value);
-    //                    if (key === value) {
-    //                        saved[letter].splice(i, 1);
-    //                    }
-    //                    console.log(key, special[letter].indexOf(key));
-                        if (precoded[letter]) {
-                            if (precoded[letter].indexOf(key) !== -1) {
-                                keys.splice(i, 1);
+                        if (event.which === 40 || event.which === 46) {
+                            if (this.value) {
+                                filter(this.value);
+                            } else {
+                                filter("", { all: true });
                             }
                         }
 
-                        if (anon.key) {
-                            //console.warn(anon.key, key, anon.key.indexOf(key));
-                            if (anon.key.indexOf(key) === 0) {
-                                keys.splice(i, 1);
-                                //delete saved[letter][key];
-                            }
+        //                element.reset();
+
+        //                keys.sort(function (a, b) {
+        //                    return a.length - b.length || a.localeCompare(b);
+        //                });
+
+        //                keys.forEach(function (item) {
+        //                    if (element.children.length >= 5) {
+        //                        return;
+        //                    }
+        //                    element.add(item);
+        //                });
+                    }, true);
+
+        //            input.addEventListener("keydown", function () {
+        //
+        //            }, true);
+
+                    input.addEventListener("search", function () {
+                        if (!this.value || this.value.length < 2) {
+                            //element.reset();
+                            return;
                         }
-                        anon.key = key;
-                        //console.log(anon.key, key);
-                        //var index =  || key.indexOf(value) === 0;
-    //                    if (key.length > value.length) {
-    //                        if (value.indexOf(key) === 0) {
-    //                            delete saved[letter][key];
-    //                        }
-    //                    } else {
-    //                        if (key.indexOf(value) === 0) {
-    //                            delete saved[letter][value];
-    //                        }
-    //                    }
-                    });
 
-                    if (!keys.length) {
-                        delete saved[letter];
-                    }
-                }, true);
+                        var value = this.value.toLowerCase();
 
-                input.addEventListener("input", function () {
-                    //console.log("input");
-                    filter(this.value);
-                }, true);
-            }));
+                        var letter = value[0];
+                        if (!saved[letter]) {
+                            saved[letter] = [];
+                        }
+                        var keys = saved[letter];
+
+        //                if (letter === '"') {
+        //                    keys.push(value.trim());
+        //                } else {
+                            keys.push(value.trim());
+        //                }
+
+
+                                    //if (value) {
+        //                for (var i = 1; i < value.length; i += 1) {
+        //                    var slice = value.slice(0, i);
+        //                    if (saved[letter][slice]) {
+        //                        delete saved[letter][slice];
+        //                    }
+        //                }
+
+        //                keys.sort(function (a, b) {
+        //                    return a.length - b.length || a.localeCompare(b);
+        //                });
+
+                        keys.sort(function (a, b) {
+                            return b.localeCompare(a);
+                            //return b.length - a.length || a.localeCompare(b);
+                        });
+
+        //                console.log(keys);
+        //                console.log(keys.sort());
+
+                        keys.forEach(function anon(key, i) {
+                            //console.log(key, value);
+        //                    if (key === value) {
+        //                        saved[letter].splice(i, 1);
+        //                    }
+        //                    console.log(key, special[letter].indexOf(key));
+                            if (precoded[letter]) {
+                                if (precoded[letter].indexOf(key) !== -1) {
+                                    keys.splice(i, 1);
+                                }
+                            }
+
+                            if (anon.key) {
+                                //console.warn(anon.key, key, anon.key.indexOf(key));
+                                if (anon.key.indexOf(key) === 0) {
+                                    keys.splice(i, 1);
+                                    //delete saved[letter][key];
+                                }
+                            }
+                            anon.key = key;
+                            //console.log(anon.key, key);
+                            //var index =  || key.indexOf(value) === 0;
+        //                    if (key.length > value.length) {
+        //                        if (value.indexOf(key) === 0) {
+        //                            delete saved[letter][key];
+        //                        }
+        //                    } else {
+        //                        if (key.indexOf(value) === 0) {
+        //                            delete saved[letter][value];
+        //                        }
+        //                    }
+                        });
+
+                        if (!keys.length) {
+                            delete saved[letter];
+                        }
+                    }, true);
+
+                    input.addEventListener("input", function () {
+                        //console.log("input");
+                        filter(this.value);
+                    }, true);
+                }));
+//            }));
         }));
     }));
 /*!
