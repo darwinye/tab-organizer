@@ -751,6 +751,7 @@ var Window = {
                                         element.appendChild(UI.create("td", function (element) {
 
                                             element.appendChild(UI.create("input", function (element) {
+                                                element.setAttribute("spellcheck", "false");
                                                 element.className = "tab-icon-text";
                                                 element.type = "text";
                                                 element.tabIndex = -1;

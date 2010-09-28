@@ -466,6 +466,7 @@ fragment.appendChild(UI.create("table", function (container) {
             //span.textContent = "Search: ";
 
             var input = document.createElement("input");
+            input.setAttribute("spellcheck", "false");
             input.setAttribute("results", "");
             input.setAttribute("incremental", "");
             input.setAttribute("placeholder", "Search");

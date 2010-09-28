@@ -73,6 +73,107 @@
             /*global Options, UI */
 
             Options.createContainer(function (container) {
+                container.category("Theme", function (container) {
+                    container.input("dropdown-list", {
+                        option: "color.theme",
+                        text: "Window theme: ",
+                        list: [{
+                            group: "Color:",
+                            list: [{
+                                value: "Blue",
+                                text: "Blue"
+                            }, {
+                                value: "Green",
+                                text: "Green"
+                            }, {
+                                value: "Yellow",
+                                text: "Yellow"
+                            }, {
+                                value: "Orange",
+                                text: "Orange"
+                            }, {
+                                value: "Red",
+                                text: "Red"
+                            }, {
+                                value: "Pink",
+                                text: "Pink"
+                            }, {
+                                value: "Purple",
+                                text: "Purple"
+                            }]
+                        }, {
+                            group: "Grayscale:",
+                            list: [{
+                                value: "Black",
+                                text: "Black"
+                            }, {
+                                value: "Grey",
+                                text: "Grey"
+                            }, {
+                                value: "White",
+                                text: "White"
+                            }]
+                        }]
+                    });
+
+                    //container.indent(function (container) {
+                        container["DOM.Element"].appendChild(UI.create("iframe", function (element) {
+                            //element.style.border = "1px solid black";
+                            element.style.border = "none";
+                            element.style.width = "600px";
+                            element.style.height = "447px";
+                            element.style.margin = "0px";
+                            element.style.padding = "0px";
+                            element.style.marginTop = "10px";
+                            element.src = "themes/window-viewer.html";
+                        }));
+                    //});
+                    /*container.input("dropdown-list", {
+                        list: [{
+                            text: "Window"
+                        }, {
+                            group: "Normal tabs:",
+                            list: [{
+                                text: "Tab (focused)"
+                            }, {
+                                text: "Tab (selected)"
+                            }, {
+                                text: "Tab (focused + selected)"
+                            }]
+                        }, {
+                            group: "Hovered tabs:",
+                            list: [{
+                                text: "Tab (hover)"
+                            }, {
+                                text: "Tab (focused)"
+                            }, {
+                                text: "Tab (selected)"
+                            }, {
+                                text: "Tab (focused + selected)"
+                            }]
+                        }]
+                    });
+
+                    container.input("slider", {
+                        text: "Red",
+                        min: 0,
+                        max: 255
+                    });
+
+                    container.input("slider", {
+                        text: "Green",
+                        min: 0,
+                        max: 255
+                    });
+
+                    container.input("slider", {
+                        text: "Blue",
+                        min: 0,
+                        max: 255
+                    });*/
+                });
+
+
                 container.category("Keyboard", function (container) {
                     container.header("Open popup with: ");
 
@@ -204,107 +305,6 @@
                         }));
                     });
 */
-                });
-
-
-                container.category("Theme", function (container) {
-                    container.input("dropdown-list", {
-                        option: "color.theme",
-                        text: "Window theme: ",
-                        list: [{
-                            group: "Color:",
-                            list: [{
-                                value: "Blue",
-                                text: "Blue"
-                            }, {
-                                value: "Green",
-                                text: "Green"
-                            }, {
-                                value: "Yellow",
-                                text: "Yellow"
-                            }, {
-                                value: "Orange",
-                                text: "Orange"
-                            }, {
-                                value: "Red",
-                                text: "Red"
-                            }, {
-                                value: "Pink",
-                                text: "Pink"
-                            }, {
-                                value: "Purple",
-                                text: "Purple"
-                            }]
-                        }, {
-                            group: "Grayscale:",
-                            list: [{
-                                value: "Black",
-                                text: "Black"
-                            }, {
-                                value: "Grey",
-                                text: "Grey"
-                            }, {
-                                value: "White",
-                                text: "White"
-                            }]
-                        }]
-                    });
-
-                    //container.indent(function (container) {
-                        container["DOM.Element"].appendChild(UI.create("iframe", function (element) {
-                            //element.style.border = "1px solid black";
-                            element.style.border = "none";
-                            element.style.width = "600px";
-                            element.style.height = "447px";
-                            element.style.margin = "0px";
-                            element.style.padding = "0px";
-                            element.style.marginTop = "10px";
-                            element.src = "themes/window-viewer.html";
-                        }));
-                    //});
-                    /*container.input("dropdown-list", {
-                        list: [{
-                            text: "Window"
-                        }, {
-                            group: "Normal tabs:",
-                            list: [{
-                                text: "Tab (focused)"
-                            }, {
-                                text: "Tab (selected)"
-                            }, {
-                                text: "Tab (focused + selected)"
-                            }]
-                        }, {
-                            group: "Hovered tabs:",
-                            list: [{
-                                text: "Tab (hover)"
-                            }, {
-                                text: "Tab (focused)"
-                            }, {
-                                text: "Tab (selected)"
-                            }, {
-                                text: "Tab (focused + selected)"
-                            }]
-                        }]
-                    });
-
-                    container.input("slider", {
-                        text: "Red",
-                        min: 0,
-                        max: 255
-                    });
-
-                    container.input("slider", {
-                        text: "Green",
-                        min: 0,
-                        max: 255
-                    });
-
-                    container.input("slider", {
-                        text: "Blue",
-                        min: 0,
-                        max: 255
-                    });*/
                 });
 
 
