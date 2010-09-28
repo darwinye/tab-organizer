@@ -58,6 +58,12 @@ select[data-options-changed] {
     border: 1px dashed transparent;
     border-radius: 4px;
 }*/
+input[type="checkbox"] {
+    top: 1px;
+    margin-top: 2px !important;
+    margin-right: 5px !important;
+    /*margin-bottom: 5px !important;*/
+}
 input[type="checkbox"][data-options-changed] + span {
     /*outline: 1px solid mediumblue !important;
     text-decoration: under-line;*/
