@@ -552,6 +552,18 @@
                     });
                 });
 
+//                container.category("Windows", function (container) {
+//                });
+
+                container.category("Search", function (container) {
+                    container.input("text", {
+                        text: "Show ",
+                        option: "search.show-number",
+                        unit: " items in the list of past queries",
+                        width: "2em"
+                    });
+                });
+
                 container.category("Undo", function (container) {
                     container.header("Show undo bar after:");
 

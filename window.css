@@ -135,7 +135,7 @@ button.link {
 #container-buttons {
     position: fixed;
     width: 100%;
-    padding: 13px 18px 21px 24px;
+    padding: 13px 26px 21px 24px;
     margin-top: 1px;
 
     white-space: nowrap;
@@ -161,6 +161,10 @@ button.link {
     margin: 0px;
     margin-right: 12px;
 }
+
+/*#search-cell {
+    vertical-align: middle;
+}*/
 #search-box {
     /*position: fixed;
     top: 15px;
@@ -168,6 +172,7 @@ button.link {
 
     /*display: table-cell;*/
     position: relative;
+    margin-top: 2px;
     /*padding-left: 10px;*/
 
     /*text-shadow: white 0px 1px 0px;*/
@@ -200,7 +205,7 @@ button.link {
 
     /*max-height: 7.8em;*/
     padding: 0px;
-    margin: 4px 1px 0px 1px;
+    margin: 0px 1px 0px 1px;
 
     background-color: white;
     border: 1px solid dimgray;
@@ -224,6 +229,7 @@ button.link {
 input[special], #search-past > li.special {
     color: darkred;
 }
+/*#search-past > li:hover,*/
 #search-past > li[data-selected] {
     color: white;
     font-weight: bold;

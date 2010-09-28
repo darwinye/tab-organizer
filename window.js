@@ -438,6 +438,8 @@ fragment.appendChild(UI.create("table", function (container) {
 
 
     container.appendChild(UI.create("td", function (element) {
+        //element.id = "search-cell";
+
         element.appendChild(UI.create("div", function (span) {
             span.id = "search-box";
             //span.textContent = "Search: ";
@@ -594,9 +596,9 @@ fragment.appendChild(UI.create("table", function (container) {
                         item.textContent = name;
                         element.appendChild(item);
 
-                        element.style.maxHeight = item.offsetHeight * 5 + "px";
-
                         element.removeAttribute("hidden");
+
+                        element.style.maxHeight = item.offsetHeight * Options.get("search.show-number") + "px";
                     };
 
                     element.reset = function () {
@@ -618,9 +620,9 @@ fragment.appendChild(UI.create("table", function (container) {
                         }
                         event.target.setAttribute("data-selected", "");
                     }, true);
-        //            element.addEventListener("mouseout", function (event) {
-        //                event.target.removeAttribute("data-selected");
-        //            }, true);
+                    element.addEventListener("mouseout", function (event) {
+                        event.target.removeAttribute("data-selected");
+                    }, true);
 
                     element.addEventListener("click", function (event) {
                         var target = event.target;
