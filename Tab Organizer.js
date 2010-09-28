@@ -620,6 +620,10 @@ var Window = {
             container.addEventListener("keydown", function (event) {
                 var query;
 
+                if (event.target.localName === "input") {
+                    return;
+                }
+
                 if (event.which === 38 || event.which === 40) {
                     query = this.querySelector(".tab[data-focused]");
                     if (query) {
@@ -786,12 +790,14 @@ var Window = {
                                                         }
                                                     }
 
-                                                    container.tabList.scroll.focus();
+                                                    //container.tabList.scroll.focus();
                                                 }, true);
                                                 element.addEventListener("keyup", function (event) {
                                                     if (event.which === 13 || event.which === 27) {
                                                         if (event.which === 27) {
                                                             this.value = value;
+
+                                                            container.tabList.scroll.focus();
                                                             //! container.tabList.focus();
                                                         }
                                                         this.blur();

@@ -14,15 +14,36 @@ Undo.setRule("new-tab", function (info) {
     Undo.reset();
 });
 
+//addEventListener("blur", function anon(event) {
+//    //this.removeEventListener(event.type, anon, true);
+
+//    console.warn(event.type, event.target, state.focused);
+//    //event.stopPropagation();
+//}, true);
+//addEventListener("focus", function anon(event) {
+//    //this.removeEventListener(event.type, anon, true);
+
+//    console.warn(event.type, event.target, state.focused);
+//    //event.stopPropagation();
+//}, true);
+
 Undo.setRule("rename-window", function (info) {
     /*addEventListener("blur", function anon(event) {
         //this.removeEventListener(event.type, anon, true);
         event.preventDefault();
         event.stopPropagation();
     }, true);*/
+//    addEventListener("blur", function (event) {
+//        console.warn(event.type, event.target);
+//        event.stopPropagation();
+//    }, true);
+
+    //console.log(state.focused);
 
     info.node.value = info.value;
+    //info.node.focus();
     info.node.select();
+    //info.node.select();
     //info.focus.focus();
     Undo.reset();
 });
@@ -418,10 +439,10 @@ fragment.appendChild(UI.create("table", function (container) {
                     element.addEventListener("click", undo, true);
 
                     addEventListener("keyup", function (event) {
-                        var target = event.target;
-                        if (target.localName === "input" && target.type === "text") {
-                            return;
-                        }
+//                        var target = event.target;
+//                        if (target.localName === "input" && target.type === "text") {
+//                            return;
+//                        }
 
                         if (event.which === 90) {
                             if (event.ctrlKey || event.metaKey) {
