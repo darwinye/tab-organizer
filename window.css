@@ -17,9 +17,6 @@ body {
     cursor: default;
     outline: none !important;
 }
-[hidden] {
-    display: none !important;
-}
 [data-selected] {
     outline: 5px auto -webkit-focus-ring-color;
 }

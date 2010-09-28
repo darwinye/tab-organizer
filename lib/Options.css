@@ -1,4 +1,8 @@
 @charset "UTF-8";
+[hidden] {
+    display: none !important;
+}
+
 button.custom {
     -webkit-box-shadow: rgba(0, 0, 0, 0.1) 1px 2px 4px;
 
@@ -66,6 +70,27 @@ input[type="checkbox"][data-options-changed] + span {
     display: inline-block;
 }
 
+#Options-tooltip, #Options-root {
+    font: menu;
+    font-size: 14px;
+    text-align: center;
+}
+#Options-tooltip {
+    -webkit-box-shadow: gainsboro 1px 1px 5px;
+
+    position: fixed;
+    background-color: #fcfeff;
+    border: 1px solid midnightblue;
+    padding: 2px 4px;
+    z-index: 9001;
+}
+/*#Options-tooltip-prefix {
+    color: dimgray;
+}*/
+#Options-tooltip-text {
+    color: firebrick;
+}
+
 #Options-wrapper input {
     -webkit-box-shadow: lightgray 0px 0px 5px;
 
@@ -110,10 +135,6 @@ input[type="checkbox"][data-options-changed] + span {
     left: 0px;
     width: 100%;
     height: 100%;
-
-    font: menu;
-    font-size: 14px;
-    text-align: center;
 
     background: #6BACCF repeat-x top left;
     background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(rgba(0, 0, 0, 0.1)), to(transparent));
