@@ -716,6 +716,23 @@ var Window = {
                         element.appendChild(UI.create("div", function (element) {
                             element.className = "tab-icon-border";
 
+                            function invalid(event) {
+                                var box = this.getBoundingClientRect();
+                                return event.pageY > box.bottom
+                                    || !container.hasAttribute("data-selected")
+                                    || !Options.get("windows.middle-close");
+                            }
+
+                            element.addEventListener("mousedown", function (event) {
+                                if (invalid.call(this, event)) {
+                                    return;
+                                }
+
+                                if (event.button === 1) {
+                                    Platform.windows.remove(win.id);
+                                }
+                            }, true);
+
                             element.appendChild(UI.create("div", function (stack) {
                                 stack.className = "tab-icon-container";
 

@@ -552,8 +552,12 @@
                     });
                 });
 
-//                container.category("Windows", function (container) {
-//                });
+                container.category("Windows", function (container) {
+                    container.input("checkbox", {
+                        option: "windows.middle-close",
+                        text: "Middle click on a window's title to close the entire window"
+                    });
+                });
 
                 container.category("Search", function (container) {
                     container.input("text", {
