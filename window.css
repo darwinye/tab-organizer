@@ -136,7 +136,7 @@ button.link {
     margin-top: 1px;
 
     white-space: nowrap;
-    z-index: 9001;
+    z-index: 2; /** Do not go higher than 2! See issue 60 */
 
     vertical-align: top;
     /*border: none;
@@ -307,6 +307,8 @@ input[special], #search-past > li.special {
     height: 100%;
     padding-bottom: 20px;
     margin-top: -10px;
+
+    /*z-index: -1;*/
 
     border-radius: 4px;
     border-top-left-radius: 0px;
