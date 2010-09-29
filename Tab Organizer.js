@@ -1008,16 +1008,40 @@ var Window = {
 
                                                     menu.separator();
 
-                                                    menu.addItem("Re<u>l</u>oad selected", {
-                                                        keys: ["L"],
-                                                        action: function () {
-                                                            container.tabList.queue.forEach(function (item) {
-                                                                Platform.tabs.update(item.tab.id, {
-                                                                    url: item.tab.url
-                                                                });
+                                                    menu.submenu("<u>S</u>elected...", {
+                                                        keys: ["S"],
+                                                        action: function (menu) {
+                                                            menu.addItem("Re<u>l</u>oad selected", {
+                                                                keys: ["L"],
+                                                                action: function () {
+                                                                    container.tabList.queue.forEach(function (item) {
+                                                                        Platform.tabs.update(item.tab.id, {
+                                                                            url: item.tab.url
+                                                                        });
+                                                                    });
+
+                                                                    container.tabList.queue.reset();
+                                                                }
                                                             });
 
-                                                            container.tabList.queue.reset();
+                                                            //menu.separator();
+
+                                                            menu.addItem("<u>C</u>lose selected", {
+                                                                keys: ["C"],
+                                                                action: function () {
+                                                                    container.tabList.queue.forEach(function (item) {
+                                                                        Platform.tabs.remove(item.tab.id);
+                                                                    });
+                                                                    container.tabList.queue.reset();
+                                                                    delete container.tabList.queue.shiftNode;
+                                                                    /*var length = container.tabList.children.length;
+                                                                    var text = "Do you want to close " + length + " tabs?";
+
+                                                                    if (length === 1 || confirm(text)) {
+                                                                        Platform.windows.remove(win.id);
+                                                                    }*/
+                                                                }
+                                                            });
                                                         }
                                                     });
 
@@ -1028,25 +1052,6 @@ var Window = {
                                                         action: function () {
                                                             state.queues.moveAllTabs(win.id);
                                                             state.queues.resetAll();
-                                                        }
-                                                    });
-
-                                                    menu.separator();
-
-                                                    menu.addItem("<u>C</u>lose selected", {
-                                                        keys: ["C"],
-                                                        action: function () {
-                                                            container.tabList.queue.forEach(function (item) {
-                                                                Platform.tabs.remove(item.tab.id);
-                                                            });
-                                                            container.tabList.queue.reset();
-                                                            delete container.tabList.queue.shiftNode;
-                                                            /*var length = container.tabList.children.length;
-                                                            var text = "Do you want to close " + length + " tabs?";
-
-                                                            if (length === 1 || confirm(text)) {
-                                                                Platform.windows.remove(win.id);
-                                                            }*/
                                                         }
                                                     });
                                                 });
