@@ -1024,7 +1024,7 @@ var Window = {
                                                                 }
                                                             });
 
-                                                            //menu.separator();
+//                                                            menu.separator();
 
                                                             menu.addItem("<u>C</u>lose selected", {
                                                                 keys: ["C"],
@@ -1042,6 +1042,15 @@ var Window = {
                                                                     }*/
                                                                 }
                                                             });
+
+//                                                            menu.addItem("<u>C</u>lose selected");
+//                                                            menu.addItem("<u>C</u>lose selected");
+//                                                            menu.addItem("<u>C</u>lose selected");
+//                                                            menu.addItem("<u>C</u>lose selected");
+//                                                            menu.addItem("<u>C</u>lose selected");
+//                                                            menu.addItem("<u>C</u>lose selected");
+//                                                            menu.addItem("<u>C</u>lose selected");
+//                                                            menu.addItem("<u>C</u>lose selected");
                                                         }
                                                     });
 
