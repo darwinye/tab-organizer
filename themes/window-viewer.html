@@ -61,6 +61,8 @@
             table.appendChild(UI.create("td"));
 
 
+            var index = 1;
+
             function makeWindow(info) {
                 info = Object(info);
 
@@ -89,12 +91,13 @@
                                                     element.appendChild(UI.create("td", function (element) {
                                                         element.appendChild(UI.create("input", function (element) {
                                                             element.className = "tab-icon-text";
-                                                            if (info.selected) {
-                                                                element.value = "Testing";
-                                                                element.addEventListener("blur", function () {
-                                                                    this.value = "Testing";
-                                                                }, true);
-                                                            }
+//                                                            if (info.selected) {
+                                                                element.value = index; // "Example"
+//                                                                element.addEventListener("blur", function () {
+//                                                                    this.value = value;
+//                                                                }, true);
+//                                                            }
+                                                            index += 1;
                                                         }));
                                                     }));
                                                     element.appendChild(UI.create("td", function (element) {

@@ -116,11 +116,15 @@ Undo.setRule("move-tabs", function (info) {
 //            localStorage["search.lastinput"] = Options.get("search.lastinput") || "";
 //        }
 
+//delete localStorage["tabs.favorites.urls"];
+
 
 var state = {
     titles: Options.getObject(localStorage["window.titles"]),
+    favorites: Options.getObject(localStorage["tabs.favorites.urls"]),
     windows: {},
     tabs: {},
+    tabsByURL: {},
     queues: {
         moveAllTabs: function (id, index) {
             var queue = [];
@@ -176,6 +180,10 @@ var state = {
         element.style.height = "100px";
     })*/
 };
+
+addEventListener("unload", function () {
+    localStorage["tabs.favorites.urls"] = JSON.stringify(state.favorites);
+}, true);
 
 //        Options.setDefaults({
 //            titles: []
@@ -680,7 +688,7 @@ fragment.appendChild(UI.create("table", function (container) {
                     }, true);
 
                     var precoded = {
-                        "i": ["inurl:", "intitle:", "is:image", "is:selected"],
+                        "i": ["inurl:", "intitle:", "is:image", "is:favorite", "is:selected"],
                         "s": ["same:url", "same:title"],
                         "w": ["window:", "window:focused"]
                     };

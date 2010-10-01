@@ -494,12 +494,23 @@ input[special], #search-past > li.special {
     cursor: pointer;
     white-space: nowrap;
 }
-.tab-favicon {
+
+.tab-favorite {
+    display: none;
+    background-image: url(images/unfavorite.png);
+}
+.tab[data-favorited] > .tab-favorite {
+    display: table-cell;
+    background-image: url(images/favorite.png);
+}
+
+.tab-favicon, .tab-favorite {
     width: 16px;
     height: 16px;
     padding: 0px;
 }
-.tab-favicon > img {
+.tab-favicon > img,
+.tab-favorite > img {
     vertical-align: top;
 }
 .tab-text {
@@ -519,6 +530,19 @@ input[special], #search-past > li.special {
     color: white;
     font-weight: bold;
 }
+
+.tab:hover > .tab-favicon,
+.tab[data-favorited] > .tab-favicon {
+    display: none;
+}
+.tab:hover > .tab-favorite {
+    display: table-cell;
+    /*background-image: url(images/unfavorite.png);*/
+}
+/*.tab[data-favorited]:hover > .tab-favorite {
+    background-image: url(images/favorite.png);
+}*/
+
 .tab[data-focused]:hover {
     background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#edbc5d), to(#d5a03a));
     border: 1px solid #b7590d;

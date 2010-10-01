@@ -57,19 +57,19 @@
         };
 */
 
-        var user = Options.snapshot().user;
+        var config = Options.getAll();
         var code = "usage-tracking";
 
-        Object.keys(user).forEach(function (key) {
+        Object.keys(config).forEach(function (key) {
             if (key in defaults) {
                 if (Options.get(code) || key === code) {
-                    _gaq.push(['_trackEvent', key, user[key]]);
-                    //console.log("tracked -", key, user[key]);
+                    _gaq.push(['_trackEvent', key, config[key]]);
+                    //console.log("tracked -", key, config[key]);
                 } else {
-                    //console.log(true, key, user[key]);
+                    //console.log(true, key, config[key]);
                 }
             } else {
-                //console.log(false, key, user[key]);
+                //console.log(false, key, config[key]);
             }
         });
         //console.log(_gaq);

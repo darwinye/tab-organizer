@@ -10,6 +10,13 @@ var Tab = {
 
             //container.title = tab.title;
 
+            if (state.favorites[tab.url]) {
+                container.setAttribute("data-favorited", "");
+            }
+
+            state.tabsByURL[tab.url] = state.tabsByURL[tab.url] || [];
+            state.tabsByURL[tab.url].push(container);
+
             state.tabs[tab.id] = container;
             container.tab = tab;
 
@@ -419,6 +426,39 @@ var Tab = {
                             element.src = "images/blank.png";
                         }
                     }));
+                }));
+                container.appendChild(UI.create("td", function (element) {
+                    element.className = "tab-favorite";
+                    element.title = "Favorite this tab";
+
+                    element.addEventListener("click", events.stop, true);
+
+                    element.addEventListener("click", function () {
+                        if (container.hasAttribute("data-favorited")) {
+                            delete state.favorites[tab.url];
+
+                            state.tabsByURL[tab.url].forEach(function (item) {
+                                item.removeAttribute("data-favorited");
+                            });
+                        } else {
+                            state.favorites[tab.url] = true;
+
+                            state.tabsByURL[tab.url].forEach(function (item) {
+                                item.setAttribute("data-favorited", "");
+                            });
+                            //this.style.backgroundImage = "url(images/unfavorite.png)";
+                        }
+                        state.search();
+                        document.body.setAttribute("hidden", "");
+                        document.body.removeAttribute("hidden");
+                    }, true);
+
+                    /*element.appendChild(UI.create("img", function (element) {
+                        element.className = "stretch";
+                        element.setAttribute("alt", "");
+
+                        element.src = "images/favorite.png";
+                    }));*/
                 }));
             }
 
