@@ -520,7 +520,7 @@ fragment.appendChild(UI.create("table", function (container) {
 
                 tabs = action.search(tabs, input.value);
 
-                var focused;
+                var focused, scroll = [];
 
                 var list = array.filter(function (item) {
                     var children = item.tabList.children;
@@ -555,7 +555,7 @@ fragment.appendChild(UI.create("table", function (container) {
                         //list.push(item);
                         //var child = item.querySelector("[data-focused]");
                         if (flags.scroll) {
-                            UI.scrollTo(item.selected, item.tabList.scroll);
+                            scroll.push(item);
                         }
                         return true;
                     }
@@ -569,6 +569,9 @@ fragment.appendChild(UI.create("table", function (container) {
 //                    console.log("scrolling");
                     focused.setWindowFocus();
                 }
+                scroll.forEach(function (item) {
+                    UI.scrollTo(item.selected, item.tabList.scroll);
+                });
 
                 /*var list = info.windows.length,
                     tabs = info.tabs.length;*/
