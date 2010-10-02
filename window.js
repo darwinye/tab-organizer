@@ -608,11 +608,6 @@ fragment.appendChild(UI.create("table", function (container) {
                 state.search({ scroll: true });
             }, true);
 
-            setTimeout(function () {
-                input.focus();
-                input.select();
-            }, 0);
-
             addEventListener("keydown", function (event) {
                 if (event.which === 70 && (event.ctrlKey || event.metaKey)) {
                     if (!event.altKey && !event.shiftKey) {
@@ -624,6 +619,11 @@ fragment.appendChild(UI.create("table", function (container) {
             }, true);
 
             span.appendChild(input);
+
+            setTimeout(function () {
+                input.focus();
+                input.select();
+            }, 0);
 
 
 //            span.appendChild(UI.create("div", function (element) {
@@ -802,7 +802,10 @@ fragment.appendChild(UI.create("table", function (container) {
         //                }
                     }
 
-                    input.addEventListener("click", function (event) {
+                    input.addEventListener("mousedown", function (event) {
+                        if (event.button !== 0) {
+                            return;
+                        }
                         if (event.offsetX < 20) {
                             if (this.value) {
                                 filter(this.value);

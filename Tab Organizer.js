@@ -421,7 +421,9 @@ var Tab = {
                         element.setAttribute("alt", "");
 
                         if (tab.favIconUrl) {
-                            element.src = tab.favIconUrl;
+//                            element.src = tab.favIconUrl;
+                            element.src = "chrome://favicon/" + tab.url;
+//                            console.log(element.src);
                         } else {
                             element.src = "images/blank.png";
                         }

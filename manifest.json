@@ -15,6 +15,7 @@
         "default_title": "Tab Organizer"
     },
     "permissions": [
+        "chrome://favicon/",
         "tabs"
     ],
     "content_scripts": [{
