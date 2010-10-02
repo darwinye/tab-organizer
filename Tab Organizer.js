@@ -597,7 +597,7 @@ var Window = {
 
 
             function scrollTo() {
-                UI.scrollIntoView(this.tabList, document.body, 40);
+                UI.scrollIntoView(this.tabList, document.body, 41);
             }
             container.addEventListener("click", scrollTo, true);
 
@@ -861,12 +861,6 @@ var Window = {
                                                         }
                                                     }, true);
 
-                                                    var info = {
-                                                        position: menu["DOM.Element"].style.position,
-                                                        left: menu["DOM.Element"].style.left,
-                                                        top: menu["DOM.Element"].style.top
-                                                    };
-
                                                     container.addEventListener("contextmenu", function (event) {
                                                         if (event.target.localName === "input") {
                                                             return;
@@ -886,37 +880,29 @@ var Window = {
 //                                                            top: event.clientY + 7 + "px"
 //                                                        });
 
-                                                        var x = event.clientX,
-                                                            y = event.clientY;
-
-                                                        contextMenu.style.position = "fixed";
-                                                        contextMenu.style.left = x + 5 + "px";
-                                                        contextMenu.style.top = y + 7 + "px";
+//                                                        var x = event.clientX,
+//                                                            y = event.clientY;
 
                                                         //document.body.appendChild(contextMenu);
 
-                                                        menu.show(function () {
-                                                            //console.log(info);
-                                                            //style.reset();
+                                                        menu.show({
+                                                            x: event.clientX,
+                                                            y: event.clientY
+//                                                            onhide: function () {
+//                                                                //console.log(info);
+//                                                                //style.reset();
 
-                                                            contextMenu.style.position = info.position;
-                                                            contextMenu.style.left = info.left;
-                                                            contextMenu.style.top = info.top;
-//                                                            if (contextMenu.style.position !== info.position) {
-//                                                            }
-//                                                            if (contextMenu.style.left !== info.left) {
-//                                                            }
-//                                                            if (contextMenu.style.top !== info.top) {
-//                                                            }
+//    //                                                            if (contextMenu.style.position !== info.position) {
+//    //                                                            }
+//    //                                                            if (contextMenu.style.left !== info.left) {
+//    //                                                            }
+//    //                                                            if (contextMenu.style.top !== info.top) {
+//    //                                                            }
 
-                                                            //element.appendChild(contextMenu);
-                                                            //container.focus();
+//                                                                //element.appendChild(contextMenu);
+//                                                                //container.focus();
+//                                                            }
                                                         });
-
-                                                        var height = contextMenu.offsetHeight;
-                                                        if (height + y > document.documentElement.clientHeight) {
-                                                            contextMenu.style.top = y - height + "px";
-                                                        }
                                                     }, false);
 
                                                     container.addEventListener("keypress", function (event) {
@@ -1090,6 +1076,7 @@ var Window = {
 //                                                            menu.addItem("<u>C</u>lose selected");
 //                                                            menu.addItem("<u>C</u>lose selected");
 //                                                            menu.addItem("<u>C</u>lose selected");
+//                                                            menu.separator();
 //                                                            menu.addItem("<u>C</u>lose selected");
                                                         }
                                                     });
