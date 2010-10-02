@@ -1076,6 +1076,19 @@ Platform.windows.getAll({ populate: true }, function (windows) {
         }
     }, true);
 
+    Options.addEventListener("change", function (event) {
+        var location = (event.name === "tabs.close.location"),
+            display = (event.name === "tabs.close.display");
+
+        if (location || display) {
+//            console.warn("UPDATING!");
+            var query = document.querySelectorAll(".tab");
+            for (var i = 0; i < query.length; i += 1) {
+                query[i].updateButtonPositions();
+            }
+        }
+    }, true);
+
     state.saveTitles = function () {
 //                    Options.removeEventListener("change", update, true);
 

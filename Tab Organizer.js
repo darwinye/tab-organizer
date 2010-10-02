@@ -353,66 +353,11 @@ var Tab = {
                 container.addEventListener("dragover", events.disable, true);
             }, true);*/
 
-            function makeCloseButton() {
-                container.appendChild(UI.create("td", function (element) {
-                    element.className = "tab-button-close";
-                    element.title = "Close (Alt Click)";
-
-                    switch (Options.get("tabs.close.display")) {
-                    case "hover":
-//                        element.setAttribute("hidden", "");
-
-//                        container.addEventListener("mouseover", function () {
-//                            element.removeAttribute("hidden");
-//                        }, true);
-//                        container.addEventListener("mouseout", function () {
-//                            element.setAttribute("hidden", "");
-//                        }, true);
-                        element.setAttribute("data-display-hover", "");
-                        break;
-                    case "focused":
-                        if (!tab.selected) {
-                            element.setAttribute("hidden", "");
-                        }
-                        container.addEventListener("Platform-blur", function () {
-                            element.setAttribute("hidden", "");
-                        }, true);
-                        container.addEventListener("Platform-focus", function () {
-                            //var parent = container.parentNode;
-                            //var query = parent.querySelector(".tab[data-focused]");
-                            element.removeAttribute("hidden");
-                        }, true);
-//                        break;
-//                    case "every":
-//                        element.style.display = "table-cell !important";
-                    }
-
-                    //element.appendChild(UI.create("img", function (element) {
-                        //element.src = "images/button-close.png";
-                        element.draggable = true;
-
-                        //element.addEventListener("mousedown", events.stop, true);
-                        //element.addEventListener("click", events.stop, true);
-                        //element.addEventListener("mouseup", events.stop, true);
-                        element.addEventListener("dragstart", events.disable, true);
-
-                        element.addEventListener("click", function (event) {
-                            event.stopPropagation();
-                            Platform.tabs.remove(tab.id);
-                        }, true);
-
-                        /*element.appendChild(UI.create("img", function (element) {
-                            element.src = "images/button-close.png";
-
-                        }));*/
-                    //}));
-                }));
-            }
 
             var text = tab.title || tab.url;
 
-            function makeFavicon() {
-                container.appendChild(UI.create("td", function (element) {
+            var cell = {
+                favicon: UI.create("td", function (element) {
                     element.className = "tab-favicon";
                     element.title = text;
 
@@ -421,15 +366,15 @@ var Tab = {
                         element.setAttribute("alt", "");
 
                         if (tab.favIconUrl) {
-//                            element.src = tab.favIconUrl;
+    //                            element.src = tab.favIconUrl;
                             element.src = "chrome://favicon/" + tab.url;
-//                            console.log(element.src);
+    //                            console.log(element.src);
                         } else {
                             element.src = "images/blank.png";
                         }
                     }));
-                }));
-                container.appendChild(UI.create("td", function (element) {
+                }),
+                favorite: UI.create("td", function (element) {
                     element.className = "tab-favorite";
                     element.title = "Favorite this tab";
 
@@ -461,72 +406,134 @@ var Tab = {
 
                         element.src = "images/favorite.png";
                     }));*/
-                }));
-            }
+                }),
+                text: UI.create("td", function (element) {
+                    element.className = "tab-text";
+                    element.title = text;
 
-            switch (Options.get("tabs.close.location")) {
-            case "left":
-                makeCloseButton();
-                break;
-            case "right":
-                makeFavicon();
-            }
+                    element.appendChild(UI.create("span", function (span) {
+                        span.textContent = text;
 
-            container.appendChild(UI.create("td", function (element) {
-                element.className = "tab-text";
-                element.title = text;
+                        container.tabText = span;
 
-                element.appendChild(UI.create("span", function (span) {
-                    span.textContent = text;
+                        /*container.editURL = function () {
 
-                    container.tabText = span;
+                        };*/
 
-                    /*container.editURL = function () {
+                        /*! container.addEventListener("dblclick", function (event) {
+                            if (false) {
+                            //! if (event.button === 0 && container.hasAttribute("data-focused")) {
+                                container.draggable = false;
 
-                    };*/
+                                element.replaceChild(UI.create("input", function (input) {
+                                    input.className = "url-input";
+                                    input.type = "text";
 
-                    /*! container.addEventListener("dblclick", function (event) {
-                        if (false) {
-                        //! if (event.button === 0 && container.hasAttribute("data-focused")) {
-                            container.draggable = false;
+                                    input.value = tab.url;
+                                    input.tabIndex = -1;
 
-                            element.replaceChild(UI.create("input", function (input) {
-                                input.className = "url-input";
-                                input.type = "text";
-
-                                input.value = tab.url;
-                                input.tabIndex = -1;
-
-                                input.addEventListener("keyup", function (event) {
-                                    if (event.which === 13 || event.which === 27) {
-                                        if (event.which === 13) {
-                                            Tab.gotoURL(tab, this.value);
+                                    input.addEventListener("keyup", function (event) {
+                                        if (event.which === 13 || event.which === 27) {
+                                            if (event.which === 13) {
+                                                Tab.gotoURL(tab, this.value);
+                                            }
+                                            container.parentNode.focus();
                                         }
-                                        container.parentNode.focus();
-                                    }
-                                }, true);
-                                input.addEventListener("blur", function (event) {
-                                    element.replaceChild(span, input);
+                                    }, true);
+                                    input.addEventListener("blur", function (event) {
+                                        element.replaceChild(span, input);
 
-                                    container.draggable = true;
-                                }, true);
+                                        container.draggable = true;
+                                    }, true);
 
-                                setTimeout(function () {
-                                    input.select();
-                                }, 0);
-                            }), span);
-                        }
-                    }, true);*/
-                }));
-            }));
+                                    setTimeout(function () {
+                                        input.select();
+                                    }, 0);
+                                }), span);
+                            }
+                        }, true);*/
+                    }));
+                }),
+                close: UI.create("td", function (element) {
+                    element.className = "tab-button-close";
+                    element.title = "Close (Alt Click)";
 
-            switch (Options.get("tabs.close.location")) {
-            case "right":
-                makeCloseButton();
-                break;
-            case "left":
-                makeFavicon();
+                    //element.appendChild(UI.create("img", function (element) {
+                        //element.src = "images/button-close.png";
+                        element.draggable = true;
+
+                        //element.addEventListener("mousedown", events.stop, true);
+                        //element.addEventListener("click", events.stop, true);
+                        //element.addEventListener("mouseup", events.stop, true);
+                        element.addEventListener("dragstart", events.disable, true);
+
+                        element.addEventListener("click", function (event) {
+                            event.stopPropagation();
+                            Platform.tabs.remove(tab.id);
+                        }, true);
+
+                        /*element.appendChild(UI.create("img", function (element) {
+                            element.src = "images/button-close.png";
+
+                        }));*/
+                    //}));
+                })
+            };
+
+            function blur() {
+                cell.close.setAttribute("hidden", "");
             }
+            function focus() {
+                //var parent = container.parentNode;
+                //var query = parent.querySelector(".tab[data-focused]");
+                cell.close.removeAttribute("hidden");
+            }
+
+            container.updateButtonPositions = function () {
+                cell.close.removeAttribute("data-display-hover");
+                cell.close.removeAttribute("hidden");
+
+                container.removeEventListener("Platform-blur", blur, true);
+                container.removeEventListener("Platform-focus", focus, true);
+
+                switch (Options.get("tabs.close.display")) {
+                case "hover":
+//                        cell.close.setAttribute("hidden", "");
+
+//                        container.addEventListener("mouseover", function () {
+//                            cell.close.removeAttribute("hidden");
+//                        }, true);
+//                        container.addEventListener("mouseout", function () {
+//                            cell.close.setAttribute("hidden", "");
+//                        }, true);
+                    cell.close.setAttribute("data-display-hover", "");
+                    break;
+                case "focused":
+                    if (!container.hasAttribute("data-focused")) {
+                        cell.close.setAttribute("hidden", "");
+                    }
+                    container.addEventListener("Platform-blur", blur, true);
+                    container.addEventListener("Platform-focus", focus, true);
+//                        break;
+//                    case "every":
+//                        cell.close.style.display = "table-cell !important";
+                }
+
+                switch (Options.get("tabs.close.location")) {
+                case "left":
+                    container.appendChild(cell.close);
+                    container.appendChild(cell.text);
+                    container.appendChild(cell.favicon);
+                    container.appendChild(cell.favorite);
+                    break;
+                case "right":
+                    container.appendChild(cell.favicon);
+                    container.appendChild(cell.favorite);
+                    container.appendChild(cell.text);
+                    container.appendChild(cell.close);
+                }
+            };
+            container.updateButtonPositions();
         });
     },
     move: function (item, info, action) {
