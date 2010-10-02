@@ -593,13 +593,14 @@ var Window = {
             state.windows[win.id] = container;
             state.list.add(container);
 
+            container.window = win;
             container.tabIndex = -1; //! 2
 
 
             function scrollTo() {
                 UI.scrollIntoView(this.tabList, document.body, 41);
             }
-            container.addEventListener("click", scrollTo, true);
+            container.addEventListener("mouseup", scrollTo, true);
 
 
             container.select = function () {
@@ -627,14 +628,10 @@ var Window = {
 //                    container.removeAttribute("data-selected");
 //                }, true);
 
-                setTimeout(function () {
+//                setTimeout(function () {
                     scrollTo.call(container);
-                }, 0);
+//                }, 0);
             };
-
-            if (win.focused || Options.get("window.lastfocused") === win.id) {
-                container.setWindowFocus();
-            }
 
 
             container.addEventListener("blur", function (event) {

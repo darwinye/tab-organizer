@@ -520,6 +520,8 @@ fragment.appendChild(UI.create("table", function (container) {
 
                 tabs = action.search(tabs, input.value);
 
+                var focused;
+
                 var list = array.filter(function (item) {
                     var children = item.tabList.children;
                     item.setAttribute("hidden", "");
@@ -540,6 +542,15 @@ fragment.appendChild(UI.create("table", function (container) {
                         }
                     });
 
+                    if (flags.focused) {
+                        var last = Options.get("window.lastfocused");
+                        var win = item.window;
+
+                        if (win.focused || last === win.id) {
+                            focused = item;
+                        }
+                    }
+
                     if (!item.hasAttribute("hidden")) {
                         //list.push(item);
                         //var child = item.querySelector("[data-focused]");
@@ -552,6 +563,11 @@ fragment.appendChild(UI.create("table", function (container) {
 
                 if (list.length) {
                     list[list.length - 1].setAttribute("data-last", "");
+                }
+
+                if (focused) {
+//                    console.log("scrolling");
+                    focused.setWindowFocus();
                 }
 
                 /*var list = info.windows.length,
@@ -1028,43 +1044,48 @@ fragment.appendChild(UI.create("table", function (element) {
 //                Options.addEventListener("change", function () {
 //                }, true);
 //            }, 0);
-
-    Platform.windows.getAll({ populate: true }, function (windows) {
-        element.appendChild(UI.create("td"));
-
-        windows.forEach(function (win) {
-            if (win.type === "normal") {
-                element.appendChild(Window.create(win));
-            }
-        });
-        state.search({ scroll: true });
-
-        element.appendChild(UI.create("td"));
-
-        Options.addEventListener("change", function (event) {
-            if (event.name === "window.lastfocused") {
-                var item = state.windows[event.value];
-                if (item) {
-                    item.setWindowFocus();
-                    state.search();
-                }
-            }
-        }, true);
-
-        addEventListener("unload", function () {
-//                    Options.removeEventListener("change", update, true);
-
-            var list = state.list.map(function (item) {
-                return item.tabIcon.indexText.value;
-            });
-
-            localStorage["window.titles"] = JSON.stringify(list);
-        }, true);
-
-//                element.addEventListener("DOMSubtreeModified", state.update, true);
-        //element.addEventListener("DOMNodeInserted", state.update, true);
-        //element.addEventListener("DOMNodeRemoved", state.update, true);
-    });
 }));
 
 document.body.appendChild(fragment);
+
+
+Platform.windows.getAll({ populate: true }, function (windows) {
+    var element = state.windowList;
+
+    element.appendChild(UI.create("td"));
+    windows.forEach(function (win) {
+        if (win.type === "normal") {
+            element.appendChild(Window.create(win));
+        }
+    });
+    element.appendChild(UI.create("td"));
+
+    Options.addEventListener("change", function (event) {
+        if (event.name === "window.lastfocused") {
+            var item = state.windows[event.value];
+            if (item) {
+                item.setWindowFocus();
+                state.search();
+            }
+        }
+    }, true);
+
+    addEventListener("unload", function () {
+//                    Options.removeEventListener("change", update, true);
+
+        var list = state.list.map(function (item) {
+            return item.tabIcon.indexText.value;
+        });
+
+        localStorage["window.titles"] = JSON.stringify(list);
+    }, true);
+
+//                element.addEventListener("DOMSubtreeModified", state.update, true);
+    //element.addEventListener("DOMNodeInserted", state.update, true);
+    //element.addEventListener("DOMNodeRemoved", state.update, true);
+
+    state.search({ scroll: true, focused: true });
+
+//    document.body.setAttribute("hidden", "");
+//    document.body.removeAttribute("hidden");
+});
