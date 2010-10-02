@@ -1070,7 +1070,7 @@ Platform.windows.getAll({ populate: true }, function (windows) {
         }
     }, true);
 
-    addEventListener("unload", function () {
+    state.saveTitles = function () {
 //                    Options.removeEventListener("change", update, true);
 
         var list = state.list.map(function (item) {
@@ -1078,7 +1078,8 @@ Platform.windows.getAll({ populate: true }, function (windows) {
         });
 
         localStorage["window.titles"] = JSON.stringify(list);
-    }, true);
+    };
+    addEventListener("unload", state.saveTitles, true);
 
 //                element.addEventListener("DOMSubtreeModified", state.update, true);
     //element.addEventListener("DOMNodeInserted", state.update, true);
