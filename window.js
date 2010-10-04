@@ -118,10 +118,14 @@ Undo.setRule("move-tabs", function (info) {
 
 //delete localStorage["tabs.favorites.urls"];
 
+//Options.setDefault("tabs.favorites.urls", Options.getObject(localStorage["tabs.favorites.urls"]));
+
+//Options.set("tabs.favorites.urls", {});
 
 var state = {
     titles: Options.getObject(localStorage["window.titles"]),
-    favorites: Options.getObject(localStorage["tabs.favorites.urls"]),
+    //favorites: Options.getObject(localStorage["tabs.favorites.urls"]),
+    favorites: Options.get("tabs.favorites.urls"),
     windows: {},
     tabs: {},
     tabsByURL: {},
@@ -181,9 +185,31 @@ var state = {
     })*/
 };
 
-addEventListener("unload", function () {
-    localStorage["tabs.favorites.urls"] = JSON.stringify(state.favorites);
-}, true);
+state.tabsByURL.add = function (url, node) {
+    state.tabsByURL[url] = state.tabsByURL[url] || [];
+    state.tabsByURL[url].push(node);
+    state.tabsByURL.update(url);
+};
+state.tabsByURL.remove = function (url, node) {
+    state.tabsByURL[url].remove(node);
+    state.tabsByURL.update(url);
+};
+state.tabsByURL.update = function (url) {
+    if (url in state.favorites) {
+        if (state.favorites[url] !== state.tabsByURL[url].length) {
+            state.favorites[url] = state.tabsByURL[url].length;
+
+            Options.triggerEvent("change", {
+                name: "tabs.favorites.urls",
+                value: url
+            });
+        }
+    }
+};
+
+//addEventListener("unload", function () {
+//    localStorage["tabs.favorites.urls"] = JSON.stringify(state.favorites);
+//}, true);
 
 //        Options.setDefaults({
 //            titles: []
@@ -1086,6 +1112,23 @@ Platform.windows.getAll({ populate: true }, function (windows) {
             for (var i = 0; i < query.length; i += 1) {
                 query[i].updateButtonPositions();
             }
+        }
+    }, true);
+
+    Options.addEventListener("change", function (event) {
+        if (event.name === "tabs.favorites.urls") {
+            if (event.remove) {
+                state.tabsByURL[event.value].forEach(function (item) {
+                    item.removeAttribute("data-favorited");
+                });
+            } else {
+                state.tabsByURL[event.value].forEach(function (item) {
+                    item.setAttribute("data-favorited", "");
+                });
+            }
+            state.search();
+            document.body.setAttribute("hidden", "");
+            document.body.removeAttribute("hidden");
         }
     }, true);
 

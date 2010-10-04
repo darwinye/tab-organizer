@@ -45,6 +45,8 @@
         };
         Options.setDefaults(defaults);
 
+        Options.setDefault("tabs.favorites.urls", {});
+
         //Options.set("usage-tracking", true);
 
 /*
@@ -59,6 +61,8 @@
 
         var config = Options.getAll();
         var code = "usage-tracking";
+
+        //console.log(config);
 
         Object.keys(config).forEach(function (key) {
             if (key in defaults) {

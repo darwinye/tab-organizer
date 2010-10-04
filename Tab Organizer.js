@@ -14,8 +14,11 @@ var Tab = {
                 container.setAttribute("data-favorited", "");
             }
 
-            state.tabsByURL[tab.url] = state.tabsByURL[tab.url] || [];
-            state.tabsByURL[tab.url].push(container);
+            state.tabsByURL.add(tab.url, container);
+
+//            container.addEventListener("DOMNodeRemovedFromDocument", function (event) {
+//                console.log(this === event.target);
+//            }, true);
 
             state.tabs[tab.id] = container;
             container.tab = tab;
@@ -384,20 +387,22 @@ var Tab = {
                         if (container.hasAttribute("data-favorited")) {
                             delete state.favorites[tab.url];
 
-                            state.tabsByURL[tab.url].forEach(function (item) {
-                                item.removeAttribute("data-favorited");
+                            Options.triggerEvent("change", {
+                                name: "tabs.favorites.urls",
+                                value: tab.url,
+                                remove: true
                             });
                         } else {
-                            state.favorites[tab.url] = true;
+                            state.favorites[tab.url] = state.tabsByURL[tab.url].length;
 
-                            state.tabsByURL[tab.url].forEach(function (item) {
-                                item.setAttribute("data-favorited", "");
+                            Options.triggerEvent("change", {
+                                name: "tabs.favorites.urls",
+                                value: tab.url,
+                                remove: false
                             });
+                            //Options.set(, state.favorites);
                             //this.style.backgroundImage = "url(images/unfavorite.png)";
                         }
-                        state.search();
-                        document.body.setAttribute("hidden", "");
-                        document.body.removeAttribute("hidden");
                     }, true);
 
                     /*element.appendChild(UI.create("img", function (element) {

@@ -66,6 +66,7 @@
         <script src="lib/Platform.js"></script>
         <script src="lib/Options.js"></script>
         <script src="lib/UI%20Helper.js"></script>
+        <script src="lib/Global%20Helper.js"></script>
 
         <script src="lib/Analytics.js"></script>
         <script>
@@ -412,7 +413,13 @@
                                         element.style.textAlign = "center";
                                         element.style.verticalAlign = "middle";
 
-                                        element.textContent = "POPUP";
+                                        element.textContent = Options.get("popup.type").toUpperCase();
+
+                                        Options.addEventListener("change", function (event) {
+                                            if (event.name === "popup.type") {
+                                                element.textContent = event.value.toUpperCase();
+                                            }
+                                        }, true);
                                     }));
                                 }));
                             }));
@@ -552,6 +559,129 @@
                             }]
                         });
                     });
+                });
+
+                container.category("Favorites", function (container) {
+                    container["DOM.Element"].appendChild(UI.create("table", function (element) {
+                        element.style.border = "1px solid dimgray";
+
+                        var favorites = Options.get("tabs.favorites.urls");
+                        var rows = {};
+
+                        element.appendChild(UI.create("tr", function (element) {
+                            element.appendChild(UI.create("th"));
+
+                            element.appendChild(UI.create("th", function (element) {
+                                element.textContent = "URL";
+                            }));
+
+                            element.appendChild(UI.create("th", function (element) {
+                                element.textContent = "Tabs";
+                            }));
+                        }));
+
+                        function makeRow(info) {
+                            return UI.create("tr", function (container) {
+                                var tabs = document.createElement("span");
+
+                                rows[info.url] = container;
+
+                                container.update = function (info) {
+                                    if (info.tabs === 0) {
+                                        container.style.backgroundColor = "salmon";
+                                    } else {
+                                        container.style.backgroundColor = "";
+                                    }
+
+                                    tabs.textContent = info.tabs;
+                                    container.info = info;
+                                };
+                                container.update(info);
+
+
+                                container.appendChild(UI.create("td", function (element) {
+                                    element.appendChild(UI.create("input", function (element) {
+                                        element.type = "checkbox";
+                                    }));
+                                }));
+
+                                container.appendChild(UI.create("td", function (element) {
+                                    element.textContent = info.url;
+                                }));
+
+                                container.appendChild(UI.create("td", function (element) {
+                                    element.appendChild(tabs);
+                                    element.appendChild(UI.create("img", function (element) {
+                                        element.src = "images/button-close.png";
+
+                                        element.addEventListener("click", function () {
+                                            delete favorites[info.url];
+
+                                            Options.triggerEvent("change", {
+                                                name: "tabs.favorites.urls",
+                                                value: info.url,
+                                                remove: true
+                                            });
+                                        }, true);
+
+                                        function show() {
+                                            element.style.visibility = "";
+                                        }
+                                        function hide() {
+                                            element.style.visibility = "hidden !important";
+                                        }
+                                        hide();
+
+                                        container.addEventListener("mouseover", show, true);
+                                        container.addEventListener("mouseout", hide, true);
+                                    }));
+                                }));
+                            });
+                        }
+
+                        var array = [];
+
+                        Object.keys(favorites).forEach(function (key) {
+                            array.push(makeRow({ url: key, tabs: favorites[key] }));
+                        });
+
+                        function update(url, remove) {
+                            var info = { url: url, tabs: favorites[url] };
+
+                            if (remove) {
+//                                console.log(rows[url].remove);
+                                if (rows[url]) {
+                                    rows[url].remove();
+                                    array.remove(rows[url]);
+                                    delete rows[url];
+                                }
+                            } else if (rows[url]) {
+                                rows[url].update(info);
+                            } else if (url) {
+                                array.push(makeRow(info));
+                            }
+
+                            array.sort(function (a, b) {
+    //                                console.log(b.tabs, a.tabs);
+                                return a.info.tabs - b.info.tabs || a.info.url.localeCompare(b.info.url);
+                            });
+
+                            array.forEach(function (item) {
+//                                if (!rows[item.url]) {
+//                                    rows[item.url] = makeRow(item);
+//                                }
+//                                rows[item.url].update(item);
+                                element.appendChild(item);
+                            });
+                        }
+                        update();
+
+                        Options.addEventListener("change", function (event) {
+                            if (event.name === "tabs.favorites.urls") {
+                                update(event.value, event.remove);
+                            }
+                        }, true);
+                    }));
                 });
 
                 container.category("Windows", function (container) {
