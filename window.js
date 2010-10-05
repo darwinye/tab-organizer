@@ -195,15 +195,16 @@ state.tabsByURL.remove = function (url, node) {
     state.tabsByURL.update(url);
 };
 state.tabsByURL.update = function (url) {
-    if (url in state.favorites) {
-        if (state.favorites[url] !== state.tabsByURL[url].length) {
-            state.favorites[url] = state.tabsByURL[url].length;
+    if (state.favorites.has(url)) {
+        state.favorites.set(url, state.tabsByURL[url].length);
+//        if (state.favorites[url] !== state.tabsByURL[url].length) {
+//            state.favorites[url] = state.tabsByURL[url].length;
 
-            Options.triggerEvent("change", {
-                name: "tabs.favorites.urls",
-                value: url
-            });
-        }
+//            Options.triggerEvent("change", {
+//                name: "tabs.favorites.urls",
+//                value: url
+//            });
+//        }
     }
 };
 
@@ -1117,7 +1118,7 @@ Platform.windows.getAll({ populate: true }, function (windows) {
 
     Options.addEventListener("change", function (event) {
         if (event.name === "tabs.favorites.urls") {
-            if (event.remove) {
+            if (event.action === "delete") {
                 state.tabsByURL[event.value].forEach(function (item) {
                     item.removeAttribute("data-favorited");
                 });

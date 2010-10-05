@@ -10,7 +10,7 @@ var Tab = {
 
             //container.title = tab.title;
 
-            if (state.favorites[tab.url]) {
+            if (state.favorites.get(tab.url)) {
                 container.setAttribute("data-favorited", "");
             }
 
@@ -385,21 +385,23 @@ var Tab = {
 
                     element.addEventListener("click", function () {
                         if (container.hasAttribute("data-favorited")) {
-                            delete state.favorites[tab.url];
+                            state.favorites.set(tab.url, null);
+//                            delete state.favorites[tab.url];
 
-                            Options.triggerEvent("change", {
-                                name: "tabs.favorites.urls",
-                                value: tab.url,
-                                remove: true
-                            });
+//                            Options.triggerEvent("change", {
+//                                name: "tabs.favorites.urls",
+//                                value: tab.url,
+//                                remove: true
+//                            });
                         } else {
-                            state.favorites[tab.url] = state.tabsByURL[tab.url].length;
+                            state.favorites.set(tab.url, state.tabsByURL[tab.url].length);
+//                            state.favorites[tab.url] = state.tabsByURL[tab.url].length;
 
-                            Options.triggerEvent("change", {
-                                name: "tabs.favorites.urls",
-                                value: tab.url,
-                                remove: false
-                            });
+//                            Options.triggerEvent("change", {
+//                                name: "tabs.favorites.urls",
+//                                value: tab.url,
+//                                remove: false
+//                            });
                             //Options.set(, state.favorites);
                             //this.style.backgroundImage = "url(images/unfavorite.png)";
                         }

@@ -615,13 +615,14 @@
                                         element.src = "images/button-close.png";
 
                                         element.addEventListener("click", function () {
-                                            delete favorites[info.url];
+                                            favorites.set(info.url, null);
+//                                            delete favorites[info.url];
 
-                                            Options.triggerEvent("change", {
-                                                name: "tabs.favorites.urls",
-                                                value: info.url,
-                                                remove: true
-                                            });
+//                                            Options.triggerEvent("change", {
+//                                                name: "tabs.favorites.urls",
+//                                                value: info.url,
+//                                                remove: true
+//                                            });
                                         }, true);
 
                                         function show() {
@@ -641,14 +642,14 @@
 
                         var array = [];
 
-                        Object.keys(favorites).forEach(function (key) {
-                            array.push(makeRow({ url: key, tabs: favorites[key] }));
+                        Object.keys(favorites.data).forEach(function (key) {
+                            array.push(makeRow({ url: key, tabs: favorites.get(key) }));
                         });
 
-                        function update(url, remove) {
-                            var info = { url: url, tabs: favorites[url] };
+                        function update(url, action) {
+                            var info = { url: url, tabs: favorites.get(url) };
 
-                            if (remove) {
+                            if (action === "delete") {
 //                                console.log(rows[url].remove);
                                 if (rows[url]) {
                                     rows[url].remove();
@@ -678,7 +679,7 @@
 
                         Options.addEventListener("change", function (event) {
                             if (event.name === "tabs.favorites.urls") {
-                                update(event.value, event.remove);
+                                update(event.value, event.action);
                             }
                         }, true);
                     }));
