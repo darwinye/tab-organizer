@@ -67,7 +67,7 @@
         Object.keys(config).forEach(function (key) {
             if (key in defaults) {
                 if (Options.get(code) || key === code) {
-                    _gaq.push(['_trackEvent', key, config[key]]);
+                    _gaq.push(['_trackEvent', "Options", key, config[key]]);
                     //console.log("tracked -", key, config[key]);
                 } else {
                     //console.log(true, key, config[key]);
@@ -78,7 +78,7 @@
         });
         //console.log(_gaq);
 
-        //_gaq.push(['_trackEvent', "name", "value]);
+        //_gaq.push(['_trackEvent', "Options", "name", "value]);
 
         var state = {};
 

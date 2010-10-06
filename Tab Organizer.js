@@ -1049,7 +1049,7 @@ var Window = {
 
                                                     menu.submenu("<u>S</u>elected...", {
                                                         keys: ["S"],
-                                                        action: function (menu) {
+                                                        create: function (menu) {
                                                             menu.addItem("Re<u>l</u>oad selected", {
                                                                 keys: ["L"],
                                                                 action: function () {
@@ -1096,11 +1096,65 @@ var Window = {
 
                                                     menu.separator();
 
-                                                    menu.addItem("<u>M</u>ove all selected", {
+//                                                    menu.addItem("<u>M</u>ove all selected", {
+//                                                        keys: ["M"],
+//                                                        action: function () {
+//                                                            state.queues.moveAllTabs(win.id);
+//                                                            state.queues.resetAll();
+//                                                        }
+//                                                    });
+
+                                                    menu.submenu("<u>M</u>ove selected to...", {
                                                         keys: ["M"],
-                                                        action: function () {
-                                                            state.queues.moveAllTabs(win.id);
-                                                            state.queues.resetAll();
+//                                                        onhide: function (menu) {
+//                                                            menu.clear();
+//                                                        },
+                                                        onshow: function (menu) {
+                                                            menu.clear();
+
+                                                            menu.addItem("New Window", {
+                                                                action: function () {
+                                                                    Platform.windows.create({ url: "lib/remove.html" }, function (win) {
+                                                                        container.tabList.queue.moveTabs(win.id);
+                                                                        container.tabList.queue.reset();
+                                                                        delete container.tabList.queue.shiftNode;
+                                                                    });
+                                                                }
+                                                            });
+
+                                                            if (state.list.length) {
+                                                                menu.separator();
+
+                                                                state.list.forEach(function (item, i) {
+                                                                    var name = item.tabIcon.indexText.value;
+                                                                    if (item === container) {
+                                                                        name = "<strong>" + name + "</strong>";
+                                                                    }
+//                                                                    if (item === container && i > 0) {
+//                                                                        menu.separator();
+//                                                                    }
+
+                                                                    menu.addItem(name, {
+                                                                        action: function () {
+                                                                            container.tabList.queue.moveTabs(item.window.id);
+                                                                            container.tabList.queue.reset();
+                                                                            delete container.tabList.queue.shiftNode;
+                                                                        }
+                                                                    });
+
+//                                                                    if (item === container && state.list[i + 1]) {
+//                                                                        menu.separator();
+//                                                                    }
+                                                                });
+                                                            }
+
+//                                                            menu.addItem(container.tabIcon.indexText.value, {
+//                                                                action: function () {
+//                                                                    container.tabList.queue.moveTabs(win.id);
+//                                                                    container.tabList.queue.reset();
+//                                                                    delete container.tabList.queue.shiftNode;
+//                                                                }
+//                                                            });
                                                         }
                                                     });
                                                 });
