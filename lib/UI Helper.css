@@ -56,13 +56,15 @@
 
 .UI-contextMenu-item[data-disabled],
 .UI-contextMenu-submenu[data-disabled] {
-    color: #aaaaaa;
+    opacity: 0.33333333;
+    /*color: #aaaaaa;*/
     cursor: default;
 }
 
 .UI-contextMenu-submenu {
     position: relative;
     margin: 0px -3px;
+    /*margin-right: -3px;*/
     padding-left: 9px;
     padding-right: 9px;
 

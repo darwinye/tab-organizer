@@ -986,6 +986,16 @@ var Window = {
 
                                                     menu.addItem("Select <u>a</u>ll", {
                                                         keys: ["A"],
+                                                        onshow: function (menu) {
+                                                            var queue = container.tabList.queue.length;
+                                                            var tabs = container.tabList.children.length;
+
+                                                            if (queue === tabs) {
+                                                                menu.disable();
+                                                            } else {
+                                                                menu.enable();
+                                                            }
+                                                        },
                                                         action: function () {
                                                             var range = [];
 
@@ -1016,6 +1026,13 @@ var Window = {
                                                     });
                                                     menu.addItem("Select <u>n</u>one", {
                                                         keys: ["N"],
+                                                        onshow: function (menu) {
+                                                            if (container.tabList.queue.length) {
+                                                                menu.enable();
+                                                            } else {
+                                                                menu.disable();
+                                                            }
+                                                        },
                                                         action: function () {
                                                             var range = [];
 
@@ -1049,6 +1066,13 @@ var Window = {
 
                                                     menu.submenu("<u>S</u>elected...", {
                                                         keys: ["S"],
+                                                        onshow: function (menu) {
+                                                            if (container.tabList.queue.length) {
+                                                                menu.enable();
+                                                            } else {
+                                                                menu.disable();
+                                                            }
+                                                        },
                                                         create: function (menu) {
                                                             menu.addItem("Re<u>l</u>oad selected", {
                                                                 keys: ["L"],
@@ -1110,6 +1134,13 @@ var Window = {
 //                                                            menu.clear();
 //                                                        },
                                                         onshow: function (menu) {
+                                                            if (container.tabList.queue.length) {
+                                                                menu.enable();
+                                                            } else {
+                                                                menu.disable();
+                                                            }
+                                                        },
+                                                        onopen: function (menu) {
                                                             menu.clear();
 
                                                             menu.addItem("New Window", {
