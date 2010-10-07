@@ -1,5 +1,5 @@
 "use strict";
-/*global action, events, Options, Platform, state, UI, window */
+/*global action, events, Options, Platform, state, UI, Undo, window */
 
 var Tab = {
     create: function (tab) {
@@ -33,7 +33,7 @@ var Tab = {
                 //state.search();
             };
             container.queueRemove = function () {
-                var is = container.parentNode.queue.remove(container);;
+                var is = container.parentNode.queue.remove(container);
                 container.undoState.selected = is;
 
                 container.removeAttribute("data-selected");
@@ -616,7 +616,7 @@ var Window = {
 
 
             function scrollTo() {
-                UI.scrollIntoView(this.tabList, document.body, 41);
+                UI.scrollIntoView(container.tabList, document.body, 41);
             }
             container.addEventListener("mouseup", scrollTo, true);
 
@@ -647,7 +647,7 @@ var Window = {
 //                }, true);
 
 //                setTimeout(function () {
-                    scrollTo.call(container);
+                    scrollTo();
 //                }, 0);
             };
 
@@ -775,15 +775,18 @@ var Window = {
                         element.appendChild(UI.create("div", function (element) {
                             element.className = "tab-icon-border";
 
-                            function invalid(event) {
-                                var box = this.getBoundingClientRect();
-                                return event.pageY > box.bottom
-                                    || !container.hasAttribute("data-selected")
-                                    || !Options.get("windows.middle-close");
+                            function invalid(element, event) {
+                                var box = element.getBoundingClientRect();
+
+                                var height = event.pageY > box.bottom;
+                                var options = !Options.get("windows.middle-close");
+                                var selected = !container.hasAttribute("data-selected");
+
+                                return height || options || selected;
                             }
 
                             element.addEventListener("mousedown", function (event) {
-                                if (invalid.call(this, event)) {
+                                if (invalid(this, event)) {
                                     return;
                                 }
 
@@ -841,8 +844,8 @@ var Window = {
                                                                 value: value,
                                                                 node: this
                                                             });
-                                                            state.undoBar.show("You renamed the window \""/* <span style='font-variant: small-caps;'>" */
-                                                                + this.value + "\".");
+                                                            state.undoBar.show("You renamed the window \"" + /* <span style='font-variant: small-caps;'>" */
+                                                                this.value + "\".");
                                                         }
                                                     }
 
