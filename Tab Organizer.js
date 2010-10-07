@@ -181,6 +181,8 @@ var Tab = {
 
                                 if (Options.get("undo.select-tabs")) {
                                     Undo.push("select-tabs", {
+                                        queue: parent.queue,
+                                        type: "select",
                                         list: range
                                     });
 
@@ -1011,6 +1013,8 @@ var Window = {
                                                             if (Options.get("undo.select-tabs")) {
                                                                 if (range.length) {
                                                                     Undo.push("select-tabs", {
+                                                                        queue: container.tabList.queue,
+                                                                        type: "select",
                                                                         list: range
                                                                     });
 
@@ -1048,6 +1052,8 @@ var Window = {
                                                             if (Options.get("undo.select-tabs")) {
                                                                 if (range.length) {
                                                                     Undo.push("select-tabs", {
+                                                                        queue: container.tabList.queue,
+                                                                        type: "unselect",
                                                                         list: range
                                                                     });
 
