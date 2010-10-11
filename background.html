@@ -63,23 +63,35 @@
         var config = Options.getAll();
         var code = "usage-tracking";
 
+        if (Options.get(code)) {
+            _gaq.push(["_trackEvent", "Version", "number", "3.0"]);
+
+            //_gaq.push(["_trackEvent", "Version", "type", "normal"]);
+            _gaq.push(["_trackEvent", "Version", "type", "developer"]);
+        }
+
         //console.log(config);
 
         Object.keys(config).forEach(function (key) {
             if (key in defaults) {
                 if (Options.get(code) || key === code) {
-                    _gaq.push(['_trackEvent', "Options", key, config[key]]);
-                    //console.log("tracked -", key, config[key]);
-                } else {
-                    //console.log(true, key, config[key]);
+                    _gaq.push(["_trackEvent", "Options", key, config[key] + ""]);
+//                    console.log("tracked -", key, config[key] + "");
                 }
-            } else {
-                //console.log(false, key, config[key]);
+//                else {
+//                    //console.log(true, key, config[key]);
+//                }
             }
+//            else {
+//                //console.log(false, key, config[key]);
+//            }
+//            setTimeout(function () {
+//                command.next();
+//            }, 1000);
         });
         //console.log(_gaq);
 
-        //_gaq.push(['_trackEvent', "Options", "name", "value]);
+        //_gaq.push(["_trackEvent", "Options", "name", "value]);
 
         var state = {};
 
