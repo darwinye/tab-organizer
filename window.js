@@ -670,9 +670,23 @@ fragment.appendChild(UI.create("table", function (container) {
                             item.className = "special";
                         }
                         item.textContent = name;
+
+                        var close = document.createElement("img");
+                        close.className = "past-queries-close";
+                        close.src = "images/button-close.png";
+
+//                        item.addEventListener("click", function (event) {
+//                            console.log(event.target);
+//                        }, true);
+
+                        //close.setAttribute("hidden", "");
+
+                        item.appendChild(close);
                         element.appendChild(item);
 
                         element.removeAttribute("hidden");
+
+//                        console.log(item.offsetHeight);
 
                         element.style.maxHeight = item.offsetHeight * Options.get("search.show-number") + "px";
                     };
@@ -690,25 +704,30 @@ fragment.appendChild(UI.create("table", function (container) {
                     }, true);
 
                     element.addEventListener("mouseover", function (event) {
-                        var query = this.querySelector("[data-selected]");
-                        if (query) {
-                            query.removeAttribute("data-selected");
-                        }
-                        event.target.setAttribute("data-selected", "");
-                    }, true);
-                    element.addEventListener("mouseout", function (event) {
-                        event.target.removeAttribute("data-selected");
-                    }, true);
-
-                    element.addEventListener("click", function (event) {
                         var target = event.target;
                         if (target.localName !== "li") {
                             return;
                         }
-                        input.value = target.textContent;
-                        input.triggerEvent("search", false, false);
 
-                        element.reset();
+                        var query = this.querySelector("[data-selected]");
+                        if (query) {
+                            query.removeAttribute("data-selected");
+                        }
+                        target.setAttribute("data-selected", "");
+                    }, true);
+                    element.addEventListener("mouseout", function anon(event) {
+                        var target = event.target;
+                        if (target.localName === "li") {
+                            anon.element = target;
+                        }
+
+                        var related = event.relatedTarget;
+                        //console.log(event.target, related);
+                        if (related && related.className === "past-queries-close") {
+                            return;
+                        } else if (anon.element) {
+                            anon.element.removeAttribute("data-selected");
+                        }
                     }, true);
 
 
@@ -832,6 +851,41 @@ fragment.appendChild(UI.create("table", function (container) {
         //                }
                     }
 
+                    function remove(text) {
+                        var letter = text[0];
+                        var array = saved[letter];
+
+                        array.remove(text);
+                        if (!array.length) {
+                            delete saved[letter];
+                        }
+
+                        filter(input.value);
+                    }
+
+                    element.addEventListener("click", function (event) {
+                        var target = event.target;
+
+                        switch (target.localName) {
+                        case "li":
+                            input.value = target.textContent;
+                            input.triggerEvent("search", false, false);
+
+                            element.reset();
+                            break;
+                        case "img":
+                            var query = element.querySelector("[data-selected]");
+                            if (query) {
+//                                console.log(query.textContent);
+                                remove(query.textContent);
+                            }
+//                            if (target.className !== "past-queries-close") {
+//                                return;
+//                            }
+                        }
+                    }, true);
+
+
                     input.addEventListener("mousedown", function (event) {
                         if (event.button !== 0) {
                             return;
@@ -879,6 +933,8 @@ fragment.appendChild(UI.create("table", function (container) {
                         } else if (event.which === 46) { //* Delete
                             var query = element.querySelector("[data-selected]");
                             if (query) {
+                                event.preventDefault();
+
                                 var index = Array.indexOf(element.children, query);
                                 //console.log(index);
         //                        var next = query.nextSibling;
@@ -893,17 +949,11 @@ fragment.appendChild(UI.create("table", function (container) {
         //                        }
                                 //console.log(next);
 
-                                var text = query.textContent;
-                                var array = saved[text[0]];
-
-                                array.remove(text);
-                                if (!array.length) {
-                                    delete saved[text[0]];
-                                }
+                                remove(query.textContent);
 
                                 //var old = this.value;
                                 //this.value = text;
-                                filter(this.value);
+//                                filter(this.value);
                                 //input.triggerEvent("input", false, false);
                                 //this.value = old;
                                 //query.remove();

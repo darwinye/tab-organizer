@@ -236,6 +236,25 @@ input[special], #search-past > li.special {
     /*border-color: #375C89;*/
     /*outline: none;*/
 }
+#search-past .past-queries-close {
+    display: none;
+
+    padding: 4px;
+    margin: -1px;
+    margin-right: -6px;
+
+    float: right;
+    cursor: pointer;
+    /*outline: 1px solid red;*/
+}
+#search-past > li[data-selected] > .past-queries-close {
+    display: block;
+}
+/*#search-past > li[data-selected]::after {
+    float: right;
+    margin-top: 2px;
+    content: url("images/button-close.png");
+}*/
 
 #window-list {
     position: absolute;
