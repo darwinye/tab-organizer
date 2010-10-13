@@ -1150,6 +1150,7 @@ var Window = {
                                                             }
                                                         },
                                                         onopen: function (menu) {
+//                                                            console.log("onopen");
                                                             menu.clear();
 
                                                             menu.addItem("New Window", {
