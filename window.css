@@ -196,7 +196,9 @@ button.link {
     -webkit-box-shadow: dimgray 0px 2px 3px;
 
     /*position: absolute;
-    z-index: 9001;*/
+    right: 0px;
+    width: 237px;*/
+    /*z-index: 9001;*/
 
     /*width: 100%;*/
 
@@ -207,48 +209,80 @@ button.link {
     background-color: white;
     border: 1px solid dimgray;
 
-    list-style: none;
+    /*list-style: none;*/
 
     overflow-x: hidden;
     overflow-y: auto;
 
-    outline: none;
+    /*outline: none;*/
 }
 /*#search-past:empty {
     display: none;
 }*/
-#search-past > li {
+.search-past-item {
+    /*padding: 0px 6px;*/
+    /*width: 100%;*/
     padding: 1px 6px 3px;
-    /*margin: -1px;
 
+    /*white-space: nowrap;*/
+
+    /*margin: -1px;
     border: 1px solid transparent;*/
+
+    /*overflow: hidden;
+    text-overflow: ellipsis;
+    clear: both;*/
 }
-input[special], #search-past > li.special {
+.search-past-table {
+    width: 100%;
+    /*vertical-align: middle;*/
+
+    table-layout: fixed;
+}
+input[special], .search-past-item.special {
     color: darkred;
 }
 /*#search-past > li:hover,*/
-#search-past > li[data-selected] {
+.search-past-item[data-selected] {
     color: white;
-    font-weight: bold;
+    /*font-weight: bold;*/
 
     background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#99c5fb), to(#5fa0f0));
     outline: 1px solid #375C89;
     /*border-color: #375C89;*/
     /*outline: none;*/
 }
-#search-past .past-queries-close {
-    display: none;
+.search-past-item-text {
+    width: 100%;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.search-past-item-text, .search-past-item-close {
+    padding: 0px;
+}
+.search-past-item-close {
+    width: 12px;
+}
+.past-queries-close {
+    visibility: hidden;
+
+    /*display: inline;*/
 
     padding: 4px;
     margin: -1px;
+    margin-bottom: -4px;
     margin-right: -6px;
 
-    float: right;
+    vertical-align: top;
+
+    /*float: right;*/
     cursor: pointer;
+    /*clear: right;*/
     /*outline: 1px solid red;*/
 }
-#search-past > li[data-selected] > .past-queries-close {
-    display: block;
+.search-past-item[data-selected] .past-queries-close {
+    visibility: visible;
 }
 /*#search-past > li[data-selected]::after {
     float: right;

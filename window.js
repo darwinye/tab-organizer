@@ -659,87 +659,26 @@ fragment.appendChild(UI.create("table", function (container) {
 //            span.appendChild(UI.create("div", function (element) {
 //                element.className = "stretch";
 
-                span.appendChild(UI.create("ul", function (element) {
-                    element.id = "search-past";
-                    element.tabIndex = -1;
+                span.appendChild(UI.create("div", function (container) {
+                    container.id = "search-past";
+                    container.tabIndex = -1;
 
 
-                    element.add = function (name, special) {
-                        var item = document.createElement("li");
-                        if (special) {
-                            item.className = "special";
-                        }
-                        item.textContent = name;
-
-                        var close = document.createElement("img");
-                        close.className = "past-queries-close";
-                        close.src = "images/button-close.png";
-
-//                        item.addEventListener("click", function (event) {
-//                            console.log(event.target);
-//                        }, true);
-
-                        //close.setAttribute("hidden", "");
-
-                        item.appendChild(close);
-                        element.appendChild(item);
-
-                        element.removeAttribute("hidden");
-
-//                        console.log(item.offsetHeight);
-
-                        element.style.maxHeight = item.offsetHeight * Options.get("search.show-number") + "px";
-                    };
-
-                    element.reset = function () {
-                        element.setAttribute("hidden", "");
-                        element.innerHTML = "";
-                    };
-                    element.reset();
-
-
-                    element.addEventListener("focus", function (event) {
+                    container.addEventListener("focus", function (event) {
                         this.removeAttribute("hidden");
                         input.focus();
                     }, true);
 
-                    element.addEventListener("mouseover", function (event) {
-                        var target = event.target;
-                        if (target.localName !== "li") {
-                            return;
-                        }
 
-                        var query = this.querySelector("[data-selected]");
-                        if (query) {
-                            query.removeAttribute("data-selected");
-                        }
-                        target.setAttribute("data-selected", "");
-                    }, true);
-                    element.addEventListener("mouseout", function anon(event) {
-                        var target = event.target;
-                        if (target.localName === "li") {
-                            anon.element = target;
-                        }
-
-                        var related = event.relatedTarget;
-                        //console.log(event.target, related);
-                        if (related && related.className === "past-queries-close") {
-                            return;
-                        } else if (anon.element) {
-                            anon.element.removeAttribute("data-selected");
-                        }
-                    }, true);
-
-
-                    input.addEventListener("blur", function () {
-                        element.setAttribute("hidden", "");
-                    }, true);
+//                    input.addEventListener("blur", function () {
+//                        container.setAttribute("hidden", "");
+//                    }, true);
 
         //            input.addEventListener("focus", function () {
         ////                if (!this.value) {
-        ////                    element.reset();
-        ////                } else if (element.children.length) {
-        ////                    element.removeAttribute("hidden");
+        ////                    container.reset();
+        ////                } else if (container.children.length) {
+        ////                    container.removeAttribute("hidden");
         ////                }
         //            }, true);
 
@@ -767,7 +706,7 @@ fragment.appendChild(UI.create("table", function (container) {
             //                var keys = saved[letter];//Object.keys(saved[letter]);
                         //}
 
-                        element.reset();
+                        container.reset();
 
                         if (info.all) {
                             keys = [];
@@ -805,12 +744,12 @@ fragment.appendChild(UI.create("table", function (container) {
                         });
 
                         keys.forEach(function (key) {
-        //                    if (element.children.length >= 5) {
+        //                    if (container.children.length >= 5) {
         //                        return;
         //                    }
 
                             if (regexp.test(key)) {
-                                element.add(key);
+                                container.add(key);
                             }
                         });
 
@@ -826,12 +765,12 @@ fragment.appendChild(UI.create("table", function (container) {
                             }
 
                             special.forEach(function (key) {
-        //                        if (element.children.length >= 5) {
+        //                        if (container.children.length >= 5) {
         //                            return;
         //                        }
 
                                 if (info.list || regexp.test(key)) {
-                                    element.add(key, true);
+                                    container.add(key, true);
                                 }
                             });
                         }
@@ -839,15 +778,15 @@ fragment.appendChild(UI.create("table", function (container) {
 
         //                anon.old = value;
 
-        //                if (element.children.length) {
+        //                if (container.children.length) {
         //                    console.log(anon.old);
-        //                    var text = element.firstChild.textContent;
+        //                    var text = container.firstChild.textContent;
         //                    this.value = text;
         //                    //this.setSelectionRange(anon.old.length, text.length);
         //                }
 
-        //                if (!element.children.length) {
-        //                    element.setAttribute("hidden", "");
+        //                if (!container.children.length) {
+        //                    container.setAttribute("hidden", "");
         //                }
                     }
 
@@ -863,27 +802,146 @@ fragment.appendChild(UI.create("table", function (container) {
                         filter(input.value);
                     }
 
-                    element.addEventListener("click", function (event) {
+                    container.addEventListener("mouseout", function anon(event) {
                         var target = event.target;
+                        if (target.localName === "td") {
+                            anon.element = target;
+                        }
 
-                        switch (target.localName) {
-                        case "li":
-                            input.value = target.textContent;
-                            input.triggerEvent("search", false, false);
+                        var related = event.relatedTarget;
+                        //console.log(event.target, related);
+                        if (related && related.className === "past-queries-close") {
+                            return;
+                        } else if (anon.element) {
+                            anon.element.removeAttribute("data-selected");
+                        }
+                    }, true);
 
-                            element.reset();
-                            break;
-                        case "img":
-                            var query = element.querySelector("[data-selected]");
+                    container.appendChild(UI.create("div", function (element) {
+                        function mouseover(event) {
+    //                        var target = event.target;
+    //                        console.log(target.localName);
+    //                        if (target.localName !== "td") {
+    //                            return;
+    //                        }
+                            var query = container.querySelector("[data-selected]");
                             if (query) {
-//                                console.log(query.textContent);
-                                remove(query.textContent);
+                                query.removeAttribute("data-selected");
                             }
+                            this.setAttribute("data-selected", "");
+                        }
+
+                        function click(event) {
+                            switch (event.target.className) {
+                            case "past-queries-close":
+                                remove(this.text);
+                                break;
+                            default:
+                                input.value = this.text;
+                                input.triggerEvent("search", false, false);
+
+                                container.reset();
+                            }
+                        }
+
+//                        function close(event) {
+//                            var query = container.querySelector("[data-selected]");
+//                            if (query) {
+////                                console.log(query.textContent);
+//                                remove(query.textContent);
+//                            }
 //                            if (target.className !== "past-queries-close") {
 //                                return;
 //                            }
-                        }
-                    }, true);
+//                        }
+
+                        container.add = function (name, special) {
+                            var item = document.createElement("div");
+                            item.className = "search-past-item";
+                            item.text = name;
+
+//                            item.addEventListener("overflow", function () {
+//                                item.title = name;
+//                            }, true);
+
+                            if (special) {
+                                item.className += " special";
+                            }
+
+//                            item.textContent = name;
+
+                            item.addEventListener("click", click, true);
+                            item.addEventListener("mouseover", mouseover, true);
+    //                        item.addEventListener("mouseout", mouseout, true);
+
+                            var table = document.createElement("table");
+                            table.className = "search-past-table";
+
+//                            var row = document.createElement("tr");
+
+                            var text = document.createElement("td");
+                            text.className = "search-past-item-text";
+
+                            var span = document.createElement("span");
+                            span.textContent = name;
+//                            span.style.overflow = "hidden";
+//                            span.style.textOverflow = "ellipsis";
+
+                            var cell = document.createElement("td");
+                            cell.className = "search-past-item-close";
+
+                            var button = document.createElement("img");
+                            button.className = "past-queries-close";
+    //                        button.style.verticalAlign = "top";
+                            button.src = "images/button-close.png";
+
+//                            button.addEventListener("click", close, true);
+
+    //                        item.addEventListener("click", function (event) {
+    //                            console.log(event.target);
+    //                        }, true);
+
+                            //button.setAttribute("hidden", "");
+
+                            text.appendChild(span);
+                            cell.appendChild(button);
+                            table.appendChild(text);
+                            table.appendChild(cell);
+//                            table.appendChild(row);
+                            item.appendChild(table);
+
+/*                            item.appendChild(text);
+                            item.appendChild(button);
+*/
+                            element.appendChild(item);
+
+                            container.removeAttribute("hidden");
+
+    //                        console.log(item.offsetHeight);
+
+                            container.style.maxHeight = item.offsetHeight * Options.get("search.show-number") + "px";
+                        };
+
+                        container.reset = function () {
+                            container.setAttribute("hidden", "");
+                            element.innerHTML = "";
+                        };
+                        container.reset();
+                    }));
+
+//                    container.addEventListener("click", function (event) {
+//                        var target = event.target;
+
+//                        console.log(target);
+
+//                        switch (target.localName) {
+//                        case "td":
+
+//                            break;
+//                        case "img":
+
+//                        }
+//                    }, true);
 
 
                     input.addEventListener("mousedown", function (event) {
@@ -904,7 +962,7 @@ fragment.appendChild(UI.create("table", function (container) {
                         if (event.which === 38 || event.which === 40) { //* Up/Down
                             event.preventDefault();
 
-                            var next, query = element.querySelector("[data-selected]");
+                            var next, query = container.querySelector("[data-selected]");
 
                             if (query) {
                                 next = (event.which === 38) ?
@@ -912,7 +970,7 @@ fragment.appendChild(UI.create("table", function (container) {
                                     query.nextSibling;
 
                             } else if (event.which === 40) {
-                                next = element.firstChild;
+                                next = container.firstChild;
                             }
 
                             if (next) {
@@ -924,18 +982,18 @@ fragment.appendChild(UI.create("table", function (container) {
                                 }
                             }
                         } else if (event.which === 27) { //* Escape
-                            element.reset();
+                            container.reset();
                         } else if (event.which === 13) { //* Enter
-                            var query = element.querySelector("[data-selected]");
+                            var query = container.querySelector("[data-selected]");
                             if (query) {
                                 query.triggerEvent("click", false, false);
                             }
                         } else if (event.which === 46) { //* Delete
-                            var query = element.querySelector("[data-selected]");
+                            var query = container.querySelector("[data-selected]");
                             if (query) {
                                 event.preventDefault();
 
-                                var index = Array.indexOf(element.children, query);
+                                var index = Array.indexOf(container.children, query);
                                 //console.log(index);
         //                        var next = query.nextSibling;
         //                        if (next) {
@@ -958,7 +1016,7 @@ fragment.appendChild(UI.create("table", function (container) {
                                 //this.value = old;
                                 //query.remove();
 
-                                var next, children = element.children;
+                                var next, children = container.children;
                                 if (children[index]) {
                                     next = children[index];
                                 } else if (children[index - 1]) {
@@ -973,7 +1031,7 @@ fragment.appendChild(UI.create("table", function (container) {
                     }, true);
 
                     input.addEventListener("keyup", function (event) {
-                        if (!element.hasAttribute("hidden")) {
+                        if (!container.hasAttribute("hidden")) {
                             return;
                         }
 
@@ -985,17 +1043,17 @@ fragment.appendChild(UI.create("table", function (container) {
                             }
                         }
 
-        //                element.reset();
+        //                container.reset();
 
         //                keys.sort(function (a, b) {
         //                    return a.length - b.length || a.localeCompare(b);
         //                });
 
         //                keys.forEach(function (item) {
-        //                    if (element.children.length >= 5) {
+        //                    if (container.children.length >= 5) {
         //                        return;
         //                    }
-        //                    element.add(item);
+        //                    container.add(item);
         //                });
                     }, true);
 
@@ -1005,7 +1063,7 @@ fragment.appendChild(UI.create("table", function (container) {
 
                     input.addEventListener("search", function () {
                         if (!this.value || this.value.length < 2) {
-                            //element.reset();
+                            //container.reset();
                             return;
                         }
 
