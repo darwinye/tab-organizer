@@ -262,11 +262,13 @@ input[special], .search-past-item.special {
     padding: 0px;
 }
 .search-past-item-close {
+    display: none;
     width: 12px;
 }
+.search-past-item[data-selected] .search-past-item-close {
+    display: table-cell;
+}
 .past-queries-close {
-    visibility: hidden;
-
     /*display: inline;*/
 
     padding: 4px;
@@ -280,9 +282,6 @@ input[special], .search-past-item.special {
     cursor: pointer;
     /*clear: right;*/
     /*outline: 1px solid red;*/
-}
-.search-past-item[data-selected] .past-queries-close {
-    visibility: visible;
 }
 /*#search-past > li[data-selected]::after {
     float: right;

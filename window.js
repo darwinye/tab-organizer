@@ -670,14 +670,14 @@ fragment.appendChild(UI.create("table", function (container) {
                     }, true);
 
 
-//                    input.addEventListener("blur", function () {
-//                        container.setAttribute("hidden", "");
-//                    }, true);
+                    input.addEventListener("blur", function () {
+                        container.setAttribute("hidden", "");
+                    }, true);
 
         //            input.addEventListener("focus", function () {
         ////                if (!this.value) {
         ////                    container.reset();
-        ////                } else if (container.children.length) {
+        ////                } else if (container.list.children.length) {
         ////                    container.removeAttribute("hidden");
         ////                }
         //            }, true);
@@ -744,7 +744,7 @@ fragment.appendChild(UI.create("table", function (container) {
                         });
 
                         keys.forEach(function (key) {
-        //                    if (container.children.length >= 5) {
+        //                    if (container.list.children.length >= 5) {
         //                        return;
         //                    }
 
@@ -765,7 +765,7 @@ fragment.appendChild(UI.create("table", function (container) {
                             }
 
                             special.forEach(function (key) {
-        //                        if (container.children.length >= 5) {
+        //                        if (container.list.children.length >= 5) {
         //                            return;
         //                        }
 
@@ -778,14 +778,14 @@ fragment.appendChild(UI.create("table", function (container) {
 
         //                anon.old = value;
 
-        //                if (container.children.length) {
+        //                if (container.list.children.length) {
         //                    console.log(anon.old);
         //                    var text = container.firstChild.textContent;
         //                    this.value = text;
         //                    //this.setSelectionRange(anon.old.length, text.length);
         //                }
 
-        //                if (!container.children.length) {
+        //                if (!container.list.children.length) {
         //                    container.setAttribute("hidden", "");
         //                }
                     }
@@ -802,22 +802,25 @@ fragment.appendChild(UI.create("table", function (container) {
                         filter(input.value);
                     }
 
-                    container.addEventListener("mouseout", function anon(event) {
-                        var target = event.target;
-                        if (target.localName === "td") {
-                            anon.element = target;
-                        }
+//                    container.addEventListener("mouseout", function anon(event) {
+//                        var target = event.target;
+//                        console.log(target);
+//                        if (target.localName === "td") {
+//                            anon.element = target;
+//                        }
 
-                        var related = event.relatedTarget;
-                        //console.log(event.target, related);
-                        if (related && related.className === "past-queries-close") {
-                            return;
-                        } else if (anon.element) {
-                            anon.element.removeAttribute("data-selected");
-                        }
-                    }, true);
+//                        var related = event.relatedTarget;
+//                        //console.log(event.target, related);
+//                        if (related && related.className === "past-queries-close") {
+//                            return;
+//                        } else if (anon.element) {
+//                            anon.element.removeAttribute("data-selected");
+//                        }
+//                    }, true);
 
                     container.appendChild(UI.create("div", function (element) {
+                        container.list = element;
+
                         function mouseover(event) {
     //                        var target = event.target;
     //                        console.log(target.localName);
@@ -829,6 +832,9 @@ fragment.appendChild(UI.create("table", function (container) {
                                 query.removeAttribute("data-selected");
                             }
                             this.setAttribute("data-selected", "");
+                        }
+                        function mouseout(event) {
+                            this.removeAttribute("data-selected");
                         }
 
                         function click(event) {
@@ -872,6 +878,7 @@ fragment.appendChild(UI.create("table", function (container) {
 
                             item.addEventListener("click", click, true);
                             item.addEventListener("mouseover", mouseover, true);
+                            item.addEventListener("mouseout", mouseout, true);
     //                        item.addEventListener("mouseout", mouseout, true);
 
                             var table = document.createElement("table");
@@ -970,7 +977,7 @@ fragment.appendChild(UI.create("table", function (container) {
                                     query.nextSibling;
 
                             } else if (event.which === 40) {
-                                next = container.firstChild;
+                                next = container.list.firstChild;
                             }
 
                             if (next) {
@@ -993,7 +1000,8 @@ fragment.appendChild(UI.create("table", function (container) {
                             if (query) {
                                 event.preventDefault();
 
-                                var index = Array.indexOf(container.children, query);
+                                var next, children = container.list.children;
+                                var index = Array.indexOf(children, query);
                                 //console.log(index);
         //                        var next = query.nextSibling;
         //                        if (next) {
@@ -1016,7 +1024,6 @@ fragment.appendChild(UI.create("table", function (container) {
                                 //this.value = old;
                                 //query.remove();
 
-                                var next, children = container.children;
                                 if (children[index]) {
                                     next = children[index];
                                 } else if (children[index - 1]) {
@@ -1050,7 +1057,7 @@ fragment.appendChild(UI.create("table", function (container) {
         //                });
 
         //                keys.forEach(function (item) {
-        //                    if (container.children.length >= 5) {
+        //                    if (container.list.children.length >= 5) {
         //                        return;
         //                    }
         //                    container.add(item);
