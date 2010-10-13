@@ -841,7 +841,7 @@ fragment.appendChild(UI.create("table", function (container) {
 
         //                if (element.children.length) {
         //                    console.log(anon.old);
-        //                    var text = element.children[0].textContent;
+        //                    var text = element.firstChild.textContent;
         //                    this.value = text;
         //                    //this.setSelectionRange(anon.old.length, text.length);
         //                }
@@ -912,7 +912,7 @@ fragment.appendChild(UI.create("table", function (container) {
                                     query.nextSibling;
 
                             } else if (event.which === 40) {
-                                next = element.children[0];
+                                next = element.firstChild;
                             }
 
                             if (next) {
