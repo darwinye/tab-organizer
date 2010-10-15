@@ -30,6 +30,6 @@
     background-image: url('Grey-button-menu.png');
 }
 
-button.custom:active, button.custom:hover {
+button.Options-button:active, button.Options-button:hover {
     background-color: #f0f0f0 !important;
 }

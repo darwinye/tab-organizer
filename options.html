@@ -563,127 +563,310 @@
                 });
 
                 container.category("Favorites", function (container) {
-                    container["DOM.Element"].appendChild(UI.create("table", function (element) {
+                    var favorites = Options.get("tabs.favorites.urls");
+                    var array = [];
+                    var rows = {};
+
+//                    container.text("This is a list of the URLs you have added to your favorites.");
+//                    container.text("If you don't have any, it will be empty.")
+
+//                    container.space({ height: "1em" });
+
+                    container["DOM.Element"].style.display = "-webkit-box";
+                    container["DOM.Element"].style.webkitBoxOrient = "vertical";
+                    container["DOM.Element"].style.webkitBoxPack = "center";
+
+//                    container.space({ height: "7px" });
+
+                    container["DOM.Element"].appendChild(UI.create("div", function (element) {
+                        element.style.display = "-webkit-box";
+                        element.style.webkitBoxFlex = "1";
+                        element.style.webkitBoxOrient = "vertical";
+
+//                        element.style.maxHeight = "406px";
+
+                        element.style.background = "white"; //* #f8f8f8
+
                         element.style.border = "1px solid dimgray";
+                        element.style.borderRadius = "2px";
 
-                        var favorites = Options.get("tabs.favorites.urls");
-                        var rows = {};
+                        element.setAttribute("hidden", "");
 
-                        element.appendChild(UI.create("tr", function (element) {
-                            element.appendChild(UI.create("th"));
+                        setTimeout(function () {
+                            element.removeAttribute("hidden");
+                        }, 0);
 
-                            element.appendChild(UI.create("th", function (element) {
+                        var header = UI.create("div", function (element) {
+                            element.style.display = "-webkit-box";
+
+                            //element.style.position = "absolute";
+                            element.style.padding = "5px 10px 1px 4px";
+                            //element.style.padding = "5px";
+                            //element.style.paddingLeft = "4px";
+                            //element.style.paddingLeft = "25px";
+                            //element.style.paddingRight = "10px";
+                            //element.style.paddingBottom = "5px";
+
+                            //element.style.background = "gainsboro";
+                            //element.style.borderBottom = "1px dotted dimgray";
+
+                            element.style.fontWeight = "bold";
+
+                            element.appendChild(UI.create("div", function (element) {
+                                element.style.visibility = "hidden";
+
+                                element.appendChild(UI.create("input", function (element) {
+                                    element.type = "checkbox";
+                                    element.style.marginTop = "1px !important";
+                                }));
+                            }));
+
+                            element.appendChild(UI.create("div", function (element) {
                                 element.textContent = "URL";
+                                element.style.webkitBoxFlex = "1";
+                                //element.style.width = "100%";
                             }));
 
-                            element.appendChild(UI.create("th", function (element) {
+                            element.appendChild(UI.create("div", function (element) {
                                 element.textContent = "Tabs";
+//                                    element.style.paddingRight = "10px";
                             }));
-                        }));
-
-                        function makeRow(info) {
-                            return UI.create("tr", function (container) {
-                                var tabs = document.createElement("span");
-
-                                rows[info.url] = container;
-
-                                container.update = function (info) {
-                                    if (info.tabs === 0) {
-                                        container.style.backgroundColor = "salmon";
-                                    } else {
-                                        container.style.backgroundColor = "";
-                                    }
-
-                                    tabs.textContent = info.tabs;
-                                    container.info = info;
-                                };
-                                container.update(info);
-
-
-                                container.appendChild(UI.create("td", function (element) {
-                                    element.appendChild(UI.create("input", function (element) {
-                                        element.type = "checkbox";
-                                    }));
-                                }));
-
-                                container.appendChild(UI.create("td", function (element) {
-                                    element.textContent = info.url;
-                                }));
-
-                                container.appendChild(UI.create("td", function (element) {
-                                    element.appendChild(tabs);
-                                    element.appendChild(UI.create("img", function (element) {
-                                        element.src = "images/button-close.png";
-
-                                        element.addEventListener("click", function () {
-                                            favorites.set(info.url, null);
-//                                            delete favorites[info.url];
-
-//                                            Options.triggerEvent("change", {
-//                                                name: "tabs.favorites.urls",
-//                                                value: info.url,
-//                                                remove: true
-//                                            });
-                                        }, true);
-
-                                        function show() {
-                                            element.style.visibility = "";
-                                        }
-                                        function hide() {
-                                            element.style.visibility = "hidden !important";
-                                        }
-                                        hide();
-
-                                        container.addEventListener("mouseover", show, true);
-                                        container.addEventListener("mouseout", hide, true);
-                                    }));
-                                }));
-                            });
-                        }
-
-                        var array = [];
-
-                        Object.keys(favorites.data).forEach(function (key) {
-                            array.push(makeRow({ url: key, tabs: favorites.get(key) }));
                         });
 
-                        function update(url, action) {
-                            var info = { url: url, tabs: favorites.get(url) };
+                        var placeholder = UI.create("div", function (element) {
+                            element.textContent = "You haven't added any tabs to your favorites";
+                            element.style.textAlign = "center";
+                            element.style.paddingTop = "15px";
+                            //element.style.paddingLeft = "20px";
+                        });
 
-                            if (action === "delete") {
-//                                console.log(rows[url].remove);
-                                if (rows[url]) {
-                                    rows[url].remove();
-                                    array.remove(rows[url]);
-                                    delete rows[url];
+                        element.appendChild(UI.create("div", function (element) {
+                            //element.style.width = "100%";
+                            //element.style.maxHeight = "431px"; //* 436px
+
+                            //element.style.paddingLeft = "4px";
+                            //element.style.paddingRight = "10px";
+
+                            //element.style.borderSpacing = "0px 0px";
+
+                            element.style.webkitBoxFlex = "1";
+
+                            element.style.paddingBottom = "3px";
+
+                            element.style.overflowX = "hidden";
+                            element.style.overflowY = "auto";
+
+                            function makeRow(info) {
+                                return UI.create("div", function (container) {
+                                    container.style.display = "-webkit-box";
+                                    container.style.padding = "2px";
+                                    container.style.paddingLeft = "4px";
+                                    container.style.paddingRight = "10px";
+                                    //container.style.border = "1px solid black";
+
+                                    var tabs = document.createElement("div");
+                                    //tabs.style.textAlign = "right";
+
+                                    rows[info.url] = container;
+
+                                    container.update = function (info) {
+                                        if (info.tabs === 0) {
+                                            container.style.backgroundColor = "salmon";
+                                        } else {
+                                            container.style.backgroundColor = "";
+                                        }
+
+                                        tabs.textContent = info.tabs;
+                                        container.info = info;
+                                    };
+                                    container.update(info);
+
+
+                                    container.appendChild(UI.create("div", function (element) {
+                                        //element.style.paddingLeft = "4px";
+
+                                        element.appendChild(UI.create("input", function (element) {
+                                            element.type = "checkbox";
+                                            element.style.marginTop = "1px !important";
+
+                                            container.checkbox = element;
+                                        }));
+                                    }));
+
+                                    container.appendChild(UI.create("div", function (element) {
+                                        element.textContent = info.url;
+
+                                        element.style.webkitBoxFlex = "1";
+                                        //element.style.width = "100%";
+                                        element.style.overflow = "hidden";
+                                        element.style.textOverflow = "ellipsis";
+
+//                                        element.appendChild(UI.create("span", function (element) {
+
+//                                        }));
+                                    }));
+
+                                    container.appendChild(tabs);
+
+//                                    container.appendChild(UI.create("div", function (element) {
+                                        //element.style.paddingRight = "10px";
+
+
+    /*!
+                                        element.appendChild(UI.create("img", function (element) {
+                                            element.src = "images/button-close.png";
+
+                                            element.addEventListener("click", function () {
+                                                favorites.set(info.url, null);
+    //                                            delete favorites[info.url];
+
+    //                                            Options.triggerEvent("change", {
+    //                                                name: "tabs.favorites.urls",
+    //                                                value: info.url,
+    //                                                remove: true
+    //                                            });
+                                            }, true);
+
+                                            function show() {
+                                                element.style.visibility = "";
+                                            }
+                                            function hide() {
+                                                element.style.visibility = "hidden !important";
+                                            }
+                                            hide();
+
+                                            container.addEventListener("mouseover", show, true);
+                                            container.addEventListener("mouseout", hide, true);
+                                        }));
+    */
+//                                    }));
+                                });
+                            }
+
+                            element.appendChild(header);
+                            element.appendChild(placeholder);
+
+                            function updateKeys() {
+                                var keys = Object.keys(favorites.data);
+
+                                if (keys.length) {
+                                    placeholder.setAttribute("hidden", "");
+                                    header.removeAttribute("hidden");
+                                } else {
+                                    placeholder.removeAttribute("hidden");
+                                    header.setAttribute("hidden", "");
                                 }
-                            } else if (rows[url]) {
-                                rows[url].update(info);
-                            } else if (url) {
-                                array.push(makeRow(info));
+
+                                return keys;
                             }
 
-                            array.sort(function (a, b) {
-    //                                console.log(b.tabs, a.tabs);
-                                return a.info.tabs - b.info.tabs || a.info.url.localeCompare(b.info.url);
+                            var keys = updateKeys();
+
+                            keys.forEach(function (key) {
+                                array.push(makeRow({ url: key, tabs: favorites.get(key) }));
                             });
 
-                            array.forEach(function (item) {
-//                                if (!rows[item.url]) {
-//                                    rows[item.url] = makeRow(item);
-//                                }
-//                                rows[item.url].update(item);
-                                element.appendChild(item);
-                            });
-                        }
-                        update();
+                            function update(url, action) {
+                                var info = { url: url, tabs: favorites.get(url) };
 
-                        Options.addEventListener("change", function (event) {
-                            if (event.name === "tabs.favorites.urls") {
-                                update(event.value, event.action);
+                                if (action === "delete") {
+    //                                console.log(rows[url].remove);
+                                    if (rows[url]) {
+                                        rows[url].remove();
+                                        array.remove(rows[url]);
+                                        delete rows[url];
+                                    }
+                                } else if (rows[url]) {
+                                    rows[url].update(info);
+                                } else if (url) {
+                                    array.push(makeRow(info));
+                                }
+
+                                updateKeys();
+
+                                array.sort(function (a, b) {
+        //                                console.log(b.tabs, a.tabs);
+                                    return a.info.tabs - b.info.tabs || a.info.url.localeCompare(b.info.url);
+                                });
+
+                                array.forEach(function (item) {
+    //                                if (!rows[item.url]) {
+    //                                    rows[item.url] = makeRow(item);
+    //                                }
+    //                                rows[item.url].update(item);
+                                    element.appendChild(item);
+                                });
                             }
+                            update();
+
+                            Options.addEventListener("change", function (event) {
+                                if (event.name === "tabs.favorites.urls") {
+                                    update(event.value, event.action);
+                                }
+                            }, true);
+                        }));
+                    }));
+
+                    container.space({ height: "10px" });
+
+                    container["DOM.Element"].appendChild(UI.create("button", function (element) {
+                        element.textContent = "Remove checked";
+                        element.className = "Options-button";
+                        //element.style.padding = "2px 8px";
+                        element.style.height = "29px";
+
+                        element.addEventListener("click", function (event) {
+                            var urls = array.filter(function (item) {
+                                if (item.checkbox.checked) {
+                                    return true;
+                                }
+                            });
+
+                            urls.forEach(function (item) {
+                                favorites.set(item.info.url, null);
+                            });
                         }, true);
                     }));
+
+                    container["DOM.Element"].appendChild(UI.create("span", function (element) {
+                        element.style.display = "inline-block";
+                        element.style.width = "12px";
+                    }));
+
+                    container["DOM.Element"].appendChild(UI.create("button", function (element) {
+                        element.textContent = "Check all";
+                        element.className = "Options-link";
+                        //element.style.padding = "0px 8px";
+                        //element.style.height = "27px";
+
+                        element.addEventListener("click", function (event) {
+                            array.forEach(function (item) {
+                                item.checkbox.checked = true;
+                            });
+                        }, true);
+                    }));
+
+                    container["DOM.Element"].appendChild(UI.create("span", function (element) {
+                        element.textContent = "|";
+                        //element.style.display = "inline-block";
+                        element.style.margin = "0px 8px";
+                        //element.style.width = "13px";
+                    }));
+
+                    container["DOM.Element"].appendChild(UI.create("button", function (element) {
+                        element.textContent = "Check none";
+                        element.className = "Options-link";
+                        //element.style.padding = "0px 8px";
+                        //element.style.height = "27px";
+
+                        element.addEventListener("click", function (event) {
+                            array.forEach(function (item) {
+                                item.checkbox.checked = false;
+                            });
+                        }, true);
+                    }));
+
+                    //container.space({ height: "12px" });
                 });
 
                 container.category("Windows", function (container) {

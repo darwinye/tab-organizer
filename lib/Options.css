@@ -3,7 +3,21 @@
     display: none !important;
 }
 
-button.custom {
+.Options-link {
+    display: inline-block;
+    color: #00C;
+    cursor: pointer;
+    text-decoration: underline;
+    white-space: nowrap;
+}
+button.Options-link {
+    padding: 0px;
+    margin: 0px;
+    background-color: transparent;
+    border: none;
+}
+
+button.Options-button {
     -webkit-box-shadow: rgba(0, 0, 0, 0.1) 1px 2px 4px;
 
     position: relative;
@@ -30,10 +44,10 @@ button.custom {
     vertical-align: middle;
     cursor: pointer;
 }
-button.custom:active, button.custom:hover {
+button.Options-button:active, button.Options-button:hover {
     background-color: #ebf5ff; /*! #e6f0ff */
 }
-button.custom:active {
+button.Options-button:active {
     -webkit-box-shadow: none;
 
     padding-bottom: 0px;

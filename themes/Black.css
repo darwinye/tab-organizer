@@ -30,6 +30,6 @@
     background-image: url('Black-button-menu.png');
 }
 
-button.custom:active, button.custom:hover {
+button.Options-button:active, button.Options-button:hover {
     background-color: #eaeaea !important;
 }

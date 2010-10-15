@@ -303,7 +303,7 @@ fragment.appendChild(UI.create("table", function (container) {
         element.appendChild(UI.create("button", function (element) {
             element.id = "button-new-window";
             element.title = "(Ctrl N)";
-            element.className = "custom";
+            element.className = "Options-button";
             element.textContent = "New Window";
             element.tabIndex = 1;
 
@@ -332,7 +332,7 @@ fragment.appendChild(UI.create("table", function (container) {
             element.href = "options.html";
             element.target = "_blank";
 
-            element.className = "link";
+            element.className = "Options-link";
             element.textContent = "Options";
             element.tabIndex = 1;
 
@@ -353,7 +353,7 @@ fragment.appendChild(UI.create("table", function (container) {
             element.href = "http://documentation.tab-organizer.googlecode.com/hg/Tab%20Organizer%20FAQ.html";
             element.target = "_blank";
 
-            element.className = "link";
+            element.className = "Options-link";
             element.textContent = "Help";
             element.tabIndex = 1;
 
@@ -463,7 +463,7 @@ fragment.appendChild(UI.create("table", function (container) {
 
                 element.appendChild(UI.create("span", function (element) {
                     element.id = "Undo-bar-button";
-                    element.className = "link";
+                    element.className = "Options-link";
                     element.title = "(Ctrl Z)";
                     element.textContent = "Undo";
 
@@ -1157,13 +1157,13 @@ fragment.appendChild(UI.create("table", function (container) {
     }));
 /*!
     container.appendChild(UI.create("button", function (button) {
-        button.className = "custom";
+        button.className = "Options-button";
         button.textContent = "Reopen Closed Tab";
         button.tabIndex = 1;
     }));
 
     container.appendChild(UI.create("button", function (button) {
-        button.className = "custom";
+        button.className = "Options-button";
         button.textContent = "Foo";
         button.tabIndex = 1;
     }));

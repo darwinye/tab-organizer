@@ -31,19 +31,6 @@ table {
     height: 100%;
 }
 
-.link {
-    display: inline-block;
-    color: #00C;
-    cursor: pointer;
-    text-decoration: underline;
-    white-space: nowrap;
-}
-button.link {
-    padding: 0px;
-    margin: 0px;
-    background-color: transparent;
-    border: none;
-}
 /*.link:active {
     outline: none;
 }*/

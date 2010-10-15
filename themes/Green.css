@@ -32,6 +32,6 @@
     color: #0c1e00;
 }
 
-button.custom:active, button.custom:hover {
+button.Options-button:active, button.Options-button:hover {
     background-color: #f1ffeb !important;
 }
