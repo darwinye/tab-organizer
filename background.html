@@ -139,6 +139,7 @@
                 options += ",width=" + info.width;
                 options += ",outerHeight=" + info.height;
                 options += ",height=" + info.height;
+//                options += "alwaysRaised=yes";
                 return open(url, "TabOrganizer", options);
             }
 
@@ -255,8 +256,14 @@
             }
         }, true);
 
-        Platform.message.addEventListener("lib.remover", function (json, port) {
-            Platform.tabs.remove(port.tab.id);
+        Platform.message.addEventListener("lib.action", function (json, port) {
+            switch (json.type) {
+            case "focus":
+                Platform.tabs.focus(port.tab);
+                break;
+            case "remove":
+                Platform.tabs.remove(port.tab.id);
+            }
         }, true);
     </script>
 </body>

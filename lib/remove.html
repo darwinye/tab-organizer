@@ -9,8 +9,8 @@
         "use strict";
         /*global Platform */
 
-        Platform.message.connect("lib.remover", function (port) {
-            port.sendMessage({});
+        Platform.message.connect("lib.action", function (port) {
+            port.sendMessage({ type: "remove" });
         });
     </script>
 </head>

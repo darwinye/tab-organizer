@@ -315,11 +315,12 @@ fragment.appendChild(UI.create("table", function (container) {
             element.addEventListener("dragenter", element.focus, true);
 
             element.addEventListener("drop", function (event) {
-                Platform.windows.create({ url: "lib/remove.html" }, function (win) {
-                    state.currentQueue.moveTabs(win.id);
-                    state.currentQueue.reset();
-                    delete state.currentQueue.shiftNode;
-                });
+                Window.create(state.currentQueue);
+//                Platform.windows.create({ url: "lib/remove.html" }, function (win) {
+//                    state.currentQueue.moveTabs(win.id);
+//                    state.currentQueue.reset();
+//                    delete state.currentQueue.shiftNode;
+//                });
             }, true);
         }));
 
@@ -1203,7 +1204,7 @@ Platform.windows.getAll({ populate: true }, function (windows) {
     element.appendChild(UI.create("td"));
     windows.forEach(function (win) {
         if (win.type === "normal") {
-            element.appendChild(Window.create(win));
+            element.appendChild(Window.proxy(win));
         }
     });
     element.appendChild(UI.create("td"));
@@ -1214,6 +1215,10 @@ Platform.windows.getAll({ populate: true }, function (windows) {
             if (item) {
                 item.setWindowFocus();
                 state.search();
+
+//                Platform.message.connect("lib.action", function (port) {
+//                    port.sendMessage({ type: "focus" });
+//                });
             }
         }
     }, true);
