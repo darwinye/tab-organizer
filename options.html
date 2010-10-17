@@ -656,6 +656,8 @@
                             element.style.overflowX = "hidden";
                             element.style.overflowY = "auto";
 
+                            element.style.whiteSpace = "nowrap";
+
                             function makeRow(info) {
                                 return UI.create("div", function (container) {
                                     container.style.display = "-webkit-box";
@@ -682,28 +684,26 @@
                                     container.update(info);
 
 
-                                    container.appendChild(UI.create("div", function (element) {
+                                    container.appendChild(UI.create("label", function (element) {
                                         //element.style.paddingLeft = "4px";
+                                        element.style.webkitBoxFlex = "1";
+                                        element.style.display = "block";
+                                        //element.style.width = "100%";
+                                        element.style.overflow = "hidden";
+                                        element.style.textOverflow = "ellipsis";
 
+                                        //container.appendChild(UI.create("label", function (element) {
                                         element.appendChild(UI.create("input", function (element) {
                                             element.type = "checkbox";
                                             element.style.marginTop = "1px !important";
 
                                             container.checkbox = element;
                                         }));
-                                    }));
 
-                                    container.appendChild(UI.create("div", function (element) {
-                                        element.textContent = info.url;
-
-                                        element.style.webkitBoxFlex = "1";
-                                        //element.style.width = "100%";
-                                        element.style.overflow = "hidden";
-                                        element.style.textOverflow = "ellipsis";
-
-//                                        element.appendChild(UI.create("span", function (element) {
-
-//                                        }));
+                                        element.appendChild(UI.create("span", function (element) {
+                                            element.textContent = info.url;
+                                        }));
+                                        //}));
                                     }));
 
                                     container.appendChild(tabs);
