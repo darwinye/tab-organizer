@@ -641,7 +641,7 @@ var Window = {
             function scrollTo() {
                 UI.scrollIntoView(container.tabList, document.body, 41);
             }
-            container.addEventListener("mouseup", scrollTo, true);
+            //container.addEventListener("mouseup", scrollTo, true);
 
 
             container.select = function () {
