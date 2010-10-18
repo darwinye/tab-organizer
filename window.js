@@ -678,7 +678,7 @@ fragment.appendChild(UI.create("table", function (container) {
         //            input.addEventListener("focus", function () {
         ////                if (!this.value) {
         ////                    container.reset();
-        ////                } else if (container.list.children.length) {
+        ////                } else if (container.children.length) {
         ////                    container.removeAttribute("hidden");
         ////                }
         //            }, true);
@@ -745,7 +745,7 @@ fragment.appendChild(UI.create("table", function (container) {
                         });
 
                         keys.forEach(function (key) {
-        //                    if (container.list.children.length >= 5) {
+        //                    if (container.children.length >= 5) {
         //                        return;
         //                    }
 
@@ -766,7 +766,7 @@ fragment.appendChild(UI.create("table", function (container) {
                             }
 
                             special.forEach(function (key) {
-        //                        if (container.list.children.length >= 5) {
+        //                        if (container.children.length >= 5) {
         //                            return;
         //                        }
 
@@ -779,14 +779,14 @@ fragment.appendChild(UI.create("table", function (container) {
 
         //                anon.old = value;
 
-        //                if (container.list.children.length) {
+        //                if (container.children.length) {
         //                    console.log(anon.old);
         //                    var text = container.firstChild.textContent;
         //                    this.value = text;
         //                    //this.setSelectionRange(anon.old.length, text.length);
         //                }
 
-        //                if (!container.list.children.length) {
+        //                if (!container.children.length) {
         //                    container.setAttribute("hidden", "");
         //                }
                     }
@@ -819,8 +819,10 @@ fragment.appendChild(UI.create("table", function (container) {
 //                        }
 //                    }, true);
 
-                    container.appendChild(UI.create("div", function (element) {
-                        container.list = element;
+//                    var element = container;
+
+                    //container.appendChild(UI.create("div", function (element) {
+                        //container.list = element;
 
                         function mouseover(event) {
     //                        var target = event.target;
@@ -882,21 +884,22 @@ fragment.appendChild(UI.create("table", function (container) {
                             item.addEventListener("mouseout", mouseout, true);
     //                        item.addEventListener("mouseout", mouseout, true);
 
-                            var table = document.createElement("table");
-                            table.className = "search-past-table";
+//                            var table = document.createElement("table");
+//                            table.className = "search-past-table";
 
 //                            var row = document.createElement("tr");
 
-                            var text = document.createElement("td");
+                            var text = document.createElement("div");
                             text.className = "search-past-item-text";
+                            text.textContent = name;
 
-                            var span = document.createElement("span");
-                            span.textContent = name;
+//                            var span = document.createElement("span");
+//                            span.textContent = name;
 //                            span.style.overflow = "hidden";
 //                            span.style.textOverflow = "ellipsis";
 
-                            var cell = document.createElement("td");
-                            cell.className = "search-past-item-close";
+//                            var cell = document.createElement("td");
+//                            cell.className = "search-past-item-close";
 
                             var button = document.createElement("img");
                             button.className = "past-queries-close";
@@ -911,17 +914,17 @@ fragment.appendChild(UI.create("table", function (container) {
 
                             //button.setAttribute("hidden", "");
 
-                            text.appendChild(span);
-                            cell.appendChild(button);
-                            table.appendChild(text);
-                            table.appendChild(cell);
+//                            text.appendChild(span);
+//                            cell.appendChild(button);
+                            item.appendChild(text);
+                            item.appendChild(button);
 //                            table.appendChild(row);
-                            item.appendChild(table);
+//                            item.appendChild(table);
 
 /*                            item.appendChild(text);
                             item.appendChild(button);
 */
-                            element.appendChild(item);
+                            container.appendChild(item); //! element
 
                             container.removeAttribute("hidden");
 
@@ -932,10 +935,10 @@ fragment.appendChild(UI.create("table", function (container) {
 
                         container.reset = function () {
                             container.setAttribute("hidden", "");
-                            element.innerHTML = "";
+                            container.innerHTML = ""; //! element
                         };
                         container.reset();
-                    }));
+                    //}));
 
 //                    container.addEventListener("click", function (event) {
 //                        var target = event.target;
@@ -978,7 +981,7 @@ fragment.appendChild(UI.create("table", function (container) {
                                     query.nextSibling;
 
                             } else if (event.which === 40) {
-                                next = container.list.firstChild;
+                                next = container.firstChild;
                             }
 
                             if (next) {
@@ -1001,7 +1004,7 @@ fragment.appendChild(UI.create("table", function (container) {
                             if (query) {
                                 event.preventDefault();
 
-                                var next, children = container.list.children;
+                                var next, children = container.children;
                                 var index = Array.indexOf(children, query);
                                 //console.log(index);
         //                        var next = query.nextSibling;
@@ -1058,7 +1061,7 @@ fragment.appendChild(UI.create("table", function (container) {
         //                });
 
         //                keys.forEach(function (item) {
-        //                    if (container.list.children.length >= 5) {
+        //                    if (container.children.length >= 5) {
         //                        return;
         //                    }
         //                    container.add(item);
