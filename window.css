@@ -374,9 +374,9 @@ input[special], .search-past-item.special {
 }
 
 
-.window[data-selected] .tab-icon-border,
-.window[data-selected] .tab-list-border {
-    outline: 5px auto -webkit-focus-ring-color;
+.window[data-selected] > .tab-icon-border,
+.window[data-selected] > .tab-list-border {
+    outline: 5px auto -webkit-focus-ring-color !important;
 }
 
 /*.window[data-focused] .tab-icon-border {

@@ -40,13 +40,17 @@
         #window-list {
             /*padding: 15px;
             padding-top: 10px;*/
-            padding: 10px;
-            padding-bottom: 21px;
+            padding-top: 11px;
+            padding-bottom: 10px;
+            padding-left: 13px;
         }
-        #URL-bar {
+        .window[data-last] {
+            padding-right: 12px;
+        }
+        /*#URL-bar {
             border-left: 1px solid black;
             border-bottom: 1px solid black;
-        }
+        }*/
     </style>
 </head>
 <body>
@@ -54,11 +58,11 @@
     <script>
         //console.log(Platform.getBackgroundPage() === this);
         (function () {
-            var table = document.createElement("table");
-            table.id = "window-list";
-            table.className = "stretch";
+            var list = document.createElement("div");
+            list.id = "window-list";
+            //table.className = "stretch";
 
-            table.appendChild(UI.create("td"));
+            //table.appendChild(UI.create("td"));
 
 
             var index = 1;
@@ -66,7 +70,7 @@
             function makeWindow(info) {
                 info = Object(info);
 
-                table.appendChild(UI.create("td", function (element) {
+                list.appendChild(UI.create("div", function (element) {
                     element.className = "window";
                     if (info.selected) {
                         element.setAttribute("data-focused", "");
@@ -74,23 +78,24 @@
                     if (info.last) {
                         element.setAttribute("data-last", "");
                     }
-                    element.appendChild(UI.create("div", function (element) {
-                        element.className = "window-div";
-                        element.appendChild(UI.create("table", function (element) {
-                            element.className = "stretch";
-                            element.appendChild(UI.create("tr", function (element) {
+                    //element.appendChild(UI.create("div", function (element) {
+                        //element.className = "window-div";
+                        //element.appendChild(UI.create("table", function (element) {
+                            //element.className = "stretch";
+                            //element.appendChild(UI.create("tr", function (element) {
                                 element.appendChild(UI.create("div", function (element) {
                                     element.className = "tab-icon-border";
                                     element.appendChild(UI.create("div", function (element) {
                                         element.className = "tab-icon-container";
                                         element.appendChild(UI.create("div", function (element) {
                                             element.className = "tab-icon";
-                                            element.appendChild(UI.create("table", function (element) {
-                                                element.className = "tab-icon-table";
-                                                element.appendChild(UI.create("tr", function (element) {
-                                                    element.appendChild(UI.create("td", function (element) {
+                                            //element.appendChild(UI.create("table", function (element) {
+                                                //element.className = "tab-icon-table";
+                                                //element.appendChild(UI.create("tr", function (element) {
+                                                    //element.appendChild(UI.create("td", function (element) {
                                                         element.appendChild(UI.create("input", function (element) {
                                                             element.className = "tab-icon-text";
+                                                            //element.tabIndex = -1;
 //                                                            if (info.selected) {
                                                                 element.value = index; // "Example"
 //                                                                element.addEventListener("blur", function () {
@@ -98,42 +103,44 @@
 //                                                                }, true);
 //                                                            }
                                                             index += 1;
+
+                                                            element.setAttribute("spellcheck", "false");
                                                         }));
-                                                    }));
-                                                    element.appendChild(UI.create("td", function (element) {
+                                                    //}));
+                                                    //element.appendChild(UI.create("td", function (element) {
                                                         element.appendChild(UI.create("div", function (element) {
                                                             element.className = "tab-icon-dropdown";
                                                         }));
-                                                    }));
-                                                }));
-                                            }));
+                                                    //}));
+                                                //}));
+                                            //}));
                                         }));
                                     }));
                                 }));
-                            }));
-                            element.appendChild(UI.create("tr", function (element) {
-                                element.className = "stretch";
-                                element.appendChild(UI.create("div", function (element) {
-                                    element.className = "stretch";
+                            //}));
+                            //element.appendChild(UI.create("tr", function (element) {
+                                //element.className = "stretch";
+                                //element.appendChild(UI.create("div", function (element) {
+                                    //element.className = "stretch";
                                     element.appendChild(UI.create("div", function (element) {
                                         element.className = "tab-list-border";
                                         element.appendChild(UI.create("div", function (element) {
                                             element.className = "tab-list";
-                                            element.appendChild(UI.create("div"));
+                                            //element.appendChild(UI.create("div"));
                                         }));
                                     }));
-                                }));
-                            }));
-                        }));
-                    }));
+                                //}));
+                            //}));
+                        //}));
+                    //}));
                 }));
             }
             makeWindow({ selected: true });
             makeWindow({ last: true });
 
 
-            table.appendChild(UI.create("td"));
-            document.body.appendChild(table);
+            //table.appendChild(UI.create("td"));
+            document.body.appendChild(list);
         }());
 /*
         document.body.appendChild(UI.create("div", function (element) {
