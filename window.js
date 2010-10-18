@@ -474,8 +474,11 @@ fragment.appendChild(UI.create("div", function (container) {
                     element.tabIndex = 1;
 
                     function undo() {
-                        state.undoBar.hide();
-                        Undo.pop();
+                        //console.log(state.undoBar.style.opacity);
+                        if (!state.undoBar.style.opacity) {
+                            state.undoBar.hide();
+                            Undo.pop();
+                        }
                     }
                     element.addEventListener("click", undo, true);
 
