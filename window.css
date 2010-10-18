@@ -376,7 +376,7 @@ input[special], .search-past-item.special {
 
 .window[data-selected] > .tab-icon-border,
 .window[data-selected] > .tab-list-border {
-    outline: 5px auto -webkit-focus-ring-color !important;
+    outline: 5px auto -webkit-focus-ring-color;
 }
 
 /*.window[data-focused] .tab-icon-border {
@@ -459,8 +459,8 @@ input[special], .search-past-item.special {
     display: -webkit-box;
     -webkit-box-align: start;
 
-    padding: 1px;
-    padding-left: 2px;
+    padding: 1px 2px;
+    /*padding-left: 2px;*/
     /*padding-bottom: 0px;*/
     background-color: white;
 
@@ -507,7 +507,7 @@ input[special], .search-past-item.special {
 
     display: none;
     /*padding: 1px 2px 0px 1px;*/
-    margin-right: 1px;
+    /*margin-right: 1px;*/
 
     width: 17px;
     height: 16px;
@@ -521,7 +521,7 @@ input[special], .search-past-item.special {
     /*float: right;*/
 }
 .window[data-focused]/* .tab-icon-border:hover*/ .tab-icon-dropdown {
-    display: block;
+    display: table-cell; /** This fixes a bug with the context menu. */
 }
 
 /*.tab-icon-buttons {
