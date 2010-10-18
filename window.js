@@ -563,7 +563,7 @@ fragment.appendChild(UI.create("div", function (container) {
                     Array.slice(children).forEach(function (child) {
                         if (child.hasAttribute("data-focused")) {
                             /*setTimeout(function () {
-                                UI.scrollTo(child, item.tabList.scroll);
+                                UI.scrollTo(child, item.tabList);
                             }, 0);*/
                             item.selected = child;
                         }
@@ -603,7 +603,7 @@ fragment.appendChild(UI.create("div", function (container) {
                     focused.setWindowFocus();
                 }
                 scroll.forEach(function (item) {
-                    UI.scrollTo(item.selected, item.tabList.scroll);
+                    UI.scrollTo(item.selected, item.tabList);
                 });
 
                 /*var list = info.windows.length,
@@ -1180,9 +1180,9 @@ fragment.appendChild(UI.create("div", function (container) {
     //}));
 }));
 
-fragment.appendChild(UI.create("table", function (element) {
+fragment.appendChild(UI.create("div", function (element) {
     element.id = "window-list";
-    element.className = "stretch";
+    //element.className = "stretch";
     //element.style.display = "none !important";
 
     state.windowList = element;
@@ -1210,13 +1210,13 @@ document.body.appendChild(fragment);
 Platform.windows.getAll({ populate: true }, function (windows) {
     var element = state.windowList;
 
-    element.appendChild(UI.create("td"));
+//    element.appendChild(UI.create("td"));
     windows.forEach(function (win) {
         if (win.type === "normal") {
             element.appendChild(Window.proxy(win));
         }
     });
-    element.appendChild(UI.create("td"));
+//    element.appendChild(UI.create("td"));
 
     Options.addEventListener("change", function (event) {
         if (event.name === "window.lastfocused") {

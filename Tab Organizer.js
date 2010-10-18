@@ -628,7 +628,7 @@ var Window = {
     proxy: function (win) {
         var fragment = document.createDocumentFragment();
 
-        fragment.appendChild(UI.create("td", function (container) {
+        fragment.appendChild(UI.create("div", function (container) {
             container.className = "window";
 
             state.windows[win.id] = container;
@@ -728,8 +728,8 @@ var Window = {
 //                            element.dispatchEvent(info);
 
                             //element.scrollIntoView();
-                            //UI.scrollTo(query, this.tabList.scroll);
-                            //UI.scrollIntoView(element, this.tabList.scroll, 110);
+                            //UI.scrollTo(query, this.tabList);
+                            //UI.scrollIntoView(element, this.tabList, 110);
 
                             Tab.focus(element.tab);
 
@@ -807,15 +807,15 @@ var Window = {
                 //}
             }, true);
 
-            container.appendChild(UI.create("div", function (element) {
-                element.className = "window-div";
+            //container.appendChild(UI.create("div", function (element) {
+                //element.className = "window-div";
 
-                element.appendChild(UI.create("table", function (element) {
-                    element.className = "stretch";
+                //element.appendChild(UI.create("table", function (element) {
+                    //element.className = "stretch";
 
-                    element.appendChild(UI.create("tr", function (element) {
+                    //container.appendChild(UI.create("tr", function (element) {
 
-                        element.appendChild(UI.create("div", function (element) {
+                        container.appendChild(UI.create("div", function (element) {
                             element.className = "tab-icon-border";
 
                             function invalid(element, event) {
@@ -846,12 +846,12 @@ var Window = {
 
                                     container.tabIcon = icon;
 
-                                    icon.appendChild(UI.create("table", function (element) {
-                                        element.className = "tab-icon-table";
+                                    //icon.appendChild(UI.create("table", function (element) {
+                                        //element.className = "tab-icon-table";
 
-                                        element.appendChild(UI.create("td", function (element) {
+                                        //element.appendChild(UI.create("td", function (element) {
 
-                                            element.appendChild(UI.create("input", function (element) {
+                                            icon.appendChild(UI.create("input", function (element) {
                                                 element.setAttribute("spellcheck", "false");
                                                 element.className = "tab-icon-text";
                                                 element.type = "text";
@@ -883,7 +883,7 @@ var Window = {
                                                     if (this.value !== value) {
                                                         if (Options.get("undo.rename-window")) {
                                                             Undo.push("rename-window", {
-                                                                focus: container.tabList.scroll,
+                                                                focus: container.tabList,
                                                                 value: value,
                                                                 node: this
                                                             });
@@ -892,24 +892,24 @@ var Window = {
                                                         }
                                                     }
 
-                                                    //container.tabList.scroll.focus();
+                                                    //container.tabList.focus();
                                                 }, true);
                                                 element.addEventListener("keyup", function (event) {
                                                     if (event.which === 13 || event.which === 27) {
                                                         if (event.which === 27) {
                                                             this.value = value;
 
-                                                            container.tabList.scroll.focus();
+                                                            container.tabList.focus();
                                                             //! container.tabList.focus();
                                                         }
                                                         this.blur();
                                                     }
                                                 }, true);
                                             }));
-                                        }));
+                                        //}));
 
-                                        element.appendChild(UI.create("td", function (element) {
-                                            element.appendChild(UI.create("div", function (element) {
+                                        //element.appendChild(UI.create("td", function (element) {
+                                            icon.appendChild(UI.create("div", function (element) {
                                                 element.className = "tab-icon-dropdown";
                                                 element.title = "Open menu (Ctrl M)";
 
@@ -1349,29 +1349,29 @@ var Window = {
 ////                                                    }));*/
 ////                                                }));
 //                                            }));
-                                        }));
-                                    }));
+                                        //}));
+                                    //}));
                                 }));
                             }));
                         }));
-                    }));
+                    //}));
 
-                    element.appendChild(UI.create("tr", function (element) {
-                        element.className = "stretch";
+                    //container.appendChild(UI.create("tr", function (element) {
+                        //element.className = "stretch";
 
-                        element.appendChild(UI.create("div", function (element) {
-                            element.className = "stretch";
+                        //element.appendChild(UI.create("div", function (element) {
+                            //element.className = "stretch";
 
-                            element.appendChild(UI.create("div", function (element) {
+                            container.appendChild(UI.create("div", function (element) {
                                 element.className = "tab-list-border";
 
-                                element.appendChild(UI.create("div", function (element) {
-                                    element.className = "tab-list";
-                                    element.tabIndex = 1;
+                                element.appendChild(UI.create("div", function (list) {
+                                    list.className = "tab-list";
+                                    list.tabIndex = 1;
 
-                                    element.appendChild(UI.create("div", function (list) {
+                                    //element.appendChild(UI.create("div", function (list) {
                                         container.tabList = list;
-                                        list.scroll = element;
+                                        //list.scroll = list;
 
                                         list.queue = [];
 
@@ -1404,13 +1404,13 @@ var Window = {
 
                                             list.appendChild(Tab.proxy(tab));
                                         });
-                                    }));
+                                    //}));
                                 }));
                             }));
-                        }));
-                    }));
-                }));
-            }));
+                        //}));
+                    //}));
+                //}));
+            //}));
         }));
 
         return fragment;
