@@ -26,7 +26,7 @@ var Tab = {
         });
     },
     proxy: function (tab) {
-        return UI.create("table", function (container) {
+        return UI.create("div", function (container) {
             container.className = "tab";
             container.draggable = true;
             //container.tabIndex = -1; //!
@@ -385,24 +385,21 @@ var Tab = {
             var text = tab.title || tab.url;
 
             var cell = {
-                favicon: UI.create("td", function (element) {
+                favicon: UI.create("img", function (element) {
                     element.className = "tab-favicon";
                     element.title = text;
+                    //element.className = "stretch";
+                    element.setAttribute("alt", "");
 
-                    element.appendChild(UI.create("img", function (element) {
-                        element.className = "stretch";
-                        element.setAttribute("alt", "");
-
-                        if (tab.favIconUrl) {
-    //                            element.src = tab.favIconUrl;
-                            element.src = "chrome://favicon/" + tab.url;
-    //                            console.log(element.src);
-                        } else {
-                            element.src = "images/blank.png";
-                        }
-                    }));
+                    if (tab.favIconUrl) {
+//                            element.src = tab.favIconUrl;
+                        element.src = "chrome://favicon/" + tab.url;
+//                            console.log(element.src);
+                    } else {
+                        element.src = "images/blank.png";
+                    }
                 }),
-                favorite: UI.create("td", function (element) {
+                favorite: UI.create("div", function (element) {
                     element.className = "tab-favorite";
                     element.title = "Favorite this tab";
 
@@ -439,54 +436,51 @@ var Tab = {
                         element.src = "images/favorite.png";
                     }));*/
                 }),
-                text: UI.create("td", function (element) {
+                text: UI.create("div", function (element) {
                     element.className = "tab-text";
                     element.title = text;
+                    element.textContent = text;
 
-                    element.appendChild(UI.create("span", function (span) {
-                        span.textContent = text;
+                    container.tabText = element;
 
-                        container.tabText = span;
+                    /*container.editURL = function () {
 
-                        /*container.editURL = function () {
+                    };*/
 
-                        };*/
+                    /*! container.addEventListener("dblclick", function (event) {
+                        if (false) {
+                        //! if (event.button === 0 && container.hasAttribute("data-focused")) {
+                            container.draggable = false;
 
-                        /*! container.addEventListener("dblclick", function (event) {
-                            if (false) {
-                            //! if (event.button === 0 && container.hasAttribute("data-focused")) {
-                                container.draggable = false;
+                            element.replaceChild(UI.create("input", function (input) {
+                                input.className = "url-input";
+                                input.type = "text";
 
-                                element.replaceChild(UI.create("input", function (input) {
-                                    input.className = "url-input";
-                                    input.type = "text";
+                                input.value = tab.url;
+                                input.tabIndex = -1;
 
-                                    input.value = tab.url;
-                                    input.tabIndex = -1;
-
-                                    input.addEventListener("keyup", function (event) {
-                                        if (event.which === 13 || event.which === 27) {
-                                            if (event.which === 13) {
-                                                Tab.gotoURL(tab, this.value);
-                                            }
-                                            container.parentNode.focus();
+                                input.addEventListener("keyup", function (event) {
+                                    if (event.which === 13 || event.which === 27) {
+                                        if (event.which === 13) {
+                                            Tab.gotoURL(tab, this.value);
                                         }
-                                    }, true);
-                                    input.addEventListener("blur", function (event) {
-                                        element.replaceChild(span, input);
+                                        container.parentNode.focus();
+                                    }
+                                }, true);
+                                input.addEventListener("blur", function (event) {
+                                    element.replaceChild(span, input);
 
-                                        container.draggable = true;
-                                    }, true);
+                                    container.draggable = true;
+                                }, true);
 
-                                    setTimeout(function () {
-                                        input.select();
-                                    }, 0);
-                                }), span);
-                            }
-                        }, true);*/
-                    }));
+                                setTimeout(function () {
+                                    input.select();
+                                }, 0);
+                            }), span);
+                        }
+                    }, true);*/
                 }),
-                close: UI.create("td", function (element) {
+                close: UI.create("div", function (element) {
                     element.className = "tab-button-close";
                     element.title = "Close (Alt Click)";
 
