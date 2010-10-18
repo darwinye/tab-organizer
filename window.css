@@ -3,6 +3,8 @@ body {
     -webkit-user-drag: none;
     -webkit-user-select: none;
 
+    /*display: -webkit-box;*/
+
     /*width: 900px;
     height: 380px;*/
     margin: 0px;
@@ -308,15 +310,18 @@ input[special], .search-past-item.special {
 
 #window-list {
     -webkit-box-sizing: border-box;
+    /*-webkit-box-flex: 1;*/
 
     display: -webkit-box;
     -webkit-box-pack: center;
+    /*-webkit-box-align: start;*/
 
     position: absolute;
 
     width: 100%;
     height: 100%;
-    padding: 69px 15px 41px;
+    padding: 70px 0px 30px 18px;
+    /*margin-right: 15px;*/
 }
 .window {
     /*width: 400px;*/
@@ -329,8 +334,10 @@ input[special], .search-past-item.special {
     z-index: 2;*/
 
     min-width: 105px;
-    height: 100%;
-    padding-right: 15px;
+    max-width: 400px;
+
+    /*height: 100%;*/
+    padding-right: 16px;
     outline: none;
 }
 /*.window[data-selected] > .window-div {*/
@@ -339,7 +346,8 @@ input[special], .search-past-item.special {
     z-index: 2;
 }
 .window[data-last] {
-    padding-right: 0px;
+    padding-right: 17px;
+    min-width: 400px;
 }
 /*.window[data-last] > .window-div {
     width: 400px;
@@ -357,7 +365,7 @@ input[special], .search-past-item.special {
     /*border: 1px outset #333333;*/
 }
 .tab-icon-border, .tab-icon {
-    height: 29px;
+    height: 30px;
 }
 .tab-icon, .tab-list {
     /*border: 1px inset #666666;*/
@@ -411,7 +419,10 @@ input[special], .search-past-item.special {
 .tab-list {
     -webkit-box-flex: 1;
 
-    /*height: 100%;*/
+    /*position: absolute;
+
+    width: 100%;
+    height: 100%;*/
     padding: 2px;
 
     background-color: white;
@@ -428,7 +439,7 @@ input[special], .search-past-item.special {
     z-index: 1;*/
 
     width: 105px;
-    margin-bottom: 10px;
+    margin-bottom: 9px;
 
     border-bottom: none;
     border-radius: 4px;
@@ -443,11 +454,14 @@ input[special], .search-past-item.special {
     background-color: inherit;
 }
 .tab-icon {
+    -webkit-box-sizing: border-box;
+
     display: -webkit-box;
     -webkit-box-align: start;
 
-    padding: 0px;
-    padding-left: 3px;
+    padding: 1px;
+    padding-left: 2px;
+    /*padding-bottom: 0px;*/
     background-color: white;
 
     border-bottom: 1px dashed rgba(0, 0, 0, 0.03);
