@@ -296,11 +296,11 @@ addEventListener("dragend", function () {
 
 var fragment = document.createDocumentFragment();
 
-fragment.appendChild(UI.create("div", function (element) {
-    element.id = "container-wrapper";
+fragment.appendChild(UI.create("div", function (container) {
+    //element.id = "container-wrapper";
 
-    element.appendChild(UI.create("div", function (container) {
-        container.id = "container-box";
+    //element.appendChild(UI.create("div", function (container) {
+        container.id = "toolbar";
 
     //container.appendChild(UI.create("td", function (element) {
         container.appendChild(UI.create("button", function (element) {
@@ -1177,7 +1177,7 @@ fragment.appendChild(UI.create("div", function (element) {
         button.tabIndex = 1;
     }));
 */
-    }));
+    //}));
 }));
 
 fragment.appendChild(UI.create("table", function (element) {

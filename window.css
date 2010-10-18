@@ -76,6 +76,55 @@ table {
     font-weight: bold;
 }
 
+#placeholder {
+    display: block !important;
+    /*height: 0px;*/ /* 16px */
+    margin: 3px 0px;
+    border: 1px inset gray;
+}
+
+/*#container-wrapper {
+
+}*/
+#toolbar {
+    -webkit-box-sizing: border-box;
+
+    display: -webkit-box;
+    /*-webkit-box-lines: multiple;
+    -webkit-box-align: end;*/
+
+    position: fixed;
+    z-index: 2; /** Do not go higher than 2! See issue 60 */
+    left: 0px;
+    top: 0px;
+
+    width: 100%;
+    padding: 15px 27px 22px 25px;
+    /*margin-top: 1px;*/
+
+    /*white-space: nowrap;*/
+
+    /*vertical-align: top;*/
+    /*border: none;
+    border-spacing: 0px 0px;*/
+}
+#toolbar .separator {
+    margin: 0px 7px;
+    /*margin-left: 1px;
+    margin-right: 6px;
+    margin-right: 5px;*/
+}
+/*#toolbar button {
+    width: 150px;
+
+    white-space: normal;
+}*/
+#button-new-window {
+    /*display: table-cell;*/
+    margin: 0px;
+    margin-right: 12px;
+}
+
 /*#Undo-wrapper {
 
 }*/
@@ -120,52 +169,6 @@ table {
 #Undo-bar-button {
     margin-left: 10px;
     font-weight: bold;
-}
-
-#placeholder {
-    display: block !important;
-    /*height: 0px;*/ /* 16px */
-    margin: 3px 0px;
-    border: 1px inset gray;
-}
-
-#container-wrapper {
-    position: fixed;
-    left: 0px;
-    top: 0px;
-
-    width: 100%;
-    z-index: 2; /** Do not go higher than 2! See issue 60 */
-}
-#container-box {
-    display: -webkit-box;
-    /*-webkit-box-lines: multiple;
-    -webkit-box-align: end;*/
-
-    padding: 15px 27px 22px 25px;
-    /*margin-top: 1px;*/
-
-    /*white-space: nowrap;*/
-
-    /*vertical-align: top;*/
-    /*border: none;
-    border-spacing: 0px 0px;*/
-}
-#container-box .separator {
-    margin: 0px 7px;
-    /*margin-left: 1px;
-    margin-right: 6px;
-    margin-right: 5px;*/
-}
-/*#container-box button {
-    width: 150px;
-
-    white-space: normal;
-}*/
-#button-new-window {
-    /*display: table-cell;*/
-    margin: 0px;
-    margin-right: 12px;
 }
 
 /*#search-cell {
