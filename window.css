@@ -39,8 +39,8 @@ table {
     -webkit-box-shadow: gainsboro 1px 1px 5px;
 
     position: fixed;
-    left: 0;
-    bottom: 0;
+    left: 0px;
+    bottom: 0px;
     padding: 0px 5px 2px 3px;
     max-width: 100%;
 
@@ -76,12 +76,20 @@ table {
     font-weight: bold;
 }
 
+/*#Undo-wrapper {
+
+}*/
 #Undo-bar {
-    float: left;
+    display: -webkit-box;
+    -webkit-box-pack: center;
+    -webkit-box-align: start;
+    -webkit-box-flex: 1;
+
+    margin: 0px 7px;
+
+    /*float: left;*/
     /*width: 100%;*/
-    position: relative;
-    top: 3px;
-    left: 50%;
+    /*left: 50%;*/
     /*top: 5px;*/
     /*top: 17px;
     left: 46.8%;*/
@@ -95,18 +103,23 @@ table {
     /*display: inline-block;*/
     /*margin: auto;*/
 
-    position: relative;
-    left: -50%;
+    /*position: relative;
+    left: -50%;*/
+    /*position: relative;
+    top: 3px;*/
+
+    padding: 2px 5px;
+    margin-top: 3px;
 
     background-color: #FFF1A8;
-    padding: 2px 5px;
-    margin: 0px 7px;
-    font-weight: bold;
     border: 1px solid dimgray;
     border-radius: 5px;
+
+    font-weight: bold;
 }
 #Undo-bar-button {
     margin-left: 10px;
+    font-weight: bold;
 }
 
 #placeholder {
@@ -116,26 +129,35 @@ table {
     border: 1px inset gray;
 }
 
-#container-buttons {
+#container-wrapper {
     position: fixed;
+    left: 0px;
+    top: 0px;
+
     width: 100%;
-    padding: 13px 26px 21px 24px;
-    margin-top: 1px;
-
-    white-space: nowrap;
     z-index: 2; /** Do not go higher than 2! See issue 60 */
+}
+#container-box {
+    display: -webkit-box;
+    /*-webkit-box-lines: multiple;
+    -webkit-box-align: end;*/
 
-    vertical-align: top;
+    padding: 15px 27px 22px 25px;
+    /*margin-top: 1px;*/
+
+    /*white-space: nowrap;*/
+
+    /*vertical-align: top;*/
     /*border: none;
     border-spacing: 0px 0px;*/
 }
-#container-buttons .separator {
+#container-box .separator {
     margin: 0px 7px;
     /*margin-left: 1px;
     margin-right: 6px;
     margin-right: 5px;*/
 }
-/*#container-buttons button {
+/*#container-box button {
     width: 150px;
 
     white-space: normal;

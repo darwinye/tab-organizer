@@ -296,11 +296,14 @@ addEventListener("dragend", function () {
 
 var fragment = document.createDocumentFragment();
 
-fragment.appendChild(UI.create("table", function (container) {
-    container.id = "container-buttons";
+fragment.appendChild(UI.create("div", function (element) {
+    element.id = "container-wrapper";
 
-    container.appendChild(UI.create("td", function (element) {
-        element.appendChild(UI.create("button", function (element) {
+    element.appendChild(UI.create("div", function (container) {
+        container.id = "container-box";
+
+    //container.appendChild(UI.create("td", function (element) {
+        container.appendChild(UI.create("button", function (element) {
             element.id = "button-new-window";
             element.title = "(Ctrl N)";
             element.className = "Options-button";
@@ -324,12 +327,12 @@ fragment.appendChild(UI.create("table", function (container) {
             }, true);
         }));
 
-//        element.appendChild(UI.create("span", function (element) {
+//        container.appendChild(UI.create("span", function (element) {
 //            element.className = "separator";
 //            //element.textContent = "-";
 //        }));
 
-        element.appendChild(UI.create("button", function (element) {
+        container.appendChild(UI.create("button", function (element) {
             element.href = "options.html";
             element.target = "_blank";
 
@@ -345,12 +348,12 @@ fragment.appendChild(UI.create("table", function (container) {
             }, true);
         }));
 
-        element.appendChild(UI.create("span", function (element) {
+        container.appendChild(UI.create("span", function (element) {
             element.className = "separator";
             element.textContent = "|";
         }));
 
-        element.appendChild(UI.create("button", function (element) {
+        container.appendChild(UI.create("button", function (element) {
             element.href = "http://documentation.tab-organizer.googlecode.com/hg/Tab%20Organizer%20FAQ.html";
             element.target = "_blank";
 
@@ -365,13 +368,14 @@ fragment.appendChild(UI.create("table", function (container) {
                 anon.popup = open(element.href, element.target);
             }, true);
         }));
-    }));
+    //}));
 
 
-    container.appendChild(UI.create("td", function (element) {
-        element.className = "stretch";
+    //container.appendChild(UI.create("div", function (element) {
+        //element.id = "Undo-wrapper";
+        //element.className = "stretch";
 
-        element.appendChild(UI.create("div", function (element) {
+        container.appendChild(UI.create("div", function (element) {
             element.id = "Undo-bar";
 
             element.appendChild(UI.create("div", function (element) {
@@ -462,11 +466,12 @@ fragment.appendChild(UI.create("table", function (container) {
                     });
                 }));
 
-                element.appendChild(UI.create("span", function (element) {
+                element.appendChild(UI.create("button", function (element) {
                     element.id = "Undo-bar-button";
                     element.className = "Options-link";
                     element.title = "(Ctrl Z)";
                     element.textContent = "Undo";
+                    element.tabIndex = 1;
 
                     function undo() {
                         state.undoBar.hide();
@@ -491,13 +496,13 @@ fragment.appendChild(UI.create("table", function (container) {
                 }));
             }));
         }));
-    }));
+    //}));
 
 
-    container.appendChild(UI.create("td", function (element) {
+    //container.appendChild(UI.create("td", function (element) {
         //element.id = "search-cell";
 
-        element.appendChild(UI.create("div", function (span) {
+        container.appendChild(UI.create("div", function (span) {
             span.id = "search-box";
             //span.textContent = "Search: ";
 
@@ -1158,7 +1163,7 @@ fragment.appendChild(UI.create("table", function (container) {
                 }));
 //            }));
         }));
-    }));
+    //}));
 /*!
     container.appendChild(UI.create("button", function (button) {
         button.className = "Options-button";
@@ -1172,6 +1177,7 @@ fragment.appendChild(UI.create("table", function (container) {
         button.tabIndex = 1;
     }));
 */
+    }));
 }));
 
 fragment.appendChild(UI.create("table", function (element) {
