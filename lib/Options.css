@@ -111,7 +111,7 @@ input[type="checkbox"][data-options-changed] + span {
     color: firebrick;
 }
 
-#Options-wrapper input {
+#Options-root input {
     -webkit-box-shadow: lightgray 0px 0px 5px;
 
     position: relative;
@@ -124,7 +124,7 @@ input[type="checkbox"][data-options-changed] + span {
     border: 1px solid dimgray;
     border-radius: 3px;
 }
-#Options-wrapper select {
+#Options-root select {
     -webkit-box-shadow: lightgray 0px 0px 5px;
 
     position: relative;
@@ -144,12 +144,16 @@ input[type="checkbox"][data-options-changed] + span {
         color-stop(0.7, rgba(0, 0, 0, 0.05)),
         to(rgba(0, 0, 0, 0.1)));
 }
-/*#Options-wrapper img {
+/*#Options-root img {
     vertical-align: text-bottom;
 }*/
 
 
 #Options-root {
+    /*display: -webkit-box;
+    -webkit-box-pack: center;
+    -webkit-box-align: center;*/
+
     position: absolute;
     top: 0px;
     left: 0px;
@@ -168,7 +172,7 @@ input[type="checkbox"][data-options-changed] + span {
     -webkit-box-shadow: dimgray 1px 1px 10px;
 
     display: inline-block;
-    position: relative;
+    /*position: relative;*/
     padding: 15px;
     padding-top: 5px;
 
@@ -180,6 +184,7 @@ input[type="checkbox"][data-options-changed] + span {
 }
 #Options-title {
     display: none;
+
     font-size: 13px;
     font-variant: small-caps;
     text-align: right;
@@ -189,11 +194,13 @@ input[type="checkbox"][data-options-changed] + span {
 #Options-inner {
     /*-webkit-box-shadow: lightgray 0px 0px 1px;*/
 
+    /*display: table;*/
+
     width: 100%;
     height: 100%;
     max-height: 600px;
 
-    position: relative;
+    /*position: relative;*/
     /*padding: 15px 18px;*/
     margin: 10px 0px 10px;
     padding: 0px 0px 15px;
@@ -256,18 +263,27 @@ input[type="checkbox"][data-options-changed] + span {
     cursor: default;
 }
 #Options-content {
+    /*display: table-cell;*/
+    /*display: -webkit-box;
+    -webkit-box-lines: multiple;
+
+    -webkit-box-flex: 1;*/
     width: 100%;
+    /*height: 100%;*/
     padding: 5px 0px;
 }
+/*.Options-content {
+    -webkit-box-flex: 1;
+}*/
 /*#Options-inner > .tab > div {
     visibility: hidden;
 }
 #Options-inner > .tab[data-selected] > div {
     visibility: visible;
 }*/
-#Options-bottom {
-    /*margin-top: 10px;*/
-}
+/*#Options-bottom {
+    margin-top: 10px;
+}*/
 #Options-buttons {
     float: right;
     margin-top: 10px;
