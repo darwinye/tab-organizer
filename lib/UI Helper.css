@@ -16,8 +16,11 @@
     -webkit-box-sizing: border-box;
 
     height: 100%;
+
     overflow-x: hidden;
     overflow-y: scroll;
+
+    /*background-color: transparent;*/
 }
 
 .UI-contextMenu {
@@ -100,17 +103,21 @@
     outline: 1px solid red;
 }*/
 
+/*.UI-contextMenu-submenu:not([data-selected]) .UI-contextMenu-submenu-padding {
+    height: 0px;
+}*/
+
 .UI-contextMenu-submenu-padding {
     -webkit-box-sizing: border-box;
 
     position: absolute;
     z-index: 2;
     left: 100%;
-    top: -4px;
+    top: 0px;
 
     padding: 8px;
     margin-left: -9px;
-    margin-top: -8px;
+    margin-top: -12px;
 }
 .UI-contextMenu-submenu-padding[data-overflow-x] {
     left: auto;
@@ -118,11 +125,11 @@
     margin-right: -9px;
     /*padding-right: 7px;*/
 }
-.UI-contextMenu-submenu-padding[data-overflow-y] {
+/*.UI-contextMenu-submenu-padding[data-overflow-y] {
     top: auto;
     bottom: 0px;
     margin-bottom: -12px;
-}
+}*/
 
 /*.UI-contextMenu-submenu-list {
     margin-left: 1px;
