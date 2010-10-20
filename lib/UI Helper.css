@@ -12,6 +12,14 @@
     cursor: default;
 }
 
+.UI-contextMenu-submenu-list {
+    -webkit-box-sizing: border-box;
+
+    height: 100%;
+    overflow-x: hidden;
+    overflow-y: scroll;
+}
+
 .UI-contextMenu {
     position: absolute;
     top: 100%;
@@ -88,11 +96,13 @@
     background-position: 95% center;*/
 }
 
-/*.UI-contextMenu-submenu, .UI-contextMenu-submenu-padding, .UI-contextMenu-submenu-mask {
+.UI-contextMenu-submenu, .UI-contextMenu-submenu-padding, .UI-contextMenu-submenu-mask {
     outline: 1px solid red;
-}*/
+}
 
 .UI-contextMenu-submenu-padding {
+    -webkit-box-sizing: border-box;
+
     position: absolute;
     left: 100%;
     top: -4px;
