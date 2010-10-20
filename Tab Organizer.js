@@ -1152,6 +1152,23 @@ var Window = {
                                                                 }
                                                             });
 
+//                                                            menu.submenu("<u>T</u>esting", {
+//                                                                keys: ["T"],
+//                                                                create: function (menu) {
+//                                                                    menu.addItem("<u>F</u>oo", {
+//                                                                        keys: ["F"]
+//                                                                    });
+
+//                                                                    menu.addItem("<u>B</u>ar", {
+//                                                                        keys: ["B"]
+//                                                                    });
+
+//                                                                    menu.addItem("<u>Q</u>ux", {
+//                                                                        keys: ["Q"]
+//                                                                    });
+//                                                                }
+//                                                            });
+
 //                                                            menu.addItem("<u>C</u>lose selected");
 //                                                            menu.addItem("<u>C</u>lose selected");
 //                                                            menu.addItem("<u>C</u>lose selected");

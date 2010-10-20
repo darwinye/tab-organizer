@@ -19,7 +19,7 @@ body {
     cursor: default;
     outline: none !important;
 
-    /*overflow-y: hidden;*/
+    overflow-y: hidden;
 }
 [data-selected] {
     outline: 5px auto -webkit-focus-ring-color;
