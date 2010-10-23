@@ -60,7 +60,7 @@
         };
 */
 
-        var config = Options.getAll();
+        var config = Options.snapshot().user;
         var code = "usage-tracking";
 
         if (Options.get(code)) {
@@ -75,8 +75,10 @@
         Object.keys(config).forEach(function (key) {
             if (key in defaults) {
                 if (Options.get(code) || key === code) {
-                    _gaq.push(["_trackEvent", "Options", key, config[key] + ""]);
-//                    console.log("tracked -", key, config[key] + "");
+                    if (config[key] !== defaults[key]) {
+                        _gaq.push(["_trackEvent", "Options", key, config[key] + ""]);
+    //                    console.log("tracked -", key, config[key] + "");
+                    }
                 }
 //                else {
 //                    //console.log(true, key, config[key]);
@@ -225,6 +227,7 @@
         }, true);
 
         Platform.message.addEventListener("lib.keyboard", function (event) {
+            //console.log(event);
             if (event.type === "keyup") {
                 /*
                 if (keycheck(event, {
