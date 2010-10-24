@@ -86,8 +86,11 @@ input[type="checkbox"][data-options-changed] + span {
     color: blue !important;
 }
 
-.Options-group div {
-    display: inline-block;
+.Options-group {
+    display: -webkit-box;
+}
+.Options-indent {
+    margin-left: 15px;
 }
 
 #Options-tooltip, #Options-root {
