@@ -16,7 +16,8 @@
     },
     "permissions": [
         "chrome://favicon/",
-        "tabs"
+        "tabs",
+        "idle"
     ],
     "content_scripts": [{
         "matches": [ "http://*/*", "https://*/*", "ftp://*/*" ],

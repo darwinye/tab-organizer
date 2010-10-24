@@ -56,6 +56,7 @@
         Options.setDefaults(defaults);
 
         Options.setObject("tabs.favorites.urls");
+        Options.setObject("counter.state");
 
         //Options.set("usage-tracking", true);
 
@@ -106,11 +107,116 @@
 
         var state = {};
 
+        var counter = Options.get("counter.state");
+
+        function updateTimestamp() {
+            var date = new Date();
+            date.setHours(Options.get("counter.reset.time.hour"));
+            date.setMinutes(Options.get("counter.reset.time.minute"));
+            counter.set("timestamp", date.getTime());
+        }
+        updateTimestamp();
+/*        if (!counter.get("timestamp")) {
+
+        }*/
+/*        if (!counter.get("hour")) {
+            container.set("hour", Date
+        }*/
+
+        function updateText() {
+            if (Options.get("counter.enabled")) {
+                var value = counter.get("number");
+                if (value > 0) {
+                    Platform.icon.setBackgroundColor({ color: [225, 0, 0, 255] });
+                } else {
+                    Platform.icon.setBackgroundColor({ color: [0, 100, 0, 255] });
+                }
+                Platform.icon.setText({ text: value });
+            } else {
+                Platform.icon.setText({ text: "" });
+            }
+        }
+        updateText();
+
+        function resetText() {
+            counter.set("number", Options.get("counter.reset.number"));
+            updateText();
+        }
+
+        if (!counter.get("number")) {
+            resetText();
+        }
+
+
+        //var DAY = 1000 * 60 * 60 * 24;
+
+        (function anon() {
+            if (Options.get("counter.reset.time")) {
+                var time = new Date();
+                if (time > counter.get("timestamp")) {
+                    updateTimestamp();
+                    resetText();
+                }
+            }
+
+            if (Options.get("counter.reset.idle")) {
+                var hours = Options.get("counter.reset.idle.hour") * 60 * 60;
+                chrome.idle.queryState(hours, function (state) {
+                    if (state === "idle") {
+                        resetText();
+                    }
+                });
+            }
+
+            setTimeout(anon, 60000);
+        }());
+
+//        var startCounter, stopCounter;
+
+        (function () {
+            function add() {
+                counter.set("number", counter.get("number") + 1);
+                updateText();
+            }
+            function subtract() {
+                counter.set("number", counter.get("number") - 1);
+                updateText();
+            }
+            Platform.tabs.addEventListener("create", add, true);
+            Platform.tabs.addEventListener("remove", subtract, true);
+
+//            startCounter = function () {
+//                Platform.icon.setText({ text: counter.get("number") });
+//            };
+//            stopCounter = function () {
+//                Platform.icon.setText({ text: "" });
+//                //Platform.tabs.removeEventListener("create", add, true);
+//                //Platform.tabs.removeEventListener("remove", subtract, true);
+//            };
+        }());
+
+//        if (Options.get("counter.enabled")) {
+//            startCounter();
+//        }
         if (Options.get("popup.type") === "bubble") {
             Platform.icon.setPopup({ popup: "window.html" });
         }
+
         Options.addEventListener("change", function (event) {
-            if (event.name === "popup.type") {
+            switch (event.name) {
+            case "counter.reset.time.hour": //* FALLTHRU
+            case "counter.reset.time.minute":
+                updateTimestamp();
+                break;
+            case "counter.enabled":
+                updateText();
+//                if (event.value) {
+//                    startCounter();
+//                } else {
+//                    stopCounter();
+//                }
+                break;
+            case "popup.type":
                 Platform.icon.setPopup({
                     popup: (event.value === "bubble") ? "window.html" : ""
                 });
@@ -135,6 +241,12 @@
             Platform.icon.setTitle({ title: title.join("") });
         }
         updateTitle();
+
+
+/*        function updateText() {
+            Platform.icon.setText({ text: counter.get("number") });
+        }
+        updateText();*/
 
 
         var openPopup = (function () {

@@ -884,7 +884,10 @@
                         text: "Show ",
                         option: "search.show-number",
                         unit: " items in the list of past queries",
-                        width: "2em"
+                        width: "2em",
+                        limit: {
+                            min: 0
+                        }
                     });
                 });
 
@@ -925,7 +928,10 @@
                         text: "Show undo bar for ",
                         option: "undo.timer",
                         unit: "seconds",
-                        width: "2em"
+                        width: "2em",
+                        limit: {
+                            min: 0
+                        }
                     });
                 });
 
@@ -1049,7 +1055,10 @@
                                 container.input("number", {
                                     option: "counter.reset.idle.hour",
                                     width: "2em",
-                                    unit: "hours"
+                                    unit: "hours",
+                                    limit: {
+                                        min: 0
+                                    }
                                 });
                             });
                         });
