@@ -438,7 +438,7 @@
 
                             element.appendChild(UI.create("div", function (element) {
                                 //input.appendChild(document.createTextNode(" %"));
-                                element.appendChild(container.input("text", {
+                                element.appendChild(container.input("number", {
                                     option: "popup.offsetX",
                                     text: "Left: ",
                                     unit: "%",
@@ -455,7 +455,7 @@
                                 }));*/
                             }));
                             element.appendChild(UI.create("div", function (element) {
-                                element.appendChild(container.input("text", {
+                                element.appendChild(container.input("number", {
                                     option: "popup.offsetY",
                                     text: "Top: ",
                                     unit: "%",
@@ -476,20 +476,23 @@
                         element.appendChild(UI.create("td", function (element) {
                             element.className = "align-right";
 
-                            function numberCap(info) {
+                            /*function numberCap(info) {
                                 var value = (+this.value < 200) ? 200 : this.value;
-                                Options.set(info.option, null);
+                                //Options.set(info.option, null);
                                 return value;
-                            }
+                            }*/
 
                             element.appendChild(UI.create("div", function (element) {
-                                element.appendChild(container.input("text", {
+                                element.appendChild(container.input("number", {
                                     option: "popup.width",
                                     text: "Width: ",
                                     unit: "px",
                                     width: "3em",
+                                    limit: {
+                                        min: 200
+                                    }
                                     //on: "keyup",
-                                    modify: numberCap
+                                    //modify: numberCap
                                 }));
                                 /*element.appendChild(document.createTextNode());
                                 element.appendChild(UI.create("input", function (element) {
@@ -504,13 +507,16 @@
                                 element.appendChild(document.createTextNode(" "));*/
                             }));
                             element.appendChild(UI.create("div", function (element) {
-                                element.appendChild(container.input("text", {
+                                element.appendChild(container.input("number", {
                                     option: "popup.height",
                                     text: "Height: ",
                                     unit: "px",
                                     width: "3em",
+                                    limit: {
+                                        min: 200
+                                    }
                                     //on: "keyup",
-                                    modify: numberCap
+                                    //modify: numberCap
                                 }));
                                 /*element.appendChild(document.createTextNode("Height: "));
                                 element.appendChild(UI.create("input", function (element) {
@@ -869,15 +875,12 @@
                     //container.space({ height: "12px" });
                 });
 
-                container.category("Windows", function (container) {
-                    container.input("checkbox", {
-                        option: "windows.middle-close",
-                        text: "Middle click on a window's title to close the entire window"
-                    });
-                });
+                /*container.category("Windows", function (container) {
+
+                });*/
 
                 container.category("Search", function (container) {
-                    container.input("text", {
+                    container.input("number", {
                         text: "Show ",
                         option: "search.show-number",
                         unit: " items in the list of past queries",
@@ -918,7 +921,7 @@
 
                     container.space({ height: "5px" });
 
-                    container.input("text", {
+                    container.input("number", {
                         text: "Show undo bar for ",
                         option: "undo.timer",
                         unit: "seconds",
@@ -945,6 +948,110 @@
                         container.input("checkbox", {
                             text: "Allow for usage tracking",
                             option: "usage-tracking"
+                        });
+                    });
+                });
+
+                container.category("Experimental", function (container) {
+                    container.text("Experimental features are disabled by default. Possibly because they break things, or I'm not sure how useful they are, or because they change the behavior of Tab Organizer significantly.");
+
+                    container.space({ height: "1em" });
+
+                    container.text("These features might be removed or changed at any time.");
+
+                    container.separator();
+                    container.space({ height: "1em" });
+
+                    container.input("checkbox", {
+                        option: "windows.middle-close",
+                        text: "Middle click on a window's title to close the entire window"
+                    });
+
+                    container.input("checkbox", {
+                        option: "popup.close.escape",
+                        text: "Use the Escape key to close the popup"
+                    });
+
+                    container.space({ height: "0.5em" });
+                    container.separator();
+                    container.space({ height: "0.5em" });
+
+                    container.input("checkbox", {
+                        option: "counter.enabled",
+                        text: "Display a counter that shows how many tabs have been opened/closed"
+                    });
+
+                    container.space({ height: "0.5em" });
+
+                    container.indent(function (container) {
+                        container.header(function (container) {
+                            container.input("number", {
+                                option: "counter.reset.number",
+                                text: "Reset the counter to ",
+                                unit: "...",
+                                width: "2em"
+                            });
+                        });
+                        container.indent(function (container) {
+                            function modify(info) {
+                                var value = Math.max(0, Math.min(23, this.value)) + "";
+
+                                if (value.length > 2) {
+                                    value = value.slice(0, 2);
+                                }
+/*                                if (value > 23) {
+                                    value = "23";
+                                }
+                                if (value < 0) {
+                                    value = "0";
+                                }*/
+                                while (value.length < 2) {
+                                    value = "0" + value;
+                                }
+                                return value;
+                            }
+                            container.group(function (container) {
+                                container.input("checkbox", {
+                                    option: "counter.reset.time",
+                                    text: "...when it is "
+                                });
+                                container.input("number", {
+                                    option: "counter.reset.time.hour",
+                                    width: "2em",
+                                    unit: ":",
+                                    limit: {
+                                        min: 0,
+                                        max: 23,
+                                        digits: 2
+                                    }/*,
+                                    verbatim: true,
+                                    modify: modify*/
+                                });
+                                container.input("number", {
+                                    option: "counter.reset.time.minute",
+                                    unit: "o'clock",
+                                    width: "2em",
+                                    limit: {
+                                        min: 0,
+                                        max: 59,
+                                        digits: 2
+                                    }/*
+                                    verbatim: true,
+                                    modify: modify*/
+                                });
+                            });
+
+                            container.group(function (container) {
+                                container.input("checkbox", {
+                                    option: "counter.reset.idle",
+                                    text: "...when idle for "
+                                });
+                                container.input("number", {
+                                    option: "counter.reset.idle.hour",
+                                    width: "2em",
+                                    unit: "hours"
+                                });
+                            });
                         });
                     });
                 });
