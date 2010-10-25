@@ -989,12 +989,12 @@
 
                     container.space({ height: "0.5em" });
 
-                    container.indent(function (container) {
+                    //container.indent(function (container) {
                         container.header(function (container) {
                             container.input("number", {
                                 option: "counter.reset.number",
                                 text: "Reset the counter to ",
-                                unit: "...",
+                                unit: "when...",
                                 width: "2em"
                             });
                         });
@@ -1019,7 +1019,7 @@
                             container.group(function (container) {
                                 container.input("checkbox", {
                                     option: "counter.reset.time",
-                                    text: "...when it is "
+                                    text: "...it is "
                                 });
                                 container.input("number", {
                                     option: "counter.reset.time.hour",
@@ -1050,7 +1050,7 @@
                             container.group(function (container) {
                                 container.input("checkbox", {
                                     option: "counter.reset.idle",
-                                    text: "...when idle for "
+                                    text: "...idle for "
                                 });
                                 container.input("number", {
                                     option: "counter.reset.idle.hour",
@@ -1062,7 +1062,7 @@
                                 });
                             });
                         });
-                    });
+                    //});
                 });
             });
         </script>

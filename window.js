@@ -293,6 +293,16 @@ addEventListener("dragend", function () {
     state.dragging = false;
 }, true);
 
+addEventListener("keydown", function (event) {
+    if (event.which === 27) { //* Escape
+        if (!event.defaultPrevented) {
+            if (Options.get("popup.close.escape")) {
+                close();
+            }
+        }
+    }
+}, false);
+
 
 var fragment = document.createDocumentFragment();
 
@@ -1001,6 +1011,10 @@ fragment.appendChild(UI.create("div", function (container) {
                                 }
                             }
                         } else if (event.which === 27) { //* Escape
+                            if (!container.hasAttribute("hidden")) {
+                                event.preventDefault();
+                            }
+
                             container.reset();
                         } else if (event.which === 13) { //* Enter
                             var query = container.querySelector("[data-selected]");

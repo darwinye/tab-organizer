@@ -888,9 +888,14 @@ var Window = {
 
                                                     //container.tabList.focus();
                                                 }, true);
+                                                element.addEventListener("keydown", function (event) {
+                                                    if (event.which === 27) { //* Escape
+                                                        event.preventDefault();
+                                                    }
+                                                }, true);
                                                 element.addEventListener("keyup", function (event) {
-                                                    if (event.which === 13 || event.which === 27) {
-                                                        if (event.which === 27) {
+                                                    if (event.which === 13 || event.which === 27) { //* Enter/Escape
+                                                        if (event.which === 27) { //* Escape
                                                             this.value = value;
 
                                                             container.tabList.focus();
