@@ -1,11 +1,12 @@
 "use strict";
 /*global action, events, Options, Platform, Tab, UI, Undo, Window */
 
+
 if (Options.get("popup.type") === "bubble") {
     document.body.style.width = Options.get("popup.width") + "px";
     document.body.style.height = Options.get("popup.height") + "px";
-    document.body.style.overflowY = "hidden";
-    document.body.style.maxWidth = "100%";
+    //document.body.style.overflowY = "hidden";
+    //document.body.style.maxWidth = "100%";
 }
 
 
@@ -1225,15 +1226,17 @@ document.body.appendChild(fragment);
 
 
 Platform.windows.getAll({ populate: true }, function (windows) {
-    var element = state.windowList;
+    var fragment = document.createDocumentFragment();
 
 //    element.appendChild(UI.create("td"));
     windows.forEach(function (win) {
         if (win.type === "normal") {
-            element.appendChild(Window.proxy(win));
+            fragment.appendChild(Window.proxy(win));
         }
     });
 //    element.appendChild(UI.create("td"));
+
+    state.windowList.appendChild(fragment);
 
     Options.addEventListener("change", function (event) {
         if (event.name === "window.lastfocused") {
@@ -1274,8 +1277,8 @@ Platform.windows.getAll({ populate: true }, function (windows) {
                 });
             }
             state.search();
-            document.body.setAttribute("hidden", "");
-            document.body.removeAttribute("hidden");
+//            document.body.setAttribute("hidden", "");
+//            document.body.removeAttribute("hidden");
         }
     }, true);
 
@@ -1294,8 +1297,31 @@ Platform.windows.getAll({ populate: true }, function (windows) {
     //element.addEventListener("DOMNodeInserted", state.update, true);
     //element.addEventListener("DOMNodeRemoved", state.update, true);
 
+//    setTimeout(function () {
     state.search({ scroll: true, focused: true });
+//    }, 0);
 
 //    document.body.setAttribute("hidden", "");
 //    document.body.removeAttribute("hidden");
+//    document.body.style.margin = "0px";
+//    document.body.style.margin = "";
+    //document.body.className += "foo";
+//    getComputedStyle(document.body, null).height;
+//    document.body.style.display = 'none';
+//    document.body.style.display = 'block';
+//    document.body.offsetHeight;
+//    document.body.style.maxHeight = "0px";
+//    document.body.style.maxHeight = "";
+
+//    var height = document.body.style.height;
+//    document.body.style.height = "0px";
+//    setTimeout(function () {
+//        //document.body.style.height = height;
+
+//    }, 100);
+
+//    addEventListener("load", function () {
+////        alert();
+//        document.body.style.height = Options.get("popup.height") + "px";
+//    }, true);
 });
