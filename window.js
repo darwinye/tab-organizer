@@ -344,7 +344,7 @@ fragment.appendChild(UI.create("div", function (container) {
 //        }));
 
         container.appendChild(UI.create("button", function (element) {
-            element.href = "options.html";
+            element.href = "/options.html";
             element.target = "_blank";
 
             element.className = "Options-link";
@@ -928,7 +928,7 @@ fragment.appendChild(UI.create("div", function (container) {
                             var button = document.createElement("img");
                             button.className = "past-queries-close";
     //                        button.style.verticalAlign = "top";
-                            button.src = "images/button-close.png";
+                            button.src = "/images/button-close.png";
 
 //                            button.addEventListener("click", close, true);
 
@@ -1244,7 +1244,7 @@ document.body.appendChild(fragment);
 //    console.log(event.timeStamp, event.type);
 //}, true);
 
-addEventListener("load", function (event) {
+addEventListener("load", function (event) { //* Issue 69
     //    console.log(event.timeStamp, event.type);
     Platform.windows.getAll({ populate: true }, function (windows) {
         var fragment = document.createDocumentFragment();

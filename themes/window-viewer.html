@@ -4,34 +4,12 @@
     <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
     <title>Theme Viewer</title>
 
-    <script src="../lib/Platform.js"></script>
-    <script src="../lib/Options.js"></script>
-    <script>
-        "use strict";
-        /*global Options */
+    <script src="/lib/Platform.js"></script>
+    <script src="/lib/Options.js"></script>
+    <script src="/themes/color-sync.js"></script>
 
-        (function () {
-            var link = document.createElement("link");
-            link.rel = "stylesheet";
-            link.type = "text/css";
-
-            function href(value) {
-                link.href = value + ".css";
-            }
-            href(Options.get("color.theme"));
-
-            Options.addEventListener("change", function (event) {
-                if (event.name === "color.theme") {
-                    href(event.value);
-                }
-            }, true);
-
-            document.head.appendChild(link);
-        }());
-    </script>
-
-    <link rel="stylesheet" type="text/css" href="../lib/Options.css" />
-    <link rel="stylesheet" type="text/css" href="../window.css" />
+    <link rel="stylesheet" type="text/css" href="/lib/Options.css" />
+    <link rel="stylesheet" type="text/css" href="/window.css" />
 
     <style type="text/css">
         body {
@@ -54,7 +32,7 @@
     </style>
 </head>
 <body>
-    <script src="../lib/UI%20Helper.js"></script>
+    <script src="/lib/UI%20Helper.js"></script>
     <script>
         //console.log(Platform.getBackgroundPage() === this);
         (function () {

@@ -220,7 +220,7 @@ body {
     border-color: #e1e1e1;
     border-radius: 2px;
 
-    /*background-image: url(images/button-search.png);
+    /*background-image: url(/images/button-search.png);
     background-repeat: no-repeat;
     background-position: right 1px;*/
 }
@@ -321,7 +321,7 @@ input[special], .search-past-item.special {
 /*#search-past > li[data-selected]::after {
     float: right;
     margin-top: 2px;
-    content: url("images/button-close.png");
+    content: url("/images/button-close.png");
 }*/
 
 #window-list {
@@ -524,7 +524,7 @@ input[special], .search-past-item.special {
 }
 
 .tab-icon-dropdown {
-    /*-webkit-mask-image: url(images/button-menu-mask.png);*/
+    /*-webkit-mask-image: url(/images/button-menu-mask.png);*/
 
     display: none;
     /*padding: 1px 2px 0px 1px;*/
@@ -534,7 +534,7 @@ input[special], .search-past-item.special {
     height: 16px;
 
     /*background-color: red;*/
-    /*background-image: url('images/button-menu.png');*/
+    /*background-image: url('/images/button-menu.png');*/
 
     border: 1px solid transparent;
     border-radius: 5px;
@@ -605,7 +605,7 @@ input[special], .search-past-item.special {
     width: 16px;
     /*height: 13px;*/
 
-    background-image: url('images/button-close.png');
+    background-image: url(/images/button-close.png);
     background-color: rgba(255, 255, 255, 0.75);
     /*background-position: center;*/
 
@@ -622,7 +622,7 @@ input[special], .search-past-item.special {
     display: block;
 }
 .tab-button-close:hover {
-    /*background-image: url('close-button-hover.png');*/
+    /*background-image: url('/close-button-hover.png');*/
     background-color: white !important;
 }
 
@@ -646,11 +646,11 @@ input[special], .search-past-item.special {
 
 .tab-favorite {
     display: none;
-    background-image: url(images/unfavorite.png);
+    background-image: url(/images/unfavorite.png);
 }
 .tab[data-favorited] > .tab-favorite {
     display: block;
-    background-image: url(images/favorite.png);
+    background-image: url(/images/favorite.png);
 }
 
 .tab-favicon, .tab-favorite {
@@ -689,10 +689,10 @@ input[special], .search-past-item.special {
 }
 .tab:hover > .tab-favorite {
     display: block;
-    /*background-image: url(images/unfavorite.png);*/
+    /*background-image: url(/images/unfavorite.png);*/
 }
 /*.tab[data-favorited]:hover > .tab-favorite {
-    background-image: url(images/favorite.png);
+    background-image: url(/images/favorite.png);
 }*/
 
 .tab[data-focused]:hover {

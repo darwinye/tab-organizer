@@ -396,7 +396,7 @@ var Tab = {
                         element.src = "chrome://favicon/" + tab.url;
 //                            console.log(element.src);
                     } else {
-                        element.src = "images/blank.png";
+                        element.src = "/images/blank.png";
                     }
                 }),
                 favorite: UI.create("div", function (element) {
@@ -433,7 +433,7 @@ var Tab = {
                         element.className = "stretch";
                         element.setAttribute("alt", "");
 
-                        element.src = "images/favorite.png";
+                        element.src = "/images/favorite.png";
                     }));*/
                 }),
                 text: UI.create("div", function (element) {
@@ -485,7 +485,7 @@ var Tab = {
                     element.title = "Close (Alt Click)";
 
                     //element.appendChild(UI.create("img", function (element) {
-                        //element.src = "images/button-close.png";
+                        //element.src = "/images/button-close.png";
                         element.draggable = true;
 
                         //element.addEventListener("mousedown", events.stop, true);
@@ -499,7 +499,7 @@ var Tab = {
                         }, true);
 
                         /*element.appendChild(UI.create("img", function (element) {
-                            element.src = "images/button-close.png";
+                            element.src = "/images/button-close.png";
 
                         }));*/
                     //}));
@@ -1266,7 +1266,7 @@ var Window = {
 //                                                dropdown.className = "tab-icon-dropdown";
 
 //                                                /*var img = document.createElement("img");
-//                                                img.src = "images/button-menu.png";*/
+//                                                img.src = "/images/button-menu.png";*/
 
 //                                                dropdown.addEventListener("mousedown",  {
 //                                                    build: function (menu) {

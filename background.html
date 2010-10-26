@@ -5,11 +5,11 @@
     <title>Background Page</title>
 </head>
 <body>
-    <script src="lib/Platform.js"></script>
-    <script src="lib/Options.js"></script>
+    <script src="/lib/Platform.js"></script>
+    <script src="/lib/Options.js"></script>
 
-    <script src="lib/Array.js"></script>
-    <script src="lib/Analytics.js"></script>
+    <script src="/lib/Array.js"></script>
+    <script src="/lib/Analytics.js"></script>
     <script>
         "use strict";
         /*global Options, Platform */
@@ -109,13 +109,19 @@
 
         var counter = Options.get("counter.state");
 
-        function updateTimestamp() {
+        counter.reset = function () {
+            counter.set("number", Options.get("counter.reset.number"));
+            counter.update();
+        };
+
+        counter.timestamp = function () {
             var date = new Date();
             date.setHours(Options.get("counter.reset.time.hour"));
             date.setMinutes(Options.get("counter.reset.time.minute"));
             counter.set("timestamp", date.getTime());
-        }
-        updateTimestamp();
+        };
+        counter.timestamp();
+
 /*        if (!counter.get("timestamp")) {
 
         }*/
@@ -123,7 +129,7 @@
             container.set("hour", Date
         }*/
 
-        function updateText() {
+        counter.update = function () {
             if (Options.get("counter.enabled")) {
                 var value = counter.get("number");
                 if (value > 0) {
@@ -135,17 +141,8 @@
             } else {
                 Platform.icon.setText({ text: "" });
             }
-        }
-        updateText();
-
-        function resetText() {
-            counter.set("number", Options.get("counter.reset.number"));
-            updateText();
-        }
-
-        if (!counter.get("number")) {
-            resetText();
-        }
+        };
+        counter.update();
 
 
         //var DAY = 1000 * 60 * 60 * 24;
@@ -154,8 +151,8 @@
             if (Options.get("counter.reset.time")) {
                 var time = new Date();
                 if (time > counter.get("timestamp")) {
-                    updateTimestamp();
-                    resetText();
+                    counter.timestamp();
+                    counter.reset();
                 }
             }
 
@@ -163,7 +160,7 @@
                 var hours = Options.get("counter.reset.idle.hour") * 60 * 60;
                 chrome.idle.queryState(hours, function (state) {
                     if (state === "idle") {
-                        resetText();
+                        counter.reset();
                     }
                 });
             }
@@ -176,11 +173,11 @@
         (function () {
             function add() {
                 counter.set("number", counter.get("number") + 1);
-                updateText();
+                counter.update();
             }
             function subtract() {
                 counter.set("number", counter.get("number") - 1);
-                updateText();
+                counter.update();
             }
             Platform.tabs.addEventListener("create", add, true);
             Platform.tabs.addEventListener("remove", subtract, true);
@@ -195,6 +192,7 @@
 //            };
         }());
 
+
 //        if (Options.get("counter.enabled")) {
 //            startCounter();
 //        }
@@ -206,10 +204,16 @@
             switch (event.name) {
             case "counter.reset.time.hour": //* FALLTHRU
             case "counter.reset.time.minute":
-                updateTimestamp();
+                counter.timestamp();
                 break;
             case "counter.enabled":
-                updateText();
+                if (event.value) {
+                    if (!counter.get("hasrun")) {
+                        counter.set("hasrun", true);
+                        counter.reset();
+                    }
+                }
+                counter.update();
 //                if (event.value) {
 //                    startCounter();
 //                } else {
@@ -222,6 +226,7 @@
                 });
             }
         }, true);
+
 
         function updateTitle() {
             var title = [ "Tab Organizer (" ];
