@@ -23,6 +23,7 @@ button.Options-button {
     position: relative;
     z-index: 9001;
     height: 32px;
+    min-height: 22px;
     padding: 2px 14px;
     margin-left: 10px;
 
@@ -44,6 +45,9 @@ button.Options-button {
     vertical-align: middle;
     cursor: pointer;
 }
+/*button.Options-button.slim {
+    height: 29px;
+}*/
 button.Options-button:active, button.Options-button:hover {
     background-color: #ebf5ff; /*! #e6f0ff */
 }

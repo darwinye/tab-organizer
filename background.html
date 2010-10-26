@@ -208,8 +208,8 @@
                 break;
             case "counter.enabled":
                 if (event.value) {
-                    if (!counter.get("hasrun")) {
-                        counter.set("hasrun", true);
+                    if (!counter.get("first-run")) {
+                        counter.set("first-run", true);
                         counter.reset();
                     }
                 }

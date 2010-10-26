@@ -994,7 +994,7 @@
                         text: "Display a counter that shows how many tabs have been opened/closed"
                     });
 
-                    container.space({ height: "0.5em" });
+                    container.space({ height: "0.8em" });
 
                     //container.indent(function (container) {
                         container.header(function (container) {
@@ -1070,6 +1070,19 @@
                             });
                         });
                     //});
+
+                    container["DOM.Element"].appendChild(UI.create("button", function (element) {
+                        element.textContent = "Reset counter";
+                        element.className = "Options-button";
+                        element.style.height = "27px";
+                        element.style.marginTop = "0.9em";
+
+                        var counter = Options.get("counter.state");
+
+                        element.addEventListener("click", function () {
+                            counter.reset();
+                        }, true);
+                    }));
                 });
             });
         </script>
