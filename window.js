@@ -604,6 +604,9 @@ fragment.appendChild(UI.create("div", function (container) {
                         if (flags.scroll) {
                             scroll.push(item);
                         }
+//                        if (flags.scroll) {
+//                            //UI.scrollTo(item.selected, item.tabList);
+//                        }
                         return true;
                     }
                 });
@@ -638,6 +641,8 @@ fragment.appendChild(UI.create("div", function (container) {
                 }
 
                 document.title = string.join("");
+
+                document.body.scrollTop = 0; //* Issue 87
 
                 //search.stop = false;
             }
@@ -1224,104 +1229,122 @@ fragment.appendChild(UI.create("div", function (element) {
 
 document.body.appendChild(fragment);
 
+//addEventListener("scroll", function anon(event) {
+//    //this.removeEventListener(event.type, anon, true);
 
-Platform.windows.getAll({ populate: true }, function (windows) {
-    var fragment = document.createDocumentFragment();
+//    //setTimeout(function () {
+//    //}, 0);
+//    //document.scrollLeft = 0; //* Issue 87
 
-//    element.appendChild(UI.create("td"));
-    windows.forEach(function (win) {
-        if (win.type === "normal") {
-            fragment.appendChild(Window.proxy(win));
-        }
-    });
-//    element.appendChild(UI.create("td"));
+//    //event.preventDefault();
+//    console.log(event.timeStamp, event.target, document.scrollLeft, document.scrollTop);
+//}, true);
 
-    state.windowList.appendChild(fragment);
+//addEventListener("DOMContentLoaded", function (event) {
+//    console.log(event.timeStamp, event.type);
+//}, true);
 
-    Options.addEventListener("change", function (event) {
-        if (event.name === "window.lastfocused") {
-            var item = state.windows[event.value];
-            if (item) {
-                item.setWindowFocus();
-                state.search();
+addEventListener("load", function (event) {
+    //    console.log(event.timeStamp, event.type);
+    Platform.windows.getAll({ populate: true }, function (windows) {
+        var fragment = document.createDocumentFragment();
 
-//                Platform.message.connect("lib.action", function (port) {
-//                    port.sendMessage({ type: "focus" });
-//                });
+    //    element.appendChild(UI.create("td"));
+        windows.forEach(function (win) {
+            if (win.type === "normal") {
+                fragment.appendChild(Window.proxy(win));
             }
-        }
-    }, true);
-
-    Options.addEventListener("change", function (event) {
-        var location = (event.name === "tabs.close.location"),
-            display = (event.name === "tabs.close.display");
-
-        if (location || display) {
-//            console.warn("UPDATING!");
-            var query = document.querySelectorAll(".tab");
-            for (var i = 0; i < query.length; i += 1) {
-                query[i].updateButtonPositions();
-            }
-        }
-    }, true);
-
-    Options.addEventListener("change", function (event) {
-        if (event.name === "tabs.favorites.urls") {
-            if (event.action === "delete") {
-                state.tabsByURL[event.value].forEach(function (item) {
-                    item.removeAttribute("data-favorited");
-                });
-            } else {
-                state.tabsByURL[event.value].forEach(function (item) {
-                    item.setAttribute("data-favorited", "");
-                });
-            }
-            state.search();
-//            document.body.setAttribute("hidden", "");
-//            document.body.removeAttribute("hidden");
-        }
-    }, true);
-
-    state.saveTitles = function () {
-//                    Options.removeEventListener("change", update, true);
-
-        var list = state.list.map(function (item) {
-            return item.tabIcon.indexText.value;
         });
+    //    element.appendChild(UI.create("td"));
 
-        localStorage["window.titles"] = JSON.stringify(list);
-    };
-    addEventListener("unload", state.saveTitles, true);
+        state.windowList.appendChild(fragment);
 
-//                element.addEventListener("DOMSubtreeModified", state.update, true);
-    //element.addEventListener("DOMNodeInserted", state.update, true);
-    //element.addEventListener("DOMNodeRemoved", state.update, true);
+        Options.addEventListener("change", function (event) {
+            if (event.name === "window.lastfocused") {
+                var item = state.windows[event.value];
+                if (item) {
+                    item.setWindowFocus();
+                    state.search();
 
-//    setTimeout(function () {
-    state.search({ scroll: true, focused: true });
-//    }, 0);
+    //                Platform.message.connect("lib.action", function (port) {
+    //                    port.sendMessage({ type: "focus" });
+    //                });
+                }
+            }
+        }, true);
 
-//    document.body.setAttribute("hidden", "");
-//    document.body.removeAttribute("hidden");
-//    document.body.style.margin = "0px";
-//    document.body.style.margin = "";
-    //document.body.className += "foo";
-//    getComputedStyle(document.body, null).height;
-//    document.body.style.display = 'none';
-//    document.body.style.display = 'block';
-//    document.body.offsetHeight;
-//    document.body.style.maxHeight = "0px";
-//    document.body.style.maxHeight = "";
+        Options.addEventListener("change", function (event) {
+            var location = (event.name === "tabs.close.location"),
+                display = (event.name === "tabs.close.display");
 
-//    var height = document.body.style.height;
-//    document.body.style.height = "0px";
-//    setTimeout(function () {
-//        //document.body.style.height = height;
+            if (location || display) {
+    //            console.warn("UPDATING!");
+                var query = document.querySelectorAll(".tab");
+                for (var i = 0; i < query.length; i += 1) {
+                    query[i].updateButtonPositions();
+                }
+            }
+        }, true);
 
-//    }, 100);
+        Options.addEventListener("change", function (event) {
+            if (event.name === "tabs.favorites.urls") {
+                if (event.action === "delete") {
+                    state.tabsByURL[event.value].forEach(function (item) {
+                        item.removeAttribute("data-favorited");
+                    });
+                } else {
+                    state.tabsByURL[event.value].forEach(function (item) {
+                        item.setAttribute("data-favorited", "");
+                    });
+                }
+                state.search();
+    //            document.body.setAttribute("hidden", "");
+    //            document.body.removeAttribute("hidden");
+            }
+        }, true);
 
-//    addEventListener("load", function () {
-////        alert();
-//        document.body.style.height = Options.get("popup.height") + "px";
-//    }, true);
-});
+        state.saveTitles = function () {
+    //                    Options.removeEventListener("change", update, true);
+
+            var list = state.list.map(function (item) {
+                return item.tabIcon.indexText.value;
+            });
+
+            localStorage["window.titles"] = JSON.stringify(list);
+        };
+        addEventListener("unload", state.saveTitles, true);
+
+    //                element.addEventListener("DOMSubtreeModified", state.update, true);
+        //element.addEventListener("DOMNodeInserted", state.update, true);
+        //element.addEventListener("DOMNodeRemoved", state.update, true);
+
+    //    setTimeout(function () {
+        state.search({ scroll: true, focused: true });
+    //        scrollTo(0, 0);
+    //    }, 0);
+
+    //    document.body.setAttribute("hidden", "");
+    //    document.body.removeAttribute("hidden");
+    //    document.body.style.margin = "0px";
+    //    document.body.style.margin = "";
+        //document.body.className += "foo";
+    //    getComputedStyle(document.body, null).height;
+    //    document.body.style.display = 'none';
+    //    document.body.style.display = 'block';
+    //    document.body.offsetHeight;
+    //    document.body.style.maxHeight = "0px";
+    //    document.body.style.maxHeight = "";
+
+    //    var height = document.body.style.height;
+    //    document.body.style.height = "0px";
+    //    setTimeout(function () {
+    //        //document.body.style.height = height;
+
+    //    }, 100);
+
+    //    addEventListener("load", function () {
+    ////        alert();
+    //        document.body.style.height = Options.get("popup.height") + "px";
+    //    }, true);
+    });
+}, true);
