@@ -145,11 +145,11 @@
         counter.update();
 
 
-        //var DAY = 1000 * 60 * 60 * 24;
+        var day = 1000 * 60 * 60 * 24;
 
         (function anon() {
             if (Options.get("counter.reset.time")) {
-                var time = new Date();
+                var time = new Date() - day;
                 if (time > counter.get("timestamp")) {
                     counter.timestamp();
                     counter.reset();
