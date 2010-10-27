@@ -1261,14 +1261,18 @@ addEventListener("load", function (event) { //* Issue 69
 
         Options.addEventListener("change", function (event) {
             if (event.name === "window.lastfocused") {
-                var item = state.windows[event.value];
-                if (item) {
-                    item.setWindowFocus();
-                    state.search();
+                if (event.value === null) {
+                    action.unselectWindow();
+                } else {
+                    var item = state.windows[event.value];
+                    if (item) {
+                        item.setWindowFocus();
+                        state.search();
 
-    //                Platform.message.connect("lib.action", function (port) {
-    //                    port.sendMessage({ type: "focus" });
-    //                });
+        //                Platform.message.connect("lib.action", function (port) {
+        //                    port.sendMessage({ type: "focus" });
+        //                });
+                    }
                 }
             }
         }, true);

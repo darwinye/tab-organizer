@@ -337,7 +337,23 @@
 */
 
         Platform.windows.addEventListener("focus", function (win) {
+//            console.log(win);
+//            clearTimeout(anon.timer);
             if (win !== null) {
+//                if (anon.timer) {
+//                    setTimeout(function () {
+//                        anon.timer = false;
+//                    }, 100);
+//                } else {
+//                    //                    anon.timer = true;
+//    //                alert();
+//                    Options.set("window.lastfocused", null, { verbatim: true });
+
+//                    //action.unselectWindow();
+//                    //state.search();
+//                }
+//            } else {
+//                anon.timer = true;
                 Platform.windows.get(win, function (win) {
                     if (win.type === "normal") {
                         Options.set("window.lastfocused", win.id);
@@ -345,11 +361,7 @@
                         //state.search();
                     }
                 });
-            }/* else {
-                action.unselectWindow();
-
-                state.search();
-            }*/
+            }
         }, true);
 
         Platform.message.addEventListener("lib.keyboard", function (event) {
