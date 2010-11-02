@@ -718,7 +718,7 @@ fragment.appendChild(UI.create("div", function (container) {
 
                     var precoded = {
                         "i": ["inurl:", "intitle:", "is:image", "is:favorite", "is:selected"],
-                        "s": ["same:url", "same:title"],
+                        "s": ["same:url", "same:title", "same:domain"],
                         "w": ["window:", "window:focused"]
                     };
 
