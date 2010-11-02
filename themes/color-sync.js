@@ -11,7 +11,7 @@
     }
     href(Options.get("color.theme"));
 
-    Options.addEventListener("change", function (event) {
+    Options.event.addListener("change", function (event) {
         if (event.name === "color.theme") {
             href(event.value);
         }

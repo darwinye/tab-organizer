@@ -212,7 +212,7 @@
             Platform.icon.setPopup({ popup: "window.html" });
         }
 
-        Options.addEventListener("change", function (event) {
+        Options.event.addListener("change", function (event) {
             switch (event.name) {
             case "counter.reset.time.hour": //* FALLTHRU
             case "counter.reset.time.minute":

@@ -364,7 +364,7 @@
 
                                     element.style.left = Options.get("popup.offsetX") + 50 + "%";
 
-                                    Options.addEventListener("change", function (event) {
+                                    Options.event.addListener("change", function (event) {
                                         if (event.name === "popup.offsetX") {
                                             element.style.left = event.value + 50 + "%";
                                         }
@@ -379,7 +379,7 @@
 
                                     element.style.top = Options.get("popup.offsetY") + 50 + "%";
 
-                                    Options.addEventListener("change", function (event) {
+                                    Options.event.addListener("change", function (event) {
                                         if (event.name === "popup.offsetY") {
                                             element.style.top = event.value + 50 + "%";
                                         }
@@ -393,7 +393,7 @@
                                     element.style.fontSize = "16px";
                                     element.style.backgroundColor = "honeydew";
 
-                                    Options.addEventListener("change", (function () {
+                                    Options.event.addListener("change", (function () {
                                         function update() {
                                             var popup = {
                                                 offsetX: Options.get("popup.offsetX"),
@@ -423,7 +423,7 @@
 
                                         element.textContent = Options.get("popup.type").toUpperCase();
 
-                                        Options.addEventListener("change", function (event) {
+                                        Options.event.addListener("change", function (event) {
                                             if (event.name === "popup.type") {
                                                 element.textContent = event.value.toUpperCase();
                                             }
@@ -733,7 +733,7 @@
                                                 favorites.set(info.url, null);
     //                                            delete favorites[info.url];
 
-    //                                            Options.triggerEvent("change", {
+    //                                            Options.event.trigger("change", {
     //                                                name: "tabs.favorites.urls",
     //                                                value: info.url,
     //                                                remove: true
@@ -812,7 +812,7 @@
                             }
                             update();
 
-                            Options.addEventListener("change", function (event) {
+                            Options.event.addListener("change", function (event) {
                                 if (event.name === "tabs.favorites.urls") {
                                     update(event.value, event.action);
                                 }

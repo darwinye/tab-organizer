@@ -410,7 +410,7 @@ var Tab = {
                             state.favorites.set(tab.url, null);
 //                            delete state.favorites[tab.url];
 
-//                            Options.triggerEvent("change", {
+//                            Options.event.trigger("change", {
 //                                name: "tabs.favorites.urls",
 //                                value: tab.url,
 //                                remove: true
@@ -419,7 +419,7 @@ var Tab = {
                             state.favorites.set(tab.url, state.tabsByURL[tab.url].length);
 //                            state.favorites[tab.url] = state.tabsByURL[tab.url].length;
 
-//                            Options.triggerEvent("change", {
+//                            Options.event.trigger("change", {
 //                                name: "tabs.favorites.urls",
 //                                value: tab.url,
 //                                remove: false

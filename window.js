@@ -97,7 +97,7 @@ Undo.setRule("move-tabs", function (info) {
 //        });
 
 
-//        Options.triggerEvent("change");
+//        Options.event.trigger("change");
 
 //        delete localStorage["search.lastinput"];
 //        delete localStorage["window.titles"];
@@ -201,7 +201,7 @@ state.tabsByURL.update = function (url) {
 //        if (state.favorites[url] !== state.tabsByURL[url].length) {
 //            state.favorites[url] = state.tabsByURL[url].length;
 
-//            Options.triggerEvent("change", {
+//            Options.event.trigger("change", {
 //                name: "tabs.favorites.urls",
 //                value: url
 //            });
@@ -1222,7 +1222,7 @@ fragment.appendChild(UI.create("div", function (element) {
     //var windowlist = document.getElementById("window-list");
 
 //            setTimeout(function () {
-//                Options.addEventListener("change", function () {
+//                Options.event.addListener("change", function () {
 //                }, true);
 //            }, 0);
 }));
@@ -1259,7 +1259,7 @@ addEventListener("load", function (event) { //* Issue 69
 
         state.windowList.appendChild(fragment);
 
-        Options.addEventListener("change", function (event) {
+        Options.event.addListener("change", function (event) {
             if (event.name === "window.lastfocused") {
                 if (event.value === null) {
                     action.unselectWindow();
@@ -1277,7 +1277,7 @@ addEventListener("load", function (event) { //* Issue 69
             }
         }, true);
 
-        Options.addEventListener("change", function (event) {
+        Options.event.addListener("change", function (event) {
             var location = (event.name === "tabs.close.location"),
                 display = (event.name === "tabs.close.display");
 
@@ -1290,7 +1290,7 @@ addEventListener("load", function (event) { //* Issue 69
             }
         }, true);
 
-        Options.addEventListener("change", function (event) {
+        Options.event.addListener("change", function (event) {
             if (event.name === "tabs.favorites.urls") {
                 if (event.action === "delete") {
                     state.tabsByURL[event.value].forEach(function (item) {
@@ -1308,7 +1308,7 @@ addEventListener("load", function (event) { //* Issue 69
         }, true);
 
         state.saveTitles = function () {
-    //                    Options.removeEventListener("change", update, true);
+    //                    Options.event.removeListener("change", update, true);
 
             var list = state.list.map(function (item) {
                 return item.tabIcon.indexText.value;
