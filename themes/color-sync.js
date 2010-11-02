@@ -15,7 +15,7 @@
         if (event.name === "color.theme") {
             href(event.value);
         }
-    }, true);
+    });
 
     document.head.appendChild(link);
 }());

@@ -368,7 +368,7 @@
                                         if (event.name === "popup.offsetX") {
                                             element.style.left = event.value + 50 + "%";
                                         }
-                                    }, true);
+                                    });
                                 }));
 
                                 element.appendChild(UI.create("div", function (element) {
@@ -383,7 +383,7 @@
                                         if (event.name === "popup.offsetY") {
                                             element.style.top = event.value + 50 + "%";
                                         }
-                                    }, true);
+                                    });
                                 }));
 
                                 element.appendChild(UI.create("table", function (element) {
@@ -393,27 +393,25 @@
                                     element.style.fontSize = "16px";
                                     element.style.backgroundColor = "honeydew";
 
-                                    Options.event.addListener("change", (function () {
-                                        function update() {
-                                            var popup = {
-                                                offsetX: Options.get("popup.offsetX"),
-                                                offsetY: Options.get("popup.offsetY"),
-                                                width: Options.get("popup.width"),
-                                                height: Options.get("popup.height")
-                                            };
+                                    function update() {
+                                        var popup = {
+                                            offsetX: Options.get("popup.offsetX"),
+                                            offsetY: Options.get("popup.offsetY"),
+                                            width: Options.get("popup.width"),
+                                            height: Options.get("popup.height")
+                                        };
 
-                                            var width = popup.width / screen.width * 100;
-                                            var height = popup.height / screen.height * 100;
+                                        var width = popup.width / screen.width * 100;
+                                        var height = popup.height / screen.height * 100;
 
-                                            this.style.left = popup.offsetX - width / 2 + 50 + "%";
-                                            this.style.top = popup.offsetY - height / 2 + 50 + "%";
-                                            this.style.width = width + "%";
-                                            this.style.height = height + "%";
-                                        }
-                                        update.call(element);
+                                        element.style.left = popup.offsetX - width / 2 + 50 + "%";
+                                        element.style.top = popup.offsetY - height / 2 + 50 + "%";
+                                        element.style.width = width + "%";
+                                        element.style.height = height + "%";
+                                    }
+                                    update();
 
-                                        return update.bind(element);
-                                    }()), true);
+                                    Options.event.addListener("change", update);
 
                                     element.appendChild(UI.create("td", function (element) {
                                         element.style.padding = "0px";
@@ -427,7 +425,7 @@
                                             if (event.name === "popup.type") {
                                                 element.textContent = event.value.toUpperCase();
                                             }
-                                        }, true);
+                                        });
                                     }));
                                 }));
                             }));
@@ -816,7 +814,7 @@
                                 if (event.name === "tabs.favorites.urls") {
                                     update(event.value, event.action);
                                 }
-                            }, true);
+                            });
                         }));
                     }));
 

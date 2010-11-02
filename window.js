@@ -1223,7 +1223,7 @@ fragment.appendChild(UI.create("div", function (element) {
 
 //            setTimeout(function () {
 //                Options.event.addListener("change", function () {
-//                }, true);
+//                });
 //            }, 0);
 }));
 
@@ -1275,20 +1275,20 @@ addEventListener("load", function (event) { //* Issue 69
                     }
                 }
             }
-        }, true);
+        });
 
         Options.event.addListener("change", function (event) {
             var location = (event.name === "tabs.close.location"),
                 display = (event.name === "tabs.close.display");
 
             if (location || display) {
-    //            console.warn("UPDATING!");
+//                console.warn("UPDATING!");
                 var query = document.querySelectorAll(".tab");
                 for (var i = 0; i < query.length; i += 1) {
                     query[i].updateButtonPositions();
                 }
             }
-        }, true);
+        });
 
         Options.event.addListener("change", function (event) {
             if (event.name === "tabs.favorites.urls") {
@@ -1305,10 +1305,10 @@ addEventListener("load", function (event) { //* Issue 69
     //            document.body.setAttribute("hidden", "");
     //            document.body.removeAttribute("hidden");
             }
-        }, true);
+        });
 
         state.saveTitles = function () {
-    //                    Options.event.removeListener("change", update, true);
+    //                    Options.event.removeListener("change", update);
 
             var list = state.list.map(function (item) {
                 return item.tabIcon.indexText.value;

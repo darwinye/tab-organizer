@@ -212,6 +212,10 @@
             Platform.icon.setPopup({ popup: "window.html" });
         }
 
+//        Options.event.addListener("change", function (event) {
+//            console.log(event);
+//        });
+
         Options.event.addListener("change", function (event) {
             switch (event.name) {
             case "counter.reset.time.hour": //* FALLTHRU
@@ -237,7 +241,7 @@
                     popup: (event.value === "bubble") ? "window.html" : ""
                 });
             }
-        }, true);
+        });
 
 
         function updateTitle() {
