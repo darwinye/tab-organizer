@@ -42,6 +42,7 @@
             "windows.middle-close": false,
 
             "counter.enabled": false,
+            "counter.reset.whenlower": true,
             "counter.reset.number": 5,
             "counter.reset.time": false,
             "counter.reset.time.hour": "00",
@@ -109,9 +110,20 @@
 
         var counter = Options.get("counter.state");
 
-        counter.reset = function () {
-            counter.set("number", Options.get("counter.reset.number"));
-            counter.update();
+        counter.reset = function (should) {
+            var reset = Options.get("counter.reset.number");
+            var lower = Options.get("counter.reset.whenlower");
+
+            /**
+             *  Only reset under the following conditions:
+             *    1. If explicitly told to, via the argument `should`
+             *    2. If lower is unchecked
+             *    3. If lower is checked, and the counter's number is lower than the reset number
+             */
+            if (should || !lower || counter.get("number") < reset) {
+                counter.set("number", reset);
+                counter.update();
+            }
         };
 
         counter.timestamp = function () {

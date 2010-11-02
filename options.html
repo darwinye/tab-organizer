@@ -1006,23 +1006,23 @@
                             });
                         });
                         container.indent(function (container) {
-                            function modify(info) {
+                            /*function modify(info) {
                                 var value = Math.max(0, Math.min(23, this.value)) + "";
 
                                 if (value.length > 2) {
                                     value = value.slice(0, 2);
                                 }
-/*                                if (value > 23) {
-                                    value = "23";
-                                }
-                                if (value < 0) {
-                                    value = "0";
-                                }*/
+                                //if (value > 23) {
+                                    //value = "23";
+                                //}
+                                //if (value < 0) {
+                                    //value = "0";
+                                //}
                                 while (value.length < 2) {
                                     value = "0" + value;
                                 }
                                 return value;
-                            }
+                            }*/
                             container.group(function (container) {
                                 container.input("checkbox", {
                                     option: "counter.reset.time",
@@ -1071,16 +1071,23 @@
                         });
                     //});
 
+                    container.space({ height: "0.75em" });
+
+                    container.input("checkbox", {
+                        option: "counter.reset.whenlower",
+                        text: "Only reset when the counter is lower than the reset number"
+                    });
+
                     container["DOM.Element"].appendChild(UI.create("button", function (element) {
                         element.textContent = "Reset counter";
                         element.className = "Options-button";
                         element.style.height = "27px";
-                        element.style.marginTop = "0.9em";
+                        element.style.marginTop = "0.9em"; // 0.9em
 
                         var counter = Options.get("counter.state");
 
                         element.addEventListener("click", function () {
-                            counter.reset();
+                            counter.reset(true);
                         }, true);
                     }));
                 });

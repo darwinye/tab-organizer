@@ -660,7 +660,7 @@ fragment.appendChild(UI.create("div", function (container) {
             //input.addEventListener("click", state.search, true);
             //input.addEventListener("input", state.search, true);
             input.addEventListener("search", function () {
-                state.search({ scroll: true });
+                state.search({ scroll: true, focused: true });
             }, true);
 
             addEventListener("keydown", function (event) {
