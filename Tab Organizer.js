@@ -620,6 +620,8 @@ var Window = {
         });
     },
     proxy: function (win) {
+//        info = Object(info);
+
         var fragment = document.createDocumentFragment();
 
         fragment.appendChild(UI.create("div", function (container) {
@@ -855,57 +857,61 @@ var Window = {
 
                                                 icon.indexText = element;
 
-                                                var index = state.list.indexOf(container);
-                                                element.value = action.returnTitle(index);
+                                                if (win.name) {
+                                                    element.value = win.name;
+                                                } else {
+                                                    var index = state.list.indexOf(container);
+                                                    element.value = action.returnTitle(index);
 
-                                                var value;
+                                                    var value;
 
-                                                element.addEventListener("mousedown", function (event) {
-                                                    if (container.hasAttribute("data-focused")) {
-                                                        element.addEventListener("click", element.select, true);
-                                                    } else {
-                                                        element.removeEventListener("click", element.select, true);
-                                                        container.focus();
+                                                    element.addEventListener("mousedown", function (event) {
+                                                        if (container.hasAttribute("data-focused")) {
+                                                            element.addEventListener("click", element.select, true);
+                                                        } else {
+                                                            element.removeEventListener("click", element.select, true);
+                                                            container.focus();
 
-                                                        event.preventDefault();
-                                                    }
-                                                }, true);
-                                                element.addEventListener("focus", function (event) {
-                                                    value = this.value;
-                                                }, true);
-                                                element.addEventListener("blur", function (event) {
-                                                    this.value = this.value || index + 1;
-
-                                                    if (this.value !== value) {
-                                                        if (Options.get("undo.rename-window")) {
-                                                            Undo.push("rename-window", {
-                                                                focus: container.tabList,
-                                                                value: value,
-                                                                node: this
-                                                            });
-                                                            state.undoBar.show("You renamed the window \"" + /* <span style='font-variant: small-caps;'>" */
-                                                                this.value + "\".");
+                                                            event.preventDefault();
                                                         }
-                                                    }
+                                                    }, true);
+                                                    element.addEventListener("focus", function (event) {
+                                                        value = this.value;
+                                                    }, true);
+                                                    element.addEventListener("blur", function (event) {
+                                                        this.value = this.value || index + 1;
 
-                                                    //container.tabList.focus();
-                                                }, true);
-                                                element.addEventListener("keydown", function (event) {
-                                                    if (event.which === 27) { //* Escape
-                                                        event.preventDefault();
-                                                    }
-                                                }, true);
-                                                element.addEventListener("keyup", function (event) {
-                                                    if (event.which === 13 || event.which === 27) { //* Enter/Escape
+                                                        if (this.value !== value) {
+                                                            if (Options.get("undo.rename-window")) {
+                                                                Undo.push("rename-window", {
+                                                                    focus: container.tabList,
+                                                                    value: value,
+                                                                    node: this
+                                                                });
+                                                                state.undoBar.show("You renamed the window \"" + /* <span style='font-variant: small-caps;'>" */
+                                                                    this.value + "\".");
+                                                            }
+                                                        }
+
+                                                        //container.tabList.focus();
+                                                    }, true);
+                                                    element.addEventListener("keydown", function (event) {
                                                         if (event.which === 27) { //* Escape
-                                                            this.value = value;
-
-                                                            container.tabList.focus();
-                                                            //! container.tabList.focus();
+                                                            event.preventDefault();
                                                         }
-                                                        this.blur();
-                                                    }
-                                                }, true);
+                                                    }, true);
+                                                    element.addEventListener("keyup", function (event) {
+                                                        if (event.which === 13 || event.which === 27) { //* Enter/Escape
+                                                            if (event.which === 27) { //* Escape
+                                                                this.value = value;
+
+                                                                container.tabList.focus();
+                                                                //! container.tabList.focus();
+                                                            }
+                                                            this.blur();
+                                                        }
+                                                    }, true);
+                                                }
                                             }));
                                         //}));
 

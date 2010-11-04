@@ -307,6 +307,124 @@ addEventListener("keydown", function (event) {
 
 var fragment = document.createDocumentFragment();
 
+fragment.appendChild(UI.create("button", function (element) {
+    //element.id = "views-wrapper";
+
+    //element.appendChild(UI.create("button", function (element) {
+        element.id = "views-list";
+        element.tabIndex = 1;
+
+        var selected;
+
+        function select(target) {
+            if (selected) {
+                selected.removeAttribute("data-selected");
+            }
+            target.setAttribute("data-selected", "");
+            selected = target;
+        }
+
+        function register(name, info) {
+            element.appendChild(UI.create("div", function (element) {
+                element.className = "views-item";
+                element.textContent = name;
+                if (!selected) {
+                    element.setAttribute("data-selected", "");
+                    selected = element;
+                }
+
+                if (typeof info.action === "function") {
+                    element.addEventListener("click", function (event) {
+                        select(element);
+                        info.action.call(element);
+                    }, true);
+                }
+            }));
+        }
+
+        /*element.addEventListener("click", function (event) {
+            var target = event.target;
+            switch (target.className) {
+            case "views-item":
+                select(target);
+            }
+        }, true);*/
+
+        register("WIN", {
+            action: function () {
+                //var tabs = Array.slice(document.getElementsByClassName("tab"));
+            }
+        });
+
+        register("DOM", {
+            action: function () {
+                var tabs = Array.slice(document.getElementsByClassName("tab"));
+//                var tabs = Object.keys(state.tabs).map(function (key) {
+//                    return state.tabs[key];
+//                });
+
+                var windows = {};
+
+                var regexp = /^[^:]+:\/\/([^\/]*)/;
+
+                tabs.forEach(function (item) {
+                    var url = regexp.exec(item.tab.url)[1];
+                    //console.log(url);
+                    windows[url] = windows[url] || [];
+                    windows[url].push(item);
+                });
+
+                var fragment = document.createDocumentFragment();
+
+                state.list.length = 0;
+
+                var view = Object.keys(windows).map(function (key) {
+                    var info = {
+                        name: key,
+                        tabs: windows[key].map(function (item) {
+                            return item.tab;
+                        })
+                    };
+                    return info;
+                });
+
+                view.sort(function (a, b) {
+                    return b.tabs.length - a.tabs.length;
+                });
+
+                console.log(view);
+
+                view.slice(0, 10).forEach(function (info) {
+                    fragment.appendChild(Window.proxy(info));
+                });
+
+//            //    element.appendChild(UI.create("td"));
+//                windows.forEach(function (win) {
+//                    if (win.type === "normal") {
+
+//                    }
+//                });
+//            //    element.appendChild(UI.create("td"));
+
+                state.windowList.innerHTML = "";
+                state.windowList.appendChild(fragment);
+
+                state.search({ scroll: true });
+
+                removeEventListener("unload", state.saveTitles, true);
+            }
+        });
+
+        register("TIM", {
+            action: function () {
+            }
+        });
+
+    //}));
+}));
+
+
+
 fragment.appendChild(UI.create("div", function (container) {
     //element.id = "container-wrapper";
 
@@ -1202,6 +1320,8 @@ fragment.appendChild(UI.create("div", function (container) {
 */
     //}));
 }));
+
+
 
 fragment.appendChild(UI.create("div", function (element) {
     element.id = "window-list";
