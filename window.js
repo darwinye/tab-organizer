@@ -128,7 +128,8 @@ var state = {
     //favorites: Options.getObject(localStorage["tabs.favorites.urls"]),
     favorites: Options.get("tabs.favorites.urls"),
     windows: {},
-    tabs: {},
+    //tabs: [],
+    tabsByID: {},
     tabsByURL: {},
     queues: {
         moveAllTabs: function (id, index) {
@@ -350,17 +351,18 @@ fragment.appendChild(UI.create("button", function (element) {
             }
         }, true);*/
 
-        register("WIN", {
+        register("WINDOW", {
             action: function () {
+                var tabs = Array.slice(document.getElementsByClassName("tab"));
                 //var tabs = Array.slice(document.getElementsByClassName("tab"));
             }
         });
 
-        register("DOM", {
+        register("DOMAIN", {
             action: function () {
                 var tabs = Array.slice(document.getElementsByClassName("tab"));
-//                var tabs = Object.keys(state.tabs).map(function (key) {
-//                    return state.tabs[key];
+//                var tabs = Object.keys(state.tabsByID).map(function (key) {
+//                    return state.tabsByID[key];
 //                });
 
                 var windows = {};
@@ -415,7 +417,7 @@ fragment.appendChild(UI.create("button", function (element) {
             }
         });
 
-        register("TIM", {
+        register("TIME", {
             action: function () {
             }
         });

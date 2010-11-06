@@ -43,7 +43,8 @@ var Tab = {
 //                console.log(this === event.target);
 //            }, true);
 
-            state.tabs[tab.id] = container;
+            state.tabsByID[tab.id] = container;
+//            state.tabs.add(container);
             container.tab = tab;
 
             container.undoState = {};
@@ -571,7 +572,7 @@ var Tab = {
 //        }
 //    },
 //    editURL: function (tab) {
-//        var container = state.tabs[tab.id];
+//        var container = state.tabsByID[tab.id];
 
 //        var span = container.tabText;
 //        var parent = span.parentNode;
@@ -635,7 +636,8 @@ var Window = {
 
 
             function scrollTo() {
-                UI.scrollIntoView(container.tabList, document.body, 41);
+                UI.scrollTo(container.tabContainer, document.body);
+                //! UI.scrollIntoView(container.tabList, document.body, 41);
             }
             //container.addEventListener("mouseup", scrollTo, true);
 
@@ -1014,10 +1016,10 @@ var Window = {
                                                                     });
                                                                     state.undoBar.show("You created a new tab.");
                                                                 }
-                                                                //console.log("onEnded!", state.tabs[tab.id].parentNode);
-                                                                //console.log(state.tabs[tab.id].parentNode);
+                                                                //console.log("onEnded!", state.tabsByID[tab.id].parentNode);
+                                                                //console.log(state.tabsByID[tab.id].parentNode);
 //                                                                setTimeout(function () {
-//                                                                    Tab.editURL(tab);//state.tabs[tab.id].editURL();
+//                                                                    Tab.editURL(tab);//state.tabsByID[tab.id].editURL();
 //                                                                }, 1000);
                                                             });
                                                         }
@@ -1388,6 +1390,8 @@ var Window = {
 
                             container.appendChild(UI.create("div", function (element) {
                                 element.className = "tab-list-border";
+
+                                container.tabContainer = element;
 
                                 element.appendChild(UI.create("div", function (list) {
                                     list.className = "tab-list";
