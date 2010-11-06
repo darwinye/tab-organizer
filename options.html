@@ -183,6 +183,7 @@
                 });
 
 
+
                 container.category("Keyboard", function (container) {
                     container.header("Open popup with: ");
 
@@ -315,6 +316,7 @@
                     });
 */
                 });
+
 
 
                 container.category("Popup", function (container) {
@@ -539,7 +541,9 @@
                     }));
                 });
 
+
                 //container.separator();
+
 
                 container.category("Tabs", function (container) {
                     container.group(function (container) {
@@ -572,6 +576,129 @@
                         });
                     });
                 });
+
+
+
+                container.category("Counter", function (container) {
+                    container.group(function (container) {
+                        container.input("checkbox", {
+                            option: "counter.enabled",
+                            text: "Display a counter that shows how many tabs "
+                        });
+
+                        container.input("dropdown-list", {
+                            option: "counter.type",
+                            list: [{
+                                value: "total",
+                                text: "you have in total (does not reset)"
+                            }, {
+                                value: "session",
+                                text: "you have opened/closed per session"
+                            }]
+                        });
+                    });
+
+                    container.space({ height: "0.8em" });
+
+                    //container.text("These settings only apply when
+
+                    container.indent(function (container) {
+                        container.header(function (container) {
+                            container.input("number", {
+                                option: "counter.reset.number",
+                                text: "Reset the counter to ",
+                                unit: "when...",
+                                width: "2em"
+                            });
+                        });
+                        container.indent(function (container) {
+                            /*function modify(info) {
+                                var value = Math.max(0, Math.min(23, this.value)) + "";
+
+                                if (value.length > 2) {
+                                    value = value.slice(0, 2);
+                                }
+                                //if (value > 23) {
+                                    //value = "23";
+                                //}
+                                //if (value < 0) {
+                                    //value = "0";
+                                //}
+                                while (value.length < 2) {
+                                    value = "0" + value;
+                                }
+                                return value;
+                            }*/
+                            container.group(function (container) {
+                                container.input("checkbox", {
+                                    option: "counter.reset.time",
+                                    text: "...it is "
+                                });
+                                container.input("number", {
+                                    option: "counter.reset.time.hour",
+                                    width: "2em",
+                                    unit: ":",
+                                    limit: {
+                                        min: 0,
+                                        max: 23,
+                                        digits: 2
+                                    }/*,
+                                    verbatim: true,
+                                    modify: modify*/
+                                });
+                                container.input("number", {
+                                    option: "counter.reset.time.minute",
+                                    unit: "o'clock",
+                                    width: "2em",
+                                    limit: {
+                                        min: 0,
+                                        max: 59,
+                                        digits: 2
+                                    }/*
+                                    verbatim: true,
+                                    modify: modify*/
+                                });
+                            });
+
+                            container.group(function (container) {
+                                container.input("checkbox", {
+                                    option: "counter.reset.idle",
+                                    text: "...idle for "
+                                });
+                                container.input("number", {
+                                    option: "counter.reset.idle.hour",
+                                    width: "2em",
+                                    unit: "hours",
+                                    limit: {
+                                        min: 0
+                                    }
+                                });
+                            });
+                        });
+
+                        container.space({ height: "0.75em" });
+
+                        container.input("checkbox", {
+                            option: "counter.reset.whenlower",
+                            text: "Only reset when the counter is lower than the reset number"
+                        });
+                    });
+
+                    container["DOM.Element"].appendChild(UI.create("button", function (element) {
+                        element.textContent = "Reset counter";
+                        element.className = "Options-button";
+                        element.style.height = "27px";
+                        element.style.marginTop = "0.9em"; // 0.9em
+
+                        var counter = Options.get("counter.state");
+
+                        element.addEventListener("click", function () {
+                            counter.reset(true);
+                        }, true);
+                    }));
+                });
+
+
 
                 container.category("Favorites", function (container) {
                     var favorites = Options.get("tabs.favorites.urls");
@@ -983,111 +1110,9 @@
                         text: "Use the Escape key to close the popup"
                     });
 
-                    container.space({ height: "0.5em" });
-                    container.separator();
-                    container.space({ height: "0.5em" });
-
-                    container.input("checkbox", {
-                        option: "counter.enabled",
-                        text: "Display a counter that shows how many tabs have been opened/closed"
-                    });
-
-                    container.space({ height: "0.8em" });
-
-                    //container.indent(function (container) {
-                        container.header(function (container) {
-                            container.input("number", {
-                                option: "counter.reset.number",
-                                text: "Reset the counter to ",
-                                unit: "when...",
-                                width: "2em"
-                            });
-                        });
-                        container.indent(function (container) {
-                            /*function modify(info) {
-                                var value = Math.max(0, Math.min(23, this.value)) + "";
-
-                                if (value.length > 2) {
-                                    value = value.slice(0, 2);
-                                }
-                                //if (value > 23) {
-                                    //value = "23";
-                                //}
-                                //if (value < 0) {
-                                    //value = "0";
-                                //}
-                                while (value.length < 2) {
-                                    value = "0" + value;
-                                }
-                                return value;
-                            }*/
-                            container.group(function (container) {
-                                container.input("checkbox", {
-                                    option: "counter.reset.time",
-                                    text: "...it is "
-                                });
-                                container.input("number", {
-                                    option: "counter.reset.time.hour",
-                                    width: "2em",
-                                    unit: ":",
-                                    limit: {
-                                        min: 0,
-                                        max: 23,
-                                        digits: 2
-                                    }/*,
-                                    verbatim: true,
-                                    modify: modify*/
-                                });
-                                container.input("number", {
-                                    option: "counter.reset.time.minute",
-                                    unit: "o'clock",
-                                    width: "2em",
-                                    limit: {
-                                        min: 0,
-                                        max: 59,
-                                        digits: 2
-                                    }/*
-                                    verbatim: true,
-                                    modify: modify*/
-                                });
-                            });
-
-                            container.group(function (container) {
-                                container.input("checkbox", {
-                                    option: "counter.reset.idle",
-                                    text: "...idle for "
-                                });
-                                container.input("number", {
-                                    option: "counter.reset.idle.hour",
-                                    width: "2em",
-                                    unit: "hours",
-                                    limit: {
-                                        min: 0
-                                    }
-                                });
-                            });
-                        });
-                    //});
-
-                    container.space({ height: "0.75em" });
-
-                    container.input("checkbox", {
-                        option: "counter.reset.whenlower",
-                        text: "Only reset when the counter is lower than the reset number"
-                    });
-
-                    container["DOM.Element"].appendChild(UI.create("button", function (element) {
-                        element.textContent = "Reset counter";
-                        element.className = "Options-button";
-                        element.style.height = "27px";
-                        element.style.marginTop = "0.9em"; // 0.9em
-
-                        var counter = Options.get("counter.state");
-
-                        element.addEventListener("click", function () {
-                            counter.reset(true);
-                        }, true);
-                    }));
+                    //container.space({ height: "0.5em" });
+                    //container.separator();
+                    //container.space({ height: "0.5em" });
                 });
             });
         </script>

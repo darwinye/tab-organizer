@@ -42,6 +42,7 @@
             "windows.middle-close": false,
 
             "counter.enabled": false,
+            "counter.type": "total",
             "counter.reset.whenlower": true,
             "counter.reset.number": 5,
             "counter.reset.time": false,
@@ -110,6 +111,10 @@
 
         var counter = Options.get("counter.state");
 
+        //if (typeof counter.get("total-number") !== "number") {
+            //counter.set("total-number", "");
+        //}
+
         counter.reset = function (should) {
             var reset = Options.get("counter.reset.number");
             var lower = Options.get("counter.reset.whenlower");
@@ -120,8 +125,8 @@
              *    2. If lower is unchecked
              *    3. If lower is checked, and the counter's number is lower than the reset number
              */
-            if (should || !lower || counter.get("number") < reset) {
-                counter.set("number", reset);
+            if (should || !lower || counter.get("session-number") < reset) {
+                counter.set("session-number", reset);
                 counter.update();
             }
         };
@@ -143,12 +148,26 @@
 
         counter.update = function () {
             if (Options.get("counter.enabled")) {
-                var value = counter.get("number");
-                if (value > 0) {
-                    Platform.icon.setBackgroundColor({ color: [225, 0, 0, 255] });
-                } else {
-                    Platform.icon.setBackgroundColor({ color: [0, 100, 0, 255] });
+                var value;
+
+                switch (Options.get("counter.type")) {
+                case "total":
+                    value = counter.get("total-number");
+                    Platform.icon.setBackgroundColor({ color: [0, 0, 0, 255] });
+                    break;
+                case "session":
+                    value = counter.get("session-number");
+                    if (value > 0) {
+                        Platform.icon.setBackgroundColor({ color: [225, 0, 0, 255] });
+                    } else {
+                        Platform.icon.setBackgroundColor({ color: [0, 100, 0, 255] });
+                    }
                 }
+
+                if (typeof value !== "number") {
+                    value = "";
+                }
+
                 Platform.icon.setText({ text: value });
             } else {
                 Platform.icon.setText({ text: "" });
@@ -182,27 +201,43 @@
 
 //        var startCounter, stopCounter;
 
-        (function () {
-            function add() {
-                counter.set("number", counter.get("number") + 1);
-                counter.update();
-            }
-            function subtract() {
-                counter.set("number", counter.get("number") - 1);
-                counter.update();
-            }
-            Platform.tabs.addEventListener("create", add, true);
-            Platform.tabs.addEventListener("remove", subtract, true);
+        addEventListener("load", function () {
+            Platform.windows.getAll({ populate: true }, function (windows) {
+                var tabcount = 0;
 
-//            startCounter = function () {
-//                Platform.icon.setText({ text: counter.get("number") });
-//            };
-//            stopCounter = function () {
-//                Platform.icon.setText({ text: "" });
-//                //Platform.tabs.removeEventListener("create", add, true);
-//                //Platform.tabs.removeEventListener("remove", subtract, true);
-//            };
-        }());
+                windows.forEach(function (item) {
+                    tabcount += item.tabs.length;
+                });
+
+                counter.set("total-number", tabcount);
+
+                function add() {
+                    counter.set("total-number", counter.get("total-number") + 1);
+                    counter.set("session-number", counter.get("session-number") + 1);
+                    counter.update();
+                }
+                function subtract() {
+                    counter.set("total-number", counter.get("total-number") - 1);
+                    counter.set("session-number", counter.get("session-number") - 1);
+                    counter.update();
+                }
+                Platform.tabs.addEventListener("create", add, true);
+                Platform.tabs.addEventListener("remove", subtract, true);
+
+    //            startCounter = function () {
+    //                Platform.icon.setText({ text: counter.get("session-number") });
+    //            };
+    //            stopCounter = function () {
+    //                Platform.icon.setText({ text: "" });
+    //                //Platform.tabs.removeEventListener("create", add, true);
+    //                //Platform.tabs.removeEventListener("remove", subtract, true);
+    //            };
+            });
+        }, true);
+
+        //addEventListener("beforeunload", function (event) {
+            //return "Are you sure?";
+        //}, true);
 
 
 //        if (Options.get("counter.enabled")) {
@@ -221,6 +256,9 @@
             case "counter.reset.time.hour": //* FALLTHRU
             case "counter.reset.time.minute":
                 counter.timestamp();
+                break;
+            case "counter.type":
+                counter.update();
                 break;
             case "counter.enabled":
                 if (event.value) {
@@ -265,7 +303,7 @@
 
 
 /*        function updateText() {
-            Platform.icon.setText({ text: counter.get("number") });
+            Platform.icon.setText({ text: counter.get("session-number") });
         }
         updateText();*/
 
