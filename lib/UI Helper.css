@@ -1,5 +1,19 @@
 @charset "UTF-8";
 
+.UI-link {
+    display: inline-block;
+    color: #00C;
+    cursor: pointer;
+    text-decoration: underline;
+    white-space: nowrap;
+}
+button.UI-link {
+    padding: 0px;
+    margin: 0px;
+    background-color: transparent;
+    border: none;
+}
+
 .UI-contextMenu-submenu-list, .UI-contextMenu {
     -webkit-box-shadow: dimgray 0px 1px 5px; /*! 1px 1px 4px */
 

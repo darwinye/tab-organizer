@@ -308,12 +308,14 @@ addEventListener("keydown", function (event) {
 
 var fragment = document.createDocumentFragment();
 
-fragment.appendChild(UI.create("button", function (element) {
+fragment.appendChild(UI.create("div", function (element) {
     //element.id = "views-wrapper";
 
     //element.appendChild(UI.create("button", function (element) {
         element.id = "views-list";
         element.tabIndex = 1;
+
+        element.addEventListener("mousedown", events.disable, true);
 
         var selected;
 
@@ -463,13 +465,17 @@ fragment.appendChild(UI.create("div", function (container) {
 //            //element.textContent = "-";
 //        }));
 
-        container.appendChild(UI.create("button", function (element) {
+        container.appendChild(UI.link(function (element) {
             element.href = "/options.html";
             element.target = "_blank";
-
-            element.className = "Options-link";
             element.textContent = "Options";
             element.tabIndex = 1;
+        })/*UI.create("a", function (element) {
+
+
+            element.className = "UI-link";
+
+
 
             element.addEventListener("click", function anon() {
 //                if (anon.popup) {
@@ -477,27 +483,27 @@ fragment.appendChild(UI.create("div", function (container) {
 //                }
                 anon.popup = open(element.href, element.target);
             }, true);
-        }));
+        })*/);
 
         container.appendChild(UI.create("span", function (element) {
             element.className = "separator";
             element.textContent = "|";
         }));
 
-        container.appendChild(UI.create("button", function (element) {
+        container.appendChild(UI.link(function (element) {
             element.href = "http://documentation.tab-organizer.googlecode.com/hg/Tab%20Organizer%20FAQ.html";
             element.target = "_blank";
 
-            element.className = "Options-link";
+            //element.className = "UI-link";
             element.textContent = "Help";
             element.tabIndex = 1;
 
-            element.addEventListener("click", function anon() {
+            /*element.addEventListener("click", function anon() {
 //                if (anon.popup) {
 //                    anon.popup.close();
 //                }
                 anon.popup = open(element.href, element.target);
-            }, true);
+            }, true);*/
         }));
     //}));
 
@@ -597,9 +603,9 @@ fragment.appendChild(UI.create("div", function (container) {
                     });
                 }));
 
-                element.appendChild(UI.create("button", function (element) {
+                element.appendChild(UI.link(function (element) {
                     element.id = "Undo-bar-button";
-                    element.className = "Options-link";
+                    //element.className = "UI-link";
                     element.title = "(Ctrl Z)";
                     element.textContent = "Undo";
                     element.tabIndex = 1;

@@ -5,6 +5,7 @@
         <title>Tab Organizer Options</title>
 
         <link rel="stylesheet" type="text/css" href="/lib/Options.css" />
+        <link rel="stylesheet" type="text/css" href="/lib/UI%20Helper.css" />
 
         <style type="text/css">
             .align-right {
@@ -606,7 +607,7 @@
                         container.header(function (container) {
                             container.input("number", {
                                 option: "counter.reset.number",
-                                text: "Reset the counter to ",
+                                text: "Reset the session to ",
                                 unit: "when...",
                                 width: "2em"
                             });
@@ -684,18 +685,24 @@
                         });
                     });
 
-                    container["DOM.Element"].appendChild(UI.create("button", function (element) {
+                    container.space({ height: "0.9em" });
+
+                    container.button({
+                        text: "Reset counter",
+                        height: "27px",
+                        action: function () {
+                            Options.get("counter.state").reset(true);
+                        }
+                    });
+
+                    /*container["DOM.Element"].appendChild(UI.create("button", function (element) {
                         element.textContent = "Reset counter";
                         element.className = "Options-button";
                         element.style.height = "27px";
                         element.style.marginTop = "0.9em"; // 0.9em
 
-                        var counter = Options.get("counter.state");
-
-                        element.addEventListener("click", function () {
-                            counter.reset(true);
-                        }, true);
-                    }));
+                        element.addEventListener("click", , true);
+                    }));*/
                 });
 
 
@@ -947,13 +954,10 @@
 
                     container.space({ height: "10px" });
 
-                    container["DOM.Element"].appendChild(UI.create("button", function (element) {
-                        element.textContent = "Remove checked";
-                        element.className = "Options-button";
-                        //element.style.padding = "2px 8px";
-                        element.style.height = "29px";
-
-                        element.addEventListener("click", function (event) {
+                    container.button({
+                        text: "Remove checked",
+                        height: "29px",
+                        action: function () {
                             var urls = array.filter(function (item) {
                                 if (item.checkbox.checked) {
                                     return true;
@@ -963,17 +967,26 @@
                             urls.forEach(function (item) {
                                 favorites.set(item.info.url, null);
                             });
-                        }, true);
-                    }));
+                        }
+                    });
+
+                    /*container["DOM.Element"].appendChild(UI.create("button", function (element) {
+                        element.textContent = "Remove checked";
+                        element.className = "Options-button";
+                        //element.style.padding = "2px 8px";
+                        element.style.height = "29px";
+
+                        element.addEventListener("click", , true);
+                    }));*/
 
                     container["DOM.Element"].appendChild(UI.create("span", function (element) {
                         element.style.display = "inline-block";
                         element.style.width = "12px";
                     }));
 
-                    container["DOM.Element"].appendChild(UI.create("button", function (element) {
+                    container["DOM.Element"].appendChild(UI.link(function (element) {
                         element.textContent = "Check all";
-                        element.className = "Options-link";
+                        //element.className = "UI-link";
                         //element.style.padding = "0px 8px";
                         //element.style.height = "27px";
 
@@ -991,9 +1004,9 @@
                         //element.style.width = "13px";
                     }));
 
-                    container["DOM.Element"].appendChild(UI.create("button", function (element) {
+                    container["DOM.Element"].appendChild(UI.link(function (element) {
                         element.textContent = "Check none";
-                        element.className = "Options-link";
+                        //element.className = "UI-link";
                         //element.style.padding = "0px 8px";
                         //element.style.height = "27px";
 

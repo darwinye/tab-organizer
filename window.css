@@ -340,23 +340,27 @@ input[special], .search-past-item.special {
     /*-webkit-box-sizing: border-box;*/
 
     /*-webkit-box-flex: 1;*/
-    -webkit-box-align: start;
+    /*-webkit-box-align: start;*/
 
     position: fixed;
     z-index: 3;
     width: 40px;
     height: 100%;
 
-    display: block;
+    /*display: block;*/
     padding: 5px;
     padding-top: 25px;
     padding-right: 0px;
-    margin: 0px;
+    /*margin: 0px;*/
     /*margin-top: 70px;*/
 
+    overflow: hidden;
+
     background-color: white;
-    border: none;
+    /*border: none;*/
     border-right: 1px solid dimgray;
+
+    cursor: default;
     /*border: 1px solid red;*/
 }
 .views-item {
@@ -377,7 +381,7 @@ input[special], .search-past-item.special {
 .views-item[data-selected] {
     border-color: red;
     outline: none;
-    cursor: auto;
+    cursor: default;
 }
 
 

@@ -41,7 +41,7 @@
 
             "windows.middle-close": false,
 
-            "counter.enabled": false,
+            "counter.enabled": true,
             "counter.type": "total",
             "counter.reset.whenlower": true,
             "counter.reset.number": 5,
@@ -146,13 +146,14 @@
             container.set("hour", Date
         }*/
 
-        counter.update = function () {
+        counter.update = function (value) {
             if (Options.get("counter.enabled")) {
-                var value;
-
                 switch (Options.get("counter.type")) {
                 case "total":
                     value = counter.get("total-number");
+                    if (value === 0) {
+                        value = "";
+                    }
                     Platform.icon.setBackgroundColor({ color: [0, 0, 0, 255] });
                     break;
                 case "session":
@@ -210,6 +211,7 @@
                 });
 
                 counter.set("total-number", tabcount);
+                counter.update();
 
                 function add() {
                     counter.set("total-number", counter.get("total-number") + 1);
