@@ -273,7 +273,7 @@ body {
 
     table-layout: fixed;
 }*/
-input[special], .search-past-item.special {
+input[data-special], .search-past-item[data-special] {
     color: darkred;
 }
 /*#search-past > li:hover,*/
@@ -358,7 +358,7 @@ input[special], .search-past-item.special {
 
     background-color: white;
     /*border: none;*/
-    border-right: 1px solid dimgray;
+    border-right: 2px ridge dimgray;
 
     cursor: default;
     /*border: 1px solid red;*/

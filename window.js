@@ -677,6 +677,27 @@ fragment.appendChild(UI.create("div", function (container) {
                 title: document.title
             };
 
+            var precoded = {
+                "i": ["inurl:", "intitle:", "is:image", "is:favorite", "is:selected"],
+                "s": ["same:url", "same:title", "same:domain"],
+                "w": ["window:", "window:focused"]
+            };
+
+            function testSpecial(value) {
+                input.removeAttribute("data-special");
+
+                var special = precoded[value[0]];
+                if (special) {
+                    var is = special.some(function (item) {
+                        return item === value;
+                    });
+
+                    if (is) {
+                        input.setAttribute("data-special", "");
+                    }
+                }
+            }
+
             function search(array, flags) {
                 localStorage["search.lastinput"] = input.value;
 
@@ -687,6 +708,8 @@ fragment.appendChild(UI.create("div", function (container) {
                     return;
                 }
                 search.stop = true;*/
+
+                testSpecial(input.value);
 
                 var tabs = Array.slice(document.getElementsByClassName("tab"));
                 //var list = [];
@@ -842,12 +865,6 @@ fragment.appendChild(UI.create("div", function (container) {
                         localStorage["search.past-queries"] = JSON.stringify(saved);
                     }, true);
 
-                    var precoded = {
-                        "i": ["inurl:", "intitle:", "is:image", "is:favorite", "is:selected"],
-                        "s": ["same:url", "same:title", "same:domain"],
-                        "w": ["window:", "window:focused"]
-                    };
-
 
                     function filter(value, info) {
                         info = Object(info);
@@ -904,17 +921,9 @@ fragment.appendChild(UI.create("div", function (container) {
                             }
                         });
 
+                        testSpecial(value);
+
                         if (special) {
-                            var is = special.some(function (item) {
-                                return item === value;
-                            });
-
-                            if (is) {
-                                input.setAttribute("special", "");
-                            } else {
-                                input.removeAttribute("special");
-                            }
-
                             special.forEach(function (key) {
         //                        if (container.children.length >= 5) {
         //                            return;
@@ -1024,7 +1033,8 @@ fragment.appendChild(UI.create("div", function (container) {
 //                            }, true);
 
                             if (special) {
-                                item.className += " special";
+                                item.setAttribute("data-special", "");
+//                                item.className += " special";
                             }
 
 //                            item.textContent = name;
