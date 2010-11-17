@@ -75,6 +75,8 @@ var Tab = {
                 //state.search();
             };
 
+            container.addEventListener("DOMNodeRemovedFromDocument", container.queueRemove, true); //! Hacky
+
             if (tab.selected) {
                 container.setAttribute("data-focused", "");
             }
