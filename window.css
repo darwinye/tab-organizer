@@ -117,7 +117,8 @@ body {
     top: 0px;
 
     width: 100%;
-    padding: 15px 27px 22px 25px; /** 15px 27px 22px 65px */
+    height: 69px;
+    padding: 15px 27px 0px 25px; /** 15px 27px 22px 65px */
     /*margin-top: 1px;*/
 
     /*white-space: nowrap;*/
@@ -414,11 +415,11 @@ input[data-special], .search-past-item[data-special] {
     /*position: relative;
     z-index: 2;*/
 
-    min-width: 105px;
+    min-width: 89px; /** 105px */
     max-width: 400px;
 
     /*height: 100%;*/
-    padding-right: 16px;
+    padding-right: 32px;
     outline: none;
 }
 /*.window[data-selected] > .window-div {*/

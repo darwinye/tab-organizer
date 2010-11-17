@@ -158,6 +158,13 @@
                     break;
                 case "session":
                     value = counter.get("session-number");
+
+                    if (typeof value === "undefined") {
+                        value = Options.get("counter.reset.number");
+                        //counter.reset();
+                        //return;
+                    }
+
                     if (value > 0) {
                         Platform.icon.setBackgroundColor({ color: [225, 0, 0, 255] });
                     } else {
@@ -165,9 +172,9 @@
                     }
                 }
 
-                if (typeof value !== "number") {
+                /*if (isNaN(value)) {
                     value = "";
-                }
+                }*/
 
                 Platform.icon.setText({ text: value });
             } else {
