@@ -33,7 +33,6 @@ body {
     outline: none !important;
 
     /*overflow: auto;*/
-    overflow-y: hidden;
 }
 [data-selected] {
     outline: 5px auto -webkit-focus-ring-color;
@@ -390,10 +389,6 @@ input[data-special], .search-past-item[data-special] {
     -webkit-box-sizing: border-box;
     /*-webkit-box-flex: 1;*/
 
-    display: -webkit-box;
-    -webkit-box-pack: center;
-    /*-webkit-box-align: start;*/
-
     position: absolute;
     /*left: 0px;
     top: 0px;*/
@@ -415,9 +410,6 @@ input[data-special], .search-past-item[data-special] {
     /*position: relative;
     z-index: 2;*/
 
-    min-width: 89px; /** 105px */
-    max-width: 400px;
-
     /*height: 100%;*/
     padding-right: 32px;
     outline: none;
@@ -426,10 +418,6 @@ input[data-special], .search-past-item[data-special] {
 .window[data-selected] {
     position: relative;
     z-index: 2;
-}
-.window[data-last] {
-    padding-right: 18px;
-    min-width: 400px;
 }
 /*.window[data-last] > .window-div {
     width: 400px;
@@ -488,7 +476,6 @@ input[data-special], .search-past-item[data-special] {
     position: relative;
     /*top: -10px;*/
 
-    width: 400px;
     margin-top: -10px;
 
     border-radius: 4px;

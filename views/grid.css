@@ -1,0 +1,13 @@
+@charset "UTF-8";
+.window {
+    -webkit-box-sizing: border-box;
+
+    width: 50%;
+    height: 100%;
+    float: left;
+
+    min-width: 152px;
+
+    margin-bottom: -7px;
+    padding-bottom: 30px;
+}
