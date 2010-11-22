@@ -1,0 +1,36 @@
+@charset "UTF-8";
+body {
+    display: -webkit-box;
+    padding: 0px 20px !important;
+}
+
+.window-list {
+    /*float: left;*/
+    position: static !important;
+
+    -webkit-box-flex: 1;
+
+    /*width: 50% !important;*/
+    height: 426px !important;
+
+    padding-left: 15px !important;
+    padding-right: 15px !important;
+    padding-top: 0px !important;
+    margin-top: 70px;
+    /*margin-right: 20px;*/
+
+    overflow: hidden;
+    /*overflow-y: hidden;*/
+}
+/*.window-list:last-child {
+    margin-right: 3px;
+}*/
+
+.window {
+    margin-bottom: 40px;
+    padding: 0px !important;
+    /*padding-right: 15px !important;*/
+}
+.window[data-last] {
+    margin-bottom: 0px;
+}

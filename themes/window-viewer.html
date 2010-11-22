@@ -10,12 +10,13 @@
 
     <link rel="stylesheet" type="text/css" href="/lib/Options.css" />
     <link rel="stylesheet" type="text/css" href="/window.css" />
+    <link rel="stylesheet" type="text/css" href="/views/horizontal.css" />
 
     <style type="text/css">
         body {
             background-color: transparent;
         }
-        #window-list {
+        .window-list {
             /*padding: 15px;
             padding-top: 10px;*/
             padding-top: 11px;
@@ -37,7 +38,7 @@
         //console.log(Platform.getBackgroundPage() === this);
         (function () {
             var list = document.createElement("div");
-            list.id = "window-list";
+            list.className = "window-list";
             //table.className = "stretch";
 
             //table.appendChild(UI.create("td"));

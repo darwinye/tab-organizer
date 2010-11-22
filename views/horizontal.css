@@ -3,7 +3,7 @@ body {
     overflow-y: hidden;
 }
 
-#window-list {
+.window-list {
     display: -webkit-box;
     -webkit-box-pack: center;
     /*-webkit-box-align: start;*/

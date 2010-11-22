@@ -1340,30 +1340,12 @@ fragment.appendChild(UI.create("div", function (container) {
 }));
 
 
+(function () {
+    var script = document.createElement("script");
+    script.src = "/views/" + Options.get("windows.type") + ".js";
 
-fragment.appendChild(UI.create("div", function (element) {
-    element.id = "window-list";
-    //element.className = "stretch";
-    //element.style.display = "none !important";
-
-    state.windowList = element;
-
-    action.attachEvents(element);
-
-//            state.update = function anon(event) {
-//                //if (event.target.className) {
-//                    clearTimeout(anon.timeout);
-//                    anon.timeout = setTimeout(state.search, 50);
-//                //}
-//            };
-
-    //var windowlist = document.getElementById("window-list");
-
-//            setTimeout(function () {
-//                Options.event.addListener("change", function () {
-//                });
-//            }, 0);
-}));
+    fragment.appendChild(script);
+}());
 
 document.body.appendChild(fragment);
 
@@ -1385,17 +1367,7 @@ document.body.appendChild(fragment);
 addEventListener("load", function (event) { //* Issue 69
     //    console.log(event.timeStamp, event.type);
     Platform.windows.getAll({ populate: true }, function (windows) {
-        var fragment = document.createDocumentFragment();
-
-    //    element.appendChild(UI.create("td"));
-        windows.forEach(function (win) {
-            if (win.type === "normal") {
-                fragment.appendChild(Window.proxy(win));
-            }
-        });
-    //    element.appendChild(UI.create("td"));
-
-        state.windowList.appendChild(fragment);
+        state.createView(windows);
 
         Options.event.addListener("change", function (event) {
             if (event.name === "window.lastfocused") {

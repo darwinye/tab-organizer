@@ -385,7 +385,7 @@ input[data-special], .search-past-item[data-special] {
 }
 
 
-#window-list {
+.window-list {
     -webkit-box-sizing: border-box;
     /*-webkit-box-flex: 1;*/
 

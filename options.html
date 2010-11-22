@@ -1126,6 +1126,17 @@
                     //container.space({ height: "0.5em" });
                     //container.separator();
                     //container.space({ height: "0.5em" });
+
+                    container.input("dropdown-list", {
+                        option: "windows.type",
+                        list: [{
+                            value: "horizontal",
+                            text: "Horizontal"
+                        }, {
+                            value: "dual-pane",
+                            text: "Dual-Pane"
+                        }]
+                    });
                 });
             });
         </script>
