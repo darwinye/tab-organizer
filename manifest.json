@@ -21,7 +21,7 @@
     ],
     "content_scripts": [{
         "matches": [ "http://*/*", "https://*/*", "ftp://*/*" ],
-        "js": [ "lib/Platform.js",/* "lib/Options.js",*/ "lib/Keyboard.js" ],
+        "js": [ /*"lib/Platform.js", "lib/Options.js", */"lib/Keyboard.js" ],
         "run_at": "document_end",
         "all_frames": true
     }]
