@@ -147,6 +147,8 @@ input[type="checkbox"][data-options-changed] + span {
     -webkit-box-pack: center;
     -webkit-box-align: center;*/
 
+    /*-webkit-user-select: none;*/
+
     position: absolute;
     top: 0px;
     left: 0px;
