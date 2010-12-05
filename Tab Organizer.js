@@ -672,7 +672,7 @@ var Window = {
 //                }, true);
 
 //                setTimeout(function () {
-                    scrollTo();
+                scrollTo();
 //                }, 0);
             };
 

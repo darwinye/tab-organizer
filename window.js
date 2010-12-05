@@ -1376,7 +1376,8 @@ addEventListener("load", function (event) { //* Issue 69
                 } else {
                     var item = state.windows[event.value];
                     if (item) {
-                        item.setWindowFocus();
+                        //!item.setWindowFocus();
+                        item.select();
                         state.search();
 
         //                Platform.message.connect("lib.action", function (port) {
