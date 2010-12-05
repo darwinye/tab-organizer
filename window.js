@@ -796,13 +796,25 @@ fragment.appendChild(UI.create("div", function (container) {
                 //search.stop = false;
             }
 
-            state.search = function (info) {
-                console.log("Searching.");
+            state.search = function anon(info) {
+                //if (!anon.delay) {
+                    //anon.delay = true;
 
-                /*if (array instanceof Array) {
-                    search(array);
-                } else {*/
-                search(state.list, Object(info));
+                    clearTimeout(anon.timer);
+
+                    anon.timer = setTimeout(function () {
+                        console.log("Searching.");
+
+                        /*if (array instanceof Array) {
+                            search(array);
+                        } else {*/
+                        search(state.list, Object(info));
+                        //}
+
+                        //setTimeout(function () {
+                            //anon.delay = false;
+                        //}, 0);
+                    }, 0);
                 //}
             };
             //input.addEventListener("keyup", state.search, true);
@@ -1401,8 +1413,10 @@ addEventListener("load", function (event) { //* Issue 69
             }
         });
 
-        Options.event.addListener("change", function (event) {
+        Options.event.addListener("change", function /*! anon*/(event) {
             if (event.name === "tabs.favorites.urls") {
+                //! clearTimeout(anon.timer);
+
                 if (event.action === "delete") {
                     state.tabsByURL[event.value].forEach(function (item) {
                         item.removeAttribute("data-favorited");
@@ -1412,7 +1426,10 @@ addEventListener("load", function (event) { //* Issue 69
                         item.setAttribute("data-favorited", "");
                     });
                 }
-                state.search();
+
+                //! anon.timer = setTimeout(function () {
+                    state.search();
+                //! }, 0);
     //            document.body.setAttribute("hidden", "");
     //            document.body.removeAttribute("hidden");
             }

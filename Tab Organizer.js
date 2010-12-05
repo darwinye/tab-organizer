@@ -54,14 +54,16 @@ var Tab = {
                 container.undoState.selected = !is;
 
                 container.setAttribute("data-selected", "");
-                //state.search();
+
+                state.search();
             };
             container.queueRemove = function () {
                 var is = container.parentNode.queue.remove(container);
                 container.undoState.selected = is;
 
                 container.removeAttribute("data-selected");
-                //state.search();
+
+                state.search();
             };
             container.queueToggle = function () {
                 var toggle = container.parentNode.queue.toggle(container);
@@ -72,7 +74,8 @@ var Tab = {
                 } else {
                     container.removeAttribute("data-selected");
                 }
-                //state.search();
+
+                state.search();
             };
 
             container.addEventListener("DOMNodeRemovedFromDocument", container.queueRemove, true); //! Hacky
@@ -1166,6 +1169,71 @@ var Window = {
                                                                     if (length === 1 || confirm(text)) {
                                                                         Platform.windows.remove(win.id);
                                                                     }*/
+                                                                }
+                                                            });
+
+                                                            menu.separator();
+
+                                                            menu.addItem("<u>F</u>avorite selected", {
+                                                                keys: ["F"],
+                                                                onshow: function (menu) {
+                                                                    //console.log(container.tabList.queue);
+                                                                    var some = container.tabList.queue.some(function (item) {
+                                                                        return !item.hasAttribute("data-favorited");
+                                                                    });
+
+                                                                    if (some) {
+                                                                        menu.enable();
+                                                                    } else {
+                                                                        menu.disable();
+                                                                    }
+                                                                },
+                                                                action: function () {
+                                                                    //var saved = state.search;
+                                                                    //state.search = function () {};
+
+                                                                    //Function.store(state, "search", function () {
+                                                                    container.tabList.queue.forEach(function (item) {
+                                                                        var url = item.tab.url;
+                                                                        state.favorites.set(url, state.tabsByURL[url].length);
+                                                                        //favorites.set(item.info.url, null);
+                                                                    });
+
+                                                                    container.tabList.queue.reset();
+                                                                    //});
+
+                                                                    //state.search = saved;
+                                                                    //state.search();
+                                                                }
+                                                            });
+
+                                                            menu.addItem("<u>U</u>nfavorite selected", {
+                                                                keys: ["U"],
+                                                                onshow: function (menu) {
+                                                                    var some = container.tabList.queue.some(function (item) {
+                                                                        return item.hasAttribute("data-favorited");
+                                                                    });
+
+                                                                    if (some) {
+                                                                        menu.enable();
+                                                                    } else {
+                                                                        menu.disable();
+                                                                    }
+                                                                },
+                                                                action: function () {
+                                                                    //var saved = state.search;
+                                                                    //state.search = function () {};
+
+                                                                    //Function.store(state, "search", function () {
+                                                                    container.tabList.queue.forEach(function (item) {
+                                                                        state.favorites.set(item.tab.url, null);
+                                                                    });
+
+                                                                    container.tabList.queue.reset();
+                                                                    //});
+
+                                                                    //state.search = saved;
+                                                                    //state.search();
                                                                 }
                                                             });
 
