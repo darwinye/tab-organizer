@@ -137,10 +137,26 @@ body {
 
     white-space: normal;
 }*/
-#button-new-window {
+#button-menu {
+    /*display: -webkit-box;
+    -webkit-box-align: center;*/
+
     /*display: table-cell;*/
+    padding-left: 11px;
+    padding-right: 8px;
+
     margin: 0px;
     margin-right: 12px;
+}
+#button-menu-arrow {
+    /*margin: auto;*/
+    margin-left: 6px;
+    margin-bottom: 2px;
+}
+#button-menu > .UI-contextMenu {
+    margin-top: -3px;
+    margin-left: -14px;
+    text-shadow: none;
 }
 
 /*#Undo-wrapper {

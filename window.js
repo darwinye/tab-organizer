@@ -125,6 +125,7 @@ Undo.setRule("move-tabs", function (info) {
 
 var state = {
     titles: Options.getObject(localStorage["window.titles"]),
+    filters: Options.getArray(localStorage["filters.list"]),
     //favorites: Options.getObject(localStorage["tabs.favorites.urls"]),
     favorites: Options.get("tabs.favorites.urls"),
     windows: {},
@@ -186,6 +187,69 @@ var state = {
         element.style.height = "100px";
     })*/
 };
+
+
+//if (!(state.filters instanceof Array)) {
+//    state.filters = [];
+//}
+
+//console.log(state.filters);
+
+state.filters = [{
+    search: "file: | is:image",
+    action: "lock",
+    //index: "window",
+    window: "Images"
+}, {
+    search: "wikipedia",
+    action: "lock",
+    window: "Wikipedia"
+}, {
+    search: "inurl:youtube.com",
+    action: "lock",
+    window: "YouTube"
+}, {
+    search: "stackoverflow",
+    action: "lock",
+    window: "Stackoverflow"
+}, {
+    search: "lisp | arclanguage",
+    action: "lock",
+    window: "Lisp"
+}, {
+    search: "python",
+    action: "lock",
+    window: "Python"
+}, {
+    search: "javascript",
+    action: "lock",
+    window: "JavaScript"
+}, {
+    search: "starcraft | teamliquid",
+    action: "lock",
+    window: "StarCraft"
+}, {
+    search: "mozilla | firefox",
+    action: "lock",
+    window: "Mozilla"
+}/*, {
+    search: "window:stackoverflow -stackoverflow",
+    action: "move"
+}, {
+    search: "window:wikipedia -wikipedia",
+    action: "move"
+}, {
+    search: "window:images -file: -is:image",
+    action: "move"
+}*/, {
+    search: "inurl:chrome://newtab/",
+    action: "close"
+}];
+
+addEventListener("unload", function () {
+    localStorage["filters.list"] = JSON.stringify(state.filters);
+}, true);
+
 
 state.tabsByURL.add = function (url, node) {
     state.tabsByURL[url] = state.tabsByURL[url] || [];
@@ -437,27 +501,151 @@ fragment.appendChild(UI.create("div", function (container) {
 
     //container.appendChild(UI.create("td", function (element) {
         container.appendChild(UI.create("button", function (element) {
-            element.id = "button-new-window";
-            element.title = "(Ctrl N)";
+            element.id = "button-menu";
+            //element.title = "(Ctrl N)";
             element.className = "Options-button";
-            element.textContent = "New Window";
+            element.textContent = "Menu";
             element.tabIndex = 1;
 
-            element.addEventListener("click", function (event) {
-                Platform.windows.create({/* url: "chrome://newtab/" */});
-            }, true);
+            element.appendChild(UI.create("img", function (element) {
+                element.id = "button-menu-arrow";
+                element.src = "/themes/Black-button-menu.png";
+            }));
 
-            element.addEventListener("dragover", events.disable, true);
-            element.addEventListener("dragenter", element.focus, true);
+            element.appendChild(UI.contextMenu(function (menu) {
+                function show(event) {
+                    if (event.button !== 2) {
+                        menu.show();
+                    }
+                }
+                element.addEventListener("mousedown", show, true);
+                element.addEventListener("dragenter", show, true);
+                element.addEventListener("click", show, true);
 
-            element.addEventListener("drop", function (event) {
-                Window.create(state.currentQueue);
-//                Platform.windows.create({ url: "lib/remove.html" }, function (win) {
-//                    state.currentQueue.moveTabs(win.id);
-//                    state.currentQueue.reset();
-//                    delete state.currentQueue.shiftNode;
-//                });
-            }, true);
+                element.addEventListener("dragenter", element.focus, true);
+                element.addEventListener("dragover", events.stop, false);
+
+                //element.addEventListener("dragleave", element.blur, true);
+
+                menu.addItem("<u>N</u>ew Window", {
+                    keys: ["N"],
+                    ondrop: function () {
+                        Window.create(state.currentQueue);
+                    },
+                    action: function () {
+                        Platform.windows.create({/* url: "chrome://newtab/" */});
+                    }
+                });
+
+
+                menu.separator();
+
+
+                function perform(info) {
+                    var tabs = Array.slice(document.getElementsByClassName("tab"));
+
+                    tabs = action.search(tabs, info.search);
+
+                    if (tabs.length) {
+                        switch (info.action) {
+                        case "lock": //* FALLTHRU
+                        case "move":
+                            if (info.window) {
+                                var list = state.list.filter(function (item) {
+//                                    console.log(item.tabIcon.indexText.value, info.window);
+                                    return item.tabIcon.indexText.value === info.window;
+                                });
+
+                                if (list.length) {
+                                    tabs.moveTabs(list[0].window.id);
+
+                                    if (info.action === "lock") {
+                                        var odd = Array.slice(list[0].tabList.children);
+
+                                        odd = odd.filter(function (item) {
+                                            return tabs.indexOf(item) === -1;
+                                        });
+
+                                        if (odd.length) {
+                                            Window.create(odd);
+                                        }
+                                    }
+                                } else {
+                                    Window.create(tabs, { title: info.window });
+                                }
+                            } else {
+                                Window.create(tabs);
+                            }
+                            break;
+                        case "close":
+                            tabs.forEach(function (item) {
+                                Platform.tabs.remove(item.tab.id);
+                            });
+                        }
+                    }
+                }
+
+                menu.submenu("<u>F</u>ilters...", {
+                    keys: ["F"],
+                    onshow: function (menu) {
+                        if (state.filters.length) {
+                            menu.enable();
+                        } else {
+                            menu.disable();
+                        }
+                    },
+                    onopen: function (menu) {
+                        menu.clear();
+
+                        menu.addItem("<u>A</u>pply all filters", {
+                            keys: ["A"],
+                            action: function () {
+                                state.filters.forEach(perform);
+                            }
+                        });
+
+                        menu.separator();
+
+                        state.filters.forEach(function (item) {
+                            var text = [];
+
+                            text.push(item.action);
+                            text.push("<b>" + item.search + "</b>");
+                            //text.push(item.search);
+                            //text.push("'");
+
+                            if (item.window || item.action === "move") {
+                                text.push("to");
+
+                                if (item.window) {
+                                    text.push('"' + item.window + '"');
+                                } else {
+                                    text.push("new");
+                                }
+                            }
+
+                            menu.addItem(text.join(" "), {
+                                action: function () {
+                                    perform(item);
+                                }
+                            });
+                        });
+                    }
+                });
+            }));
+
+//            element.addEventListener("click", function (event) {
+//                Platform.windows.create({/* url: "chrome://newtab/" */});
+//            }, true);
+
+//            element.addEventListener("drop", function (event) {
+//                Window.create(state.currentQueue);
+////                Platform.windows.create({ url: "lib/remove.html" }, function (win) {
+////                    state.currentQueue.moveTabs(win.id);
+////                    state.currentQueue.reset();
+////                    delete state.currentQueue.shiftNode;
+////                });
+//            }, true);
         }));
 
 //        container.appendChild(UI.create("span", function (element) {
@@ -1434,6 +1622,7 @@ addEventListener("load", function (event) { //* Issue 69
     //            document.body.removeAttribute("hidden");
             }
         });
+
 
         state.saveTitles = function () {
     //                    Options.event.removeListener("change", update);
