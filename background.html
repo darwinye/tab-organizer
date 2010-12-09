@@ -44,7 +44,7 @@
 
             "counter.enabled": true,
             "counter.type": "total",
-            "counter.reset.whenlower": false,
+            "counter.reset.whenlower": true,
             "counter.reset.number": 0,
             "counter.reset.time": false,
             "counter.reset.time.hour": "00",
@@ -60,6 +60,8 @@
 
         Options.setObject("tabs.favorites.urls");
         Options.setObject("counter.state");
+
+        Options.setArray("macros.list");
 
         //Options.set("usage-tracking", true);
 

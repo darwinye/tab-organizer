@@ -125,7 +125,8 @@ Undo.setRule("move-tabs", function (info) {
 
 var state = {
     titles: Options.getObject(localStorage["window.titles"]),
-    macros: Options.getArray(localStorage["macros.list"]),
+    //macros: Options.getArray(localStorage["macros.list"]),
+    macros: Options.get("macros.list"),
     //favorites: Options.getObject(localStorage["tabs.favorites.urls"]),
     favorites: Options.get("tabs.favorites.urls"),
     windows: {},
@@ -195,60 +196,62 @@ var state = {
 
 //console.log(state.macros);
 
-state.macros = [{
-    search: "file: | is:image",
-    action: "require",
-    //index: "window",
-    window: "Images"
-}, {
-    search: "wikipedia",
-    action: "require",
-    window: "Wikipedia"
-}, {
-    search: "inurl:youtube.com",
-    action: "require",
-    window: "YouTube"
-}, {
-    search: "stackoverflow",
-    action: "require",
-    window: "StackOverflow"
-}, {
-    search: "lisp | arclanguage",
-    action: "require",
-    window: "Lisp"
-}, {
-    search: "python",
-    action: "require",
-    window: "Python"
-}, {
-    search: "javascript",
-    action: "require",
-    window: "JavaScript"
-}, {
-    search: "starcraft | teamliquid",
-    action: "require",
-    window: "StarCraft"
-}, {
-    search: "mozilla | firefox",
-    action: "require",
-    window: "Mozilla"
-}/*, {
-    search: "window:stackoverflow -stackoverflow",
-    action: "move"
-}, {
-    search: "window:wikipedia -wikipedia",
-    action: "move"
-}, {
-    search: "window:images -file: -is:image",
-    action: "move"
-}*/, {
-    search: "inurl:chrome://newtab/",
-    action: "close"
-}];
+//if (!state.macros.length) {
+//    state.macros.push({
+//        search: "file: | is:image",
+//        action: "require",
+//        //index: "window",
+//        window: "Images"
+//    }, {
+//        search: "wikipedia",
+//        action: "require",
+//        window: "Wikipedia"
+//    }, {
+//        search: "inurl:youtube.com",
+//        action: "require",
+//        window: "YouTube"
+//    }, {
+//        search: "stackoverflow",
+//        action: "require",
+//        window: "StackOverflow"
+//    }, {
+//        search: "lisp | arclanguage",
+//        action: "require",
+//        window: "Lisp"
+//    }, {
+//        search: "python",
+//        action: "require",
+//        window: "Python"
+//    }, {
+//        search: "javascript",
+//        action: "require",
+//        window: "JavaScript"
+//    }, {
+//        search: "starcraft | teamliquid",
+//        action: "require",
+//        window: "StarCraft"
+//    }, {
+//        search: "mozilla | firefox",
+//        action: "require",
+//        window: "Mozilla"
+//    }/*, {
+//        search: "window:stackoverflow -stackoverflow",
+//        action: "move"
+//    }, {
+//        search: "window:wikipedia -wikipedia",
+//        action: "move"
+//    }, {
+//        search: "window:images -file: -is:image",
+//        action: "move"
+//    }*/, {
+//        search: "inurl:chrome://newtab/",
+//        action: "close"
+//    });
+//}
 
-addEventListener("unload", function () {
-    localStorage["macros.list"] = JSON.stringify(state.macros);
-}, true);
+//addEventListener("unload", function () {
+//    localStorage["macros.list"] = JSON.stringify(state.macros);
+//}, true);
 
 
 state.tabsByURL.add = function (url, node) {
@@ -547,50 +550,52 @@ fragment.appendChild(UI.create("div", function (container) {
                 function perform(info, tabs) {
                     tabs = tabs || Array.slice(document.getElementsByClassName("tab"));
 
-                    var results = action.search(tabs, info.search);
+                    if (info.search) {
+                        var results = action.search(tabs, info.search);
 
-                    if (results.length) {
-                        switch (info.action) {
-                        case "require": //* FALLTHRU
-                        case "move":
-                            if (info.window) {
-                                var list = state.list.filter(function (item) {
-//                                    console.log(item.tabIcon.indexText.value, info.window);
-                                    return item.tabIcon.indexText.value === info.window;
-                                });
+                        if (results.length) {
+                            switch (info.action) {
+                            case "require": //* FALLTHRU
+                            case "move":
+                                if (info.window) {
+                                    var list = state.list.filter(function (item) {
+    //                                    console.log(item.tabIcon.indexText.value, info.window);
+                                        return item.tabIcon.indexText.value === info.window;
+                                    });
 
-                                if (list.length) {
-                                    results.moveTabs(list[0].window.id);
+                                    if (list.length) {
+                                        results.moveTabs(list[0].window.id);
 
-                                    if (info.action === "require") {
-                                        var odd = Array.slice(list[0].tabList.children);
+                                        if (info.action === "require") {
+                                            var odd = Array.slice(list[0].tabList.children);
 
-                                        odd = odd.filter(function (item) {
-                                            return tabs.indexOf(item) !== -1 && results.indexOf(item) === -1;
-                                        });
+                                            odd = odd.filter(function (item) {
+                                                return tabs.indexOf(item) !== -1 && results.indexOf(item) === -1;
+                                            });
 
-                                        if (odd.length) {
-                                            Window.create(odd);
+                                            if (odd.length) {
+                                                Window.create(odd);
+                                            }
                                         }
+                                    } else {
+                                        Window.create(results, { title: info.window });
                                     }
                                 } else {
-                                    Window.create(results, { title: info.window });
+                                    Window.create(results);
                                 }
-                            } else {
-                                Window.create(results);
+                                break;
+                            case "close":
+                                results.forEach(function (item) {
+                                    Platform.results.remove(item.tab.id);
+                                });
                             }
-                            break;
-                        case "close":
-                            results.forEach(function (item) {
-                                Platform.results.remove(item.tab.id);
+
+                            //console.log(results.length, tabs.length);
+
+                            tabs = tabs.filter(function (item) {
+                                return results.indexOf(item) === -1;
                             });
                         }
-
-                        //console.log(results.length, tabs.length);
-
-                        tabs = tabs.filter(function (item) {
-                            return results.indexOf(item) === -1;
-                        });
                     }
 
                     return tabs;
@@ -624,6 +629,8 @@ fragment.appendChild(UI.create("div", function (container) {
                         state.macros.forEach(function (item) {
                             var text = [];
 
+                            //console.log(item);
+
                             text.push(item.action);
                             text.push("<b>" + item.search + "</b>");
                             //text.push(item.search);
@@ -635,10 +642,12 @@ fragment.appendChild(UI.create("div", function (container) {
                                 text.push("in");
                             }
 
-                            if (item.window) {
-                                text.push('"' + item.window + '"');
-                            } else {
-                                text.push("new");
+                            if (item.action !== "close") {
+                                if (item.window) {
+                                    text.push('"' + item.window + '"');
+                                } else {
+                                    text.push("new");
+                                }
                             }
 
                             menu.addItem(text.join(" "), {

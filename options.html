@@ -78,6 +78,120 @@
             /*global Options, UI */
 
             Options.createContainer(function (container) {
+                function trigger(element) {
+                    var event = document.createEvent("Event");
+                    event.initEvent("Options-update", false, false);
+                    element.dispatchEvent(event);
+                }
+
+                function checkboxbutton(info) {
+                    info = Object(info);
+
+                    return UI.create("button", function (container) {
+                        container.className = "Options-button";
+                        container.style.padding = "0px 8px 0px 4px";
+                        container.style.marginLeft = "3px";
+                        container.style.height = "25px";
+
+                        /*container.addEventListener("mousedown", function (event) {
+                            event.preventDefault();
+                        }, true);*/
+
+                        container.appendChild(UI.create("input", function (element) {
+                            element.type = "checkbox";
+                            element.style.cursor = "pointer";
+
+                            /*container.addEventListener("click", function () {
+                                if (event.target !== element) {
+                                    element.checked = !element.checked;
+                                }
+                            }, true);*/
+
+                            info.create(element);
+
+//                                function update() {
+//
+//                                }
+//                                info.container.addEventListener("DOMNodeInsertedIntoDocument", update, true);
+//                                info.container.addEventListener("DOMNodeRemovedFromDocument", update, true);
+//                                info.container.addEventListener("change", function (event) {
+//                                    var target = event.target;
+//                                    if (target.localName === "input" && target.type === "checkbox") {
+//                                        update();
+//                                    }
+//                                }, true);
+
+                            function all() {
+                                var boxes = info.container.querySelectorAll("input[type=checkbox]");
+                                for (var i = 0; i < boxes.length; i += 1) {
+                                    boxes[i].checked = true;
+                                }
+                                element.checked = true;
+                                //remove.disabled = false;
+                                element.style.opacity = "";
+
+                                info.update(element);
+                            }
+
+                            function none() {
+                                var boxes = info.container.querySelectorAll("input[type=checkbox]");
+                                for (var i = 0; i < boxes.length; i += 1) {
+                                    boxes[i].checked = false;
+                                }
+                                element.checked = false;
+                                //remove.disabled = true;
+                                element.style.opacity = "";
+
+                                info.update(element);
+                            }
+
+                            element.addEventListener("change", function () {
+                                if (this.checked) {
+                                    all();
+                                } else {
+                                    none();
+                                }
+                            }, true);
+
+                            container.appendChild(UI.contextMenu(function (menu) {
+                                menu["DOM.Element"].style.textShadow = "none";
+                                menu["DOM.Element"].style.marginTop = "-3px";
+                                menu["DOM.Element"].style.marginLeft = "-6px";
+
+                                function show(event) {
+                                    if (event.target === element) {
+                                        return;
+                                    } else if (menu["DOM.Element"].contains(event.target)) {
+                                        return;
+                                    }
+
+                                    if (event.button !== 2) {
+                                        menu.show();
+                                    }
+                                }
+                                container.addEventListener("mousedown", show, true);
+                                container.addEventListener("click", show, true);
+
+                                menu.addItem("<u>A</u>ll", {
+                                    keys: ["A"],
+                                    action: all
+                                });
+
+                                menu.addItem("<u>N</u>one", {
+                                    keys: ["N"],
+                                    action: none
+                                });
+                            }));
+                        }));
+
+                        container.appendChild(UI.create("img", function (element) {
+                            element.src = "/themes/Black-button-menu.png";
+                            element.style.paddingLeft = "2px";
+                            element.style.paddingBottom = "3px";
+                        }));
+                    });
+                }
+
                 container.category("Theme", function (container) {
                     container.input("dropdown-list", {
                         option: "color.theme",
@@ -707,274 +821,239 @@
 
 
 
-                /*container.category("Macros", function (container) {
-
-                });*/
-
-
-
-                container.category("Favorites", function (container) {
-                    var favorites = Options.get("tabs.favorites.urls");
-                    var array = [];
-                    var rows = {};
-
-//                    container.text("This is a list of the URLs you have added to your favorites.");
-//                    container.text("If you don't have any, it will be empty.")
-
-//                    container.space({ height: "1em" });
+                container.category("Macros", function (container) {
+                    var macros = Options.get("macros.list");
+                    //var array = [];
 
                     container["DOM.Element"].style.display = "-webkit-box";
                     container["DOM.Element"].style.webkitBoxOrient = "vertical";
                     container["DOM.Element"].style.webkitBoxPack = "center";
 
-//                    container.space({ height: "7px" });
+//                    var header = UI.create("tr", function (element) {
+//                        //element.style.display = "-webkit-box";
+//                        //element.style.padding = "5px 10px 5px 10px";
+//                        //element.style.fontWeight = "bold";
 
-                    container["DOM.Element"].appendChild(UI.create("div", function (element) {
-                        element.style.display = "-webkit-box";
-                        element.style.webkitBoxFlex = "1";
-                        element.style.webkitBoxOrient = "vertical";
+//                        /*element.appendChild(UI.create("th", function (element) {
+//                            element.style.visibility = "hidden";
 
-//                        element.style.maxHeight = "406px";
+//                            element.appendChild(UI.create("input", function (element) {
+//                                element.type = "checkbox";
+//                                element.style.marginTop = "1px !important";
+//                            }));
+//                        }));*/
 
-                        element.style.background = "white"; //* #f8f8f8
+//                        element.appendChild(UI.create("th"));
 
-                        element.style.border = "1px solid dimgray";
-                        element.style.borderRadius = "2px";
+//                        element.appendChild(UI.create("th", function (element) {
+//                            element.textContent = "Action";
+//                            element.style.padding = "0px 5px 3px 5px";
+//                            //element.style.webkitBoxFlex = "1";
+//                        }));
 
-                        element.setAttribute("hidden", "");
+//                        element.appendChild(UI.create("th", function (element) {
+//                            element.textContent = "Search query";
+//                            element.style.padding = "0px 5px 3px 5px";
+//                        }));
 
-                        setTimeout(function () {
-                            element.removeAttribute("hidden");
-                        }, 0);
+//                        element.appendChild(UI.create("th"));
 
-                        var header = UI.create("div", function (element) {
-                            element.style.display = "-webkit-box";
+//                        element.appendChild(UI.create("th", function (element) {
+//                            element.textContent = "Window name";
+//                            element.style.padding = "0px 5px 3px 5px";
+//                        }));
+//                    });
 
-                            //element.style.position = "absolute";
-                            element.style.padding = "5px 10px 1px 4px";
-                            //element.style.padding = "5px";
-                            //element.style.paddingLeft = "4px";
-                            //element.style.paddingLeft = "25px";
-                            //element.style.paddingRight = "10px";
-                            //element.style.paddingBottom = "5px";
+                    var placeholder = UI.create("div", function (element) {
+                        element.textContent = "You haven't created any macros yet";
+                        element.style.textAlign = "center";
+                        element.style.paddingTop = "15px";
+                    });
 
-                            //element.style.background = "gainsboro";
-                            //element.style.borderBottom = "1px dotted dimgray";
+                    var table = UI.create("table", function (table) {
+                        //table.style.webkitBoxFlex = "1";
+                        table.style.width = "100%";
 
-                            element.style.fontWeight = "bold";
+                        //table.style.marginTop = "5px";
+                        //table.style.borderTop = "1px solid grey";
 
-                            element.appendChild(UI.create("div", function (element) {
-                                element.style.visibility = "hidden";
+                        table.style.paddingTop = "5px";
+                        //table.style.paddingRight = "5px";
+                        //table.style.paddingBottom = "6px";
 
-                                element.appendChild(UI.create("input", function (element) {
-                                    element.type = "checkbox";
-                                    element.style.marginTop = "1px !important";
+                        table.style.whiteSpace = "nowrap";
+
+                        table.makeRow = function (info) {
+                            if (!info) {
+                                info = { search: "" };
+                                macros.push(info);
+                            }
+
+                            var row = UI.create("tr", function (container) {
+                                //container.style.display = "-webkit-box";
+                                //container.style.padding = "2px";
+                                //container.style.paddingLeft = "4px";
+                                //container.style.paddingRight = "10px";
+
+                                container.info = info;
+
+                                var text = UI.create("div", function (element) {
+                                    //element.style.display = "table-cell";
+                                    element.style.width = "1em";
+                                    //element.style.paddingRight = "1px";
+                                    element.style.paddingLeft = "14px";
+                                    //element.style.height = "100%";
+                                    //element.style.verticalAlign = "bottom";
+                                });
+
+                                var windowName = UI.create("input", function (element) {
+                                    //element.style.display = "table-cell";
+                                    element.style.paddingLeft = "4px";
+                                    element.value = info.window || "";
+                                    element.setAttribute("placeholder", "New window");
+
+                                    element.addEventListener("change", function (element) {
+                                        info.window = this.value;
+                                    }, true);
+                                });
+
+                                container.appendChild(UI.create("td", function (element) {
+                                    element.appendChild(UI.create("input", function (element) {
+                                        element.type = "checkbox";
+
+                                        element.addEventListener("change", function () {
+                                            trigger(table);
+                                        }, true);
+                                        //element.style.verticalAlign = "1px";
+                                    }));
                                 }));
-                            }));
 
-                            element.appendChild(UI.create("div", function (element) {
-                                element.textContent = "URL";
-                                element.style.webkitBoxFlex = "1";
-                                //element.style.width = "100%";
-                            }));
+                                container.appendChild(UI.create("select", function (element) {
+                                    element.style.display = "table-cell";
+                                    //element.style.verticalAlign = "top";
+                                    element.style.paddingTop = element.style.paddingBottom = "0px";
+                                    element.style.marginLeft = "2px";
+                                    element.style.verticalAlign = "-3px";
+                                    //element.style.paddingBottom = "10px";
 
-                            element.appendChild(UI.create("div", function (element) {
-                                element.textContent = "Tabs";
-//                                    element.style.paddingRight = "10px";
-                            }));
-                        });
+                                    ["require", "move", "close"].forEach(function (key) {
+                                        element.appendChild(UI.create("option", function (element) {
+                                            element.textContent = key;
 
-                        var placeholder = UI.create("div", function (element) {
-                            element.textContent = "You haven't added any tabs to your favorites";
-                            element.style.textAlign = "center";
-                            element.style.paddingTop = "15px";
-                            //element.style.paddingLeft = "20px";
-                        });
+                                            if (key === info.action) {
+                                                element.selected = true;
+                                            }
+                                        }));
+                                    });
 
-                        element.appendChild(UI.create("div", function (element) {
-                            //element.style.width = "100%";
-                            //element.style.maxHeight = "431px"; //* 436px
+                                    function update() {
+                                        info.action = element.value;
 
-                            //element.style.paddingLeft = "4px";
-                            //element.style.paddingRight = "10px";
-
-                            //element.style.borderSpacing = "0px 0px";
-
-                            element.style.webkitBoxFlex = "1";
-
-                            element.style.paddingBottom = "3px";
-
-                            element.style.overflowX = "hidden";
-                            element.style.overflowY = "auto";
-
-                            element.style.whiteSpace = "nowrap";
-
-                            function makeRow(info) {
-                                return UI.create("div", function (container) {
-                                    container.style.display = "-webkit-box";
-                                    container.style.padding = "2px";
-                                    container.style.paddingLeft = "4px";
-                                    container.style.paddingRight = "10px";
-                                    //container.style.border = "1px solid black";
-
-                                    var tabs = document.createElement("div");
-                                    //tabs.style.textAlign = "right";
-
-                                    rows[info.url] = container;
-
-                                    container.update = function (info) {
-                                        if (info.tabs === 0) {
-                                            container.style.backgroundColor = "salmon";
+                                        if (element.value === "require") {
+                                            text.textContent = "in";
+                                        } else if (element.value === "move") {
+                                            text.textContent = "to";
                                         } else {
-                                            container.style.backgroundColor = "";
+                                            text.textContent = "";
                                         }
 
-                                        tabs.textContent = info.tabs;
-                                        container.info = info;
-                                    };
-                                    container.update(info);
+                                        if (element.value === "close") {
+                                            windowName.setAttribute("hidden", "");
+                                        } else {
+                                            windowName.removeAttribute("hidden");
+                                        }
+                                    }
+                                    update();
+
+                                    element.addEventListener("change", update, true);
+                                }));
+
+                                container.appendChild(UI.create("td", function (element) {
+                                    element.style.width = "100%";
+
+                                    element.appendChild(UI.create("input", function (element) {
+                                        //element.style.display = "table-cell";
+                                        element.style.width = "100%";
+                                        element.style.paddingLeft = "4px";
+                                        //element.style.webkitBoxFlex = "1";
+                                        //element.style.display = "block";
+                                        element.value = info.search;
+                                        element.setAttribute("placeholder", "Search query");
+
+                                        element.addEventListener("change", function (element) {
+                                            info.search = this.value;
+                                        }, true);
+                                    }));
+                                }));
+
+                                container.appendChild(UI.create("td", function (element) {
+                                    element.appendChild(text);
+                                }));
+
+                                container.appendChild(UI.create("td", function (element) {
+                                    element.appendChild(windowName);
+                                }));/*
+
+                                var tabs = document.createElement("div");
+
+                                rows[info.url] = container;
+
+                                container.update = function (info) {
+                                    if (info.tabs === 0) {
+                                        container.style.backgroundColor = "salmon";
+                                    } else {
+                                        container.style.backgroundColor = "";
+                                    }
+
+                                    tabs.textContent = info.tabs;
+                                    container.info = info;
+                                };
+                                container.update(info);
 
 
-                                    container.appendChild(UI.create("label", function (element) {
-                                        //element.style.paddingLeft = "4px";
-                                        element.style.webkitBoxFlex = "1";
-                                        element.style.display = "block";
-                                        //element.style.width = "100%";
-                                        element.style.overflow = "hidden";
-                                        element.style.textOverflow = "ellipsis";
+                                container.appendChild(UI.create("label", function (element) {
+                                    element.style.webkitBoxFlex = "1";
+                                    element.style.display = "block";
+                                    element.style.overflow = "hidden";
+                                    element.style.textOverflow = "ellipsis";
 
-                                        //container.appendChild(UI.create("label", function (element) {
-                                        element.appendChild(UI.create("input", function (element) {
-                                            element.type = "checkbox";
-                                            element.style.marginTop = "1px !important";
+                                    element.appendChild(UI.create("input", function (element) {
+                                        element.type = "checkbox";
+                                        element.style.marginTop = "1px !important";
 
-                                            container.checkbox = element;
-                                        }));
-
-                                        element.appendChild(UI.create("span", function (element) {
-                                            element.textContent = info.url;
-                                        }));
-                                        //}));
+                                        container.checkbox = element;
                                     }));
 
-                                    container.appendChild(tabs);
+                                    element.appendChild(UI.create("span", function (element) {
+                                        element.textContent = info.url;
+                                    }));
+                                }));
 
-//                                    container.appendChild(UI.create("div", function (element) {
-                                        //element.style.paddingRight = "10px";
-
-
-    /*!
-                                        element.appendChild(UI.create("img", function (element) {
-                                            element.src = "/images/button-close.png";
-
-                                            element.addEventListener("click", function () {
-                                                favorites.set(info.url, null);
-    //                                            delete favorites[info.url];
-
-    //                                            Options.event.trigger("change", {
-    //                                                name: "tabs.favorites.urls",
-    //                                                value: info.url,
-    //                                                remove: true
-    //                                            });
-                                            }, true);
-
-                                            function show() {
-                                                element.style.visibility = "";
-                                            }
-                                            function hide() {
-                                                element.style.visibility = "hidden !important";
-                                            }
-                                            hide();
-
-                                            container.addEventListener("mouseover", show, true);
-                                            container.addEventListener("mouseout", hide, true);
-                                        }));
-    */
-//                                    }));
-                                });
-                            }
-
-                            element.appendChild(header);
-                            element.appendChild(placeholder);
-
-                            function updateKeys() {
-                                var keys = Object.keys(favorites.data);
-
-                                if (keys.length) {
-                                    placeholder.setAttribute("hidden", "");
-                                    header.removeAttribute("hidden");
-                                } else {
-                                    placeholder.removeAttribute("hidden");
-                                    header.setAttribute("hidden", "");
-                                }
-
-                                return keys;
-                            }
-
-                            var keys = updateKeys();
-
-                            keys.forEach(function (key) {
-                                array.push(makeRow({ url: key, tabs: favorites.get(key) }));
+                                container.appendChild(tabs);*/
                             });
 
-                            function update(url, action) {
-                                var info = { url: url, tabs: favorites.get(url) };
+                            table.appendChild(row);
 
-                                if (action === "delete") {
-    //                                console.log(rows[url].remove);
-                                    if (rows[url]) {
-                                        rows[url].remove();
-                                        array.remove(rows[url]);
-                                        delete rows[url];
-                                    }
-                                } else if (rows[url]) {
-                                    rows[url].update(info);
-                                } else if (url) {
-                                    array.push(makeRow(info));
-                                }
+                            row.scrollIntoViewIfNeeded(true);
 
-                                updateKeys();
-
-                                array.sort(function (a, b) {
-        //                                console.log(b.tabs, a.tabs);
-                                    return a.info.tabs - b.info.tabs || a.info.url.localeCompare(b.info.url);
-                                });
-
-                                array.forEach(function (item) {
-    //                                if (!rows[item.url]) {
-    //                                    rows[item.url] = makeRow(item);
-    //                                }
-    //                                rows[item.url].update(item);
-                                    element.appendChild(item);
-                                });
-                            }
-                            update();
-
-                            Options.event.addListener("change", function (event) {
-                                if (event.name === "tabs.favorites.urls") {
-                                    update(event.value, event.action);
-                                }
-                            });
-                        }));
-                    }));
-
-                    container.space({ height: "10px" });
-
-                    container.button({
-                        text: "Remove checked",
-                        height: "29px",
-                        action: function () {
-                            var urls = array.filter(function (item) {
-                                if (item.checkbox.checked) {
-                                    return true;
-                                }
-                            });
-
-                            urls.forEach(function (item) {
-                                favorites.set(item.info.url, null);
-                            });
+                            trigger(table);
+                            //table.scrollTop += 9001;
                         }
+
+                        //table.appendChild(header);
+                        table.appendChild(placeholder);
+
+                        if (macros.length) {
+                            placeholder.setAttribute("hidden", "");
+                            //header.removeAttribute("hidden");
+                        } else {
+                            placeholder.removeAttribute("hidden");
+                            //header.setAttribute("hidden", "");
+                        }
+
+                        macros.forEach(table.makeRow);
                     });
+
 
                     /*container["DOM.Element"].appendChild(UI.create("button", function (element) {
                         element.textContent = "Remove checked";
@@ -985,7 +1064,7 @@
                         element.addEventListener("click", , true);
                     }));*/
 
-                    container["DOM.Element"].appendChild(UI.create("span", function (element) {
+                    /*container["DOM.Element"].appendChild(UI.create("span", function (element) {
                         element.style.display = "inline-block";
                         element.style.width = "12px";
                     }));
@@ -1021,7 +1100,470 @@
                                 item.checkbox.checked = false;
                             });
                         }, true);
+                    }));*/
+
+                    var remove;
+
+                    function update(element) {
+                        var boxes = table.querySelectorAll("input[type=checkbox]:checked");
+
+                        //console.log(boxes);
+
+                        if (boxes.length) {
+                            element.checked = true;
+                            remove.disabled = false;
+
+                            //console.log(boxes.length, table.children.length -1);
+
+                            if (boxes.length !== table.children.length - 1) {
+                                element.style.opacity = "0.5";
+                            } else {
+                                element.style.opacity = "";
+                            }
+                        } else {
+                            element.checked = false;
+                            remove.disabled = true;
+                            element.style.opacity = "";
+                        }
+                    }
+                    container["DOM.Element"].appendChild(checkboxbutton({
+                        container: table,
+                        create: function (element) {
+                            table.addEventListener("Options-update", function () {
+                                update(element);
+                            }, true);
+                        },
+                        update: update
                     }));
+
+                    container.button({
+                        text: "New macro",
+                        height: "25px", //! 29px
+                        action: function () {
+                            table.makeRow();
+                        }
+                    });
+
+                    remove = container.button({
+                        text: "Remove checked",
+                        height: "25px", //! 29px
+                        action: function () {
+                            var boxes = Array.slice(table.children).filter(function (item) {
+                                var input = item.querySelector("input[type=checkbox]:checked");
+                                return input && input.checked;
+                            });
+                            /*var urls = array.filter(function (item) {
+                                if (item.checkbox.checked) {
+                                    return true;
+                                }
+                            });*/
+
+                            boxes.forEach(function (item) {
+                                var index = macros.indexOf(item.info);
+                                if (index !== -1) {
+                                    macros.splice(index, 1);
+                                }
+                                table.removeChild(item);
+                                trigger(table);
+                            });
+                        }
+                    });
+                    remove.disabled = true;
+
+                    container.space({ height: "10px" });
+
+                    container["DOM.Element"].appendChild(UI.create("div", function (element) {
+                        element.style.display = "-webkit-box";
+                        element.style.webkitBoxFlex = "1";
+                        element.style.webkitBoxOrient = "vertical";
+
+                        element.style.padding = "4px 9px 9px 4px";
+
+                        element.style.overflowX = "hidden";
+                        element.style.overflowY = "auto";
+
+                        //element.style.background = "white";
+                        element.style.background = "#fefefe" //* white #f8f8f8
+
+                        element.style.border = "1px solid dimgray";
+                        element.style.borderRadius = "2px";
+
+                        element.setAttribute("hidden", "");
+
+                        setTimeout(function () {
+                            element.removeAttribute("hidden");
+                        }, 0);
+
+                        element.appendChild(table);
+                    }));
+                });
+
+
+
+                container.category("Favorites", function (container) {
+                    var favorites = Options.get("tabs.favorites.urls");
+                    var array = [];
+                    var rows = {};
+
+//                    container.text("This is a list of the URLs you have added to your favorites.");
+//                    container.text("If you don't have any, it will be empty.")
+
+//                    container.space({ height: "1em" });
+
+                    container["DOM.Element"].style.display = "-webkit-box";
+                    container["DOM.Element"].style.webkitBoxOrient = "vertical";
+                    container["DOM.Element"].style.webkitBoxPack = "center";
+
+
+                    var header = UI.create("div", function (element) {
+                        element.style.display = "-webkit-box";
+
+                        //element.style.position = "absolute";
+                        element.style.padding = "6px 13px 1px 7px";
+                        //element.style.padding = "5px";
+                        //element.style.paddingLeft = "4px";
+                        //element.style.paddingLeft = "25px";
+                        //element.style.paddingRight = "10px";
+                        //element.style.paddingBottom = "5px";
+
+                        //element.style.background = "gainsboro";
+                        //element.style.borderBottom = "1px dotted dimgray";
+
+                        element.style.fontWeight = "bold";
+
+                        element.appendChild(UI.create("div", function (element) {
+                            element.style.visibility = "hidden";
+
+                            element.appendChild(UI.create("input", function (element) {
+                                //element.disabled = true;
+                                element.type = "checkbox";
+                                element.style.marginTop = "1px !important";
+
+//                                element.addEventListener("change", function () {
+//                                    element.checked = false;
+//                                    console.log(this.checked);
+//                                }, true);
+                            }));
+                        }));
+
+                        element.appendChild(UI.create("div", function (element) {
+                            element.textContent = "URL";
+                            element.style.webkitBoxFlex = "1";
+                            //element.style.width = "100%";
+                        }));
+
+                        element.appendChild(UI.create("div", function (element) {
+                            element.textContent = "Tabs";
+//                                    element.style.paddingRight = "10px";
+                        }));
+                    });
+
+                    var placeholder = UI.create("div", function (element) {
+                        element.textContent = "You haven't added any tabs to your favorites";
+                        element.style.textAlign = "center";
+                        element.style.paddingTop = "15px";
+                        //element.style.paddingLeft = "20px";
+                    });
+
+                    var table = UI.create("div", function (table) {
+                        //table.style.width = "100%";
+                        //table.style.maxHeight = "431px"; //* 436px
+
+                        //table.style.paddingLeft = "4px";
+                        //table.style.paddingRight = "10px";
+
+                        //table.style.borderSpacing = "0px 0px";
+
+                        table.style.webkitBoxFlex = "1";
+
+                        table.style.paddingBottom = "6px";
+
+                        table.style.overflowX = "hidden";
+                        table.style.overflowY = "auto";
+
+                        table.style.whiteSpace = "nowrap";
+
+                        function makeRow(info) {
+                            return UI.create("div", function (container) {
+                                container.style.display = "-webkit-box";
+                                container.style.padding = "2px";
+                                container.style.paddingLeft = "7px";
+                                container.style.paddingRight = "13px";
+                                //container.style.border = "1px solid black";
+
+                                var tabs = document.createElement("div");
+                                //tabs.style.textAlign = "right";
+
+                                rows[info.url] = container;
+
+                                container.update = function (info) {
+                                    if (info.tabs === 0) {
+                                        container.style.backgroundColor = "salmon";
+                                    } else {
+                                        container.style.backgroundColor = "";
+                                    }
+
+                                    tabs.textContent = info.tabs;
+                                    container.info = info;
+                                };
+                                container.update(info);
+
+
+                                container.appendChild(UI.create("label", function (element) {
+                                    //element.style.paddingLeft = "4px";
+                                    element.style.webkitBoxFlex = "1";
+                                    element.style.display = "block";
+                                    //element.style.width = "100%";
+                                    element.style.overflow = "hidden";
+                                    element.style.textOverflow = "ellipsis";
+
+                                    //container.appendChild(UI.create("label", function (element) {
+                                    element.appendChild(UI.create("input", function (element) {
+                                        element.type = "checkbox";
+                                        element.style.marginTop = "1px !important";
+
+                                        container.checkbox = element;
+
+                                        element.addEventListener("change", function () {
+                                            trigger(table);
+                                        }, true);
+                                    }));
+
+                                    element.appendChild(UI.create("span", function (element) {
+                                        element.textContent = info.url;
+                                    }));
+                                    //}));
+                                }));
+
+                                container.appendChild(tabs);
+
+//                                    container.appendChild(UI.create("div", function (element) {
+                                    //element.style.paddingRight = "10px";
+
+
+/*!
+                                    element.appendChild(UI.create("img", function (element) {
+                                        element.src = "/images/button-close.png";
+
+                                        element.addEventListener("click", function () {
+                                            favorites.set(info.url, null);
+//                                            delete favorites[info.url];
+
+//                                            Options.event.trigger("change", {
+//                                                name: "tabs.favorites.urls",
+//                                                value: info.url,
+//                                                remove: true
+//                                            });
+                                        }, true);
+
+                                        function show() {
+                                            element.style.visibility = "";
+                                        }
+                                        function hide() {
+                                            element.style.visibility = "hidden !important";
+                                        }
+                                        hide();
+
+                                        container.addEventListener("mouseover", show, true);
+                                        container.addEventListener("mouseout", hide, true);
+                                    }));
+*/
+//                                    }));
+                            });
+                        }
+
+                        function updateKeys() {
+                            var keys = Object.keys(favorites.data);
+
+                            if (keys.length) {
+                                placeholder.setAttribute("hidden", "");
+                                header.removeAttribute("hidden");
+                            } else {
+                                placeholder.removeAttribute("hidden");
+                                header.setAttribute("hidden", "");
+                            }
+
+                            return keys;
+                        }
+
+                        var keys = updateKeys();
+
+                        keys.forEach(function (key) {
+                            array.push(makeRow({ url: key, tabs: favorites.get(key) }));
+                        });
+
+                        function update(url, action) {
+                            var info = { url: url, tabs: favorites.get(url) };
+
+                            if (action === "delete") {
+//                                console.log(rows[url].remove);
+                                if (rows[url]) {
+                                    rows[url].remove();
+                                    array.remove(rows[url]);
+                                    delete rows[url];
+                                }
+                            } else if (rows[url]) {
+                                rows[url].update(info);
+                            } else if (url) {
+                                array.push(makeRow(info));
+                            }
+
+                            updateKeys();
+
+                            array.sort(function (a, b) {
+    //                                console.log(b.tabs, a.tabs);
+                                return a.info.tabs - b.info.tabs || a.info.url.localeCompare(b.info.url);
+                            });
+
+                            array.forEach(function (item) {
+//                                if (!rows[item.url]) {
+//                                    rows[item.url] = makeRow(item);
+//                                }
+//                                rows[item.url].update(item);
+                                table.appendChild(item);
+                            });
+
+                            trigger(table);
+                        }
+                        update();
+
+                        Options.event.addListener("change", function (event) {
+                            if (event.name === "tabs.favorites.urls") {
+                                update(event.value, event.action);
+                            }
+                        });
+                    });
+
+
+                    var remove;
+
+                    function update(element) {
+                        var boxes = table.querySelectorAll("input[type=checkbox]:checked");
+
+                        //console.log(boxes);
+
+                        if (boxes.length) {
+                            element.checked = true;
+                            remove.disabled = false;
+
+                            //console.log(boxes.length, table.children.length -1);
+
+                            if (boxes.length !== table.children.length) {
+                                element.style.opacity = "0.5";
+                            } else {
+                                element.style.opacity = "";
+                            }
+                        } else {
+                            element.checked = false;
+                            remove.disabled = true;
+                            element.style.opacity = "";
+                        }
+                    }
+                    container["DOM.Element"].appendChild(checkboxbutton({
+                        container: table,
+                        create: function (element) {
+                            table.addEventListener("Options-update", function () {
+                                update(element);
+                            }, true);
+                        },
+                        update: update
+                    }));
+
+                    remove = container.button({
+                        text: "Remove checked",
+                        height: "25px", //! 29px
+                        action: function () {
+                            var urls = array.filter(function (item) {
+                                if (item.checkbox.checked) {
+                                    return true;
+                                }
+                            });
+
+                            urls.forEach(function (item) {
+                                favorites.set(item.info.url, null);
+                            });
+                        }
+                    });
+                    remove.disabled = true;
+
+                    container.space({ height: "10px" });
+
+//                    container.space({ height: "7px" });
+
+                    container["DOM.Element"].appendChild(UI.create("div", function (element) {
+                        element.style.display = "-webkit-box";
+                        element.style.webkitBoxFlex = "1";
+                        element.style.webkitBoxOrient = "vertical";
+
+//                        element.style.maxHeight = "406px";
+
+                        //element.style.background = "white";
+                        element.style.background = "#fefefe" //* white #f8f8f8
+
+                        element.style.border = "1px solid dimgray";
+                        element.style.borderRadius = "2px";
+
+                        element.setAttribute("hidden", "");
+
+                        setTimeout(function () {
+                            element.removeAttribute("hidden");
+                        }, 0);
+
+                        //element.appendChild(UI.create("div", function (element) {
+                        element.appendChild(header);
+                        element.appendChild(placeholder);
+                        element.appendChild(table);
+                        //}));
+                    }));
+
+//                    container.space({ height: "10px" });
+
+//                    /*container["DOM.Element"].appendChild(UI.create("button", function (element) {
+//                        element.textContent = "Remove checked";
+//                        element.className = "Options-button";
+//                        //element.style.padding = "2px 8px";
+//                        element.style.height = "29px";
+
+//                        element.addEventListener("click", , true);
+//                    }));*/
+
+//                    container["DOM.Element"].appendChild(UI.create("span", function (element) {
+//                        element.style.display = "inline-block";
+//                        element.style.width = "12px";
+//                    }));
+
+//                    container["DOM.Element"].appendChild(UI.link(function (element) {
+//                        element.textContent = "Check all";
+//                        //element.className = "UI-link";
+//                        //element.style.padding = "0px 8px";
+//                        //element.style.height = "27px";
+
+//                        element.addEventListener("click", function (event) {
+//                            array.forEach(function (item) {
+//                                item.checkbox.checked = true;
+//                            });
+//                        }, true);
+//                    }));
+
+//                    container["DOM.Element"].appendChild(UI.create("span", function (element) {
+//                        element.textContent = "|";
+//                        //element.style.display = "inline-block";
+//                        element.style.margin = "0px 8px";
+//                        //element.style.width = "13px";
+//                    }));
+
+//                    container["DOM.Element"].appendChild(UI.link(function (element) {
+//                        element.textContent = "Check none";
+//                        //element.className = "UI-link";
+//                        //element.style.padding = "0px 8px";
+//                        //element.style.height = "27px";
+
+//                        element.addEventListener("click", function (event) {
+//                            array.forEach(function (item) {
+//                                item.checkbox.checked = false;
+//                            });
+//                        }, true);
+//                    }));
 
                     //container.space({ height: "12px" });
                 });

@@ -7,7 +7,7 @@ button.Options-button {
     -webkit-box-shadow: rgba(0, 0, 0, 0.1) 1px 2px 4px;
 
     position: relative;
-    z-index: 9001;
+    z-index: 9002;
     height: 32px;
     min-height: 22px;
     padding: 2px 14px;
@@ -34,10 +34,11 @@ button.Options-button {
 /*button.Options-button.slim {
     height: 29px;
 }*/
-button.Options-button:active, button.Options-button:hover {
+button.Options-button:not(:disabled):active,
+button.Options-button:not(:disabled):hover {
     background-color: #ebf5ff; /*! #e6f0ff */
 }
-button.Options-button:active {
+button.Options-button:not(:disabled):active {
     -webkit-box-shadow: none;
 
     padding-bottom: 0px;
@@ -48,6 +49,10 @@ button.Options-button:active {
         color-stop(0.05, rgba(0, 0, 0, 0.05)),
         color-stop(0.95, rgba(0, 0, 0, 0.05)),
         to(rgba(0, 0, 0, 0.1)));
+}
+button.Options-button:disabled {
+    cursor: default;
+    color: grey;
 }
 
 input[data-options-changed],
@@ -137,6 +142,9 @@ input[type="checkbox"][data-options-changed] + span {
         color-stop(0.7, rgba(0, 0, 0, 0.05)),
         to(rgba(0, 0, 0, 0.1)));
 }
+/*#Options-root option {
+    font-weight: normal !important;
+}*/
 /*#Options-root img {
     vertical-align: text-bottom;
 }*/
