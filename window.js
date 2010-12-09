@@ -125,7 +125,7 @@ Undo.setRule("move-tabs", function (info) {
 
 var state = {
     titles: Options.getObject(localStorage["window.titles"]),
-    filters: Options.getArray(localStorage["filters.list"]),
+    macros: Options.getArray(localStorage["macros.list"]),
     //favorites: Options.getObject(localStorage["tabs.favorites.urls"]),
     favorites: Options.get("tabs.favorites.urls"),
     windows: {},
@@ -189,48 +189,48 @@ var state = {
 };
 
 
-//if (!(state.filters instanceof Array)) {
-//    state.filters = [];
+//if (!(state.macros instanceof Array)) {
+//    state.macros = [];
 //}
 
-//console.log(state.filters);
+//console.log(state.macros);
 
-state.filters = [{
+state.macros = [{
     search: "file: | is:image",
-    action: "lock",
+    action: "require",
     //index: "window",
     window: "Images"
 }, {
     search: "wikipedia",
-    action: "lock",
+    action: "require",
     window: "Wikipedia"
 }, {
     search: "inurl:youtube.com",
-    action: "lock",
+    action: "require",
     window: "YouTube"
 }, {
     search: "stackoverflow",
-    action: "lock",
-    window: "Stackoverflow"
+    action: "require",
+    window: "StackOverflow"
 }, {
     search: "lisp | arclanguage",
-    action: "lock",
+    action: "require",
     window: "Lisp"
 }, {
     search: "python",
-    action: "lock",
+    action: "require",
     window: "Python"
 }, {
     search: "javascript",
-    action: "lock",
+    action: "require",
     window: "JavaScript"
 }, {
     search: "starcraft | teamliquid",
-    action: "lock",
+    action: "require",
     window: "StarCraft"
 }, {
     search: "mozilla | firefox",
-    action: "lock",
+    action: "require",
     window: "Mozilla"
 }/*, {
     search: "window:stackoverflow -stackoverflow",
@@ -247,7 +247,7 @@ state.filters = [{
 }];
 
 addEventListener("unload", function () {
-    localStorage["filters.list"] = JSON.stringify(state.filters);
+    localStorage["macros.list"] = JSON.stringify(state.macros);
 }, true);
 
 
@@ -514,6 +514,9 @@ fragment.appendChild(UI.create("div", function (container) {
 
             element.appendChild(UI.contextMenu(function (menu) {
                 function show(event) {
+                    if (menu["DOM.Element"].contains(event.target)) {
+                        return;
+                    }
                     if (event.button !== 2) {
                         menu.show();
                     }
@@ -541,14 +544,14 @@ fragment.appendChild(UI.create("div", function (container) {
                 menu.separator();
 
 
-                function perform(info) {
-                    var tabs = Array.slice(document.getElementsByClassName("tab"));
+                function perform(info, tabs) {
+                    tabs = tabs || Array.slice(document.getElementsByClassName("tab"));
 
-                    tabs = action.search(tabs, info.search);
+                    var results = action.search(tabs, info.search);
 
-                    if (tabs.length) {
+                    if (results.length) {
                         switch (info.action) {
-                        case "lock": //* FALLTHRU
+                        case "require": //* FALLTHRU
                         case "move":
                             if (info.window) {
                                 var list = state.list.filter(function (item) {
@@ -557,13 +560,13 @@ fragment.appendChild(UI.create("div", function (container) {
                                 });
 
                                 if (list.length) {
-                                    tabs.moveTabs(list[0].window.id);
+                                    results.moveTabs(list[0].window.id);
 
-                                    if (info.action === "lock") {
+                                    if (info.action === "require") {
                                         var odd = Array.slice(list[0].tabList.children);
 
                                         odd = odd.filter(function (item) {
-                                            return tabs.indexOf(item) === -1;
+                                            return tabs.indexOf(item) !== -1 && results.indexOf(item) === -1;
                                         });
 
                                         if (odd.length) {
@@ -571,24 +574,32 @@ fragment.appendChild(UI.create("div", function (container) {
                                         }
                                     }
                                 } else {
-                                    Window.create(tabs, { title: info.window });
+                                    Window.create(results, { title: info.window });
                                 }
                             } else {
-                                Window.create(tabs);
+                                Window.create(results);
                             }
                             break;
                         case "close":
-                            tabs.forEach(function (item) {
-                                Platform.tabs.remove(item.tab.id);
+                            results.forEach(function (item) {
+                                Platform.results.remove(item.tab.id);
                             });
                         }
+
+                        //console.log(results.length, tabs.length);
+
+                        tabs = tabs.filter(function (item) {
+                            return results.indexOf(item) === -1;
+                        });
                     }
+
+                    return tabs;
                 }
 
-                menu.submenu("<u>F</u>ilters...", {
-                    keys: ["F"],
+                menu.submenu("<u>M</u>acros...", {
+                    keys: ["M"],
                     onshow: function (menu) {
-                        if (state.filters.length) {
+                        if (state.macros.length) {
                             menu.enable();
                         } else {
                             menu.disable();
@@ -597,16 +608,20 @@ fragment.appendChild(UI.create("div", function (container) {
                     onopen: function (menu) {
                         menu.clear();
 
-                        menu.addItem("<u>A</u>pply all filters", {
+                        menu.addItem("<u>A</u>pply all macros", {
                             keys: ["A"],
                             action: function () {
-                                state.filters.forEach(perform);
+                                var tabs;
+
+                                state.macros.forEach(function (item) {
+                                    tabs = perform(item, tabs);
+                                });
                             }
                         });
 
                         menu.separator();
 
-                        state.filters.forEach(function (item) {
+                        state.macros.forEach(function (item) {
                             var text = [];
 
                             text.push(item.action);
@@ -614,14 +629,16 @@ fragment.appendChild(UI.create("div", function (container) {
                             //text.push(item.search);
                             //text.push("'");
 
-                            if (item.window || item.action === "move") {
+                            if (item.action === "move") {
                                 text.push("to");
+                            } else if (item.action === "require") {
+                                text.push("in");
+                            }
 
-                                if (item.window) {
-                                    text.push('"' + item.window + '"');
-                                } else {
-                                    text.push("new");
-                                }
+                            if (item.window) {
+                                text.push('"' + item.window + '"');
+                            } else {
+                                text.push("new");
                             }
 
                             menu.addItem(text.join(" "), {
@@ -988,21 +1005,34 @@ fragment.appendChild(UI.create("div", function (container) {
                 //if (!anon.delay) {
                     //anon.delay = true;
 
-                    clearTimeout(anon.timer);
+                    info = Object(info);
 
-                    anon.timer = setTimeout(function () {
+                    function wrapper() {
                         console.log("Searching.");
 
                         /*if (array instanceof Array) {
                             search(array);
                         } else {*/
-                        search(state.list, Object(info));
+                        search(state.list, info);
                         //}
 
                         //setTimeout(function () {
                             //anon.delay = false;
                         //}, 0);
-                    }, 0);
+                    }
+
+                    if (info.nodelay) {
+                        wrapper();
+                    } else if (!anon.delay) {
+                        clearTimeout(anon.timer);
+
+                        anon.delay = true;
+                        anon.timer = setTimeout(wrapper, 0);
+
+                        setTimeout(function () {
+                            anon.delay = false;
+                        }, 1000);
+                    }
                 //}
             };
             //input.addEventListener("keyup", state.search, true);
@@ -1576,9 +1606,9 @@ addEventListener("load", function (event) { //* Issue 69
                 } else {
                     var item = state.windows[event.value];
                     if (item) {
-                        //!item.setWindowFocus();
-                        item.select();
-                        state.search();
+                        item.setWindowFocus();
+                        //!item.select();
+                        state.search({ scroll: true, focused: true, nodelay: true });
 
         //                Platform.message.connect("lib.action", function (port) {
         //                    port.sendMessage({ type: "focus" });
@@ -1627,8 +1657,12 @@ addEventListener("load", function (event) { //* Issue 69
         state.saveTitles = function () {
     //                    Options.event.removeListener("change", update);
 
-            var list = state.list.map(function (item) {
-                return item.tabIcon.indexText.value;
+            var list = state.list.map(function (item, i) {
+                var text = item.tabIcon.indexText.value;
+                if (+text === i + 1) {
+                    text = undefined;
+                }
+                return text;
             });
 
             localStorage["window.titles"] = JSON.stringify(list);
@@ -1640,7 +1674,7 @@ addEventListener("load", function (event) { //* Issue 69
         //element.addEventListener("DOMNodeRemoved", state.update, true);
 
     //    setTimeout(function () {
-        state.search({ scroll: true, focused: true });
+        state.search({ scroll: true, focused: true, nodelay: true });
     //        scrollTo(0, 0);
     //    }, 0);
 

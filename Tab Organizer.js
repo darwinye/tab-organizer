@@ -616,8 +616,19 @@ var Tab = {
 
 
 var Window = {
-    create: function (array) {
+    //pending: {},
+    create: function (array, info) {
+        info = Object(info);
+
         Platform.windows.create({ url: "lib/remove.html" }, function (win) {
+            //Window.pending[win.id] = info;
+
+            //console.log(win.id, state.windows[win.id]);
+
+            if (info.title) {
+                state.windows[win.id].tabIcon.indexText.value = info.title;
+            }
+
             if (array) {
                 array.moveTabs(win.id);
                 array.reset();
@@ -626,7 +637,7 @@ var Window = {
         });
     },
     proxy: function (win) {
-//        info = Object(info);
+        //info = Object(info);
 
         var fragment = document.createDocumentFragment();
 
@@ -864,13 +875,19 @@ var Window = {
 
                                                 icon.indexText = element;
 
-                                                if (win.name) {
-                                                    element.value = win.name;
-                                                } else {
-                                                    var index = state.list.indexOf(container);
-                                                    element.value = action.returnTitle(index);
+                                                //if (false) {
 
-                                                    var value;
+                                                //if (win.name) {
+                                                    //element.value = win.name;
+                                                //} else {
+                                                var value, index = state.list.indexOf(container);
+
+                                                //if (info.title) {
+                                                    //element.value = info.title;
+                                                    //console.log(element, info.title, element.value);
+                                                //} else {
+                                                    element.value = action.returnTitle(index);
+                                                //}
 
                                                     element.addEventListener("mousedown", function (event) {
                                                         if (container.hasAttribute("data-focused")) {
@@ -918,7 +935,8 @@ var Window = {
                                                             this.blur();
                                                         }
                                                     }, true);
-                                                }
+                                                //}
+                                                //}
                                             }));
                                         //}));
 
@@ -1491,17 +1509,19 @@ var Window = {
                                         list.addEventListener("DOMNodeInserted", update, true);
                                         list.addEventListener("DOMNodeRemoved", update, true);*/
 
-                                        win.tabs.forEach(function (tab) {
-//                                            var element = Tab.proxy(tab);
+                                        if (win.tabs) {
+                                            win.tabs.forEach(function (tab) {
+    //                                            var element = Tab.proxy(tab);
 
-//                                            /*if (tab.selected) {
-//                                                setTimeout(function () {
-//                                                    UI.scrollTo(element, list);
-//                                                }, 0);
-//                                            }*/
+    //                                            /*if (tab.selected) {
+    //                                                setTimeout(function () {
+    //                                                    UI.scrollTo(element, list);
+    //                                                }, 0);
+    //                                            }*/
 
-                                            list.appendChild(Tab.proxy(tab));
-                                        });
+                                                list.appendChild(Tab.proxy(tab));
+                                            });
+                                        }
                                     //}));
                                 }));
                             }));
