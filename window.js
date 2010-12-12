@@ -41,7 +41,7 @@ Undo.setRule("rename-window", function (info) {
 
     //console.log(state.focused);
 
-    info.node.value = info.value;
+    state.titles[info.index] = info.node.value = info.value;
     //info.node.focus();
     info.node.select();
     //info.node.select();
@@ -124,7 +124,8 @@ Undo.setRule("move-tabs", function (info) {
 //Options.set("tabs.favorites.urls", {});
 
 var state = {
-    titles: Options.getObject(localStorage["window.titles"]),
+    //titles: Options.getObject(localStorage["window.titles"]),
+    titles: Options.get("windows.titles"),
     //macros: Options.getArray(localStorage["macros.list"]),
     macros: Options.get("macros.list"),
     //favorites: Options.getObject(localStorage["tabs.favorites.urls"]),
@@ -188,6 +189,17 @@ var state = {
         element.style.height = "100px";
     })*/
 };
+
+if (localStorage["window.titles"]) {
+    state.titles.push.apply(state.titles, Options.getObject(localStorage["window.titles"]));
+    delete localStorage["window.titles"];
+
+    state.titles.forEach(function (item, i) {
+        if (+item === i + 1) {
+            state.titles[i] = null;
+        }
+    });
+}
 
 
 //if (!(state.macros instanceof Array)) {
@@ -312,7 +324,7 @@ addEventListener("focus", function (event) {
         //delete state.focused;
         //}
 
-        if (state.focused) {
+        if (target === this && state.focused) { //! Fixes a bug with the window titles.
             state.focused.triggerEvent("blur", false, false);
         }
     }
@@ -1704,20 +1716,20 @@ addEventListener("load", function (event) { //* Issue 69
         });
 
 
-        state.saveTitles = function () {
-    //                    Options.event.removeListener("change", update);
+//        state.saveTitles = function () {
+//    //                    Options.event.removeListener("change", update);
 
-            var list = state.list.map(function (item, i) {
-                var text = item.tabIcon.indexText.value;
-                if (+text === i + 1) {
-                    text = undefined;
-                }
-                return text;
-            });
+//            var list = state.list.map(function (item, i) {
+//                var text = item.tabIcon.indexText.value;
+//                if (+text === i + 1) {
+//                    text = undefined;
+//                }
+//                return text;
+//            });
 
-            localStorage["window.titles"] = JSON.stringify(list);
-        };
-        addEventListener("unload", state.saveTitles, true);
+//            localStorage["window.titles"] = JSON.stringify(list);
+//        };
+//        addEventListener("unload", state.saveTitles, true);
 
     //                element.addEventListener("DOMSubtreeModified", state.update, true);
         //element.addEventListener("DOMNodeInserted", state.update, true);

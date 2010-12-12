@@ -902,14 +902,36 @@ var Window = {
                                                     element.addEventListener("focus", function (event) {
                                                         value = this.value;
                                                     }, true);
+//                                                    element.addEventListener("keyup", function (event) {
+//                                                        state.titles[index] = (this.value) ? this.value : null;
+////                                                        console.log(this.value);
+////                                                        if (this.value) {
+////
+////                                                        } else {
+////                                                            state.titles[index] = null;
+////                                                            //this.value = action.returnTitle(index); //index + 1;
+////                                                        }
+//                                                    }, true);
                                                     element.addEventListener("blur", function (event) {
-                                                        this.value = this.value || index + 1;
+//                                                        if (this.value) {
+//                                                            state.titles[index] = this.value;
+//                                                            console.log(this.value);
+//                                                        } else {
+//                                                            state.titles[index] = null;
+//                                                            this.value = action.returnTitle(index); //index + 1;
+//                                                        }
+                                                        state.titles[index] = (this.value) ? this.value : null;
+                                                        //console.log(this.value, event.target);
+                                                        //var temp = this.value || action.returnTitle(index);//index + 1;
+                                                        this.value = action.returnTitle(index);//index + 1;
+                                                        //console.log(this.value);
 
                                                         if (this.value !== value) {
                                                             if (Options.get("undo.rename-window")) {
                                                                 Undo.push("rename-window", {
                                                                     focus: container.tabList,
                                                                     value: value,
+                                                                    index: index,
                                                                     node: this
                                                                 });
                                                                 state.undoBar.show("You renamed the window \"" + /* <span style='font-variant: small-caps;'>" */

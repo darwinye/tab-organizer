@@ -61,6 +61,7 @@
         Options.setObject("tabs.favorites.urls");
         Options.setObject("counter.state");
 
+        Options.setArray("windows.titles");
         Options.setArray("macros.list");
 
         //Options.set("usage-tracking", true);
@@ -226,6 +227,11 @@
 
                 counter.set("total-number", tabcount);
                 counter.update();
+
+                if (Options.get(code)) {
+                    _gaq.push(["_trackEvent", "Options", "windows.titles", windows.length + ""]);
+                    _gaq.push(["_trackEvent", "Options", "counter.state.total-number", tabcount + ""]);
+                }
 
                 function add() {
                     counter.set("total-number", counter.get("total-number") + 1);
