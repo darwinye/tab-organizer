@@ -83,6 +83,9 @@
 
             //_gaq.push(["_trackEvent", "Version", "type", "normal"]);
             _gaq.push(["_trackEvent", "Version", "type", "developer"]);
+
+            _gaq.push(["_trackEvent", "Options", "tabs.favorites.urls", Options.get("tabs.favorites.urls").keys().length + ""]);
+            _gaq.push(["_trackEvent", "Options", "macros.list", Options.get("macros.list").length + ""]);
         }
 
         //console.log(config);
