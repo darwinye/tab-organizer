@@ -52,7 +52,8 @@ button.Options-button:not(:disabled):active {
 }
 button.Options-button:disabled {
     cursor: default;
-    color: grey;
+    /*color: grey;*/
+    opacity: 0.5;
 }
 
 input[data-options-changed],

@@ -244,7 +244,7 @@ var Tab = {
                             parent.queue.reset();
                             delete parent.queue.shiftNode;
                         }
-                        Tab.focus(tab);
+                        Tab.focus(container.tab); //! `tab` object is replaced after moving
                     }
                 }
             }, false);

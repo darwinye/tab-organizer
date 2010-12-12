@@ -547,26 +547,30 @@ fragment.appendChild(UI.create("div", function (container) {
                 menu.separator();
 
 
-                function perform(info, tabs) {
-                    tabs = tabs || Array.slice(document.getElementsByClassName("tab"));
+                function perform(macro, info) {
+                    var tabs = info.tabs || Array.slice(document.getElementsByClassName("tab"));
 
-                    if (info.search) {
-                        var results = action.search(tabs, info.search);
+                    if (macro.search) {
+                        var results = action.search(tabs, macro.search);
 
                         if (results.length) {
-                            switch (info.action) {
+                            switch (macro.action) {
                             case "require": //* FALLTHRU
                             case "move":
-                                if (info.window) {
+                                if (macro.window) {
                                     var list = state.list.filter(function (item) {
-    //                                    console.log(item.tabIcon.indexText.value, info.window);
-                                        return item.tabIcon.indexText.value === info.window;
+    //                                    console.log(item.tabIcon.indexText.value, macro.window);
+                                        return item.tabIcon.indexText.value === macro.window;
                                     });
 
                                     if (list.length) {
-                                        results.moveTabs(list[0].window.id);
+                                        var moved = results.moveTabs(list[0].window.id, null, !info.list);
 
-                                        if (info.action === "require") {
+                                        if (info.list) {
+                                            info.list = info.list.concat(moved);
+                                        }
+
+                                        if (macro.action === "require") {
                                             var odd = Array.slice(list[0].tabList.children);
 
                                             odd = odd.filter(function (item) {
@@ -575,18 +579,34 @@ fragment.appendChild(UI.create("div", function (container) {
 
                                             if (odd.length) {
                                                 Window.create(odd);
+
+                                                if (info.list) {
+                                                    info.list = info.list.concat(odd);
+                                                }
+
+//                                                tabs = tabs.filter(function (item) {
+//                                                    return odd.indexOf(item) === -1;
+//                                                });
                                             }
                                         }
                                     } else {
-                                        Window.create(results, { title: info.window });
+                                        Window.create(results, { title: macro.window });
+
+                                        if (info.list) {
+                                            info.list = info.list.concat(results);
+                                        }
                                     }
                                 } else {
                                     Window.create(results);
+
+                                    if (info.list) {
+                                        info.list = info.list.concat(results);
+                                    }
                                 }
                                 break;
                             case "close":
                                 results.forEach(function (item) {
-                                    Platform.results.remove(item.tab.id);
+                                    Platform.tabs.remove(item.tab.id);
                                 });
                             }
 
@@ -616,23 +636,44 @@ fragment.appendChild(UI.create("div", function (container) {
                         menu.addItem("<u>A</u>pply all macros", {
                             keys: ["A"],
                             action: function () {
-                                var tabs;
+                                var info = { list: [] };
 
                                 state.macros.forEach(function (item) {
-                                    tabs = perform(item, tabs);
+                                    info.tabs = perform(item, info);
                                 });
+
+                                var list = info.list;
+
+                                Undo.push("move-tabs", {
+                                    list: list
+                                });
+
+                                if (list.length === 1) {
+                                    state.undoBar.show("You moved " + list.length + " tab.");
+                                } else {
+                                    state.undoBar.show("You moved " + list.length + " tabs.");
+                                }
                             }
                         });
 
                         menu.separator();
 
                         state.macros.forEach(function (item) {
+                            if (!item.search) {
+                                return;
+                            }
+
                             var text = [];
 
                             //console.log(item);
 
                             text.push(item.action);
-                            text.push("<b>" + item.search + "</b>");
+
+                            if (item.search) {
+                                text.push("<b>" + item.search + "</b>");
+                            } else {
+                                text.push("all tabs");
+                            }
                             //text.push(item.search);
                             //text.push("'");
 
@@ -646,7 +687,7 @@ fragment.appendChild(UI.create("div", function (container) {
                                 if (item.window) {
                                     text.push('"' + item.window + '"');
                                 } else {
-                                    text.push("new");
+                                    text.push("new window");
                                 }
                             }
 
@@ -1035,12 +1076,12 @@ fragment.appendChild(UI.create("div", function (container) {
                     } else if (!anon.delay) {
                         clearTimeout(anon.timer);
 
-                        anon.delay = true;
+                        //anon.delay = true;
                         anon.timer = setTimeout(wrapper, 0);
 
-                        setTimeout(function () {
-                            anon.delay = false;
-                        }, 1000);
+                        //setTimeout(function () {
+                            //anon.delay = false;
+                        //}, 1000);
                     }
                 //}
             };

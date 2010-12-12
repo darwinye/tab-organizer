@@ -156,7 +156,7 @@ body {
 #button-menu > .UI-contextMenu {
     margin-top: -3px;
     margin-left: -14px;
-    text-shadow: none;
+    /*text-shadow: none;*/
 }
 
 /*#Undo-wrapper {

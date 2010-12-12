@@ -77,6 +77,9 @@
             "use strict";
             /*global Options, UI */
 
+            //HTMLElement.prototype.querySelector = function () {};
+            //HTMLElement.prototype.querySelectorAll = function () {};
+
             Options.createContainer(function (container) {
                 function trigger(element) {
                     var event = document.createEvent("Event");
@@ -88,6 +91,7 @@
                     info = Object(info);
 
                     return UI.create("button", function (container) {
+                        container.title = "Select all / none";
                         container.className = "Options-button";
                         container.style.padding = "0px 8px 0px 4px";
                         container.style.marginLeft = "3px";
@@ -154,7 +158,7 @@
                             }, true);
 
                             container.appendChild(UI.contextMenu(function (menu) {
-                                menu["DOM.Element"].style.textShadow = "none";
+                                //menu["DOM.Element"].style.textShadow = "none";
                                 menu["DOM.Element"].style.marginTop = "-3px";
                                 menu["DOM.Element"].style.marginLeft = "-6px";
 
@@ -172,12 +176,12 @@
                                 container.addEventListener("mousedown", show, true);
                                 container.addEventListener("click", show, true);
 
-                                menu.addItem("<u>A</u>ll", {
+                                menu.addItem("<u>A<\/u>ll", {
                                     keys: ["A"],
                                     action: all
                                 });
 
-                                menu.addItem("<u>N</u>one", {
+                                menu.addItem("<u>N<\/u>one", {
                                     keys: ["N"],
                                     action: none
                                 });
@@ -866,8 +870,9 @@
 
                     var placeholder = UI.create("div", function (element) {
                         element.textContent = "You haven't created any macros yet";
+                        //element.textContent = "You haven't added any tabs to your favorites";
                         element.style.textAlign = "center";
-                        element.style.paddingTop = "15px";
+                        element.style.paddingTop = "11px";
                     });
 
                     var table = UI.create("table", function (table) {
@@ -883,11 +888,44 @@
 
                         table.style.whiteSpace = "nowrap";
 
+                        function update() {
+                            if (macros.length) {
+                                placeholder.setAttribute("hidden", "");
+                                //header.removeAttribute("hidden");
+                            } else {
+                                placeholder.removeAttribute("hidden");
+                                //header.setAttribute("hidden", "");
+                            }
+                        }
+
+                        table.updateRows = function () {
+                            var list = Array.slice(table.children);
+
+                            list.sort(function (a, b) {
+                                return macros.indexOf(a.info) - macros.indexOf(b.info);
+                            });
+
+                            list.forEach(function (item) {
+                                table.appendChild(item);
+                            });
+
+//                            macros.forEach(function (item) {
+//                                list.indexOf(item);
+//                            });
+                        };
+
+                        table.removeRow = function (item) {
+                            table.removeChild(item);
+                            update();
+                        };
+
                         table.makeRow = function (info) {
                             if (!info) {
                                 info = { search: "" };
                                 macros.push(info);
                             }
+
+                            update();
 
                             var row = UI.create("tr", function (container) {
                                 //container.style.display = "-webkit-box";
@@ -901,18 +939,19 @@
                                     //element.style.display = "table-cell";
                                     element.style.width = "1em";
                                     //element.style.paddingRight = "1px";
-                                    element.style.paddingLeft = "14px";
+                                    element.style.paddingLeft = "12px";
                                     //element.style.height = "100%";
                                     //element.style.verticalAlign = "bottom";
                                 });
 
                                 var windowName = UI.create("input", function (element) {
                                     //element.style.display = "table-cell";
-                                    element.style.paddingLeft = "4px";
+                                    //! element.style.paddingLeft = "4px";
+                                    element.style.width = "100px";
                                     element.value = info.window || "";
-                                    element.setAttribute("placeholder", "New window");
+                                    element.setAttribute("placeholder", "new window");
 
-                                    element.addEventListener("change", function (element) {
+                                    element.addEventListener("keyup", function (element) {
                                         info.window = this.value;
                                     }, true);
                                 });
@@ -936,7 +975,7 @@
                                     element.style.verticalAlign = "-3px";
                                     //element.style.paddingBottom = "10px";
 
-                                    ["require", "move", "close"].forEach(function (key) {
+                                    ["require", "move", "close"/**, "noop"*/].forEach(function (key) {
                                         element.appendChild(UI.create("option", function (element) {
                                             element.textContent = key;
 
@@ -974,13 +1013,13 @@
                                     element.appendChild(UI.create("input", function (element) {
                                         //element.style.display = "table-cell";
                                         element.style.width = "100%";
-                                        element.style.paddingLeft = "4px";
+                                        //! element.style.paddingLeft = "4px";
                                         //element.style.webkitBoxFlex = "1";
                                         //element.style.display = "block";
                                         element.value = info.search;
-                                        element.setAttribute("placeholder", "Search query");
+                                        element.setAttribute("placeholder", "search query");
 
-                                        element.addEventListener("change", function (element) {
+                                        element.addEventListener("keyup", function (element) {
                                             info.search = this.value;
                                         }, true);
                                     }));
@@ -1034,22 +1073,14 @@
 
                             table.appendChild(row);
 
-                            row.scrollIntoViewIfNeeded(true);
-
                             trigger(table);
+
+                            row.scrollIntoView(true);
                             //table.scrollTop += 9001;
-                        }
+                        };
 
                         //table.appendChild(header);
-                        table.appendChild(placeholder);
-
-                        if (macros.length) {
-                            placeholder.setAttribute("hidden", "");
-                            //header.removeAttribute("hidden");
-                        } else {
-                            placeholder.removeAttribute("hidden");
-                            //header.setAttribute("hidden", "");
-                        }
+                        //table.appendChild(placeholder);
 
                         macros.forEach(table.makeRow);
                     });
@@ -1102,7 +1133,7 @@
                         }, true);
                     }));*/
 
-                    var remove;
+                    var up, down, remove;
 
                     function update(element) {
                         var boxes = table.querySelectorAll("input[type=checkbox]:checked");
@@ -1111,17 +1142,21 @@
 
                         if (boxes.length) {
                             element.checked = true;
+                            up.disabled = false;
+                            down.disabled = false;
                             remove.disabled = false;
 
                             //console.log(boxes.length, table.children.length -1);
 
-                            if (boxes.length !== table.children.length - 1) {
+                            if (boxes.length !== table.children.length) {
                                 element.style.opacity = "0.5";
                             } else {
                                 element.style.opacity = "";
                             }
                         } else {
                             element.checked = false;
+                            up.disabled = true;
+                            down.disabled = true;
                             remove.disabled = true;
                             element.style.opacity = "";
                         }
@@ -1144,12 +1179,150 @@
                         }
                     });
 
-                    remove = container.button({
-                        text: "Remove checked",
-                        height: "25px", //! 29px
+
+                    var wrapper = UI.create("div", function (element) {
+                        //element.style.display = "-webkit-box";
+                        element.style.webkitBoxFlex = "1";
+                        //element.style.webkitBoxOrient = "vertical";
+
+                        element.style.padding = "4px 9px 9px 4px";
+
+                        element.style.overflowX = "hidden";
+                        element.style.overflowY = "auto";
+
+                        //element.style.background = "white";
+                        element.style.background = "#fefefe"; //* white #f8f8f8
+
+                        element.style.border = "1px solid dimgray";
+                        element.style.borderRadius = "2px";
+
+                        element.setAttribute("hidden", "");
+
+                        setTimeout(function () {
+                            element.removeAttribute("hidden");
+                        }, 0);
+
+                        //element.appendChild(header);
+                        element.appendChild(placeholder);
+                        element.appendChild(table);
+                    });
+
+
+                    up = container.button({
+                        text: "", //* "▲",
+                        height: "25px",
+                        create: function (element) {
+                            element.title = "Move up";
+                            element.disabled = true;
+                            element.style.padding = "0px 9px";
+                            element.style.paddingTop = "1px";
+                            element.style.paddingBottom = "";
+
+                            element.style.borderTopRightRadius = "0px";
+                            element.style.borderBottomRightRadius = "0px";
+
+                            element.addEventListener("dragstart", function (event) {
+                                event.preventDefault();
+                            }, true);
+
+                            element.appendChild(UI.create("img", function (element) {
+                                element.src = "/images/button-up.png";
+                            }));
+                        },
                         action: function () {
                             var boxes = Array.slice(table.children).filter(function (item) {
-                                var input = item.querySelector("input[type=checkbox]:checked");
+                                var input = item.querySelector("input[type=checkbox]");
+                                return input && input.checked;
+                            });
+
+                            boxes.forEach(function (item, i) {
+                                var index = macros.indexOf(item.info);
+                                if (index !== -1) {
+                                    //console.log(index);
+                                    macros.splice(index, 1);
+
+                                    if (index <= i) {
+                                        index += 1;
+                                    }
+                                    macros.splice(index - 1, 0, item.info);
+
+                                    //var parent = item.parentNode;
+                                    //parent.removeChild(item);
+                                    //parent.insertBefore(item, parent.children[index]);
+                                }
+                            });
+                            table.updateRows();
+
+                            UI.scrollTo(boxes[0], wrapper);
+                            //boxes[0].scrollIntoViewIfNeeded(false);
+                            //trigger(table);
+                        }
+                    });
+
+
+                    down = container.button({
+                        text: "", //* "▼",
+                        height: "25px",
+                        create: function (element) {
+                            element.title = "Move down";
+                            element.disabled = true;
+                            element.style.padding = "0px 9px";
+                            element.style.paddingTop = "3px";
+                            element.style.paddingBottom = "";
+
+                            element.style.marginLeft = "-3px";
+                            element.style.borderTopLeftRadius = "0px";
+                            element.style.borderBottomLeftRadius = "0px";
+
+                            element.addEventListener("dragstart", function (event) {
+                                event.preventDefault();
+                            }, true);
+
+//                            element.style.width = "30px";
+//                            element.style.background = "url(/images/button-down.png) no-repeat"
+//                            element.style.backgroundPosition = "center center";
+
+                            element.appendChild(UI.create("img", function (element) {
+                                element.src = "/images/button-down.png";
+                                //element.style.padding = "0px 9px";
+                            }));
+                        },
+                        action: function () {
+                            var boxes = Array.slice(table.children).filter(function (item) {
+                                var input = item.querySelector("input[type=checkbox]");
+                                return input && input.checked;
+                            });
+
+                            boxes.forEach(function (item) {
+                                var index = macros.indexOf(item.info);
+                                if (index !== -1) {
+                                    macros.splice(index, 1);
+                                    macros.splice(index + boxes.length, 0, item.info);
+
+                                    //var parent = item.parentNode;
+                                    //parent.removeChild(item);
+                                    //parent.insertBefore(item, parent.children[index]);
+                                }
+                            });
+
+                            table.updateRows();
+
+                            UI.scrollTo(boxes[boxes.length - 1], wrapper);
+                            //boxes[boxes.length - 1].scrollIntoViewIfNeeded(false);
+                            //trigger(table);
+                        }
+                    });
+
+
+                    remove = container.button({
+                        text: "Remove selected",
+                        height: "25px", //! 29px
+                        create: function (element) {
+                            element.disabled = true;
+                        },
+                        action: function () {
+                            var boxes = Array.slice(table.children).filter(function (item) {
+                                var input = item.querySelector("input[type=checkbox]");
                                 return input && input.checked;
                             });
                             /*var urls = array.filter(function (item) {
@@ -1163,39 +1336,17 @@
                                 if (index !== -1) {
                                     macros.splice(index, 1);
                                 }
-                                table.removeChild(item);
-                                trigger(table);
+                                table.removeRow(item);
                             });
+
+                            trigger(table);
                         }
                     });
-                    remove.disabled = true;
+
 
                     container.space({ height: "10px" });
 
-                    container["DOM.Element"].appendChild(UI.create("div", function (element) {
-                        element.style.display = "-webkit-box";
-                        element.style.webkitBoxFlex = "1";
-                        element.style.webkitBoxOrient = "vertical";
-
-                        element.style.padding = "4px 9px 9px 4px";
-
-                        element.style.overflowX = "hidden";
-                        element.style.overflowY = "auto";
-
-                        //element.style.background = "white";
-                        element.style.background = "#fefefe" //* white #f8f8f8
-
-                        element.style.border = "1px solid dimgray";
-                        element.style.borderRadius = "2px";
-
-                        element.setAttribute("hidden", "");
-
-                        setTimeout(function () {
-                            element.removeAttribute("hidden");
-                        }, 0);
-
-                        element.appendChild(table);
-                    }));
+                    container["DOM.Element"].appendChild(wrapper);
                 });
 
 
@@ -1470,8 +1621,11 @@
                     }));
 
                     remove = container.button({
-                        text: "Remove checked",
+                        text: "Remove selected",
                         height: "25px", //! 29px
+                        create: function (element) {
+                            element.disabled = true;
+                        },
                         action: function () {
                             var urls = array.filter(function (item) {
                                 if (item.checkbox.checked) {
@@ -1484,7 +1638,7 @@
                             });
                         }
                     });
-                    remove.disabled = true;
+
 
                     container.space({ height: "10px" });
 
@@ -1498,7 +1652,7 @@
 //                        element.style.maxHeight = "406px";
 
                         //element.style.background = "white";
-                        element.style.background = "#fefefe" //* white #f8f8f8
+                        element.style.background = "#fefefe"; //* white #f8f8f8
 
                         element.style.border = "1px solid dimgray";
                         element.style.borderRadius = "2px";
