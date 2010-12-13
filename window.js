@@ -762,7 +762,7 @@ fragment.appendChild(UI.create("div", function (container) {
             element.target = "_blank";
 
             //element.className = "UI-link";
-            element.textContent = "Help";
+            element.textContent = "FAQ";
             element.tabIndex = 1;
 
             /*element.addEventListener("click", function anon() {
