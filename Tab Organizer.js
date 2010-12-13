@@ -620,13 +620,24 @@ var Window = {
     create: function (array, info) {
         info = Object(info);
 
+//        if (info.title) {
+//            state.titles.push(info.title);
+//        }
+        //console.log(state.titles);
+
         Platform.windows.create({ url: "lib/remove.html" }, function (win) {
             //Window.pending[win.id] = info;
 
             //console.log(win.id, state.windows[win.id]);
 
             if (info.title) {
-                state.windows[win.id].tabIcon.indexText.value = info.title;
+                var proxy = state.windows[win.id];
+                proxy.tabIcon.indexText.value = info.title;
+
+                var index = state.list.indexOf(proxy);
+                if (index !== -1) {
+                    state.titles[index] = info.title;
+                }
             }
 
             if (array) {
