@@ -61,6 +61,7 @@
         Options.setObject("tabs.favorites.urls");
         Options.setObject("counter.state");
 
+        Options.setArray("windows.offsets");
         Options.setArray("windows.titles");
         Options.setArray("macros.list");
 
@@ -85,32 +86,79 @@
             //_gaq.push(["_trackEvent", "Version", "type", "normal"]);
             _gaq.push(["_trackEvent", "Version", "type", "developer"]);
 
-            _gaq.push(["_trackEvent", "Options", "tabs.favorites.urls", Options.get("tabs.favorites.urls").keys().length + ""]);
-            _gaq.push(["_trackEvent", "Options", "macros.list", Options.get("macros.list").length + ""]);
+            (function () {
+                var favorites = Options.get("tabs.favorites.urls").keys().length;
+                if (favorites !== 0) {
+                    _gaq.push(["_trackEvent", "Favorites", "tabs.favorites.urls", favorites + "", favorites]);
+                }
+
+                var macros = Options.get("macros.list").length;
+                if (macros !== 0) {
+                    _gaq.push(["_trackEvent", "Macros", "macros.list", macros + "", macros]);
+                }
+            }());
         }
 
         //console.log(config);
 
-        Object.keys(config).forEach(function (key) {
-            if (key in defaults) {
-                if (Options.get(code) || key === code) {
-                    //if (!Options.isDefault(key)) {
-                    if (config[key] !== defaults[key]) {
-                        _gaq.push(["_trackEvent", "Options", key, config[key] + ""]);
-    //                    console.log("tracked -", key, config[key] + "");
+        var categories = {
+            "Popup": ["popup.type", "popup.offsetX", "popup.offsetY", "popup.width", "popup.height"],
+            "Theme": ["color.theme"],
+            "Keyboard": ["popup.hotkey.ctrl", "popup.hotkey.shift", "popup.hotkey.alt", "popup.hotkey.letter"],
+            "Privacy": ["usage-tracking"],
+            "Tabs": ["tabs.close.location", "tabs.close.display"],
+            "Experimental": ["windows.middle-close", "popup.close.escape"],
+            "Counter": ["counter.enabled", "counter.type", "counter.reset.whenlower", "counter.reset.number", "counter.reset.time", "counter.reset.time.hour", "counter.reset.time.minute", "counter.reset.idle", "counter.reset.idle.hour"],
+            "Undo": ["undo.new-tab", "undo.rename-window", "undo.select-tabs", "undo.move-tabs", "undo.close-tabs", "undo.timer"],
+            "Search": ["search.show-number"],
+            //"Favorites": [],
+            //"Macros": [],
+        };
+
+        Object.keys(categories).forEach(function (category) {
+            //if (key in defaults) {
+            categories[category].forEach(function (name) {
+                if (Options.get(code) || name === code) {
+                    if (!Options.isDefault(name)) {
+                    //if (config[key] !== defaults[key]) {
+                        var value = Options.get(name);
+                        if (typeof value === "number") {
+                            _gaq.push(["_trackEvent", category, name, value + "", value]);
+                        } else {
+                            _gaq.push(["_trackEvent", category, name, value + ""]);
+                        }
+
+                        //console.log("tracked -", category, name, value);
                     }
                 }
-//                else {
-//                    //console.log(true, key, config[key]);
-//                }
-            }
-//            else {
-//                //console.log(false, key, config[key]);
-//            }
-//            setTimeout(function () {
-//                command.next();
-//            }, 1000);
+            });
+            //}
         });
+
+//        Object.keys(config).forEach(function (key) {
+//            if (key in defaults) {
+//                if (Options.get(code) || key === code) {
+//                    //if (!Options.isDefault(key)) {
+//                    if (config[key] !== defaults[key]) {
+//                        var value = config[key];
+//                        if (typeof value !== "number") {
+//                            value += "";
+//                        }
+//                        _gaq.push(["_trackEvent", "Options", key, value]);
+//    //                    console.log("tracked -", key, config[key] + "");
+//                    }
+//                }
+////                else {
+////                    //console.log(true, key, config[key]);
+////                }
+//            }
+////            else {
+////                //console.log(false, key, config[key]);
+////            }
+////            setTimeout(function () {
+////                command.next();
+////            }, 1000);
+//        });
         //console.log(_gaq);
 
         //_gaq.push(["_trackEvent", "Options", "name", "value]);
@@ -229,8 +277,8 @@
                 counter.update();
 
                 if (Options.get(code)) {
-                    _gaq.push(["_trackEvent", "Options", "windows.titles", windows.length + ""]);
-                    _gaq.push(["_trackEvent", "Options", "counter.state.total-number", tabcount + ""]);
+                    _gaq.push(["_trackEvent", "Statistics", "windows.length", windows.length + "", windows.length]);
+                    _gaq.push(["_trackEvent", "Statistics", "tabs.length", tabcount + "", tabcount]);
                 }
 
                 function add() {

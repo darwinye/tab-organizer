@@ -303,141 +303,6 @@
 
 
 
-                container.category("Keyboard", function (container) {
-                    container.header("Open popup with: ");
-
-                    /*container.addCell(function (cell) {
-                        cell["DOM.Element"].
-
-                    });*/
-
-                    container.indent(function (container) {
-                        container.input("checkbox", {
-                            option: "popup.hotkey.ctrl",
-                            text: "Ctrl (⌘)"
-                        });
-
-                        container.input("checkbox", {
-                            option: "popup.hotkey.shift",
-                            text: "Shift"
-                        });
-
-                        container.input("checkbox", {
-                            option: "popup.hotkey.alt",
-                            text: "Alt"
-                        });
-
-                        container.space({ height: "3px" });
-
-                        container.input("text", {
-                            option: "popup.hotkey.letter",
-                            maxlength: 1,
-                            width: "2em",
-                            modify: function () {
-                                return this.value.toUpperCase();
-                            }
-                        });
-                    });
-
-//                    container.separator();
-
-//                    container.input("checkbox", {
-//                        option: "popup.close.esc",
-//                        text: "Close popup with Esc."
-//                    });
-/*
-                    container.addCell(function (cell) {
-                    });
-
-                    container.appendChild(UI.create("table", function (element) {
-                        element.appendChild(UI.create("tr", function (element) {
-                            element.appendChild(UI.create("td", function (element) {
-                                element.appendChild(UI.create("span", function (element) {
-                                    element.textContent = "Open popup with: ";
-                                }));
-                            }));
-                            element.appendChild(UI.create("td", function (element) {
-                                element.appendChild(UI.create("div", function (element) {
-                                    element.textContent = "Ctrl (⌘)";
-                                }));
-                                element.appendChild(UI.create("input", function (element) {
-                                    element.type = "checkbox";
-                                    element.className = "center";
-
-                                    Options.on("change")("popup.hotkey.ctrl", element, "checked");
-                                }));
-                            }));
-                            element.appendChild(UI.create("td", function (element) {
-                                element.appendChild(UI.create("div", function (element) {
-                                    element.textContent = "Shift";
-                                }));
-                                element.appendChild(UI.create("input", function (element) {
-                                    element.type = "checkbox";
-                                    element.className = "center";
-
-                                    Options.on("change")("popup.hotkey.shift", element, "checked");
-                                }));
-                            }));
-                            element.appendChild(UI.create("td", function (element) {
-                                element.appendChild(UI.create("div", function (element) {
-                                    element.textContent = "Alt";
-                                }));
-                                element.appendChild(UI.create("input", function (element) {
-                                    element.type = "checkbox";
-                                    element.className = "center";
-
-                                    Options.on("change")("popup.hotkey.alt", element, "checked");
-                                }));
-                            }));
-                            element.appendChild(UI.create("td", function (element) {
-                                element.appendChild(UI.create("input", function (element) {
-                                    element.style.width = "2em";
-                                    element.maxLength = 1;
-
-                                    element.addEventListener("change", function (event) {
-                                        this.value = this.value.toUpperCase();
-                                    }, true);
-
-                                    Options.on("change")("popup.hotkey.letter", element);
-
-//                                    var sync = Options.sync("popup.hotkey.code", element, function (name, property) {
-//                                        console.log(name, property);
-//                                    });
-//                                    element.addEventListener("change", sync, true);
-                                }));
-                            }));
-                        }));
-
-                        //element.appendChild(UI.create("tr", function (element) {
-                            element.appendChild(UI.create("td", function (element) {
-                                element.colSpan = 5;
-
-                                element.appendChild(UI.create("hr"));
-                            }));
-                        //}));
-
-                        element.appendChild(UI.create("tr", function (element) {
-                            //element.appendChild(UI.create("td", function (element) {
-                                //element.colSpan = 5;
-
-                                element.appendChild(UI.create("div", function (element) {
-                                    element.appendChild(UI.create("input", function (element) {
-                                        element.type = "checkbox";
-
-                                        //Options.on("change")("popup.hotkey.esc", element, "checked");
-                                    }));
-                                    element.appendChild(UI.create("span", function (element) {
-                                        element.textContent = "Close popup with Esc.";
-                                    }));
-                                }));
-                            //}));
-                        }));
-                    });
-*/
-                });
-
-
-
                 container.category("Popup", function (container) {
                     var height = 375;
 
@@ -658,6 +523,141 @@
                             }));
                         }));
                     }));
+                });
+
+
+
+                container.category("Keyboard", function (container) {
+                    container.header("Open popup with: ");
+
+                    /*container.addCell(function (cell) {
+                        cell["DOM.Element"].
+
+                    });*/
+
+                    container.indent(function (container) {
+                        container.input("checkbox", {
+                            option: "popup.hotkey.ctrl",
+                            text: "Ctrl (⌘)"
+                        });
+
+                        container.input("checkbox", {
+                            option: "popup.hotkey.shift",
+                            text: "Shift"
+                        });
+
+                        container.input("checkbox", {
+                            option: "popup.hotkey.alt",
+                            text: "Alt"
+                        });
+
+                        container.space({ height: "3px" });
+
+                        container.input("text", {
+                            option: "popup.hotkey.letter",
+                            maxlength: 1,
+                            width: "2em",
+                            modify: function () {
+                                return this.value.toUpperCase();
+                            }
+                        });
+                    });
+
+//                    container.separator();
+
+//                    container.input("checkbox", {
+//                        option: "popup.close.esc",
+//                        text: "Close popup with Esc."
+//                    });
+/*
+                    container.addCell(function (cell) {
+                    });
+
+                    container.appendChild(UI.create("table", function (element) {
+                        element.appendChild(UI.create("tr", function (element) {
+                            element.appendChild(UI.create("td", function (element) {
+                                element.appendChild(UI.create("span", function (element) {
+                                    element.textContent = "Open popup with: ";
+                                }));
+                            }));
+                            element.appendChild(UI.create("td", function (element) {
+                                element.appendChild(UI.create("div", function (element) {
+                                    element.textContent = "Ctrl (⌘)";
+                                }));
+                                element.appendChild(UI.create("input", function (element) {
+                                    element.type = "checkbox";
+                                    element.className = "center";
+
+                                    Options.on("change")("popup.hotkey.ctrl", element, "checked");
+                                }));
+                            }));
+                            element.appendChild(UI.create("td", function (element) {
+                                element.appendChild(UI.create("div", function (element) {
+                                    element.textContent = "Shift";
+                                }));
+                                element.appendChild(UI.create("input", function (element) {
+                                    element.type = "checkbox";
+                                    element.className = "center";
+
+                                    Options.on("change")("popup.hotkey.shift", element, "checked");
+                                }));
+                            }));
+                            element.appendChild(UI.create("td", function (element) {
+                                element.appendChild(UI.create("div", function (element) {
+                                    element.textContent = "Alt";
+                                }));
+                                element.appendChild(UI.create("input", function (element) {
+                                    element.type = "checkbox";
+                                    element.className = "center";
+
+                                    Options.on("change")("popup.hotkey.alt", element, "checked");
+                                }));
+                            }));
+                            element.appendChild(UI.create("td", function (element) {
+                                element.appendChild(UI.create("input", function (element) {
+                                    element.style.width = "2em";
+                                    element.maxLength = 1;
+
+                                    element.addEventListener("change", function (event) {
+                                        this.value = this.value.toUpperCase();
+                                    }, true);
+
+                                    Options.on("change")("popup.hotkey.letter", element);
+
+//                                    var sync = Options.sync("popup.hotkey.code", element, function (name, property) {
+//                                        console.log(name, property);
+//                                    });
+//                                    element.addEventListener("change", sync, true);
+                                }));
+                            }));
+                        }));
+
+                        //element.appendChild(UI.create("tr", function (element) {
+                            element.appendChild(UI.create("td", function (element) {
+                                element.colSpan = 5;
+
+                                element.appendChild(UI.create("hr"));
+                            }));
+                        //}));
+
+                        element.appendChild(UI.create("tr", function (element) {
+                            //element.appendChild(UI.create("td", function (element) {
+                                //element.colSpan = 5;
+
+                                element.appendChild(UI.create("div", function (element) {
+                                    element.appendChild(UI.create("input", function (element) {
+                                        element.type = "checkbox";
+
+                                        //Options.on("change")("popup.hotkey.esc", element, "checked");
+                                    }));
+                                    element.appendChild(UI.create("span", function (element) {
+                                        element.textContent = "Close popup with Esc.";
+                                    }));
+                                }));
+                            //}));
+                        }));
+                    });
+*/
                 });
 
 

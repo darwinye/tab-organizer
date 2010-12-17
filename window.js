@@ -10,91 +10,99 @@ if (Options.get("popup.type") === "bubble") {
 }
 
 
-Undo.setRule("new-tab", function (info) {
-    Platform.tabs.remove(info.id);
-    Undo.reset();
-});
-
-//addEventListener("blur", function anon(event) {
-//    //this.removeEventListener(event.type, anon, true);
-
-//    console.warn(event.type, event.target, state.focused);
-//    //event.stopPropagation();
-//}, true);
-//addEventListener("focus", function anon(event) {
-//    //this.removeEventListener(event.type, anon, true);
-
-//    console.warn(event.type, event.target, state.focused);
-//    //event.stopPropagation();
-//}, true);
-
-Undo.setRule("rename-window", function (info) {
-    /*addEventListener("blur", function anon(event) {
-        //this.removeEventListener(event.type, anon, true);
-        event.preventDefault();
-        event.stopPropagation();
-    }, true);*/
-//    addEventListener("blur", function (event) {
-//        console.warn(event.type, event.target);
-//        event.stopPropagation();
-//    }, true);
-
-    //console.log(state.focused);
-
-    state.titles[info.index] = info.node.value = info.value;
-    //info.node.focus();
-    info.node.select();
-    //info.node.select();
-    //info.focus.focus();
-    Undo.reset();
-});
-
-Undo.setRule("select-tabs", function (info) {
-    info.list.forEach(function (item) {
-        //console.log(item.undoState.selected);
-        if (item.undoState.selected) {
-            item.queueAdd();
-        } else {
-            item.queueRemove();
-        }
+(function () {
+    Undo.setRule("new-tab", function (info) {
+        Platform.tabs.remove(info.id);
+        Undo.reset();
     });
-    Undo.reset();
-});
 
-Undo.setRule("move-tabs", function (info) {
-    var proxy = {};
+    //addEventListener("blur", function anon(event) {
+    //    //this.removeEventListener(event.type, anon, true);
 
-    info.list.forEach(function (item) {
-        Queue.push(function (queue) {
-            var undo = item.undoState;
-            var info = {
-                index: undo.index
-            };
+    //    console.warn(event.type, event.target, state.focused);
+    //    //event.stopPropagation();
+    //}, true);
+    //addEventListener("focus", function anon(event) {
+    //    //this.removeEventListener(event.type, anon, true);
 
-            if (state.windows[undo.windowId]) {
-                info.windowId = undo.windowId;
+    //    console.warn(event.type, event.target, state.focused);
+    //    //event.stopPropagation();
+    //}, true);
+
+    Undo.setRule("rename-window", function (info) {
+        /*addEventListener("blur", function anon(event) {
+            //this.removeEventListener(event.type, anon, true);
+            event.preventDefault();
+            event.stopPropagation();
+        }, true);*/
+    //    addEventListener("blur", function (event) {
+    //        console.warn(event.type, event.target);
+    //        event.stopPropagation();
+    //    }, true);
+
+        //console.log(state.focused);
+
+        state.titles[info.index] = info.node.value = info.value;
+        //info.node.focus();
+        info.node.select();
+        //info.node.select();
+        //info.focus.focus();
+        Undo.reset();
+    });
+
+    Undo.setRule("select-tabs", function (info) {
+        info.list.forEach(function (item) {
+            //console.log(item.undoState.selected);
+            if (item.undoState.selected) {
+                item.queueAdd();
             } else {
-                info.windowId = proxy[undo.windowId];
-            }
-
-            if (info.windowId) {
-                Tab.move(item, info, item.queueAdd);
-                queue.next();
-            } else {
-                Platform.windows.create({ url: "lib/remove.html" }, function (win) {
-                    info.windowId = proxy[undo.windowId] = win.id;
-                    Tab.move(item, info, item.queueAdd);
-                    queue.next();
-                });
+                item.queueRemove();
             }
         });
+        Undo.reset();
     });
-    Undo.reset();
-});
 
-//        Undo.setRule("close-tabs", function (info) {
-//            Undo.reset();
-//        });
+    function move(info) {
+        var proxy = {};
+
+        info.list.forEach(function (item) {
+            Queue.push(function (queue) {
+                var undo = item.undoState;
+                var info = {
+                    index: undo.index
+                };
+
+                if (state.windows[undo.windowId]) {
+                    info.windowId = undo.windowId;
+                } else {
+                    info.windowId = proxy[undo.windowId];
+                }
+
+                if (info.windowId) {
+                    Tab.move(item, info, item.queueAdd);
+                    queue.next();
+                } else {
+                    Platform.windows.create({ url: "lib/remove.html" }, function (win) {
+                        info.windowId = proxy[undo.windowId] = win.id;
+                        Tab.move(item, info, item.queueAdd);
+                        queue.next();
+                    });
+                }
+            });
+        });
+        Undo.reset();
+    }
+
+    Undo.setRule("move-tabs", move);
+    Undo.setRule("macro-trigger", function (info) {
+        info.list = info.moved;
+        move(info);
+    });
+
+    //        Undo.setRule("close-tabs", function (info) {
+    //            Undo.reset();
+    //        });
+}());
 
 
 //        Options.event.trigger("change");
@@ -130,8 +138,12 @@ var state = {
     macros: Options.get("macros.list"),
     //favorites: Options.getObject(localStorage["tabs.favorites.urls"]),
     favorites: Options.get("tabs.favorites.urls"),
+    list: [],
     windows: {},
     //tabs: [],
+    //bookmarks: [],
+    bookmarksByID: {},
+    bookmarksByURL: {},
     tabsByID: {},
     tabsByURL: {},
     queues: {
@@ -161,7 +173,6 @@ var state = {
             });
         }
     },
-    list: [],
     urlBar: UI.create("div", function (container) {
         container.id = "URL-bar";
 
@@ -190,16 +201,69 @@ var state = {
     })*/
 };
 
+
 if (localStorage["window.titles"]) {
     state.titles.push.apply(state.titles, Options.getObject(localStorage["window.titles"]));
     delete localStorage["window.titles"];
 
     state.titles.forEach(function (item, i) {
         if (+item === i + 1) {
-            state.titles[i] = null;
+            delete state.titles[i];// = null;
         }
     });
 }
+
+
+Platform.bookmarks.getTree(function recurse(array) {
+    var url = state.bookmarksByURL;
+    array.forEach(function (item) {
+        if (item.children) {
+            recurse(item.children);
+        } else {
+            //state.bookmarks.push(item);
+            state.bookmarksByID[item.id] = item;
+            url[item.url] = url[item.url] + 1 || 1;
+        }
+    });
+    if (state.loaded) {
+        state.search();
+        //! state.search({ scroll: true, focused: true, nodelay: true });
+    }
+    //console.log(state.loaded);
+    //console.log(Object.keys(state.bookmarksByURL).length);
+    //console.log(state.bookmarks.length);
+});
+
+Platform.bookmarks.addEventListener("change", function (id, info) {
+    var bookmark = state.bookmarksByID[id],
+        url = state.bookmarksByURL;
+
+    if (info.url) {
+        url[bookmark.url] -= 1;
+        bookmark.title = info.title;
+        bookmark.url = info.url;
+        url[info.url] = url[info.url] + 1 || 1;
+        state.search();
+    }
+}, true);
+
+Platform.bookmarks.addEventListener("create", function (id, bookmark) {
+    var url = state.bookmarksByURL;
+    if (bookmark.url) {
+        state.bookmarksByID[id] = bookmark;
+        url[bookmark.url] = url[bookmark.url] + 1 || 1;
+        state.search();
+    }
+}, true);
+
+Platform.bookmarks.addEventListener("remove", function (id, info) {
+    var bookmark = state.bookmarksByID[id];
+    if (bookmark) {
+        state.bookmarksByURL[bookmark.url] -= 1;
+        delete state.bookmarksByID[id];
+        state.search();
+    }
+}, true);
 
 
 //if (!(state.macros instanceof Array)) {
@@ -559,79 +623,138 @@ fragment.appendChild(UI.create("div", function (container) {
                 menu.separator();
 
 
-                function perform(macro, info) {
-                    var tabs = info.tabs || Array.slice(document.getElementsByClassName("tab"));
+                var perform = (function () {
+                    function go(macro, info) {
+                        //info = Object(info);
+                        info.tabs = info.tabs || Array.slice(document.getElementsByClassName("tab"));
 
-                    if (macro.search) {
-                        var results = action.search(tabs, macro.search);
+                        if (macro.search) {
+                            var results = action.search(info.tabs, macro.search);
 
-                        if (results.length) {
-                            switch (macro.action) {
-                            case "require": //* FALLTHRU
-                            case "move":
-                                if (macro.window) {
-                                    var list = state.list.filter(function (item) {
-    //                                    console.log(item.tabIcon.indexText.value, macro.window);
-                                        return item.tabIcon.indexText.value === macro.window;
-                                    });
+                            if (results.length) {
+                                switch (macro.action) {
+                                case "require": //* FALLTHRU
+                                case "move":
+                                    if (macro.window) {
+                                        var list = state.list.filter(function (item) {
+        //                                    console.log(item.tabIcon.indexText.value, macro.window);
+                                            return item.tabIcon.indexText.value === macro.window;
+                                        });
 
-                                    if (list.length) {
-                                        var moved = results.moveTabs(list[0].window.id, null, !info.list);
+                                        if (list.length) {
+                                            var moved = results.moveTabs(list[0].window.id, null, false);//!info.moved);
 
-                                        if (info.list) {
-                                            info.list = info.list.concat(moved);
-                                        }
+                                            //if (info.moved) {
+                                            info.moved = info.moved.concat(moved);
+                                            //}
 
-                                        if (macro.action === "require") {
-                                            var odd = Array.slice(list[0].tabList.children);
+                                            if (macro.action === "require") {
+                                                var odd = Array.slice(list[0].tabList.children);
 
-                                            odd = odd.filter(function (item) {
-                                                return tabs.indexOf(item) !== -1 && results.indexOf(item) === -1;
-                                            });
+                                                odd = odd.filter(function (item) {
+                                                    return info.tabs.indexOf(item) !== -1 && results.indexOf(item) === -1;
+                                                });
 
-                                            if (odd.length) {
-                                                Window.create(odd);
+                                                if (odd.length) {
+                                                    info.makeNew = info.makeNew.concat(odd);
+                                                    //if (info.moved) {
 
-                                                if (info.list) {
-                                                    info.list = info.list.concat(odd);
+                                                    //}
+                                                    //info.moved = info.moved.concat(odd);
+
+    //                                                tabs = tabs.filter(function (item) {
+    //                                                    return odd.indexOf(item) === -1;
+    //                                                });
                                                 }
-
-//                                                tabs = tabs.filter(function (item) {
-//                                                    return odd.indexOf(item) === -1;
-//                                                });
                                             }
+                                        } else {
+                                            Window.create(results, { title: macro.window });
+
+                                            //if (info.moved) {
+                                            info.moved = info.moved.concat(results);
+                                            //}
                                         }
                                     } else {
-                                        Window.create(results, { title: macro.window });
+                                        Window.create(results);
 
-                                        if (info.list) {
-                                            info.list = info.list.concat(results);
-                                        }
+                                        //if (info.moved) {
+                                        info.moved = info.moved.concat(results);
+                                        //}
                                     }
-                                } else {
-                                    Window.create(results);
+                                    break;
+                                case "close":
+                                    results.forEach(function (item) {
+                                        Platform.tabs.remove(item.tab.id);
+                                    });
 
-                                    if (info.list) {
-                                        info.list = info.list.concat(results);
-                                    }
+                                    info.closed = info.closed.concat(results);
                                 }
-                                break;
-                            case "close":
-                                results.forEach(function (item) {
-                                    Platform.tabs.remove(item.tab.id);
+
+                                //console.log(results.length, tabs.length);
+
+                                info.makeNew = info.makeNew.filter(function (item) {
+                                    return results.indexOf(item) === -1;
                                 });
-                            }
 
-                            //console.log(results.length, tabs.length);
-
-                            tabs = tabs.filter(function (item) {
-                                return results.indexOf(item) === -1;
-                            });
+                                info.tabs = info.tabs.filter(function (item) {
+                                    return results.indexOf(item) === -1;
+                                });
+                            }// else {
+                                //results.moveTabs();
+                            //}
                         }
+
+                        return info;
                     }
 
-                    return tabs;
-                }
+                    return function (array) {
+                        var info = {
+                            makeNew: [],
+                            closed: [],
+                            moved: []
+                        };
+
+                        array.forEach(function (item) {
+                            info = go(item, info);
+                        });
+
+                        if (info.makeNew.length) {
+                            Window.create(info.makeNew);
+
+                            info.moved = info.moved.concat(info.makeNew);
+                        }
+
+                        var closed = info.closed;
+                        var moved = info.moved;
+
+                        Undo.push("macro-trigger", {
+                            closed: closed,
+                            moved: moved
+                        });
+
+                        var text = [];
+
+                        if (moved.length) {
+                            text.push("You moved ", moved.length, " tab");
+
+                            if (moved.length !== 1) {
+                                text.push("s");
+                            }
+
+    //                        text.push(" and closed ", closed.length, " tab");
+
+    //                        if (closed.length !== 1) {
+    //                            text.push("s");
+    //                        }
+                        } else {
+                            text.push("Nothing changed");
+                        }
+
+                        text.push(".");
+
+                        state.undoBar.show(text.join(""));
+                    };
+                }());
 
                 menu.submenu("<u>M</u>acros...", {
                     keys: ["M"],
@@ -648,23 +771,7 @@ fragment.appendChild(UI.create("div", function (container) {
                         menu.addItem("<u>A</u>pply all macros", {
                             keys: ["A"],
                             action: function () {
-                                var info = { list: [] };
-
-                                state.macros.forEach(function (item) {
-                                    info.tabs = perform(item, info);
-                                });
-
-                                var list = info.list;
-
-                                Undo.push("move-tabs", {
-                                    list: list
-                                });
-
-                                if (list.length === 1) {
-                                    state.undoBar.show("You moved " + list.length + " tab.");
-                                } else {
-                                    state.undoBar.show("You moved " + list.length + " tabs.");
-                                }
+                                perform(state.macros);
                             }
                         });
 
@@ -705,7 +812,7 @@ fragment.appendChild(UI.create("div", function (container) {
 
                             menu.addItem(text.join(" "), {
                                 action: function () {
-                                    perform(item);
+                                    perform([item]);
                                 }
                             });
                         });
@@ -840,10 +947,45 @@ fragment.appendChild(UI.create("div", function (container) {
                 element.show = function (name) {
                     timer.reset();
 
-                    state.undoBar.text = name;
+                    //element.style.webkitTransitionDuration = "0.01s";
 
-                    element.style.opacity = "";
-                    element.style.visibility = "";
+                    if (element.style.opacity) {
+                        state.undoBar.text = name;
+
+                        element.style.opacity = "";
+                        element.style.visibility = "";
+                    } else {
+                        //element.style.webkitTransitionDuration = "0.250s";
+
+                        element.hide();
+
+                        setTimeout(function () {
+                            state.undoBar.text = name;
+
+                            element.style.opacity = "";
+                            element.style.visibility = "";
+                        }, 100);
+
+//                        setTimeout(function () {
+//                            element.style.webkitTransitionDuration = "";
+//                        }, 0);
+
+//                        element.addEventListener("webkitTransitionEnd", function anon(event) {
+//                            this.removeEventListener(event.type, anon, true);
+
+//                            //console.log(event);
+
+//                            element.style.webkitTransitionDuration = "0s";
+
+//
+
+//                            setTimeout(function () {
+//                                element.style.webkitTransitionDuration = "";
+//                            }, 0);
+//                        }, true);
+                    }
+
+                    //element.style.webkitTransitionDuration = "";
 
                     if (!timer.mouseover) {
                         timer.set();
@@ -945,6 +1087,7 @@ fragment.appendChild(UI.create("div", function (container) {
             };
 
             var precoded = {
+                "h": ["has:bookmark", "has:macro"],
                 "i": ["inurl:", "intitle:", "is:image", "is:favorite", "is:selected"],
                 "s": ["same:url", "same:title", "same:domain"],
                 "w": ["window:", "window:focused"]
@@ -1668,9 +1811,17 @@ addEventListener("load", function (event) { //* Issue 69
                 } else {
                     var item = state.windows[event.value];
                     if (item) {
-                        item.setWindowFocus();
-                        //!item.select();
-                        state.search({ scroll: true, focused: true, nodelay: true });
+//                        if (Options.get("popup.type") === "tab") {
+                            item.select();
+//                        } else {
+//                            item.setWindowFocus();
+//                        }
+
+                        state.search({
+                            focused: Options.get("popup.type") !== "tab",
+                            nodelay: true,
+                            scroll: true
+                        });
 
         //                Platform.message.connect("lib.action", function (port) {
         //                    port.sendMessage({ type: "focus" });
@@ -1735,6 +1886,8 @@ addEventListener("load", function (event) { //* Issue 69
         //element.addEventListener("DOMNodeInserted", state.update, true);
         //element.addEventListener("DOMNodeRemoved", state.update, true);
 
+        //console.log(Object.keys(state.bookmarksByURL).length);
+
     //    setTimeout(function () {
         state.search({ scroll: true, focused: true, nodelay: true });
     //        scrollTo(0, 0);
@@ -1763,5 +1916,7 @@ addEventListener("load", function (event) { //* Issue 69
     ////        alert();
     //        document.body.style.height = Options.get("popup.height") + "px";
     //    }, true);
+
+        state.loaded = true;
     });
 }, true);

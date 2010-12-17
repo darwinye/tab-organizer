@@ -16,6 +16,7 @@
     },
     "permissions": [
         "chrome://favicon/",
+        "bookmarks",
         "tabs",
         "idle"
     ],

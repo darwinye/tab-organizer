@@ -931,7 +931,11 @@ var Window = {
 //                                                            state.titles[index] = null;
 //                                                            this.value = action.returnTitle(index); //index + 1;
 //                                                        }
-                                                        state.titles[index] = (this.value) ? this.value : null;
+                                                        if (this.value) {
+                                                            state.titles[index] = this.value;
+                                                        } else {
+                                                            delete state.titles[index];
+                                                        }
                                                         //console.log(this.value, event.target);
                                                         //var temp = this.value || action.returnTitle(index);//index + 1;
                                                         this.value = action.returnTitle(index);//index + 1;
