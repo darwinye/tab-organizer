@@ -37,6 +37,10 @@ var Tab = {
                 container.setAttribute("data-favorited", "");
             }
 
+            if (tab.pinned) {
+                container.setAttribute("data-pinned", "");
+            }
+
             state.tabsByURL.add(tab.url, container);
 
 //            container.addEventListener("DOMNodeRemovedFromDocument", function (event) {
@@ -641,7 +645,7 @@ var Window = {
             }
 
             if (array) {
-                array.moveTabs(win.id);
+                array.moveTabs(win.id, null, info.undo);
                 array.reset();
                 delete array.shiftNode;
             }

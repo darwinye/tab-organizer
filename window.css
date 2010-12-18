@@ -697,6 +697,7 @@ input[data-special], .search-past-item[data-special] {
     /*width: 100%;*/
     padding: 2px 3px;
     padding-right: 2px;
+    /*margin: 0px;*/
 
     border: 1px solid transparent;
     border-radius: 3px;
@@ -708,6 +709,20 @@ input[data-special], .search-past-item[data-special] {
     cursor: pointer;
     outline: none;
 }
+
+/*.tab[data-pinned] {
+    background-color: #c0e7ff;
+    border-radius: 0px;
+    margin-top: 0px !important;
+    border: 1px solid blue;
+    border-bottom-color: transparent;
+}
+.tab[data-pinned] + .tab[data-pinned] {
+    border-top-color: transparent;
+}
+.tab[data-pinned] + .tab {
+    margin-top: 5px;
+}*/
 
 .tab-favorite {
     display: none;

@@ -65,6 +65,14 @@
         Options.setArray("windows.titles");
         Options.setArray("macros.list");
 
+
+        if (Options.get("counter.reset.time.hour") === 0) {
+            Options.set("counter.reset.time.hour", "00");
+        }
+        if (Options.get("counter.reset.time.minute") === 0) {
+            Options.set("counter.reset.time.minute", "00");
+        }
+
         //Options.set("usage-tracking", true);
 
 /*

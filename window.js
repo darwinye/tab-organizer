@@ -668,14 +668,14 @@ fragment.appendChild(UI.create("div", function (container) {
                                                 }
                                             }
                                         } else {
-                                            Window.create(results, { title: macro.window });
+                                            Window.create(results, { title: macro.window, undo: false });
 
                                             //if (info.moved) {
                                             info.moved = info.moved.concat(results);
                                             //}
                                         }
                                     } else {
-                                        Window.create(results);
+                                        Window.create(results, { undo: false });
 
                                         //if (info.moved) {
                                         info.moved = info.moved.concat(results);
@@ -719,7 +719,7 @@ fragment.appendChild(UI.create("div", function (container) {
                         });
 
                         if (info.makeNew.length) {
-                            Window.create(info.makeNew);
+                            Window.create(info.makeNew, { undo: false });
 
                             info.moved = info.moved.concat(info.makeNew);
                         }
@@ -741,18 +741,18 @@ fragment.appendChild(UI.create("div", function (container) {
                                 text.push("s");
                             }
 
-    //                        text.push(" and closed ", closed.length, " tab");
+    //!                        text.push(" and closed ", closed.length, " tab");
 
-    //                        if (closed.length !== 1) {
-    //                            text.push("s");
-    //                        }
+    //!                        if (closed.length !== 1) {
+    //!                            text.push("s");
+    //!                        }
+                            text.push(".");
+
+                            state.undoBar.show(text.join(""));
                         } else {
-                            text.push("Nothing changed");
+//                            text.push();
+                            state.undoBar.show("Nothing changed.", { undo: false });
                         }
-
-                        text.push(".");
-
-                        state.undoBar.show(text.join(""));
                     };
                 }());
 
@@ -889,29 +889,31 @@ fragment.appendChild(UI.create("div", function (container) {
         container.appendChild(UI.create("div", function (element) {
             element.id = "Undo-bar";
 
-            element.appendChild(UI.create("div", function (element) {
-                element.id = "Undo-bar-div";
+            element.appendChild(UI.create("div", function (container) {
+                container.id = "Undo-bar-div";
 
-                state.undoBar = element;
+                //var undoButton;
 
-                element.hide = function (transition) {
+                state.undoBar = container;
+
+                container.hide = function (transition) {
                     if (transition !== true) {
-                        element.style.webkitTransitionDuration = "0s";
+                        container.style.webkitTransitionDuration = "0s";
 
                         setTimeout(function () {
-                            element.style.webkitTransitionDuration = "";
+                            container.style.webkitTransitionDuration = "";
                         }, 0);
                     }
 
-                    element.style.opacity = "0 !important";
-                    element.style.visibility = "hidden !important";
+                    container.style.opacity = "0 !important";
+                    container.style.visibility = "hidden !important";
 
 /*                        state.undoBar.addEventListener("webkitTransitionEnd", function anon(event) {
                         this.removeEventListener(event.type, anon, true);
                         this.style.webkitTransition = "";
                     }, true);*/
                 };
-                element.hide();
+                container.hide();
 
                 var timer = {
                     reset: function () {
@@ -922,7 +924,7 @@ fragment.appendChild(UI.create("div", function (container) {
                         //console.log("Timing!");
                         var ms = Options.get("undo.timer") * 1000;
                         timer.id = setTimeout(function () {
-                            element.hide(true);
+                            container.hide(true);
                         }, ms);
                     }
                 };
@@ -944,64 +946,16 @@ fragment.appendChild(UI.create("div", function (container) {
                     }
                 }, true);
 
-                element.show = function (name) {
-                    timer.reset();
-
-                    //element.style.webkitTransitionDuration = "0.01s";
-
-                    if (element.style.opacity) {
-                        state.undoBar.text = name;
-
-                        element.style.opacity = "";
-                        element.style.visibility = "";
-                    } else {
-                        //element.style.webkitTransitionDuration = "0.250s";
-
-                        element.hide();
-
-                        setTimeout(function () {
-                            state.undoBar.text = name;
-
-                            element.style.opacity = "";
-                            element.style.visibility = "";
-                        }, 100);
-
-//                        setTimeout(function () {
-//                            element.style.webkitTransitionDuration = "";
-//                        }, 0);
-
-//                        element.addEventListener("webkitTransitionEnd", function anon(event) {
-//                            this.removeEventListener(event.type, anon, true);
-
-//                            //console.log(event);
-
-//                            element.style.webkitTransitionDuration = "0s";
-
-//
-
-//                            setTimeout(function () {
-//                                element.style.webkitTransitionDuration = "";
-//                            }, 0);
-//                        }, true);
-                    }
-
-                    //element.style.webkitTransitionDuration = "";
-
-                    if (!timer.mouseover) {
-                        timer.set();
-                    }
-                };
-
-                //setTimeout(element.show, 2000);
-                //setTimeout(element.hide, 4000);
+                //setTimeout(container.show, 2000);
+                //setTimeout(container.hide, 4000);
 
                 /*addEventListener("focus", function (event) {
                     if (event.target !== document.body) {
-                        element.hide();
+                        container.hide();
                     }
                 }, true);*/
 
-                element.appendChild(UI.create("span", function (element) {
+                container.appendChild(UI.create("span", function (element) {
                     Object.defineProperty(state.undoBar, "text", {
                         get: function () {
                             return element.innerHTML;
@@ -1012,16 +966,76 @@ fragment.appendChild(UI.create("div", function (container) {
                     });
                 }));
 
-                element.appendChild(UI.link(function (element) {
+                container.appendChild(UI.link(function (element) {
                     element.id = "Undo-bar-button";
                     //element.className = "UI-link";
                     element.title = "(Ctrl Z)";
                     element.textContent = "Undo";
                     element.tabIndex = 1;
 
+                    var should = true;
+
+                    container.show = function (name, info) {
+                        timer.reset();
+
+                        info = Object(info);
+
+                        //container.style.webkitTransitionDuration = "0.01s";
+
+                        if (info.undo === false) {
+                            element.setAttribute("hidden", "");
+                            should = false;
+                        } else {
+                            element.removeAttribute("hidden");
+                            should = true;
+                        }
+
+                        if (container.style.opacity) {
+                            state.undoBar.text = name;
+
+                            container.style.opacity = "";
+                            container.style.visibility = "";
+                        } else {
+                            //container.style.webkitTransitionDuration = "0.250s";
+
+                            container.hide();
+
+                            setTimeout(function () {
+                                state.undoBar.text = name;
+
+                                container.style.opacity = "";
+                                container.style.visibility = "";
+                            }, 100);
+
+    //                        setTimeout(function () {
+    //                            container.style.webkitTransitionDuration = "";
+    //                        }, 0);
+
+    //                        container.addEventListener("webkitTransitionEnd", function anon(event) {
+    //                            this.removeEventListener(event.type, anon, true);
+
+    //                            //console.log(event);
+
+    //                            container.style.webkitTransitionDuration = "0s";
+
+    //
+
+    //                            setTimeout(function () {
+    //                                container.style.webkitTransitionDuration = "";
+    //                            }, 0);
+    //                        }, true);
+                        }
+
+                        //container.style.webkitTransitionDuration = "";
+
+                        if (!timer.mouseover) {
+                            timer.set();
+                        }
+                    };
+
                     function undo() {
                         //console.log(state.undoBar.style.opacity);
-                        if (!state.undoBar.style.opacity) {
+                        if (should && !state.undoBar.style.opacity) {
                             state.undoBar.hide();
                             Undo.pop();
                         }
@@ -1087,8 +1101,8 @@ fragment.appendChild(UI.create("div", function (container) {
             };
 
             var precoded = {
-                "h": ["has:bookmark", "has:macro"],
-                "i": ["inurl:", "intitle:", "is:image", "is:favorite", "is:selected"],
+                "h": ["has:macro"],
+                "i": ["inurl:", "intitle:", "is:image", "is:pinned", "is:favorited", "is:selected", "is:bookmarked"],
                 "s": ["same:url", "same:title", "same:domain"],
                 "w": ["window:", "window:focused"]
             };
@@ -1108,7 +1122,7 @@ fragment.appendChild(UI.create("div", function (container) {
                 }
             }
 
-            function search(array, flags) {
+            function search(windows, flags) {
                 localStorage["search.lastinput"] = input.value;
 
                 //var self = this;
@@ -1121,14 +1135,16 @@ fragment.appendChild(UI.create("div", function (container) {
 
                 testSpecial(input.value);
 
-                var tabs = Array.slice(document.getElementsByClassName("tab"));
+                var array = Array.slice(document.getElementsByClassName("tab"));
                 //var list = [];
 
-                tabs = action.search(tabs, input.value);
+                var results = action.search(array, input.value);
 
-                var focused, scroll = [];
+                var focused, scroll = [], tabs = [];
 
-                var list = array.filter(function (item) {
+                //var tabs = [];
+
+                var list = windows.filter(function (item) {
                     var children = item.tabList.children;
                     item.setAttribute("hidden", "");
                     item.removeAttribute("data-last");
@@ -1140,9 +1156,10 @@ fragment.appendChild(UI.create("div", function (container) {
                             }, 0);*/
                             item.selected = child;
                         }
-                        if (tabs.indexOf(child) !== -1) {
+                        if (results.indexOf(child) !== -1) {
                             child.removeAttribute("hidden");
                             item.removeAttribute("hidden");
+                            tabs.push(child);
                         } else {
                             child.setAttribute("hidden", "");
                         }
