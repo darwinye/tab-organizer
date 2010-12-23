@@ -387,11 +387,14 @@ addEventListener("focus", function (event) {
         //if (target.className === "window") {
         //delete state.focused;
         //}
-
-        if (target === this && state.focused) { //! Fixes a bug with the window titles.
-            state.focused.triggerEvent("blur", false, false);
-        }
     }
+
+    if (target === this && state.focused) { //! Fixes a bug with the window titles.
+        state.focused.triggerEvent("blur", false, false);
+        //delete state.focused;
+    }
+
+    //delete state.focused;
 }, true);
 addEventListener("blur", function (event) {
     var target = event.target;
@@ -422,7 +425,9 @@ addEventListener("blur", function (event) {
         //state.focused.focus();
         state.focused.triggerEvent("focus", false, false);
         //delete state.focused;
-    }
+    }// else {
+        //delete state.focused;
+    //}
 }, true);
 
 addEventListener("dragstart", function () {

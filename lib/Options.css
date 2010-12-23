@@ -1,4 +1,25 @@
 @charset "UTF-8";
+
+/**
+ *   Copyright © 2010 Paul Chapman <pcxunlimited@gmail.com>
+ *
+ *   This file is part of Options.
+ *
+ *   Options is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU Lesser General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   Options is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU Lesser General Public License for more details.
+ *
+ *   You should have received a copy of the GNU Lesser General Public License
+ *   along with Options.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
 [hidden] {
     display: none !important;
 }
@@ -74,7 +95,8 @@ input[type="checkbox"] {
     margin-right: 5px !important;
     /*margin-bottom: 5px !important;*/
 }
-input[type="checkbox"][data-options-changed] + span {
+input[type="checkbox"][data-options-changed] + span,
+input[type="radio"][data-options-changed] + span {
     /*outline: 1px solid mediumblue !important;
     text-decoration: under-line;*/
     /*background-color: mediumblue !important;

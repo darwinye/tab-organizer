@@ -6,9 +6,12 @@ var Tab = {
         Platform.tabs.focus(tab/*, function () {
             console.log("Hiya");
         }*/);
-        Platform.message.connect("lib.action", function (port) {
-            port.sendMessage({ type: "focus" });
-        });
+
+        if (Options.get("popup.type") !== "tab") {
+            Platform.message.connect("lib.action", function (port) {
+                port.sendMessage({ type: "focus" });
+            });
+        }
 //        window.blur();
 //        setTimeout(function () {
 //            window.focus();
@@ -244,11 +247,33 @@ var Tab = {
                     } else if (event.altKey) {
                         Platform.tabs.remove(tab.id);
                     } else {
-                        if (!parent.queue.has(this)) {
-                            parent.queue.reset();
-                            delete parent.queue.shiftNode;
+                        switch (Options.get("tabs.click.type")) {
+                        case "select-focus":
+                            if (this.hasAttribute("data-selected")) {
+                                Tab.focus(container.tab);
+                            } else {
+                                //if (!parent.queue.has(this)) {
+                                parent.queue.reset();
+
+//                                if (this.hasAttribute("data-selected")) {
+
+//                                } else {
+//                                    delete parent.queue.shiftNode;
+//                                }
+//                                delete parent.queue.shiftNode;
+                                //}
+                                parent.queue.shiftNode = this;
+                                this.queueAdd();
+                            }
+                            break;
+                        case "focus":
+                            if (!this.hasAttribute("data-selected")) {
+                            //if (!parent.queue.has(this)) {
+                                parent.queue.reset();
+                                delete parent.queue.shiftNode;
+                            }
+                            Tab.focus(container.tab); //! `tab` object is replaced after moving
                         }
-                        Tab.focus(container.tab); //! `tab` object is replaced after moving
                     }
                 }
             }, false);
@@ -364,6 +389,10 @@ var Tab = {
                 if (!state.currentQueue.length) {
                     state.currentQueue.add(state.highlighted);
                 }
+
+                //console.log("dragstart");
+
+                //event.preventDefault();
 
 //                this.setAttribute("data-selected", "");
 

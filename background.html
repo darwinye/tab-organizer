@@ -38,6 +38,7 @@
 
             "tabs.close.location": "right",
             "tabs.close.display": "hover",
+            "tabs.click.type": "focus",
 
             "windows.middle-close": false,
             "windows.type": "horizontal",
@@ -110,15 +111,24 @@
         //console.log(config);
 
         var categories = {
-            "Popup": ["popup.type", "popup.offsetX", "popup.offsetY", "popup.width", "popup.height"],
-            "Theme": ["color.theme"],
-            "Keyboard": ["popup.hotkey.ctrl", "popup.hotkey.shift", "popup.hotkey.alt", "popup.hotkey.letter"],
-            "Privacy": ["usage-tracking"],
-            "Tabs": ["tabs.close.location", "tabs.close.display"],
-            "Experimental": ["windows.middle-close", "popup.close.escape"],
             "Counter": ["counter.enabled", "counter.type", "counter.reset.whenlower", "counter.reset.number", "counter.reset.time", "counter.reset.time.hour", "counter.reset.time.minute", "counter.reset.idle", "counter.reset.idle.hour"],
-            "Undo": ["undo.new-tab", "undo.rename-window", "undo.select-tabs", "undo.move-tabs", "undo.close-tabs", "undo.timer"],
+
+            "Experimental": ["windows.middle-close", "popup.close.escape"],
+
+            "Keyboard": ["popup.hotkey.ctrl", "popup.hotkey.shift", "popup.hotkey.alt", "popup.hotkey.letter"],
+
+            "Popup": ["popup.type", "popup.offsetX", "popup.offsetY", "popup.width", "popup.height"],
+
+            "Privacy": ["usage-tracking"],
+
             "Search": ["search.show-number"],
+
+            "Tabs": ["tabs.close.location", "tabs.close.display", "tabs.click.type"],
+
+            "Theme": ["color.theme"],
+
+            "Undo": ["undo.new-tab", "undo.rename-window", "undo.select-tabs", "undo.move-tabs", "undo.close-tabs", "undo.timer"],
+
             //"Favorites": [],
             //"Macros": [],
         };

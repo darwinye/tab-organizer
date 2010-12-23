@@ -196,372 +196,1640 @@
                     });
                 }
 
-                container.category("Theme", function (container) {
-                    container.input("dropdown-list", {
-                        option: "color.theme",
-                        text: "Window theme: ",
-                        list: [{
-                            group: "Color:",
-                            list: [{
-                                value: "Blue",
-                                text: "Blue"
-                            }, {
-                                value: "Green",
-                                text: "Green"
-                            }, {
-                                value: "Yellow",
-                                text: "Yellow"
-                            }, {
-                                value: "Orange",
-                                text: "Orange"
-                            }, {
-                                value: "Red",
-                                text: "Red"
-                            }, {
-                                value: "Pink",
-                                text: "Pink"
-                            }, {
-                                value: "Purple",
-                                text: "Purple"
-                            }]
-                        }, {
-                            group: "Grayscale:",
-                            list: [{
-                                value: "Black",
-                                text: "Black"
-                            }, {
-                                value: "Grey",
-                                text: "Grey"
-                            }, {
-                                value: "White",
-                                text: "White"
-                            }]
-                        }]
-                    });
+                var categories = {
+                    "Counter": function (container) {
+                        container.group(function (container) {
+                            container.input("checkbox", {
+                                option: "counter.enabled",
+                                text: "Display a counter that shows how many tabs "
+                            });
 
-                    //container.indent(function (container) {
+                            container.input("dropdown-list", {
+                                option: "counter.type",
+                                list: [{
+                                    value: "total",
+                                    text: "you have in total (does not reset)"
+                                }, {
+                                    value: "session",
+                                    text: "you have opened/closed per session"
+                                }]
+                            });
+                        });
+
+                        container.space({ height: "0.8em" });
+
+                        //container.text("These settings only apply when
+
+                        container.indent(function (container) {
+                            container.header(function (container) {
+                                container.input("number", {
+                                    option: "counter.reset.number",
+                                    text: "Reset the session to ",
+                                    unit: "when...",
+                                    width: "2em"
+                                });
+                            });
+                            container.indent(function (container) {
+                                /*function modify(info) {
+                                    var value = Math.max(0, Math.min(23, this.value)) + "";
+
+                                    if (value.length > 2) {
+                                        value = value.slice(0, 2);
+                                    }
+                                    //if (value > 23) {
+                                        //value = "23";
+                                    //}
+                                    //if (value < 0) {
+                                        //value = "0";
+                                    //}
+                                    while (value.length < 2) {
+                                        value = "0" + value;
+                                    }
+                                    return value;
+                                }*/
+                                container.group(function (container) {
+                                    container.input("checkbox", {
+                                        option: "counter.reset.time",
+                                        text: "...it is "
+                                    });
+                                    container.input("number", {
+                                        option: "counter.reset.time.hour",
+                                        width: "2em",
+                                        unit: ":",
+                                        limit: {
+                                            min: 0,
+                                            max: 23,
+                                            digits: 2
+                                        }/*,
+                                        verbatim: true,
+                                        modify: modify*/
+                                    });
+                                    container.input("number", {
+                                        option: "counter.reset.time.minute",
+                                        unit: "o'clock",
+                                        width: "2em",
+                                        limit: {
+                                            min: 0,
+                                            max: 59,
+                                            digits: 2
+                                        }/*
+                                        verbatim: true,
+                                        modify: modify*/
+                                    });
+                                });
+
+                                container.group(function (container) {
+                                    container.input("checkbox", {
+                                        option: "counter.reset.idle",
+                                        text: "...idle for "
+                                    });
+                                    container.input("number", {
+                                        option: "counter.reset.idle.hour",
+                                        width: "2em",
+                                        unit: "hours",
+                                        limit: {
+                                            min: 0
+                                        }
+                                    });
+                                });
+                            });
+
+                            container.space({ height: "0.75em" });
+
+                            container.input("checkbox", {
+                                option: "counter.reset.whenlower",
+                                text: "Only reset when the counter is lower than the reset number"
+                            });
+                        });
+
+                        container.space({ height: "0.9em" });
+
+                        container.button({
+                            text: "Reset counter",
+                            height: "27px",
+                            action: function () {
+                                Options.get("counter.state").reset(true);
+                            }
+                        });
+
+                        /*container["DOM.Element"].appendChild(UI.create("button", function (element) {
+                            element.textContent = "Reset counter";
+                            element.className = "Options-button";
+                            element.style.height = "27px";
+                            element.style.marginTop = "0.9em"; // 0.9em
+
+                            element.addEventListener("click", , true);
+                        }));*/
+                    },
+
+
+
+                    "Experimental": function (container) {
+                        container.text("Experimental features are disabled by default. Possibly because they break things, or I'm not sure how useful they are, or because they change the behavior of Tab Organizer significantly.");
+
+                        container.space({ height: "1em" });
+
+                        container.text("These features might be removed or changed at any time.");
+
+                        container.separator();
+                        container.space({ height: "1em" });
+
+                        container.input("checkbox", {
+                            option: "windows.middle-close",
+                            text: "Middle click on a window's title to close the entire window"
+                        });
+
+                        container.input("checkbox", {
+                            option: "popup.close.escape",
+                            text: "Use the Escape key to close the popup"
+                        });
+
+                        //container.space({ height: "0.5em" });
+                        //container.separator();
+                        //container.space({ height: "0.5em" });
+
+                        /*container.input("dropdown-list", {
+                            option: "windows.type",
+                            list: [{
+                                value: "horizontal",
+                                text: "Horizontal"
+                            }, {
+                                value: "dual-pane",
+                                text: "Dual-Pane"
+                            }]
+                        });*/
+                    },
+
+
+
+                    "Favorites": function (container) {
+                        var favorites = Options.get("tabs.favorites.urls");
+                        var array = [];
+                        var rows = {};
+
+    //                    container.text("This is a list of the URLs you have added to your favorites.");
+    //                    container.text("If you don't have any, it will be empty.")
+
+    //                    container.space({ height: "1em" });
+
                         container["DOM.Element"].style.display = "-webkit-box";
                         container["DOM.Element"].style.webkitBoxOrient = "vertical";
-                        container["DOM.Element"].appendChild(UI.create("iframe", function (element) {
-                            //element.style.border = "1px solid black";
-                            //element.setAttribute("hidden", "");
-                            element.style.webkitBoxFlex = "1";
-                            element.style.display = "block";
-                            element.style.border = "none";
-                            //element.style.width = "600px";
-                            //element.style.height = "447px";
-                            //element.style.margin = "0px";
-                            //element.style.padding = "0px";
-                            element.style.marginTop = "10px";
-                            element.src = "/themes/window-viewer.html";
-                        }));
-                    //});
-                    /*container.input("dropdown-list", {
-                        list: [{
-                            text: "Window"
-                        }, {
-                            group: "Normal tabs:",
-                            list: [{
-                                text: "Tab (focused)"
-                            }, {
-                                text: "Tab (selected)"
-                            }, {
-                                text: "Tab (focused + selected)"
-                            }]
-                        }, {
-                            group: "Hovered tabs:",
-                            list: [{
-                                text: "Tab (hover)"
-                            }, {
-                                text: "Tab (focused)"
-                            }, {
-                                text: "Tab (selected)"
-                            }, {
-                                text: "Tab (focused + selected)"
-                            }]
-                        }]
-                    });
-
-                    container.input("slider", {
-                        text: "Red",
-                        min: 0,
-                        max: 255
-                    });
-
-                    container.input("slider", {
-                        text: "Green",
-                        min: 0,
-                        max: 255
-                    });
-
-                    container.input("slider", {
-                        text: "Blue",
-                        min: 0,
-                        max: 255
-                    });*/
-                });
+                        container["DOM.Element"].style.webkitBoxPack = "center";
 
 
+                        var header = UI.create("div", function (element) {
+                            element.style.display = "-webkit-box";
 
-                container.category("Popup", function (container) {
-                    var height = 375;
+                            //element.style.position = "absolute";
+                            element.style.padding = "6px 13px 1px 7px";
+                            //element.style.padding = "5px";
+                            //element.style.paddingLeft = "4px";
+                            //element.style.paddingLeft = "25px";
+                            //element.style.paddingRight = "10px";
+                            //element.style.paddingBottom = "5px";
 
-                    container.input("dropdown-list", {
-                        option: "popup.type",
-                        text: "Display in a...",
-                        list: [{
-                            value: "popup",
-                            text: "Popup"
-                        }, {
-                            value: "bubble",
-                            text: "Bubble"
-                        }, {
-                            value: "tab",
-                            text: "Tab"
-                        }]
-                    });
+                            //element.style.background = "gainsboro";
+                            //element.style.borderBottom = "1px dotted dimgray";
 
-                    //container.space({ height: "1px" });
-                    container.separator();
-                    container.space({ height: "10px" });
-
-                    //container.space({ height: "10px" });
-
-                    container["DOM.Element"].appendChild(UI.create("table", function (element) {
-                        element.style.backgroundColor = "slategray";
-                        element.style.borderSpacing = "0px";
-                        element.style.border = "2px solid black";
-                        element.style.width = height * (screen.width / screen.height) + "px";
-
-                        element.appendChild(UI.create("td", function (element) {
-                            element.style.height = height + "px";
-                            element.style.padding = "0px !important";
+                            element.style.fontWeight = "bold";
 
                             element.appendChild(UI.create("div", function (element) {
-                                element.style.position = "relative";
-                                element.style.width = "100%";
-                                element.style.height = "100%";
+                                element.style.visibility = "hidden";
 
-                                element.appendChild(UI.create("div", function (element) {
-                                    element.style.position = "absolute";
-                                    element.style.width = "1px";
-                                    element.style.height = "100%";
-                                    element.style.backgroundColor = "red";
+                                element.appendChild(UI.create("input", function (element) {
+                                    //element.disabled = true;
+                                    element.type = "checkbox";
+                                    element.style.marginTop = "1px !important";
 
-                                    element.style.left = Options.get("popup.offsetX") + 50 + "%";
-
-                                    Options.event.addListener("change", function (event) {
-                                        if (event.name === "popup.offsetX") {
-                                            element.style.left = event.value + 50 + "%";
-                                        }
-                                    });
+    //                                element.addEventListener("change", function () {
+    //                                    element.checked = false;
+    //                                    console.log(this.checked);
+    //                                }, true);
                                 }));
+                            }));
 
-                                element.appendChild(UI.create("div", function (element) {
-                                    element.style.position = "absolute";
-                                    element.style.width = "100%";
-                                    element.style.height = "1px";
-                                    element.style.backgroundColor = "red";
+                            element.appendChild(UI.create("div", function (element) {
+                                element.textContent = "URL";
+                                element.style.webkitBoxFlex = "1";
+                                //element.style.width = "100%";
+                            }));
 
-                                    element.style.top = Options.get("popup.offsetY") + 50 + "%";
+                            element.appendChild(UI.create("div", function (element) {
+                                element.textContent = "Tabs";
+    //                                    element.style.paddingRight = "10px";
+                            }));
+                        });
 
-                                    Options.event.addListener("change", function (event) {
-                                        if (event.name === "popup.offsetY") {
-                                            element.style.top = event.value + 50 + "%";
+                        var placeholder = UI.create("div", function (element) {
+                            element.textContent = "You haven't added any tabs to your favorites";
+                            element.style.textAlign = "center";
+                            element.style.paddingTop = "15px";
+                            //element.style.paddingLeft = "20px";
+                        });
+
+                        var table = UI.create("div", function (table) {
+                            //table.style.width = "100%";
+                            //table.style.maxHeight = "431px"; //* 436px
+
+                            //table.style.paddingLeft = "4px";
+                            //table.style.paddingRight = "10px";
+
+                            //table.style.borderSpacing = "0px 0px";
+
+                            table.style.webkitBoxFlex = "1";
+
+                            table.style.paddingBottom = "6px";
+
+                            table.style.overflowX = "hidden";
+                            table.style.overflowY = "auto";
+
+                            table.style.whiteSpace = "nowrap";
+
+                            function makeRow(info) {
+                                return UI.create("div", function (container) {
+                                    container.style.display = "-webkit-box";
+                                    container.style.padding = "2px";
+                                    container.style.paddingLeft = "7px";
+                                    container.style.paddingRight = "13px";
+                                    //container.style.border = "1px solid black";
+
+                                    var tabs = document.createElement("div");
+                                    //tabs.style.textAlign = "right";
+
+                                    rows[info.url] = container;
+
+                                    container.update = function (info) {
+                                        if (info.tabs === 0) {
+                                            container.style.backgroundColor = "salmon";
+                                        } else {
+                                            container.style.backgroundColor = "";
                                         }
-                                    });
-                                }));
 
-                                element.appendChild(UI.create("table", function (element) {
-                                    element.style.position = "absolute";
-                                    element.style.margin = "0px";
-                                    element.style.border = "1px solid darkgreen";
-                                    element.style.fontSize = "16px";
-                                    element.style.backgroundColor = "honeydew";
+                                        tabs.textContent = info.tabs;
+                                        container.info = info;
+                                    };
+                                    container.update(info);
 
-                                    function update() {
-                                        var popup = {
-                                            offsetX: Options.get("popup.offsetX"),
-                                            offsetY: Options.get("popup.offsetY"),
-                                            width: Options.get("popup.width"),
-                                            height: Options.get("popup.height")
-                                        };
 
-                                        var width = popup.width / screen.width * 100;
-                                        var height = popup.height / screen.height * 100;
+                                    container.appendChild(UI.create("label", function (element) {
+                                        //element.style.paddingLeft = "4px";
+                                        element.style.webkitBoxFlex = "1";
+                                        element.style.display = "block";
+                                        //element.style.width = "100%";
+                                        element.style.overflow = "hidden";
+                                        element.style.textOverflow = "ellipsis";
 
-                                        element.style.left = popup.offsetX - width / 2 + 50 + "%";
-                                        element.style.top = popup.offsetY - height / 2 + 50 + "%";
-                                        element.style.width = width + "%";
-                                        element.style.height = height + "%";
+                                        //container.appendChild(UI.create("label", function (element) {
+                                        element.appendChild(UI.create("input", function (element) {
+                                            element.type = "checkbox";
+                                            element.style.marginTop = "1px !important";
+
+                                            container.checkbox = element;
+
+                                            element.addEventListener("change", function () {
+                                                trigger(table);
+                                            }, true);
+                                        }));
+
+                                        element.appendChild(UI.create("span", function (element) {
+                                            element.textContent = info.url;
+                                        }));
+                                        //}));
+                                    }));
+
+                                    container.appendChild(tabs);
+
+    //                                    container.appendChild(UI.create("div", function (element) {
+                                        //element.style.paddingRight = "10px";
+
+
+    /*!
+                                        element.appendChild(UI.create("img", function (element) {
+                                            element.src = "/images/button-close.png";
+
+                                            element.addEventListener("click", function () {
+                                                favorites.set(info.url, null);
+    //                                            delete favorites[info.url];
+
+    //                                            Options.event.trigger("change", {
+    //                                                name: "tabs.favorites.urls",
+    //                                                value: info.url,
+    //                                                remove: true
+    //                                            });
+                                            }, true);
+
+                                            function show() {
+                                                element.style.visibility = "";
+                                            }
+                                            function hide() {
+                                                element.style.visibility = "hidden !important";
+                                            }
+                                            hide();
+
+                                            container.addEventListener("mouseover", show, true);
+                                            container.addEventListener("mouseout", hide, true);
+                                        }));
+    */
+    //                                    }));
+                                });
+                            }
+
+                            function updateKeys() {
+                                var keys = favorites.keys();
+
+                                if (keys.length) {
+                                    placeholder.setAttribute("hidden", "");
+                                    header.removeAttribute("hidden");
+                                } else {
+                                    placeholder.removeAttribute("hidden");
+                                    header.setAttribute("hidden", "");
+                                }
+
+                                return keys;
+                            }
+
+                            var keys = updateKeys();
+
+                            keys.forEach(function (key) {
+                                array.push(makeRow({ url: key, tabs: favorites.get(key) }));
+                            });
+
+                            function update(url, action) {
+                                var info = { url: url, tabs: favorites.get(url) };
+
+                                if (action === "delete") {
+    //                                console.log(rows[url].remove);
+                                    if (rows[url]) {
+                                        rows[url].remove();
+                                        array.remove(rows[url]);
+                                        delete rows[url];
                                     }
-                                    update();
+                                } else if (rows[url]) {
+                                    rows[url].update(info);
+                                } else if (url) {
+                                    array.push(makeRow(info));
+                                }
 
-                                    Options.event.addListener("change", update);
+                                updateKeys();
 
-                                    element.appendChild(UI.create("td", function (element) {
-                                        element.style.padding = "0px";
-                                        element.style.border = "none";
-                                        element.style.textAlign = "center";
-                                        element.style.verticalAlign = "middle";
+                                array.sort(function (a, b) {
+        //                                console.log(b.tabs, a.tabs);
+                                    return a.info.tabs - b.info.tabs || a.info.url.localeCompare(b.info.url);
+                                });
 
-                                        element.textContent = Options.get("popup.type").toUpperCase();
+                                array.forEach(function (item) {
+    //                                if (!rows[item.url]) {
+    //                                    rows[item.url] = makeRow(item);
+    //                                }
+    //                                rows[item.url].update(item);
+                                    table.appendChild(item);
+                                });
+
+                                trigger(table);
+                            }
+                            update();
+
+                            Options.event.addListener("change", function (event) {
+                                if (event.name === "tabs.favorites.urls") {
+                                    update(event.value, event.action);
+                                }
+                            });
+                        });
+
+
+                        var remove;
+
+                        function update(element) {
+                            var boxes = table.querySelectorAll("input[type=checkbox]:checked");
+
+                            //console.log(boxes);
+
+                            if (boxes.length) {
+                                element.checked = true;
+                                remove.disabled = false;
+
+                                //console.log(boxes.length, table.children.length -1);
+
+                                if (boxes.length !== table.children.length) {
+                                    element.style.opacity = "0.5";
+                                } else {
+                                    element.style.opacity = "";
+                                }
+                            } else {
+                                element.checked = false;
+                                remove.disabled = true;
+                                element.style.opacity = "";
+                            }
+                        }
+                        container["DOM.Element"].appendChild(checkboxbutton({
+                            container: table,
+                            create: function (element) {
+                                table.addEventListener("Options-update", function () {
+                                    update(element);
+                                }, true);
+                            },
+                            update: update
+                        }));
+
+                        remove = container.button({
+                            text: "Remove selected",
+                            height: "25px", //! 29px
+                            create: function (element) {
+                                element.disabled = true;
+                            },
+                            action: function () {
+                                var urls = array.filter(function (item) {
+                                    if (item.checkbox.checked) {
+                                        return true;
+                                    }
+                                });
+
+                                urls.forEach(function (item) {
+                                    favorites.set(item.info.url, null);
+                                });
+                            }
+                        });
+
+
+                        container.space({ height: "10px" });
+
+    //                    container.space({ height: "7px" });
+
+                        container["DOM.Element"].appendChild(UI.create("div", function (element) {
+                            element.style.display = "-webkit-box";
+                            element.style.webkitBoxFlex = "1";
+                            element.style.webkitBoxOrient = "vertical";
+
+    //                        element.style.maxHeight = "406px";
+
+                            //element.style.background = "white";
+                            element.style.background = "#fefefe"; //* white #f8f8f8
+
+                            element.style.border = "1px solid dimgray";
+                            element.style.borderRadius = "2px";
+
+                            element.setAttribute("hidden", "");
+
+                            setTimeout(function () {
+                                element.removeAttribute("hidden");
+                            }, 0);
+
+                            //element.appendChild(UI.create("div", function (element) {
+                            element.appendChild(header);
+                            element.appendChild(placeholder);
+                            element.appendChild(table);
+                            //}));
+                        }));
+
+    //                    container.space({ height: "10px" });
+
+    //                    /*container["DOM.Element"].appendChild(UI.create("button", function (element) {
+    //                        element.textContent = "Remove checked";
+    //                        element.className = "Options-button";
+    //                        //element.style.padding = "2px 8px";
+    //                        element.style.height = "29px";
+
+    //                        element.addEventListener("click", , true);
+    //                    }));*/
+
+    //                    container["DOM.Element"].appendChild(UI.create("span", function (element) {
+    //                        element.style.display = "inline-block";
+    //                        element.style.width = "12px";
+    //                    }));
+
+    //                    container["DOM.Element"].appendChild(UI.link(function (element) {
+    //                        element.textContent = "Check all";
+    //                        //element.className = "UI-link";
+    //                        //element.style.padding = "0px 8px";
+    //                        //element.style.height = "27px";
+
+    //                        element.addEventListener("click", function (event) {
+    //                            array.forEach(function (item) {
+    //                                item.checkbox.checked = true;
+    //                            });
+    //                        }, true);
+    //                    }));
+
+    //                    container["DOM.Element"].appendChild(UI.create("span", function (element) {
+    //                        element.textContent = "|";
+    //                        //element.style.display = "inline-block";
+    //                        element.style.margin = "0px 8px";
+    //                        //element.style.width = "13px";
+    //                    }));
+
+    //                    container["DOM.Element"].appendChild(UI.link(function (element) {
+    //                        element.textContent = "Check none";
+    //                        //element.className = "UI-link";
+    //                        //element.style.padding = "0px 8px";
+    //                        //element.style.height = "27px";
+
+    //                        element.addEventListener("click", function (event) {
+    //                            array.forEach(function (item) {
+    //                                item.checkbox.checked = false;
+    //                            });
+    //                        }, true);
+    //                    }));
+
+                        //container.space({ height: "12px" });
+                    },
+
+
+
+                    "Keyboard": function (container) {
+                        container.header("Open popup with: ");
+
+                        /*container.addCell(function (cell) {
+                            cell["DOM.Element"].
+
+                        });*/
+
+                        container.indent(function (container) {
+                            container.input("checkbox", {
+                                option: "popup.hotkey.ctrl",
+                                text: "Ctrl (⌘)"
+                            });
+
+                            container.input("checkbox", {
+                                option: "popup.hotkey.shift",
+                                text: "Shift"
+                            });
+
+                            container.input("checkbox", {
+                                option: "popup.hotkey.alt",
+                                text: "Alt"
+                            });
+
+                            container.space({ height: "3px" });
+
+                            container.input("text", {
+                                option: "popup.hotkey.letter",
+                                maxlength: 1,
+                                width: "2em",
+                                modify: function () {
+                                    return this.value.toUpperCase();
+                                }
+                            });
+                        });
+                    },
+
+
+
+                    "Macros": function (container) {
+                        var macros = Options.get("macros.list");
+                        //var array = [];
+
+                        container["DOM.Element"].style.display = "-webkit-box";
+                        container["DOM.Element"].style.webkitBoxOrient = "vertical";
+                        container["DOM.Element"].style.webkitBoxPack = "center";
+
+    //                    var header = UI.create("tr", function (element) {
+    //                        //element.style.display = "-webkit-box";
+    //                        //element.style.padding = "5px 10px 5px 10px";
+    //                        //element.style.fontWeight = "bold";
+
+    //                        /*element.appendChild(UI.create("th", function (element) {
+    //                            element.style.visibility = "hidden";
+
+    //                            element.appendChild(UI.create("input", function (element) {
+    //                                element.type = "checkbox";
+    //                                element.style.marginTop = "1px !important";
+    //                            }));
+    //                        }));*/
+
+    //                        element.appendChild(UI.create("th"));
+
+    //                        element.appendChild(UI.create("th", function (element) {
+    //                            element.textContent = "Action";
+    //                            element.style.padding = "0px 5px 3px 5px";
+    //                            //element.style.webkitBoxFlex = "1";
+    //                        }));
+
+    //                        element.appendChild(UI.create("th", function (element) {
+    //                            element.textContent = "Search query";
+    //                            element.style.padding = "0px 5px 3px 5px";
+    //                        }));
+
+    //                        element.appendChild(UI.create("th"));
+
+    //                        element.appendChild(UI.create("th", function (element) {
+    //                            element.textContent = "Window name";
+    //                            element.style.padding = "0px 5px 3px 5px";
+    //                        }));
+    //                    });
+
+                        var placeholder = UI.create("div", function (element) {
+                            element.textContent = "You haven't created any macros yet";
+                            //element.textContent = "You haven't added any tabs to your favorites";
+                            element.style.textAlign = "center";
+                            element.style.paddingTop = "11px";
+                        });
+
+                        var table = UI.create("table", function (table) {
+                            //table.style.webkitBoxFlex = "1";
+                            table.style.width = "100%";
+
+                            //table.style.marginTop = "5px";
+                            //table.style.borderTop = "1px solid grey";
+
+                            table.style.paddingTop = "5px";
+                            //table.style.paddingRight = "5px";
+                            //table.style.paddingBottom = "6px";
+
+                            table.style.whiteSpace = "nowrap";
+
+                            function update() {
+                                if (macros.length) {
+                                    placeholder.setAttribute("hidden", "");
+                                    //header.removeAttribute("hidden");
+                                } else {
+                                    placeholder.removeAttribute("hidden");
+                                    //header.setAttribute("hidden", "");
+                                }
+                            }
+
+                            table.updateRows = function () {
+                                var list = Array.slice(table.children);
+
+                                list.sort(function (a, b) {
+                                    return macros.indexOf(a.info) - macros.indexOf(b.info);
+                                });
+
+                                list.forEach(function (item) {
+                                    table.appendChild(item);
+                                });
+
+    //                            macros.forEach(function (item) {
+    //                                list.indexOf(item);
+    //                            });
+                            };
+
+                            table.removeRow = function (item) {
+                                table.removeChild(item);
+                                update();
+                            };
+
+                            table.makeRow = function (info) {
+                                if (!info) {
+                                    info = { search: "" };
+                                    macros.push(info);
+                                }
+
+                                update();
+
+                                var row = UI.create("tr", function (container) {
+                                    //container.style.display = "-webkit-box";
+                                    //container.style.padding = "2px";
+                                    //container.style.paddingLeft = "4px";
+                                    //container.style.paddingRight = "10px";
+
+                                    container.info = info;
+
+                                    var text = UI.create("div", function (element) {
+                                        //element.style.display = "table-cell";
+                                        element.style.width = "1em";
+                                        //element.style.paddingRight = "1px";
+                                        element.style.paddingLeft = "12px";
+                                        //element.style.height = "100%";
+                                        //element.style.verticalAlign = "bottom";
+                                    });
+
+                                    var windowName = UI.create("input", function (element) {
+                                        //element.style.display = "table-cell";
+                                        //! element.style.paddingLeft = "4px";
+                                        element.style.width = "100px";
+                                        element.value = info.window || "";
+                                        element.setAttribute("placeholder", "new window");
+
+                                        element.addEventListener("keyup", function (element) {
+                                            info.window = this.value;
+                                        }, true);
+                                    });
+
+                                    container.appendChild(UI.create("td", function (element) {
+                                        element.appendChild(UI.create("input", function (element) {
+                                            element.type = "checkbox";
+
+                                            element.addEventListener("change", function () {
+                                                trigger(table);
+                                            }, true);
+                                            //element.style.verticalAlign = "1px";
+                                        }));
+                                    }));
+
+                                    container.appendChild(UI.create("select", function (element) {
+                                        element.style.display = "table-cell";
+                                        //element.style.verticalAlign = "top";
+                                        element.style.paddingTop = element.style.paddingBottom = "0px";
+                                        element.style.marginLeft = "2px";
+                                        element.style.verticalAlign = "-3px";
+                                        //element.style.paddingBottom = "10px";
+
+                                        ["require", "move", "close"/**, "noop"*/].forEach(function (key) {
+                                            element.appendChild(UI.create("option", function (element) {
+                                                element.textContent = key;
+
+                                                if (key === info.action) {
+                                                    element.selected = true;
+                                                }
+                                            }));
+                                        });
+
+                                        function update() {
+                                            info.action = element.value;
+
+                                            if (element.value === "require") {
+                                                text.textContent = "in";
+                                            } else if (element.value === "move") {
+                                                text.textContent = "to";
+                                            } else {
+                                                text.textContent = "";
+                                            }
+
+                                            if (element.value === "close") {
+                                                windowName.setAttribute("hidden", "");
+                                            } else {
+                                                windowName.removeAttribute("hidden");
+                                            }
+                                        }
+                                        update();
+
+                                        element.addEventListener("change", update, true);
+                                    }));
+
+                                    container.appendChild(UI.create("td", function (element) {
+                                        element.style.width = "100%";
+
+                                        element.appendChild(UI.create("input", function (element) {
+                                            //element.style.display = "table-cell";
+                                            element.style.width = "100%";
+                                            //! element.style.paddingLeft = "4px";
+                                            //element.style.webkitBoxFlex = "1";
+                                            //element.style.display = "block";
+                                            element.value = info.search;
+                                            element.setAttribute("placeholder", "search query");
+
+                                            element.addEventListener("keyup", function (element) {
+                                                info.search = this.value;
+                                            }, true);
+                                        }));
+                                    }));
+
+                                    container.appendChild(UI.create("td", function (element) {
+                                        element.appendChild(text);
+                                    }));
+
+                                    container.appendChild(UI.create("td", function (element) {
+                                        element.appendChild(windowName);
+                                    }));/*
+
+                                    var tabs = document.createElement("div");
+
+                                    rows[info.url] = container;
+
+                                    container.update = function (info) {
+                                        if (info.tabs === 0) {
+                                            container.style.backgroundColor = "salmon";
+                                        } else {
+                                            container.style.backgroundColor = "";
+                                        }
+
+                                        tabs.textContent = info.tabs;
+                                        container.info = info;
+                                    };
+                                    container.update(info);
+
+
+                                    container.appendChild(UI.create("label", function (element) {
+                                        element.style.webkitBoxFlex = "1";
+                                        element.style.display = "block";
+                                        element.style.overflow = "hidden";
+                                        element.style.textOverflow = "ellipsis";
+
+                                        element.appendChild(UI.create("input", function (element) {
+                                            element.type = "checkbox";
+                                            element.style.marginTop = "1px !important";
+
+                                            container.checkbox = element;
+                                        }));
+
+                                        element.appendChild(UI.create("span", function (element) {
+                                            element.textContent = info.url;
+                                        }));
+                                    }));
+
+                                    container.appendChild(tabs);*/
+                                });
+
+                                table.appendChild(row);
+
+                                trigger(table);
+
+                                row.scrollIntoView(true);
+                                //table.scrollTop += 9001;
+                            };
+
+                            //table.appendChild(header);
+                            //table.appendChild(placeholder);
+
+                            macros.forEach(table.makeRow);
+                        });
+
+
+                        /*container["DOM.Element"].appendChild(UI.create("button", function (element) {
+                            element.textContent = "Remove checked";
+                            element.className = "Options-button";
+                            //element.style.padding = "2px 8px";
+                            element.style.height = "29px";
+
+                            element.addEventListener("click", , true);
+                        }));*/
+
+                        /*container["DOM.Element"].appendChild(UI.create("span", function (element) {
+                            element.style.display = "inline-block";
+                            element.style.width = "12px";
+                        }));
+
+                        container["DOM.Element"].appendChild(UI.link(function (element) {
+                            element.textContent = "Check all";
+                            //element.className = "UI-link";
+                            //element.style.padding = "0px 8px";
+                            //element.style.height = "27px";
+
+                            element.addEventListener("click", function (event) {
+                                array.forEach(function (item) {
+                                    item.checkbox.checked = true;
+                                });
+                            }, true);
+                        }));
+
+                        container["DOM.Element"].appendChild(UI.create("span", function (element) {
+                            element.textContent = "|";
+                            //element.style.display = "inline-block";
+                            element.style.margin = "0px 8px";
+                            //element.style.width = "13px";
+                        }));
+
+                        container["DOM.Element"].appendChild(UI.link(function (element) {
+                            element.textContent = "Check none";
+                            //element.className = "UI-link";
+                            //element.style.padding = "0px 8px";
+                            //element.style.height = "27px";
+
+                            element.addEventListener("click", function (event) {
+                                array.forEach(function (item) {
+                                    item.checkbox.checked = false;
+                                });
+                            }, true);
+                        }));*/
+
+                        var up, down, remove;
+
+                        function update(element) {
+                            var boxes = table.querySelectorAll("input[type=checkbox]:checked");
+
+                            //console.log(boxes);
+
+                            if (boxes.length) {
+                                element.checked = true;
+                                up.disabled = false;
+                                down.disabled = false;
+                                remove.disabled = false;
+
+                                //console.log(boxes.length, table.children.length -1);
+
+                                if (boxes.length !== table.children.length) {
+                                    element.style.opacity = "0.5";
+                                } else {
+                                    element.style.opacity = "";
+                                }
+                            } else {
+                                element.checked = false;
+                                up.disabled = true;
+                                down.disabled = true;
+                                remove.disabled = true;
+                                element.style.opacity = "";
+                            }
+                        }
+                        container["DOM.Element"].appendChild(checkboxbutton({
+                            container: table,
+                            create: function (element) {
+                                table.addEventListener("Options-update", function () {
+                                    update(element);
+                                }, true);
+                            },
+                            update: update
+                        }));
+
+                        container.button({
+                            text: "New macro",
+                            height: "25px", //! 29px
+                            action: function () {
+                                table.makeRow();
+                            }
+                        });
+
+
+                        var wrapper = UI.create("div", function (element) {
+                            //element.style.display = "-webkit-box";
+                            element.style.webkitBoxFlex = "1";
+                            //element.style.webkitBoxOrient = "vertical";
+
+                            element.style.padding = "4px 9px 9px 4px";
+
+                            element.style.overflowX = "hidden";
+                            element.style.overflowY = "auto";
+
+                            //element.style.background = "white";
+                            element.style.background = "#fefefe"; //* white #f8f8f8
+
+                            element.style.border = "1px solid dimgray";
+                            element.style.borderRadius = "2px";
+
+                            element.setAttribute("hidden", "");
+
+                            setTimeout(function () {
+                                element.removeAttribute("hidden");
+                            }, 0);
+
+                            //element.appendChild(header);
+                            element.appendChild(placeholder);
+                            element.appendChild(table);
+                        });
+
+
+                        up = container.button({
+                            text: "", //* "▲",
+                            height: "25px",
+                            create: function (element) {
+                                element.title = "Move up";
+                                element.disabled = true;
+                                element.style.padding = "0px 9px";
+                                element.style.paddingTop = "1px";
+                                element.style.paddingBottom = "";
+
+                                element.style.borderTopRightRadius = "0px";
+                                element.style.borderBottomRightRadius = "0px";
+
+                                element.addEventListener("dragstart", function (event) {
+                                    event.preventDefault();
+                                }, true);
+
+                                element.appendChild(UI.create("img", function (element) {
+                                    element.src = "/images/button-up.png";
+                                }));
+                            },
+                            action: function () {
+                                var boxes = Array.slice(table.children).filter(function (item) {
+                                    var input = item.querySelector("input[type=checkbox]");
+                                    return input && input.checked;
+                                });
+
+                                boxes.forEach(function (item, i) {
+                                    var index = macros.indexOf(item.info);
+                                    if (index !== -1) {
+                                        //console.log(index);
+                                        macros.splice(index, 1);
+
+                                        if (index <= i) {
+                                            index += 1;
+                                        }
+                                        macros.splice(index - 1, 0, item.info);
+
+                                        //var parent = item.parentNode;
+                                        //parent.removeChild(item);
+                                        //parent.insertBefore(item, parent.children[index]);
+                                    }
+                                });
+                                table.updateRows();
+
+                                UI.scrollTo(boxes[0], wrapper);
+                                //boxes[0].scrollIntoViewIfNeeded(false);
+                                //trigger(table);
+                            }
+                        });
+
+
+                        down = container.button({
+                            text: "", //* "▼",
+                            height: "25px",
+                            create: function (element) {
+                                element.title = "Move down";
+                                element.disabled = true;
+                                element.style.padding = "0px 9px";
+                                element.style.paddingTop = "3px";
+                                element.style.paddingBottom = "";
+
+                                element.style.marginLeft = "-3px";
+                                element.style.borderTopLeftRadius = "0px";
+                                element.style.borderBottomLeftRadius = "0px";
+
+                                element.addEventListener("dragstart", function (event) {
+                                    event.preventDefault();
+                                }, true);
+
+    //                            element.style.width = "30px";
+    //                            element.style.background = "url(/images/button-down.png) no-repeat"
+    //                            element.style.backgroundPosition = "center center";
+
+                                element.appendChild(UI.create("img", function (element) {
+                                    element.src = "/images/button-down.png";
+                                    //element.style.padding = "0px 9px";
+                                }));
+                            },
+                            action: function () {
+                                var boxes = Array.slice(table.children).filter(function (item) {
+                                    var input = item.querySelector("input[type=checkbox]");
+                                    return input && input.checked;
+                                });
+
+                                boxes.forEach(function (item) {
+                                    var index = macros.indexOf(item.info);
+                                    if (index !== -1) {
+                                        macros.splice(index, 1);
+                                        macros.splice(index + boxes.length, 0, item.info);
+
+                                        //var parent = item.parentNode;
+                                        //parent.removeChild(item);
+                                        //parent.insertBefore(item, parent.children[index]);
+                                    }
+                                });
+
+                                table.updateRows();
+
+                                UI.scrollTo(boxes[boxes.length - 1], wrapper);
+                                //boxes[boxes.length - 1].scrollIntoViewIfNeeded(false);
+                                //trigger(table);
+                            }
+                        });
+
+
+                        remove = container.button({
+                            text: "Remove selected",
+                            height: "25px", //! 29px
+                            create: function (element) {
+                                element.disabled = true;
+                            },
+                            action: function () {
+                                var boxes = Array.slice(table.children).filter(function (item) {
+                                    var input = item.querySelector("input[type=checkbox]");
+                                    return input && input.checked;
+                                });
+                                /*var urls = array.filter(function (item) {
+                                    if (item.checkbox.checked) {
+                                        return true;
+                                    }
+                                });*/
+
+                                boxes.forEach(function (item) {
+                                    var index = macros.indexOf(item.info);
+                                    if (index !== -1) {
+                                        macros.splice(index, 1);
+                                    }
+                                    table.removeRow(item);
+                                });
+
+                                trigger(table);
+                            }
+                        });
+
+
+                        container.space({ height: "10px" });
+
+                        container["DOM.Element"].appendChild(wrapper);
+                    },
+
+
+
+                    "Popup": function (container) {
+                        var height = 375;
+
+                        container.input("dropdown-list", {
+                            option: "popup.type",
+                            text: "Display in a...",
+                            list: [{
+                                value: "popup",
+                                text: "Popup"
+                            }, {
+                                value: "bubble",
+                                text: "Bubble"
+                            }, {
+                                value: "tab",
+                                text: "Tab"
+                            }]
+                        });
+
+                        //container.space({ height: "1px" });
+                        container.separator();
+                        container.space({ height: "10px" });
+
+                        //container.space({ height: "10px" });
+
+                        container["DOM.Element"].appendChild(UI.create("table", function (element) {
+                            element.style.backgroundColor = "slategray";
+                            element.style.borderSpacing = "0px";
+                            element.style.border = "2px solid black";
+                            element.style.width = height * (screen.width / screen.height) + "px";
+
+                            element.appendChild(UI.create("td", function (element) {
+                                element.style.height = height + "px";
+                                element.style.padding = "0px !important";
+
+                                element.appendChild(UI.create("div", function (element) {
+                                    element.style.position = "relative";
+                                    element.style.width = "100%";
+                                    element.style.height = "100%";
+
+                                    element.appendChild(UI.create("div", function (element) {
+                                        element.style.position = "absolute";
+                                        element.style.width = "1px";
+                                        element.style.height = "100%";
+                                        element.style.backgroundColor = "red";
+
+                                        element.style.left = Options.get("popup.offsetX") + 50 + "%";
 
                                         Options.event.addListener("change", function (event) {
-                                            if (event.name === "popup.type") {
-                                                element.textContent = event.value.toUpperCase();
+                                            if (event.name === "popup.offsetX") {
+                                                element.style.left = event.value + 50 + "%";
                                             }
                                         });
+                                    }));
+
+                                    element.appendChild(UI.create("div", function (element) {
+                                        element.style.position = "absolute";
+                                        element.style.width = "100%";
+                                        element.style.height = "1px";
+                                        element.style.backgroundColor = "red";
+
+                                        element.style.top = Options.get("popup.offsetY") + 50 + "%";
+
+                                        Options.event.addListener("change", function (event) {
+                                            if (event.name === "popup.offsetY") {
+                                                element.style.top = event.value + 50 + "%";
+                                            }
+                                        });
+                                    }));
+
+                                    element.appendChild(UI.create("table", function (element) {
+                                        element.style.position = "absolute";
+                                        element.style.margin = "0px";
+                                        element.style.border = "1px solid darkgreen";
+                                        element.style.fontSize = "16px";
+                                        element.style.backgroundColor = "honeydew";
+
+                                        function update() {
+                                            var popup = {
+                                                offsetX: Options.get("popup.offsetX"),
+                                                offsetY: Options.get("popup.offsetY"),
+                                                width: Options.get("popup.width"),
+                                                height: Options.get("popup.height")
+                                            };
+
+                                            var width = popup.width / screen.width * 100;
+                                            var height = popup.height / screen.height * 100;
+
+                                            element.style.left = popup.offsetX - width / 2 + 50 + "%";
+                                            element.style.top = popup.offsetY - height / 2 + 50 + "%";
+                                            element.style.width = width + "%";
+                                            element.style.height = height + "%";
+                                        }
+                                        update();
+
+                                        Options.event.addListener("change", update);
+
+                                        element.appendChild(UI.create("td", function (element) {
+                                            element.style.padding = "0px";
+                                            element.style.border = "none";
+                                            element.style.textAlign = "center";
+                                            element.style.verticalAlign = "middle";
+
+                                            element.textContent = Options.get("popup.type").toUpperCase();
+
+                                            Options.event.addListener("change", function (event) {
+                                                if (event.name === "popup.type") {
+                                                    element.textContent = event.value.toUpperCase();
+                                                }
+                                            });
+                                        }));
                                     }));
                                 }));
                             }));
                         }));
-                    }));
 
-                    container["DOM.Element"].appendChild(UI.create("table", function (element) {
-                        element.style.position = "relative";
-                        element.style.margin = "12px auto 0px";
-                        //element.style.marginTop = "10px";
-                        element.style.borderSpacing = "30px 0px";
+                        container["DOM.Element"].appendChild(UI.create("table", function (element) {
+                            element.style.position = "relative";
+                            element.style.margin = "12px auto 0px";
+                            //element.style.marginTop = "10px";
+                            element.style.borderSpacing = "30px 0px";
 
-                        element.appendChild(UI.create("td", function (element) {
-                            element.className = "align-right";
+                            element.appendChild(UI.create("td", function (element) {
+                                element.className = "align-right";
 
-                            element.appendChild(UI.create("div", function (element) {
-                                //input.appendChild(document.createTextNode(" %"));
-                                element.appendChild(container.input("number", {
-                                    option: "popup.offsetX",
-                                    text: "Left: ",
-                                    unit: "%",
-                                    width: "2.5em"
-                                    //on: "keyup"
+                                element.appendChild(UI.create("div", function (element) {
+                                    //input.appendChild(document.createTextNode(" %"));
+                                    element.appendChild(container.input("number", {
+                                        option: "popup.offsetX",
+                                        text: "Left: ",
+                                        unit: "%",
+                                        width: "2.5em"
+                                        //on: "keyup"
+                                    }));
+                                    /*element.appendChild(document.createTextNode("Left: "));
+                                    element.appendChild(UI.create("input", function (element) {
+                                        element.className = "char4";
+
+                                        Options.on("keyup")(element, {
+                                            option: "popup.offsetX"
+                                        });
+                                    }));*/
                                 }));
-                                /*element.appendChild(document.createTextNode("Left: "));
-                                element.appendChild(UI.create("input", function (element) {
-                                    element.className = "char4";
+                                element.appendChild(UI.create("div", function (element) {
+                                    element.appendChild(container.input("number", {
+                                        option: "popup.offsetY",
+                                        text: "Top: ",
+                                        unit: "%",
+                                        width: "2.5em"
+                                        //on: "keyup"
+                                    }));
+                                    /*element.appendChild(document.createTextNode());
+                                    element.appendChild(UI.create("input", function (element) {
+                                        element.className = "char4";
 
-                                    Options.on("keyup")(element, {
-                                        option: "popup.offsetX"
-                                    });
-                                }));*/
+                                        Options.on("keyup")(element, {
+                                            option:
+                                        });
+                                    }));
+                                    element.appendChild(document.createTextNode(" %"));*/
+                                }));
                             }));
-                            element.appendChild(UI.create("div", function (element) {
-                                element.appendChild(container.input("number", {
-                                    option: "popup.offsetY",
-                                    text: "Top: ",
-                                    unit: "%",
-                                    width: "2.5em"
-                                    //on: "keyup"
-                                }));
-                                /*element.appendChild(document.createTextNode());
-                                element.appendChild(UI.create("input", function (element) {
-                                    element.className = "char4";
+                            element.appendChild(UI.create("td", function (element) {
+                                element.className = "align-right";
 
-                                    Options.on("keyup")(element, {
-                                        option:
-                                    });
+                                /*function numberCap(info) {
+                                    var value = (+this.value < 200) ? 200 : this.value;
+                                    //Options.set(info.option, null);
+                                    return value;
+                                }*/
+
+                                element.appendChild(UI.create("div", function (element) {
+                                    element.appendChild(container.input("number", {
+                                        option: "popup.width",
+                                        text: "Width: ",
+                                        unit: "px",
+                                        width: "3em",
+                                        limit: {
+                                            min: 200
+                                        }
+                                        //on: "keyup",
+                                        //modify: numberCap
+                                    }));
+                                    /*element.appendChild(document.createTextNode());
+                                    element.appendChild(UI.create("input", function (element) {
+                                        element.className = "char5";
+                                        element.id = ;
+
+                                        element.addEventListener("change", numberCap, true);
+                                        Options.on("keyup")(element, {
+                                            option: element.id
+                                        });
+                                    }));
+                                    element.appendChild(document.createTextNode(" "));*/
                                 }));
-                                element.appendChild(document.createTextNode(" %"));*/
+                                element.appendChild(UI.create("div", function (element) {
+                                    element.appendChild(container.input("number", {
+                                        option: "popup.height",
+                                        text: "Height: ",
+                                        unit: "px",
+                                        width: "3em",
+                                        limit: {
+                                            min: 200
+                                        }
+                                        //on: "keyup",
+                                        //modify: numberCap
+                                    }));
+                                    /*element.appendChild(document.createTextNode("Height: "));
+                                    element.appendChild(UI.create("input", function (element) {
+                                        element.className = "char5";
+                                        element.id = "popup.height";
+
+                                        element.addEventListener("change", numberCap, true);
+                                        Options.on("keyup")(element, {
+                                            option: element.id
+                                        });
+                                    }));
+                                    element.appendChild(document.createTextNode(" "));*/
+                                }));
                             }));
                         }));
-                        element.appendChild(UI.create("td", function (element) {
-                            element.className = "align-right";
+                    },
 
-                            /*function numberCap(info) {
-                                var value = (+this.value < 200) ? 200 : this.value;
-                                //Options.set(info.option, null);
-                                return value;
-                            }*/
 
-                            element.appendChild(UI.create("div", function (element) {
-                                element.appendChild(container.input("number", {
-                                    option: "popup.width",
-                                    text: "Width: ",
-                                    unit: "px",
-                                    width: "3em",
-                                    limit: {
-                                        min: 200
-                                    }
-                                    //on: "keyup",
-                                    //modify: numberCap
-                                }));
-                                /*element.appendChild(document.createTextNode());
-                                element.appendChild(UI.create("input", function (element) {
-                                    element.className = "char5";
-                                    element.id = ;
 
-                                    element.addEventListener("change", numberCap, true);
-                                    Options.on("keyup")(element, {
-                                        option: element.id
-                                    });
-                                }));
-                                element.appendChild(document.createTextNode(" "));*/
+                    "Privacy": function (container) {
+                        container.header("Usage tracking:");
+
+                        container.indent(function (container) {
+                            container.text("By default, we track how frequently you open the popup and options page, and also what settings you have chosen in the options page.");
+
+                            container.space({ height: "1em" });
+
+                            container.text("We do not track your search queries or window titles.");
+
+                            container.space({ height: "1em" });
+
+                            container.text("This information is anonymous and is used solely to improve Tab Organizer.");
+
+                            container.space({ height: "1.25em" });
+
+                            container.input("checkbox", {
+                                text: "Allow for usage tracking",
+                                option: "usage-tracking"
+                            });
+                        });
+                    },
+
+
+
+                    "Search": function (container) {
+                        container.input("number", {
+                            text: "Show ",
+                            option: "search.show-number",
+                            unit: " items in the list of past queries",
+                            width: "2em",
+                            limit: {
+                                min: 0
+                            }
+                        });
+                    },
+
+
+
+                    "Tabs": function (container) {
+                        container.group(function (container) {
+                            container.input("dropdown-list", {
+                                option: "tabs.close.location",
+                                text: "Show the <img src='/images/button-close.png' alt='close' /> button on the ",
+                                list: [{
+                                    value: "right",
+                                    text: "right"
+                                }, {
+                                    value: "left",
+                                    text: "left"
+                                }],
+                                //unit: " side "
+                            });
+
+                            container.input("dropdown-list", {
+                                option: "tabs.close.display",
+                                text: " side ",
+                                list: [{
+                                    value: "hover",
+                                    text: "while hovering"
+                                }, {
+                                    value: "focused",
+                                    text: "of the focused tab"
+                                }, {
+                                    value: "every",
+                                    text: "of every tab"
+                                }]
+                            });
+                        });
+
+                        container.space({ height: "0.5em" });
+
+                        container.header("Click behavior:");
+
+                        container.indent(function (container) {
+                            container.input("radio-list", {
+                                option: "tabs.click.type",
+                                list: [{
+                                    value: "focus",
+                                    text: "1 click to focus"
+                                }, {
+                                    value: "select-focus",
+                                    text: "1 click to select, 2 clicks to focus"
+                                }]
+                            });
+                        });
+                    },
+
+
+
+                    "Theme": function (container) {
+                        container.input("dropdown-list", {
+                            option: "color.theme",
+                            text: "Window theme: ",
+                            list: [{
+                                group: "Color:",
+                                list: [{
+                                    value: "Blue",
+                                    text: "Blue"
+                                }, {
+                                    value: "Green",
+                                    text: "Green"
+                                }, {
+                                    value: "Yellow",
+                                    text: "Yellow"
+                                }, {
+                                    value: "Orange",
+                                    text: "Orange"
+                                }, {
+                                    value: "Red",
+                                    text: "Red"
+                                }, {
+                                    value: "Pink",
+                                    text: "Pink"
+                                }, {
+                                    value: "Purple",
+                                    text: "Purple"
+                                }]
+                            }, {
+                                group: "Grayscale:",
+                                list: [{
+                                    value: "Black",
+                                    text: "Black"
+                                }, {
+                                    value: "Grey",
+                                    text: "Grey"
+                                }, {
+                                    value: "White",
+                                    text: "White"
+                                }]
+                            }]
+                        });
+
+                        //container.indent(function (container) {
+                            container["DOM.Element"].style.display = "-webkit-box";
+                            container["DOM.Element"].style.webkitBoxOrient = "vertical";
+                            container["DOM.Element"].appendChild(UI.create("iframe", function (element) {
+                                //element.style.border = "1px solid black";
+                                //element.setAttribute("hidden", "");
+                                element.style.webkitBoxFlex = "1";
+                                element.style.display = "block";
+                                element.style.border = "none";
+                                //element.style.width = "600px";
+                                //element.style.height = "447px";
+                                //element.style.margin = "0px";
+                                //element.style.padding = "0px";
+                                element.style.marginTop = "10px";
+                                element.src = "/themes/window-viewer.html";
                             }));
-                            element.appendChild(UI.create("div", function (element) {
-                                element.appendChild(container.input("number", {
-                                    option: "popup.height",
-                                    text: "Height: ",
-                                    unit: "px",
-                                    width: "3em",
-                                    limit: {
-                                        min: 200
-                                    }
-                                    //on: "keyup",
-                                    //modify: numberCap
-                                }));
-                                /*element.appendChild(document.createTextNode("Height: "));
-                                element.appendChild(UI.create("input", function (element) {
-                                    element.className = "char5";
-                                    element.id = "popup.height";
+                        //});
+                        /*container.input("dropdown-list", {
+                            list: [{
+                                text: "Window"
+                            }, {
+                                group: "Normal tabs:",
+                                list: [{
+                                    text: "Tab (focused)"
+                                }, {
+                                    text: "Tab (selected)"
+                                }, {
+                                    text: "Tab (focused + selected)"
+                                }]
+                            }, {
+                                group: "Hovered tabs:",
+                                list: [{
+                                    text: "Tab (hover)"
+                                }, {
+                                    text: "Tab (focused)"
+                                }, {
+                                    text: "Tab (selected)"
+                                }, {
+                                    text: "Tab (focused + selected)"
+                                }]
+                            }]
+                        });
 
-                                    element.addEventListener("change", numberCap, true);
-                                    Options.on("keyup")(element, {
-                                        option: element.id
-                                    });
-                                }));
-                                element.appendChild(document.createTextNode(" "));*/
-                            }));
-                        }));
-                    }));
+                        container.input("slider", {
+                            text: "Red",
+                            min: 0,
+                            max: 255
+                        });
+
+                        container.input("slider", {
+                            text: "Green",
+                            min: 0,
+                            max: 255
+                        });
+
+                        container.input("slider", {
+                            text: "Blue",
+                            min: 0,
+                            max: 255
+                        });*/
+                    },
+
+
+
+                    "Undo": function (container) {
+                        container.header("Show undo bar after:");
+
+                        container.indent(function (container) {
+                            container.input("checkbox", {
+                                option: "undo.new-tab",
+                                text: "Creating a new tab"
+                            });
+
+                            container.input("checkbox", {
+                                option: "undo.rename-window",
+                                text: "Renaming a window"
+                            });
+
+                            container.input("checkbox", {
+                                option: "undo.select-tabs",
+                                text: "Un/selecting tabs"
+                            });
+
+                            container.input("checkbox", {
+                                option: "undo.move-tabs",
+                                text: "Moving tabs"
+                            });
+
+                            container.input("checkbox", {
+                                option: "undo.close-tabs",
+                                text: "Closing tabs",
+                                disabled: true
+                            });
+                        });
+
+                        container.space({ height: "5px" });
+
+                        container.input("number", {
+                            text: "Show undo bar for ",
+                            option: "undo.timer",
+                            unit: "seconds",
+                            width: "2em",
+                            limit: {
+                                min: 0
+                            }
+                        });
+                    }
+                };
+
+                /*
+                    Popup: 6159
+                    Theme: 5976
+                    Privacy: 3731
+                    Keyboard: 3482
+
+                    Experimental: 1561
+                    Tabs: 1538
+
+                    Counter: 927
+                    Undo: 679
+
+                    Search: 429
+                    Favorites: 202
+                    Macros: 39
+
+                  ---------------------
+
+                    Popup: 2329
+                    Theme: 2137
+                    Privacy: 1250
+                    Keyboard: 1139
+
+                    Tabs: 616
+                    Experimental: 606
+                    Favorites: 387
+
+                    Counter: 311
+                    Undo: 224
+
+                    Search: 95
+                    Macros: 80
+                */
+
+
+                [
+                    "Theme",
+                    "Popup",
+                    "Privacy",
+                    "Keyboard",
+
+                    "Tabs",
+                    "Counter",
+                    "Undo",
+                    "Search",
+
+                    "Favorites",
+                    "Macros",
+                    "Experimental",
+                ].forEach(function (name) {
+                    container.category(name, function (container) {
+                        categories[name](container);
+                    });
                 });
 
 
 
-                container.category("Keyboard", function (container) {
-                    container.header("Open popup with: ");
 
-                    /*container.addCell(function (cell) {
-                        cell["DOM.Element"].
 
-                    });*/
 
-                    container.indent(function (container) {
-                        container.input("checkbox", {
-                            option: "popup.hotkey.ctrl",
-                            text: "Ctrl (⌘)"
-                        });
 
-                        container.input("checkbox", {
-                            option: "popup.hotkey.shift",
-                            text: "Shift"
-                        });
 
-                        container.input("checkbox", {
-                            option: "popup.hotkey.alt",
-                            text: "Alt"
-                        });
 
-                        container.space({ height: "3px" });
 
-                        container.input("text", {
-                            option: "popup.hotkey.letter",
-                            maxlength: 1,
-                            width: "2em",
-                            modify: function () {
-                                return this.value.toUpperCase();
-                            }
-                        });
-                    });
 
 //                    container.separator();
 
@@ -658,1188 +1926,34 @@
                         }));
                     });
 */
-                });
+                //});
 
 
                 //container.separator();
 
 
-                container.category("Tabs", function (container) {
-                    container.group(function (container) {
-                        container.input("dropdown-list", {
-                            option: "tabs.close.location",
-                            text: "Show the <img src='/images/button-close.png' alt='close' /> button on the ",
-                            list: [{
-                                value: "right",
-                                text: "right"
-                            }, {
-                                value: "left",
-                                text: "left"
-                            }],
-                            //unit: " side "
-                        });
 
-                        container.input("dropdown-list", {
-                            option: "tabs.close.display",
-                            text: " side ",
-                            list: [{
-                                value: "hover",
-                                text: "while hovering"
-                            }, {
-                                value: "focused",
-                                text: "of the focused tab"
-                            }, {
-                                value: "every",
-                                text: "of every tab"
-                            }]
-                        });
-                    });
-                });
 
 
 
-                container.category("Counter", function (container) {
-                    container.group(function (container) {
-                        container.input("checkbox", {
-                            option: "counter.enabled",
-                            text: "Display a counter that shows how many tabs "
-                        });
 
-                        container.input("dropdown-list", {
-                            option: "counter.type",
-                            list: [{
-                                value: "total",
-                                text: "you have in total (does not reset)"
-                            }, {
-                                value: "session",
-                                text: "you have opened/closed per session"
-                            }]
-                        });
-                    });
 
-                    container.space({ height: "0.8em" });
 
-                    //container.text("These settings only apply when
 
-                    container.indent(function (container) {
-                        container.header(function (container) {
-                            container.input("number", {
-                                option: "counter.reset.number",
-                                text: "Reset the session to ",
-                                unit: "when...",
-                                width: "2em"
-                            });
-                        });
-                        container.indent(function (container) {
-                            /*function modify(info) {
-                                var value = Math.max(0, Math.min(23, this.value)) + "";
 
-                                if (value.length > 2) {
-                                    value = value.slice(0, 2);
-                                }
-                                //if (value > 23) {
-                                    //value = "23";
-                                //}
-                                //if (value < 0) {
-                                    //value = "0";
-                                //}
-                                while (value.length < 2) {
-                                    value = "0" + value;
-                                }
-                                return value;
-                            }*/
-                            container.group(function (container) {
-                                container.input("checkbox", {
-                                    option: "counter.reset.time",
-                                    text: "...it is "
-                                });
-                                container.input("number", {
-                                    option: "counter.reset.time.hour",
-                                    width: "2em",
-                                    unit: ":",
-                                    limit: {
-                                        min: 0,
-                                        max: 23,
-                                        digits: 2
-                                    }/*,
-                                    verbatim: true,
-                                    modify: modify*/
-                                });
-                                container.input("number", {
-                                    option: "counter.reset.time.minute",
-                                    unit: "o'clock",
-                                    width: "2em",
-                                    limit: {
-                                        min: 0,
-                                        max: 59,
-                                        digits: 2
-                                    }/*
-                                    verbatim: true,
-                                    modify: modify*/
-                                });
-                            });
 
-                            container.group(function (container) {
-                                container.input("checkbox", {
-                                    option: "counter.reset.idle",
-                                    text: "...idle for "
-                                });
-                                container.input("number", {
-                                    option: "counter.reset.idle.hour",
-                                    width: "2em",
-                                    unit: "hours",
-                                    limit: {
-                                        min: 0
-                                    }
-                                });
-                            });
-                        });
-
-                        container.space({ height: "0.75em" });
-
-                        container.input("checkbox", {
-                            option: "counter.reset.whenlower",
-                            text: "Only reset when the counter is lower than the reset number"
-                        });
-                    });
-
-                    container.space({ height: "0.9em" });
-
-                    container.button({
-                        text: "Reset counter",
-                        height: "27px",
-                        action: function () {
-                            Options.get("counter.state").reset(true);
-                        }
-                    });
-
-                    /*container["DOM.Element"].appendChild(UI.create("button", function (element) {
-                        element.textContent = "Reset counter";
-                        element.className = "Options-button";
-                        element.style.height = "27px";
-                        element.style.marginTop = "0.9em"; // 0.9em
-
-                        element.addEventListener("click", , true);
-                    }));*/
-                });
-
-
-
-                container.category("Macros", function (container) {
-                    var macros = Options.get("macros.list");
-                    //var array = [];
-
-                    container["DOM.Element"].style.display = "-webkit-box";
-                    container["DOM.Element"].style.webkitBoxOrient = "vertical";
-                    container["DOM.Element"].style.webkitBoxPack = "center";
-
-//                    var header = UI.create("tr", function (element) {
-//                        //element.style.display = "-webkit-box";
-//                        //element.style.padding = "5px 10px 5px 10px";
-//                        //element.style.fontWeight = "bold";
-
-//                        /*element.appendChild(UI.create("th", function (element) {
-//                            element.style.visibility = "hidden";
-
-//                            element.appendChild(UI.create("input", function (element) {
-//                                element.type = "checkbox";
-//                                element.style.marginTop = "1px !important";
-//                            }));
-//                        }));*/
-
-//                        element.appendChild(UI.create("th"));
-
-//                        element.appendChild(UI.create("th", function (element) {
-//                            element.textContent = "Action";
-//                            element.style.padding = "0px 5px 3px 5px";
-//                            //element.style.webkitBoxFlex = "1";
-//                        }));
-
-//                        element.appendChild(UI.create("th", function (element) {
-//                            element.textContent = "Search query";
-//                            element.style.padding = "0px 5px 3px 5px";
-//                        }));
-
-//                        element.appendChild(UI.create("th"));
-
-//                        element.appendChild(UI.create("th", function (element) {
-//                            element.textContent = "Window name";
-//                            element.style.padding = "0px 5px 3px 5px";
-//                        }));
-//                    });
-
-                    var placeholder = UI.create("div", function (element) {
-                        element.textContent = "You haven't created any macros yet";
-                        //element.textContent = "You haven't added any tabs to your favorites";
-                        element.style.textAlign = "center";
-                        element.style.paddingTop = "11px";
-                    });
-
-                    var table = UI.create("table", function (table) {
-                        //table.style.webkitBoxFlex = "1";
-                        table.style.width = "100%";
-
-                        //table.style.marginTop = "5px";
-                        //table.style.borderTop = "1px solid grey";
-
-                        table.style.paddingTop = "5px";
-                        //table.style.paddingRight = "5px";
-                        //table.style.paddingBottom = "6px";
-
-                        table.style.whiteSpace = "nowrap";
-
-                        function update() {
-                            if (macros.length) {
-                                placeholder.setAttribute("hidden", "");
-                                //header.removeAttribute("hidden");
-                            } else {
-                                placeholder.removeAttribute("hidden");
-                                //header.setAttribute("hidden", "");
-                            }
-                        }
-
-                        table.updateRows = function () {
-                            var list = Array.slice(table.children);
-
-                            list.sort(function (a, b) {
-                                return macros.indexOf(a.info) - macros.indexOf(b.info);
-                            });
-
-                            list.forEach(function (item) {
-                                table.appendChild(item);
-                            });
-
-//                            macros.forEach(function (item) {
-//                                list.indexOf(item);
-//                            });
-                        };
-
-                        table.removeRow = function (item) {
-                            table.removeChild(item);
-                            update();
-                        };
-
-                        table.makeRow = function (info) {
-                            if (!info) {
-                                info = { search: "" };
-                                macros.push(info);
-                            }
-
-                            update();
-
-                            var row = UI.create("tr", function (container) {
-                                //container.style.display = "-webkit-box";
-                                //container.style.padding = "2px";
-                                //container.style.paddingLeft = "4px";
-                                //container.style.paddingRight = "10px";
-
-                                container.info = info;
-
-                                var text = UI.create("div", function (element) {
-                                    //element.style.display = "table-cell";
-                                    element.style.width = "1em";
-                                    //element.style.paddingRight = "1px";
-                                    element.style.paddingLeft = "12px";
-                                    //element.style.height = "100%";
-                                    //element.style.verticalAlign = "bottom";
-                                });
-
-                                var windowName = UI.create("input", function (element) {
-                                    //element.style.display = "table-cell";
-                                    //! element.style.paddingLeft = "4px";
-                                    element.style.width = "100px";
-                                    element.value = info.window || "";
-                                    element.setAttribute("placeholder", "new window");
-
-                                    element.addEventListener("keyup", function (element) {
-                                        info.window = this.value;
-                                    }, true);
-                                });
-
-                                container.appendChild(UI.create("td", function (element) {
-                                    element.appendChild(UI.create("input", function (element) {
-                                        element.type = "checkbox";
-
-                                        element.addEventListener("change", function () {
-                                            trigger(table);
-                                        }, true);
-                                        //element.style.verticalAlign = "1px";
-                                    }));
-                                }));
-
-                                container.appendChild(UI.create("select", function (element) {
-                                    element.style.display = "table-cell";
-                                    //element.style.verticalAlign = "top";
-                                    element.style.paddingTop = element.style.paddingBottom = "0px";
-                                    element.style.marginLeft = "2px";
-                                    element.style.verticalAlign = "-3px";
-                                    //element.style.paddingBottom = "10px";
-
-                                    ["require", "move", "close"/**, "noop"*/].forEach(function (key) {
-                                        element.appendChild(UI.create("option", function (element) {
-                                            element.textContent = key;
-
-                                            if (key === info.action) {
-                                                element.selected = true;
-                                            }
-                                        }));
-                                    });
-
-                                    function update() {
-                                        info.action = element.value;
-
-                                        if (element.value === "require") {
-                                            text.textContent = "in";
-                                        } else if (element.value === "move") {
-                                            text.textContent = "to";
-                                        } else {
-                                            text.textContent = "";
-                                        }
-
-                                        if (element.value === "close") {
-                                            windowName.setAttribute("hidden", "");
-                                        } else {
-                                            windowName.removeAttribute("hidden");
-                                        }
-                                    }
-                                    update();
-
-                                    element.addEventListener("change", update, true);
-                                }));
-
-                                container.appendChild(UI.create("td", function (element) {
-                                    element.style.width = "100%";
-
-                                    element.appendChild(UI.create("input", function (element) {
-                                        //element.style.display = "table-cell";
-                                        element.style.width = "100%";
-                                        //! element.style.paddingLeft = "4px";
-                                        //element.style.webkitBoxFlex = "1";
-                                        //element.style.display = "block";
-                                        element.value = info.search;
-                                        element.setAttribute("placeholder", "search query");
-
-                                        element.addEventListener("keyup", function (element) {
-                                            info.search = this.value;
-                                        }, true);
-                                    }));
-                                }));
-
-                                container.appendChild(UI.create("td", function (element) {
-                                    element.appendChild(text);
-                                }));
-
-                                container.appendChild(UI.create("td", function (element) {
-                                    element.appendChild(windowName);
-                                }));/*
-
-                                var tabs = document.createElement("div");
-
-                                rows[info.url] = container;
-
-                                container.update = function (info) {
-                                    if (info.tabs === 0) {
-                                        container.style.backgroundColor = "salmon";
-                                    } else {
-                                        container.style.backgroundColor = "";
-                                    }
-
-                                    tabs.textContent = info.tabs;
-                                    container.info = info;
-                                };
-                                container.update(info);
-
-
-                                container.appendChild(UI.create("label", function (element) {
-                                    element.style.webkitBoxFlex = "1";
-                                    element.style.display = "block";
-                                    element.style.overflow = "hidden";
-                                    element.style.textOverflow = "ellipsis";
-
-                                    element.appendChild(UI.create("input", function (element) {
-                                        element.type = "checkbox";
-                                        element.style.marginTop = "1px !important";
-
-                                        container.checkbox = element;
-                                    }));
-
-                                    element.appendChild(UI.create("span", function (element) {
-                                        element.textContent = info.url;
-                                    }));
-                                }));
-
-                                container.appendChild(tabs);*/
-                            });
-
-                            table.appendChild(row);
-
-                            trigger(table);
-
-                            row.scrollIntoView(true);
-                            //table.scrollTop += 9001;
-                        };
-
-                        //table.appendChild(header);
-                        //table.appendChild(placeholder);
-
-                        macros.forEach(table.makeRow);
-                    });
-
-
-                    /*container["DOM.Element"].appendChild(UI.create("button", function (element) {
-                        element.textContent = "Remove checked";
-                        element.className = "Options-button";
-                        //element.style.padding = "2px 8px";
-                        element.style.height = "29px";
-
-                        element.addEventListener("click", , true);
-                    }));*/
-
-                    /*container["DOM.Element"].appendChild(UI.create("span", function (element) {
-                        element.style.display = "inline-block";
-                        element.style.width = "12px";
-                    }));
-
-                    container["DOM.Element"].appendChild(UI.link(function (element) {
-                        element.textContent = "Check all";
-                        //element.className = "UI-link";
-                        //element.style.padding = "0px 8px";
-                        //element.style.height = "27px";
-
-                        element.addEventListener("click", function (event) {
-                            array.forEach(function (item) {
-                                item.checkbox.checked = true;
-                            });
-                        }, true);
-                    }));
-
-                    container["DOM.Element"].appendChild(UI.create("span", function (element) {
-                        element.textContent = "|";
-                        //element.style.display = "inline-block";
-                        element.style.margin = "0px 8px";
-                        //element.style.width = "13px";
-                    }));
-
-                    container["DOM.Element"].appendChild(UI.link(function (element) {
-                        element.textContent = "Check none";
-                        //element.className = "UI-link";
-                        //element.style.padding = "0px 8px";
-                        //element.style.height = "27px";
-
-                        element.addEventListener("click", function (event) {
-                            array.forEach(function (item) {
-                                item.checkbox.checked = false;
-                            });
-                        }, true);
-                    }));*/
-
-                    var up, down, remove;
-
-                    function update(element) {
-                        var boxes = table.querySelectorAll("input[type=checkbox]:checked");
-
-                        //console.log(boxes);
-
-                        if (boxes.length) {
-                            element.checked = true;
-                            up.disabled = false;
-                            down.disabled = false;
-                            remove.disabled = false;
-
-                            //console.log(boxes.length, table.children.length -1);
-
-                            if (boxes.length !== table.children.length) {
-                                element.style.opacity = "0.5";
-                            } else {
-                                element.style.opacity = "";
-                            }
-                        } else {
-                            element.checked = false;
-                            up.disabled = true;
-                            down.disabled = true;
-                            remove.disabled = true;
-                            element.style.opacity = "";
-                        }
-                    }
-                    container["DOM.Element"].appendChild(checkboxbutton({
-                        container: table,
-                        create: function (element) {
-                            table.addEventListener("Options-update", function () {
-                                update(element);
-                            }, true);
-                        },
-                        update: update
-                    }));
-
-                    container.button({
-                        text: "New macro",
-                        height: "25px", //! 29px
-                        action: function () {
-                            table.makeRow();
-                        }
-                    });
-
-
-                    var wrapper = UI.create("div", function (element) {
-                        //element.style.display = "-webkit-box";
-                        element.style.webkitBoxFlex = "1";
-                        //element.style.webkitBoxOrient = "vertical";
-
-                        element.style.padding = "4px 9px 9px 4px";
-
-                        element.style.overflowX = "hidden";
-                        element.style.overflowY = "auto";
-
-                        //element.style.background = "white";
-                        element.style.background = "#fefefe"; //* white #f8f8f8
-
-                        element.style.border = "1px solid dimgray";
-                        element.style.borderRadius = "2px";
-
-                        element.setAttribute("hidden", "");
-
-                        setTimeout(function () {
-                            element.removeAttribute("hidden");
-                        }, 0);
-
-                        //element.appendChild(header);
-                        element.appendChild(placeholder);
-                        element.appendChild(table);
-                    });
-
-
-                    up = container.button({
-                        text: "", //* "▲",
-                        height: "25px",
-                        create: function (element) {
-                            element.title = "Move up";
-                            element.disabled = true;
-                            element.style.padding = "0px 9px";
-                            element.style.paddingTop = "1px";
-                            element.style.paddingBottom = "";
-
-                            element.style.borderTopRightRadius = "0px";
-                            element.style.borderBottomRightRadius = "0px";
-
-                            element.addEventListener("dragstart", function (event) {
-                                event.preventDefault();
-                            }, true);
-
-                            element.appendChild(UI.create("img", function (element) {
-                                element.src = "/images/button-up.png";
-                            }));
-                        },
-                        action: function () {
-                            var boxes = Array.slice(table.children).filter(function (item) {
-                                var input = item.querySelector("input[type=checkbox]");
-                                return input && input.checked;
-                            });
-
-                            boxes.forEach(function (item, i) {
-                                var index = macros.indexOf(item.info);
-                                if (index !== -1) {
-                                    //console.log(index);
-                                    macros.splice(index, 1);
-
-                                    if (index <= i) {
-                                        index += 1;
-                                    }
-                                    macros.splice(index - 1, 0, item.info);
-
-                                    //var parent = item.parentNode;
-                                    //parent.removeChild(item);
-                                    //parent.insertBefore(item, parent.children[index]);
-                                }
-                            });
-                            table.updateRows();
-
-                            UI.scrollTo(boxes[0], wrapper);
-                            //boxes[0].scrollIntoViewIfNeeded(false);
-                            //trigger(table);
-                        }
-                    });
-
-
-                    down = container.button({
-                        text: "", //* "▼",
-                        height: "25px",
-                        create: function (element) {
-                            element.title = "Move down";
-                            element.disabled = true;
-                            element.style.padding = "0px 9px";
-                            element.style.paddingTop = "3px";
-                            element.style.paddingBottom = "";
-
-                            element.style.marginLeft = "-3px";
-                            element.style.borderTopLeftRadius = "0px";
-                            element.style.borderBottomLeftRadius = "0px";
-
-                            element.addEventListener("dragstart", function (event) {
-                                event.preventDefault();
-                            }, true);
-
-//                            element.style.width = "30px";
-//                            element.style.background = "url(/images/button-down.png) no-repeat"
-//                            element.style.backgroundPosition = "center center";
-
-                            element.appendChild(UI.create("img", function (element) {
-                                element.src = "/images/button-down.png";
-                                //element.style.padding = "0px 9px";
-                            }));
-                        },
-                        action: function () {
-                            var boxes = Array.slice(table.children).filter(function (item) {
-                                var input = item.querySelector("input[type=checkbox]");
-                                return input && input.checked;
-                            });
-
-                            boxes.forEach(function (item) {
-                                var index = macros.indexOf(item.info);
-                                if (index !== -1) {
-                                    macros.splice(index, 1);
-                                    macros.splice(index + boxes.length, 0, item.info);
-
-                                    //var parent = item.parentNode;
-                                    //parent.removeChild(item);
-                                    //parent.insertBefore(item, parent.children[index]);
-                                }
-                            });
-
-                            table.updateRows();
-
-                            UI.scrollTo(boxes[boxes.length - 1], wrapper);
-                            //boxes[boxes.length - 1].scrollIntoViewIfNeeded(false);
-                            //trigger(table);
-                        }
-                    });
-
-
-                    remove = container.button({
-                        text: "Remove selected",
-                        height: "25px", //! 29px
-                        create: function (element) {
-                            element.disabled = true;
-                        },
-                        action: function () {
-                            var boxes = Array.slice(table.children).filter(function (item) {
-                                var input = item.querySelector("input[type=checkbox]");
-                                return input && input.checked;
-                            });
-                            /*var urls = array.filter(function (item) {
-                                if (item.checkbox.checked) {
-                                    return true;
-                                }
-                            });*/
-
-                            boxes.forEach(function (item) {
-                                var index = macros.indexOf(item.info);
-                                if (index !== -1) {
-                                    macros.splice(index, 1);
-                                }
-                                table.removeRow(item);
-                            });
-
-                            trigger(table);
-                        }
-                    });
-
-
-                    container.space({ height: "10px" });
-
-                    container["DOM.Element"].appendChild(wrapper);
-                });
-
-
-
-                container.category("Favorites", function (container) {
-                    var favorites = Options.get("tabs.favorites.urls");
-                    var array = [];
-                    var rows = {};
-
-//                    container.text("This is a list of the URLs you have added to your favorites.");
-//                    container.text("If you don't have any, it will be empty.")
-
-//                    container.space({ height: "1em" });
-
-                    container["DOM.Element"].style.display = "-webkit-box";
-                    container["DOM.Element"].style.webkitBoxOrient = "vertical";
-                    container["DOM.Element"].style.webkitBoxPack = "center";
-
-
-                    var header = UI.create("div", function (element) {
-                        element.style.display = "-webkit-box";
-
-                        //element.style.position = "absolute";
-                        element.style.padding = "6px 13px 1px 7px";
-                        //element.style.padding = "5px";
-                        //element.style.paddingLeft = "4px";
-                        //element.style.paddingLeft = "25px";
-                        //element.style.paddingRight = "10px";
-                        //element.style.paddingBottom = "5px";
-
-                        //element.style.background = "gainsboro";
-                        //element.style.borderBottom = "1px dotted dimgray";
-
-                        element.style.fontWeight = "bold";
-
-                        element.appendChild(UI.create("div", function (element) {
-                            element.style.visibility = "hidden";
-
-                            element.appendChild(UI.create("input", function (element) {
-                                //element.disabled = true;
-                                element.type = "checkbox";
-                                element.style.marginTop = "1px !important";
-
-//                                element.addEventListener("change", function () {
-//                                    element.checked = false;
-//                                    console.log(this.checked);
-//                                }, true);
-                            }));
-                        }));
-
-                        element.appendChild(UI.create("div", function (element) {
-                            element.textContent = "URL";
-                            element.style.webkitBoxFlex = "1";
-                            //element.style.width = "100%";
-                        }));
-
-                        element.appendChild(UI.create("div", function (element) {
-                            element.textContent = "Tabs";
-//                                    element.style.paddingRight = "10px";
-                        }));
-                    });
-
-                    var placeholder = UI.create("div", function (element) {
-                        element.textContent = "You haven't added any tabs to your favorites";
-                        element.style.textAlign = "center";
-                        element.style.paddingTop = "15px";
-                        //element.style.paddingLeft = "20px";
-                    });
-
-                    var table = UI.create("div", function (table) {
-                        //table.style.width = "100%";
-                        //table.style.maxHeight = "431px"; //* 436px
-
-                        //table.style.paddingLeft = "4px";
-                        //table.style.paddingRight = "10px";
-
-                        //table.style.borderSpacing = "0px 0px";
-
-                        table.style.webkitBoxFlex = "1";
-
-                        table.style.paddingBottom = "6px";
-
-                        table.style.overflowX = "hidden";
-                        table.style.overflowY = "auto";
-
-                        table.style.whiteSpace = "nowrap";
-
-                        function makeRow(info) {
-                            return UI.create("div", function (container) {
-                                container.style.display = "-webkit-box";
-                                container.style.padding = "2px";
-                                container.style.paddingLeft = "7px";
-                                container.style.paddingRight = "13px";
-                                //container.style.border = "1px solid black";
-
-                                var tabs = document.createElement("div");
-                                //tabs.style.textAlign = "right";
-
-                                rows[info.url] = container;
-
-                                container.update = function (info) {
-                                    if (info.tabs === 0) {
-                                        container.style.backgroundColor = "salmon";
-                                    } else {
-                                        container.style.backgroundColor = "";
-                                    }
-
-                                    tabs.textContent = info.tabs;
-                                    container.info = info;
-                                };
-                                container.update(info);
-
-
-                                container.appendChild(UI.create("label", function (element) {
-                                    //element.style.paddingLeft = "4px";
-                                    element.style.webkitBoxFlex = "1";
-                                    element.style.display = "block";
-                                    //element.style.width = "100%";
-                                    element.style.overflow = "hidden";
-                                    element.style.textOverflow = "ellipsis";
-
-                                    //container.appendChild(UI.create("label", function (element) {
-                                    element.appendChild(UI.create("input", function (element) {
-                                        element.type = "checkbox";
-                                        element.style.marginTop = "1px !important";
-
-                                        container.checkbox = element;
-
-                                        element.addEventListener("change", function () {
-                                            trigger(table);
-                                        }, true);
-                                    }));
-
-                                    element.appendChild(UI.create("span", function (element) {
-                                        element.textContent = info.url;
-                                    }));
-                                    //}));
-                                }));
-
-                                container.appendChild(tabs);
-
-//                                    container.appendChild(UI.create("div", function (element) {
-                                    //element.style.paddingRight = "10px";
-
-
-/*!
-                                    element.appendChild(UI.create("img", function (element) {
-                                        element.src = "/images/button-close.png";
-
-                                        element.addEventListener("click", function () {
-                                            favorites.set(info.url, null);
-//                                            delete favorites[info.url];
-
-//                                            Options.event.trigger("change", {
-//                                                name: "tabs.favorites.urls",
-//                                                value: info.url,
-//                                                remove: true
-//                                            });
-                                        }, true);
-
-                                        function show() {
-                                            element.style.visibility = "";
-                                        }
-                                        function hide() {
-                                            element.style.visibility = "hidden !important";
-                                        }
-                                        hide();
-
-                                        container.addEventListener("mouseover", show, true);
-                                        container.addEventListener("mouseout", hide, true);
-                                    }));
-*/
-//                                    }));
-                            });
-                        }
-
-                        function updateKeys() {
-                            var keys = favorites.keys();
-
-                            if (keys.length) {
-                                placeholder.setAttribute("hidden", "");
-                                header.removeAttribute("hidden");
-                            } else {
-                                placeholder.removeAttribute("hidden");
-                                header.setAttribute("hidden", "");
-                            }
-
-                            return keys;
-                        }
-
-                        var keys = updateKeys();
-
-                        keys.forEach(function (key) {
-                            array.push(makeRow({ url: key, tabs: favorites.get(key) }));
-                        });
-
-                        function update(url, action) {
-                            var info = { url: url, tabs: favorites.get(url) };
-
-                            if (action === "delete") {
-//                                console.log(rows[url].remove);
-                                if (rows[url]) {
-                                    rows[url].remove();
-                                    array.remove(rows[url]);
-                                    delete rows[url];
-                                }
-                            } else if (rows[url]) {
-                                rows[url].update(info);
-                            } else if (url) {
-                                array.push(makeRow(info));
-                            }
-
-                            updateKeys();
-
-                            array.sort(function (a, b) {
-    //                                console.log(b.tabs, a.tabs);
-                                return a.info.tabs - b.info.tabs || a.info.url.localeCompare(b.info.url);
-                            });
-
-                            array.forEach(function (item) {
-//                                if (!rows[item.url]) {
-//                                    rows[item.url] = makeRow(item);
-//                                }
-//                                rows[item.url].update(item);
-                                table.appendChild(item);
-                            });
-
-                            trigger(table);
-                        }
-                        update();
-
-                        Options.event.addListener("change", function (event) {
-                            if (event.name === "tabs.favorites.urls") {
-                                update(event.value, event.action);
-                            }
-                        });
-                    });
-
-
-                    var remove;
-
-                    function update(element) {
-                        var boxes = table.querySelectorAll("input[type=checkbox]:checked");
-
-                        //console.log(boxes);
-
-                        if (boxes.length) {
-                            element.checked = true;
-                            remove.disabled = false;
-
-                            //console.log(boxes.length, table.children.length -1);
-
-                            if (boxes.length !== table.children.length) {
-                                element.style.opacity = "0.5";
-                            } else {
-                                element.style.opacity = "";
-                            }
-                        } else {
-                            element.checked = false;
-                            remove.disabled = true;
-                            element.style.opacity = "";
-                        }
-                    }
-                    container["DOM.Element"].appendChild(checkboxbutton({
-                        container: table,
-                        create: function (element) {
-                            table.addEventListener("Options-update", function () {
-                                update(element);
-                            }, true);
-                        },
-                        update: update
-                    }));
-
-                    remove = container.button({
-                        text: "Remove selected",
-                        height: "25px", //! 29px
-                        create: function (element) {
-                            element.disabled = true;
-                        },
-                        action: function () {
-                            var urls = array.filter(function (item) {
-                                if (item.checkbox.checked) {
-                                    return true;
-                                }
-                            });
-
-                            urls.forEach(function (item) {
-                                favorites.set(item.info.url, null);
-                            });
-                        }
-                    });
-
-
-                    container.space({ height: "10px" });
-
-//                    container.space({ height: "7px" });
-
-                    container["DOM.Element"].appendChild(UI.create("div", function (element) {
-                        element.style.display = "-webkit-box";
-                        element.style.webkitBoxFlex = "1";
-                        element.style.webkitBoxOrient = "vertical";
-
-//                        element.style.maxHeight = "406px";
-
-                        //element.style.background = "white";
-                        element.style.background = "#fefefe"; //* white #f8f8f8
-
-                        element.style.border = "1px solid dimgray";
-                        element.style.borderRadius = "2px";
-
-                        element.setAttribute("hidden", "");
-
-                        setTimeout(function () {
-                            element.removeAttribute("hidden");
-                        }, 0);
-
-                        //element.appendChild(UI.create("div", function (element) {
-                        element.appendChild(header);
-                        element.appendChild(placeholder);
-                        element.appendChild(table);
-                        //}));
-                    }));
-
-//                    container.space({ height: "10px" });
-
-//                    /*container["DOM.Element"].appendChild(UI.create("button", function (element) {
-//                        element.textContent = "Remove checked";
-//                        element.className = "Options-button";
-//                        //element.style.padding = "2px 8px";
-//                        element.style.height = "29px";
-
-//                        element.addEventListener("click", , true);
-//                    }));*/
-
-//                    container["DOM.Element"].appendChild(UI.create("span", function (element) {
-//                        element.style.display = "inline-block";
-//                        element.style.width = "12px";
-//                    }));
-
-//                    container["DOM.Element"].appendChild(UI.link(function (element) {
-//                        element.textContent = "Check all";
-//                        //element.className = "UI-link";
-//                        //element.style.padding = "0px 8px";
-//                        //element.style.height = "27px";
-
-//                        element.addEventListener("click", function (event) {
-//                            array.forEach(function (item) {
-//                                item.checkbox.checked = true;
-//                            });
-//                        }, true);
-//                    }));
-
-//                    container["DOM.Element"].appendChild(UI.create("span", function (element) {
-//                        element.textContent = "|";
-//                        //element.style.display = "inline-block";
-//                        element.style.margin = "0px 8px";
-//                        //element.style.width = "13px";
-//                    }));
-
-//                    container["DOM.Element"].appendChild(UI.link(function (element) {
-//                        element.textContent = "Check none";
-//                        //element.className = "UI-link";
-//                        //element.style.padding = "0px 8px";
-//                        //element.style.height = "27px";
-
-//                        element.addEventListener("click", function (event) {
-//                            array.forEach(function (item) {
-//                                item.checkbox.checked = false;
-//                            });
-//                        }, true);
-//                    }));
-
-                    //container.space({ height: "12px" });
-                });
 
                 /*container.category("Windows", function (container) {
 
                 });*/
 
-                container.category("Search", function (container) {
-                    container.input("number", {
-                        text: "Show ",
-                        option: "search.show-number",
-                        unit: " items in the list of past queries",
-                        width: "2em",
-                        limit: {
-                            min: 0
-                        }
-                    });
-                });
 
-                container.category("Undo", function (container) {
-                    container.header("Show undo bar after:");
 
-                    container.indent(function (container) {
-                        container.input("checkbox", {
-                            option: "undo.new-tab",
-                            text: "Creating a new tab"
-                        });
 
-                        container.input("checkbox", {
-                            option: "undo.rename-window",
-                            text: "Renaming a window"
-                        });
 
-                        container.input("checkbox", {
-                            option: "undo.select-tabs",
-                            text: "Un/selecting tabs"
-                        });
 
-                        container.input("checkbox", {
-                            option: "undo.move-tabs",
-                            text: "Moving tabs"
-                        });
 
-                        container.input("checkbox", {
-                            option: "undo.close-tabs",
-                            text: "Closing tabs",
-                            disabled: true
-                        });
-                    });
 
-                    container.space({ height: "5px" });
-
-                    container.input("number", {
-                        text: "Show undo bar for ",
-                        option: "undo.timer",
-                        unit: "seconds",
-                        width: "2em",
-                        limit: {
-                            min: 0
-                        }
-                    });
-                });
-
-                container.category("Privacy", function (container) {
-                    container.header("Usage tracking:");
-
-                    container.indent(function (container) {
-                        container.text("By default, we track how frequently you open the popup and options page, and also what settings you have chosen in the options page.");
-
-                        container.space({ height: "1em" });
-
-                        container.text("We do not track your search queries or window titles.");
-
-                        container.space({ height: "1em" });
-
-                        container.text("This information is anonymous and is used solely to improve Tab Organizer.");
-
-                        container.space({ height: "1.25em" });
-
-                        container.input("checkbox", {
-                            text: "Allow for usage tracking",
-                            option: "usage-tracking"
-                        });
-                    });
-                });
-
-                container.category("Experimental", function (container) {
-                    container.text("Experimental features are disabled by default. Possibly because they break things, or I'm not sure how useful they are, or because they change the behavior of Tab Organizer significantly.");
-
-                    container.space({ height: "1em" });
-
-                    container.text("These features might be removed or changed at any time.");
-
-                    container.separator();
-                    container.space({ height: "1em" });
-
-                    container.input("checkbox", {
-                        option: "windows.middle-close",
-                        text: "Middle click on a window's title to close the entire window"
-                    });
-
-                    container.input("checkbox", {
-                        option: "popup.close.escape",
-                        text: "Use the Escape key to close the popup"
-                    });
-
-                    //container.space({ height: "0.5em" });
-                    //container.separator();
-                    //container.space({ height: "0.5em" });
-
-                    /*container.input("dropdown-list", {
-                        option: "windows.type",
-                        list: [{
-                            value: "horizontal",
-                            text: "Horizontal"
-                        }, {
-                            value: "dual-pane",
-                            text: "Dual-Pane"
-                        }]
-                    });*/
-                });
             });
         </script>
     </body>
