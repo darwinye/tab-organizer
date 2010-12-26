@@ -90,8 +90,10 @@ select[data-options-changed] {
     border-radius: 4px;
 }*/
 input[type="checkbox"] {
-    top: 1px;
     margin-top: 2px !important;
+}
+input[type="checkbox"], input[type="radio"] {
+    top: 1px;
     margin-right: 5px !important;
     /*margin-bottom: 5px !important;*/
 }

@@ -249,7 +249,11 @@ var Tab = {
                     } else {
                         switch (Options.get("tabs.click.type")) {
                         case "select-focus":
+                            //parent.queue.reset();
+
                             if (this.hasAttribute("data-selected")) {
+                                //delete parent.queue.shiftNode;
+
                                 Tab.focus(container.tab);
                             } else {
                                 //if (!parent.queue.has(this)) {
