@@ -239,10 +239,13 @@ Platform.bookmarks.addEventListener("change", function (id, info) {
         url = state.bookmarksByURL;
 
     if (info.url) {
+//        var tabs = [];
+
         url[bookmark.url] -= 1;
         bookmark.title = info.title;
         bookmark.url = info.url;
         url[info.url] = url[info.url] + 1 || 1;
+
         state.search();
     }
 }, true);
@@ -252,7 +255,7 @@ Platform.bookmarks.addEventListener("create", function (id, bookmark) {
     if (bookmark.url) {
         state.bookmarksByID[id] = bookmark;
         url[bookmark.url] = url[bookmark.url] + 1 || 1;
-        state.search();
+        state.search({ tabs: state.tabsByURL[bookmark.url] });
     }
 }, true);
 
@@ -261,7 +264,7 @@ Platform.bookmarks.addEventListener("remove", function (id, info) {
     if (bookmark) {
         state.bookmarksByURL[bookmark.url] -= 1;
         delete state.bookmarksByID[id];
-        state.search();
+        state.search({ tabs: state.tabsByURL[bookmark.url] });
     }
 }, true);
 
@@ -634,7 +637,7 @@ fragment.appendChild(UI.create("div", function (container) {
                         info.tabs = info.tabs || Array.slice(document.getElementsByClassName("tab"));
 
                         if (macro.search) {
-                            var results = action.search(info.tabs, macro.search);
+                            var results = action.parse(macro.search)(info.tabs);
 
                             if (results.length) {
                                 switch (macro.action) {
@@ -1099,7 +1102,7 @@ fragment.appendChild(UI.create("div", function (container) {
                 input.value = lastinput;
             }
 
-            var info = {
+            var cache = {
                 //windows: document.getElementsByClassName("window"),
                 //tabs: document.getElementsByClassName("tab"),
                 title: document.title
@@ -1127,7 +1130,7 @@ fragment.appendChild(UI.create("div", function (container) {
                 }
             }
 
-            function search(windows, flags) {
+            function search(windows, info) {
                 localStorage["search.lastinput"] = input.value;
 
                 //var self = this;
@@ -1140,57 +1143,153 @@ fragment.appendChild(UI.create("div", function (container) {
 
                 testSpecial(input.value);
 
-                var array = Array.slice(document.getElementsByClassName("tab"));
+//                var array = ;
                 //var list = [];
 
-                var results = action.search(array, input.value);
+                if (!cache.filter || cache.input !== input.value) {
+                    cache.filter = action.parse(input.value);
+                    cache.input = input.value;
+                }
 
-                var focused, scroll = [], tabs = [];
+//                var test = !info.tabs || info.tabs.length;
+
+//                if (test) {
+//                    info.tabs = ;
+//                }
+
+                var array = Array.slice(document.getElementsByClassName("tab"));
+
+                //if (!has) {
+
+                //}
+
+                var results = cache.filter(array);
+                var focused, scroll = [];//, tabs = [];
+
+//                if (test) {
+//                    cache.length = results.length;
+//                }
+
+//                console.log(results.length);
+
+//                cache.length += results.length;
+//                cache.length -= info.tabs.length - results.inverse.length;
+
+//                console.log(results.length, results.inverse.length);
+
+//                windows.forEach(function (item) {
+//                    item.setAttribute("hidden", "");
+//                    item.removeAttribute("data-last");
+//                });
+
+                results.forEach(function (child) {
+                    var item = child.parentNode.container;
+//                    console.log(item);
+//!                    item.setAttribute("data-shouldshow", "");
+
+                    if (child.hasAttribute("data-focused")) {
+                        item.selected = child;
+                    }
+
+                    child.removeAttribute("hidden");
+//                    tabs.push(child);
+                });
+
+                results.inverse.forEach(function (child) {
+                    child.setAttribute("hidden", "");
+                });
+
+                var list = windows.filter(function (item) {
+                    item.removeAttribute("data-last");
+
+                    var children = Array.slice(item.tabList.children);
+
+                    var test = children.some(function (child) {
+                        return !child.hasAttribute("hidden");
+                    });
+
+                    if (test) {
+//!                    if (item.hasAttribute("data-shouldshow")) {
+//!                        item.removeAttribute("data-shouldshow");
+                        item.removeAttribute("hidden");
+
+                        if (info.focused) {
+                            var last = Options.get("window.lastfocused");
+                            var win = item.window;
+
+                            if (win.focused || last === win.id) {
+                                focused = item;
+                            }
+                        }
+
+                        if (info.scroll) {
+                            scroll.push(item);
+                        }
+                    } else { //* Fixes windows showing up even when empty.
+                    // if (results.inverse.length) {
+//                        if (results.inverse.length) {
+//!                        var children = Array.slice(item.tabList.children);
+
+//!                        var test = children.every(function (child) {
+//!                            return child.hasAttribute("hidden");
+//!                        });
+
+//!                        if (test) {
+                        item.setAttribute("hidden", "");
+//!                        }
+//                        }
+                    }
+
+                    return test;
+//!                    return !item.hasAttribute("hidden");
+                });
 
                 //var tabs = [];
 
-                var list = windows.filter(function (item) {
-                    var children = item.tabList.children;
-                    item.setAttribute("hidden", "");
-                    item.removeAttribute("data-last");
+//                var list = [];
 
-                    Array.slice(children).forEach(function (child) {
-                        if (child.hasAttribute("data-focused")) {
-                            /*setTimeout(function () {
-                                UI.scrollTo(child, item.tabList);
-                            }, 0);*/
-                            item.selected = child;
-                        }
-                        if (results.indexOf(child) !== -1) {
-                            child.removeAttribute("hidden");
-                            item.removeAttribute("hidden");
-                            tabs.push(child);
-                        } else {
-                            child.setAttribute("hidden", "");
-                        }
-                    });
+//                var list = windows.filter(function (item) {
+//                    var children = item.tabList.children;
+//                    item.setAttribute("hidden", "");
+//                    item.removeAttribute("data-last");
 
-                    if (flags.focused) {
-                        var last = Options.get("window.lastfocused");
-                        var win = item.window;
-
-                        if (win.focused || last === win.id) {
-                            focused = item;
-                        }
-                    }
-
-                    if (!item.hasAttribute("hidden")) {
-                        //list.push(item);
-                        //var child = item.querySelector("[data-focused]");
-                        if (flags.scroll) {
-                            scroll.push(item);
-                        }
-//                        if (flags.scroll) {
-//                            //UI.scrollTo(item.selected, item.tabList);
+//                    Array.slice(children).forEach(function (child) {
+//                        if (child.hasAttribute("data-focused")) {
+//                            /*setTimeout(function () {
+//                                UI.scrollTo(child, item.tabList);
+//                            }, 0);*/
+//                            item.selected = child;
 //                        }
-                        return true;
-                    }
-                });
+//                        if (results.indexOf(child) !== -1) {
+//                            child.removeAttribute("hidden");
+//                            item.removeAttribute("hidden");
+////                            tabs.push(child);
+//                        } else {//if (results.inverse.indexOf(child) !== -1) {
+//                            child.setAttribute("hidden", "");
+//                        }
+//                    });
+
+//                    if (info.focused) {
+//                        var last = Options.get("window.lastfocused");
+//                        var win = item.window;
+
+//                        if (win.focused || last === win.id) {
+//                            focused = item;
+//                        }
+//                    }
+
+//                    if (!item.hasAttribute("hidden")) {
+//                        //list.push(item);
+//                        //var child = item.querySelector("[data-focused]");
+//                        if (info.scroll) {
+//                            scroll.push(item);
+//                        }
+////                        if (info.scroll) {
+////                            //UI.scrollTo(item.selected, item.tabList);
+////                        }
+//                        return true;
+//                    }
+//                });
 
                 if (list.length) {
                     list[list.length - 1].setAttribute("data-last", "");
@@ -1207,19 +1306,35 @@ fragment.appendChild(UI.create("div", function (container) {
                 /*var list = info.windows.length,
                     tabs = info.tabs.length;*/
 
-                var string = [ info.title, " (" ];
+                var string = [ cache.title, " (" ];
 
-                if (tabs.length === 1) {
-                    string.push(tabs.length, " tab in ");
-                } else {
-                    string.push(tabs.length, " tabs in ");
-                }
+//                var length = info.tabs.length - results.inverse.length;
 
-                if (list.length === 1) {
-                    string.push(list.length, " window)");
-                } else {
-                    string.push(list.length, " windows)");
-                }
+                var length = results.length;
+                string.push(length, (length === 1)
+                                      ? " tab in "
+                                      : " tabs in ");
+
+                var length = list.length;
+                string.push(length, (length === 1)
+                                      ? " window)"
+                                      : " windows)");
+
+
+
+//                var length = results.length;
+//                if (length === 1) {
+//                    string.push(length, " tab in ");
+//                } else {
+//                    string.push(length, " tabs in ");
+//                }
+
+//                var length = list.length;
+//                if (length === 1) {
+//                    string.push(length, " window)");
+//                } else {
+//                    string.push(length, " windows)");
+//                }
 
                 document.title = string.join("");
 
@@ -1881,7 +1996,7 @@ addEventListener("load", function (event) { //* Issue 69
                 }
 
                 //! anon.timer = setTimeout(function () {
-                    state.search();
+                state.search(/*{ tabs: state.tabsByURL[event.value] }*/);
                 //! }, 0);
     //            document.body.setAttribute("hidden", "");
     //            document.body.removeAttribute("hidden");

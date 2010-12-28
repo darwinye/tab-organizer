@@ -62,7 +62,7 @@ var Tab = {
 
                 container.setAttribute("data-selected", "");
 
-                state.search();
+                state.search(/*{ tabs: [container] }*/);
             };
             container.queueRemove = function () {
                 var is = container.parentNode.queue.remove(container);
@@ -70,7 +70,7 @@ var Tab = {
 
                 container.removeAttribute("data-selected");
 
-                state.search();
+                state.search(/*{ tabs: [container] }*/);
             };
             container.queueToggle = function () {
                 var toggle = container.parentNode.queue.toggle(container);
@@ -82,7 +82,7 @@ var Tab = {
                     container.removeAttribute("data-selected");
                 }
 
-                state.search();
+                state.search(/*{ tabs: [container] }*/);
             };
 
             container.addEventListener("DOMNodeRemovedFromDocument", container.queueRemove, true); //! Hacky
@@ -1562,6 +1562,8 @@ var Window = {
                                     //element.appendChild(UI.create("div", function (list) {
                                         container.tabList = list;
                                         //list.scroll = list;
+
+                                        list.container = container;
 
                                         list.queue = [];
 
