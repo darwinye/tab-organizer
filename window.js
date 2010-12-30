@@ -146,6 +146,7 @@ var state = {
     bookmarksByURL: {},
     tabsByID: {},
     tabsByURL: {},
+    visitedByID: Options.get("tabs.visited.byID"),
     queues: {
         moveAllTabs: function (id, index) {
             var queue = [];
@@ -1217,7 +1218,7 @@ fragment.appendChild(UI.create("div", function (container) {
                             var last = Options.get("window.lastfocused");
                             var win = item.window;
 
-                            if (win.focused || last === win.id) {
+                            if (win.focused || (!focused && last === win.id)) {
                                 focused = item;
                             }
                         }

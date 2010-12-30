@@ -478,6 +478,14 @@
         }
 */
 
+        Options.set("tabs.visited.byID", {});
+
+        var visitedByID = Options.get("tabs.visited.byID");
+
+        Platform.tabs.addEventListener("focus", function (id) {
+            visitedByID[id] = true;
+        }, true);
+
         Platform.windows.addEventListener("focus", function (win) {
 //            console.log(win);
 //            clearTimeout(anon.timer);
