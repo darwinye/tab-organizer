@@ -589,7 +589,7 @@
                             }
                             update();
 
-                            Options.event.addListener("change", function (event) {
+                            Options.event.on("change", function (event) {
                                 if (event.name === "tabs.favorites.urls") {
                                     update(event.value, event.action);
                                 }
@@ -1347,7 +1347,7 @@
 
                                         element.style.left = Options.get("popup.offsetX") + 50 + "%";
 
-                                        Options.event.addListener("change", function (event) {
+                                        Options.event.on("change", function (event) {
                                             if (event.name === "popup.offsetX") {
                                                 element.style.left = event.value + 50 + "%";
                                             }
@@ -1362,7 +1362,7 @@
 
                                         element.style.top = Options.get("popup.offsetY") + 50 + "%";
 
-                                        Options.event.addListener("change", function (event) {
+                                        Options.event.on("change", function (event) {
                                             if (event.name === "popup.offsetY") {
                                                 element.style.top = event.value + 50 + "%";
                                             }
@@ -1394,7 +1394,7 @@
                                         }
                                         update();
 
-                                        Options.event.addListener("change", update);
+                                        Options.event.on("change", update);
 
                                         element.appendChild(UI.create("td", function (element) {
                                             element.style.padding = "0px";
@@ -1404,7 +1404,7 @@
 
                                             element.textContent = Options.get("popup.type").toUpperCase();
 
-                                            Options.event.addListener("change", function (event) {
+                                            Options.event.on("change", function (event) {
                                                 if (event.name === "popup.type") {
                                                     element.textContent = event.value.toUpperCase();
                                                 }

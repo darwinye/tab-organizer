@@ -20,7 +20,7 @@ document.body.appendChild(UI.create("div", function (element) {
     //var windowlist = document.getElementById("window-list");
 
 //            setTimeout(function () {
-//                Options.event.addListener("change", function () {
+//                Options.event.on("change", function () {
 //                });
 //            }, 0);
 }));

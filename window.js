@@ -1946,7 +1946,7 @@ addEventListener("load", function (event) { //* Issue 69
     Platform.windows.getAll({ populate: true }, function (windows) {
         state.createView(windows);
 
-        Options.event.addListener("change", function (event) {
+        Options.event.on("change", function (event) {
             if (event.name === "window.lastfocused") {
                 if (event.value === null) {
                     action.unselectWindow();
@@ -1973,7 +1973,7 @@ addEventListener("load", function (event) { //* Issue 69
             }
         });
 
-        Options.event.addListener("change", function (event) {
+        Options.event.on("change", function (event) {
             var location = (event.name === "tabs.close.location"),
                 display = (event.name === "tabs.close.display");
 
@@ -1986,7 +1986,7 @@ addEventListener("load", function (event) { //* Issue 69
             }
         });
 
-        Options.event.addListener("change", function /*! anon*/(event) {
+        Options.event.on("change", function /*! anon*/(event) {
             if (event.name === "tabs.favorites.urls") {
                 //! clearTimeout(anon.timer);
 
@@ -2010,7 +2010,7 @@ addEventListener("load", function (event) { //* Issue 69
 
 
 //        state.saveTitles = function () {
-//    //                    Options.event.removeListener("change", update);
+//    //                    Options.event.remove("change", update);
 
 //            var list = state.list.map(function (item, i) {
 //                var text = item.tabIcon.indexText.value;
