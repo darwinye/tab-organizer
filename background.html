@@ -478,12 +478,15 @@
         }
 */
 
-        Options.set("tabs.visited.byID", {});
+//        Options.set("tabs.visited.byID", null);
+        Options.set("tabs.visited.byURL", {});
 
-        var visitedByID = Options.get("tabs.visited.byID");
+        var visitedByURL = Options.get("tabs.visited.byURL");
 
         Platform.tabs.addEventListener("focus", function (id) {
-            visitedByID[id] = true;
+            Platform.tabs.get(id, function (tab) {
+                visitedByURL[tab.url] = true;
+            });
         }, true);
 
         Platform.windows.addEventListener("focus", function (win) {

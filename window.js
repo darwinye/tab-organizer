@@ -146,7 +146,7 @@ var state = {
     bookmarksByURL: {},
     tabsByID: {},
     tabsByURL: {},
-    visitedByID: Options.get("tabs.visited.byID"),
+    visitedByURL: Options.get("tabs.visited.byURL"),
     queues: {
         moveAllTabs: function (id, index) {
             var queue = [];
