@@ -1158,7 +1158,9 @@ fragment.appendChild(UI.create("div", function (container) {
 //                    info.tabs = ;
 //                }
 
-                var array = Array.slice(document.getElementsByClassName("tab"));
+                var array = (state.createSearchList)
+                              ? state.createSearchList()
+                              : Array.slice(document.getElementsByClassName("tab"));
 
                 //if (!has) {
 
@@ -1204,6 +1206,8 @@ fragment.appendChild(UI.create("div", function (container) {
                     item.removeAttribute("data-last");
 
                     var children = Array.slice(item.tabList.children);
+
+//                    console.log(item.tabIcon.indexText.value, results.length, results.inverse.length);
 
                     var test = children.some(function (child) {
                         return !child.hasAttribute("hidden");

@@ -25,6 +25,10 @@ document.body.appendChild(UI.create("div", function (element) {
 //            }, 0);
 }));
 
+//state.createSearchList = function () {
+//    return ;
+//};
+
 state.createView = function (windows) {
     var fragment = document.createDocumentFragment();
 
