@@ -3,10 +3,7 @@ body {
     -webkit-user-drag: none;
     -webkit-user-select: none;
 
-
-
     max-width: 100%;
-
 
     padding: 0px;
     margin: 0px;
@@ -19,14 +16,11 @@ body {
 
     cursor: default;
     outline: none !important;
-
 }
+
 [data-selected] {
     outline: 5px auto -webkit-focus-ring-color;
 }
-
-
-
 
 #URL-bar {
     -webkit-box-shadow: gainsboro 1px 1px 5px;
@@ -85,20 +79,16 @@ body {
     width: 100%;
     height: 69px;
     padding: 15px 27px 0px 25px; /** 15px 27px 22px 65px */
-
-
 }
 #toolbar .separator {
     margin: 0px 7px;
 }
 #button-menu {
-
     padding-left: 11px;
     padding-right: 8px;
 
     margin: 0px;
     margin-right: 12px;
-
 }
 #button-menu-arrow {
     margin-left: 6px;
@@ -116,14 +106,11 @@ body {
     -webkit-box-flex: 1;
 
     margin: 0px 7px;
-
 }
 #Undo-bar-div {
     -webkit-transition-property: opacity, visibility;
     -webkit-transition-duration: 1s;
     -webkit-transition-timing-function: ease;
-
-
 
     padding: 2px 5px;
     margin-top: 3px;
@@ -140,7 +127,6 @@ body {
 }
 
 #search-box {
-
     position: relative;
 
     width: 241px; /*! 200px 225px */
@@ -149,37 +135,27 @@ body {
     white-space: nowrap;
 }
 #search-box > input {
-
-
     width: 100%;
     padding: 0px 2px;
     margin: 0px;
 
     border-color: #e1e1e1;
     border-radius: 2px;
-
 }
 #search-past {
     -webkit-box-shadow: dimgray 0px 2px 3px;
-
-
 
     margin: 0px 1px 0px 1px;
 
     background-color: white;
     border: 1px solid dimgray;
 
-
     overflow-x: hidden;
     overflow-y: auto;
-
 }
 .search-past-item {
     display: -webkit-box;
     padding: 1px 6px 3px;
-
-
-
 }
 input[data-special], .search-past-item[data-special] {
     color: darkred;
@@ -212,10 +188,7 @@ input[data-special], .search-past-item[data-special] {
     display: inline;
 }
 
-
 #views-list {
-
-
     position: fixed;
     z-index: 3;
     width: 40px;
@@ -253,7 +226,6 @@ input[data-special], .search-past-item[data-special] {
     cursor: default;
 }
 
-
 .window-list {
     -webkit-box-sizing: border-box;
 
@@ -262,14 +234,12 @@ input[data-special], .search-past-item[data-special] {
     width: 100%;
     height: 100%;
     padding: 70px 0px 30px 18px; /** 70px 0px 30px 58px */
-
 }
 .window {
     -webkit-box-flex: 1;
 
     display: -webkit-box;
     -webkit-box-orient: vertical;
-
 
     padding-right: 32px;
     outline: none;
@@ -279,10 +249,8 @@ input[data-special], .search-past-item[data-special] {
     z-index: 2;
 }
 
-
 .tab-icon-border, .tab-list-border {
     -webkit-box-shadow: gainsboro 0px 1px 7px;
-
 }
 .tab-icon-border, .tab-icon {
     height: 30px;
@@ -291,14 +259,10 @@ input[data-special], .search-past-item[data-special] {
     margin: 7px;
 }
 
-
 .window[data-selected] > .tab-icon-border,
 .window[data-selected] > .tab-list-border {
     outline: 5px auto -webkit-focus-ring-color;
 }
-
-
-
 
 .tab-list-border {
     -webkit-box-flex: 1;
@@ -312,8 +276,6 @@ input[data-special], .search-past-item[data-special] {
 
     border-radius: 4px;
     border-top-left-radius: 0px;
-
-
 }
 .tab-list {
     -webkit-box-flex: 1;
@@ -387,16 +349,13 @@ input[data-special], .search-past-item[data-special] {
 }
 
 .tab-icon-dropdown {
-
     display: none;
 
     width: 17px;
     height: 16px;
 
-
     border: 1px solid transparent;
     border-radius: 5px;
-
 }
 .window[data-focused] .tab-icon-dropdown {
     display: table-cell; /** This fixes a bug with the context menu. */
@@ -407,8 +366,8 @@ input[data-special], .search-past-item[data-special] {
     border: 1px solid gainsboro;
 }
 
+.tab-button-close:active {
     border: 1px inset lightgray;
-
     background-position: center 2px;
 }
 .tab-button-close {
@@ -419,7 +378,6 @@ input[data-special], .search-past-item[data-special] {
 
     border: 1px solid transparent;
     border-radius: 3px;
-
 }
 .tab-button-close[data-display-hover] {
     display: none;
@@ -434,18 +392,16 @@ input[data-special], .search-past-item[data-special] {
 .tab {
     display: -webkit-box;
     /*! display: table;*/
-    
+
     padding: 2px 3px;
     padding-right: 2px;
 
     border: 1px solid transparent;
     border-radius: 3px;
 
-
     cursor: pointer;
     outline: none;
 }
-
 
 .tab-favorite {
     display: none;
@@ -495,29 +451,28 @@ input[data-special], .search-past-item[data-special] {
     border: 1px solid #b7590d;
 }
 .tab[data-selected]:hover {
-
     background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#96e45c), to(#7acb31));
 }
 .tab[data-selected][data-focused]:hover {
     background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#d3e34e), to(#bfbd23));
 }
 .tab[data-focused] {
-    background-color: oldlace; 
+    background-color: oldlace;
     border: 1px solid goldenrod;
 }
 .tab[data-selected] {
     /*! background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(rgba(124, 252, 0, 0.4)), to(rgba(124, 252, 0, 0.5)));*/
     /*! background-image: -webkit-gradient(linear, 0% 0%, 0% 100%,
-        from(transparent),
-        color-stop(0.1, rgba(0, 0, 0, 0.02)),
-        color-stop(0.9, rgba(0, 0, 0, 0.05)),
-        to(rgba(0, 0, 0, 0.1)));*/
+                                       from(transparent),
+                                       color-stop(0.1, rgba(0, 0, 0, 0.02)),
+                                       color-stop(0.9, rgba(0, 0, 0, 0.05)),
+                                       to(rgba(0, 0, 0, 0.1)));*/
     background-image: -webkit-gradient(linear, 0% 0%, 0% 100%,
-        from(transparent),
-        color-stop(0.1, rgba(0, 0, 0, 0.02)),
-        color-stop(0.8, transparent),
-        color-stop(0.9, rgba(0, 0, 0, 0.03)),
-        to(rgba(0, 0, 0, 0.04)));
+                                       from(transparent),
+                                       color-stop(0.1, rgba(0, 0, 0, 0.02)),
+                                       color-stop(0.8, transparent),
+                                       color-stop(0.9, rgba(0, 0, 0, 0.03)),
+                                       to(rgba(0, 0, 0, 0.04)));
 
     /*! background-color: rgba(124, 252, 0, 0.35);*/
     background-color: rgba(114, 255, 0, 0.3); /*! -> d4ffb3 */

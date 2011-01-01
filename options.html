@@ -11,8 +11,6 @@
             .align-right {
                 text-align: right !important;
             }
-
-
         </style>
     </head>
     <body>
@@ -26,7 +24,6 @@
         <script>
             "use strict";
             /*global Options, UI */
-
 
             Options.createContainer(function (container) {
                 function trigger(element) {
@@ -45,14 +42,11 @@
                         container.style.marginLeft = "3px";
                         container.style.height = "25px";
 
-
                         container.appendChild(UI.create("input", function (element) {
                             element.type = "checkbox";
                             element.style.cursor = "pointer";
 
-
                             info.create(element);
-
 
                             function all() {
                                 var boxes = info.container.querySelectorAll("input[type=checkbox]");
@@ -122,6 +116,7 @@
                     });
                 }
 
+
                 var categories = {
                     "Counter": function (container) {
                         container.group(function (container) {
@@ -144,7 +139,6 @@
 
                         container.space({ height: "0.8em" });
 
-
                         container.indent(function (container) {
                             container.header(function (container) {
                                 container.input("number", {
@@ -154,6 +148,7 @@
                                     width: "2em"
                                 });
                             });
+
                             container.indent(function (container) {
                                 container.group(function (container) {
                                     container.input("checkbox", {
@@ -215,9 +210,7 @@
                                 Options.get("counter.state").reset(true);
                             }
                         });
-
                     },
-
 
 
                     "Experimental": function (container) {
@@ -239,10 +232,7 @@
                             option: "popup.close.escape",
                             text: "Use the Escape key to close the popup"
                         });
-
-
                     },
-
 
 
                     "Favorites": function (container) {
@@ -250,19 +240,13 @@
                         var array = [];
                         var rows = {};
 
-
-
                         container["DOM.Element"].style.display = "-webkit-box";
                         container["DOM.Element"].style.webkitBoxOrient = "vertical";
                         container["DOM.Element"].style.webkitBoxPack = "center";
 
-
                         var header = UI.create("div", function (element) {
                             element.style.display = "-webkit-box";
-
                             element.style.padding = "6px 13px 1px 7px";
-
-
                             element.style.fontWeight = "bold";
 
                             element.appendChild(UI.create("div", function (element) {
@@ -271,7 +255,6 @@
                                 element.appendChild(UI.create("input", function (element) {
                                     element.type = "checkbox";
                                     element.style.marginTop = "1px !important";
-
                                 }));
                             }));
 
@@ -292,16 +275,10 @@
                         });
 
                         var table = UI.create("div", function (table) {
-
-
-
                             table.style.webkitBoxFlex = "1";
-
                             table.style.paddingBottom = "6px";
-
                             table.style.overflowX = "hidden";
                             table.style.overflowY = "auto";
-
                             table.style.whiteSpace = "nowrap";
 
                             function makeRow(info) {
@@ -352,8 +329,6 @@
 
                                     container.appendChild(tabs);
 
-
-
     /*!
                                         element.appendChild(UI.create("img", function (element) {
                                             element.src = "/images/button-close.png";
@@ -381,7 +356,6 @@
                                             container.addEventListener("mouseout", hide, true);
                                         }));
     */
-
                                 });
                             }
 
@@ -447,11 +421,9 @@
                         function update(element) {
                             var boxes = table.querySelectorAll("input[type=checkbox]:checked");
 
-
                             if (boxes.length) {
                                 element.checked = true;
                                 remove.disabled = false;
-
 
                                 if (boxes.length !== table.children.length) {
                                     element.style.opacity = "0.5";
@@ -464,6 +436,7 @@
                                 element.style.opacity = "";
                             }
                         }
+
                         container["DOM.Element"].appendChild(checkboxbutton({
                             container: table,
                             create: function (element) {
@@ -473,6 +446,7 @@
                             },
                             update: update
                         }));
+
 
                         remove = container.button({
                             text: "Remove selected",
@@ -493,18 +467,13 @@
                             }
                         });
 
-
                         container.space({ height: "10px" });
-
 
                         container["DOM.Element"].appendChild(UI.create("div", function (element) {
                             element.style.display = "-webkit-box";
                             element.style.webkitBoxFlex = "1";
                             element.style.webkitBoxOrient = "vertical";
-
-
                             element.style.background = "#fefefe"; //* white #f8f8f8
-
                             element.style.border = "1px solid dimgray";
                             element.style.borderRadius = "2px";
 
@@ -518,22 +487,11 @@
                             element.appendChild(placeholder);
                             element.appendChild(table);
                         }));
-
-
-
-
-
-
-
-
-
                     },
-
 
 
                     "Keyboard": function (container) {
                         container.header("Open popup with: ");
-
 
                         container.indent(function (container) {
                             container.input("checkbox", {
@@ -565,20 +523,12 @@
                     },
 
 
-
                     "Macros": function (container) {
                         var macros = Options.get("macros.list");
 
                         container["DOM.Element"].style.display = "-webkit-box";
                         container["DOM.Element"].style.webkitBoxOrient = "vertical";
                         container["DOM.Element"].style.webkitBoxPack = "center";
-
-
-
-
-
-
-
 
                         var placeholder = UI.create("div", function (element) {
                             element.textContent = "You haven't created any macros yet";
@@ -588,10 +538,7 @@
 
                         var table = UI.create("table", function (table) {
                             table.style.width = "100%";
-
-
                             table.style.paddingTop = "5px";
-
                             table.style.whiteSpace = "nowrap";
 
                             function update() {
@@ -612,7 +559,6 @@
                                 list.forEach(function (item) {
                                     table.appendChild(item);
                                 });
-
                             };
 
                             table.removeRow = function (item) {
@@ -629,7 +575,6 @@
                                 update();
 
                                 var row = UI.create("tr", function (container) {
-
                                     container.info = info;
 
                                     var text = UI.create("div", function (element) {
@@ -728,18 +673,14 @@
                                 row.scrollIntoView(true);
                             };
 
-
                             macros.forEach(table.makeRow);
                         });
-
-
 
 
                         var up, down, remove;
 
                         function update(element) {
                             var boxes = table.querySelectorAll("input[type=checkbox]:checked");
-
 
                             if (boxes.length) {
                                 element.checked = true;
@@ -761,6 +702,7 @@
                                 element.style.opacity = "";
                             }
                         }
+
                         container["DOM.Element"].appendChild(checkboxbutton({
                             container: table,
                             create: function (element) {
@@ -779,17 +721,12 @@
                             }
                         });
 
-
                         var wrapper = UI.create("div", function (element) {
                             element.style.webkitBoxFlex = "1";
-
                             element.style.padding = "4px 9px 9px 4px";
-
                             element.style.overflowX = "hidden";
                             element.style.overflowY = "auto";
-
                             element.style.background = "#fefefe"; //* white #f8f8f8
-
                             element.style.border = "1px solid dimgray";
                             element.style.borderRadius = "2px";
 
@@ -802,7 +739,6 @@
                             element.appendChild(placeholder);
                             element.appendChild(table);
                         });
-
 
                         up = container.button({
                             text: "", //* "▲",
@@ -840,7 +776,6 @@
                                             index += 1;
                                         }
                                         macros.splice(index - 1, 0, item.info);
-
                                     }
                                 });
                                 table.updateRows();
@@ -848,7 +783,6 @@
                                 UI.scrollTo(boxes[0], wrapper);
                             }
                         });
-
 
                         down = container.button({
                             text: "", //* "▼",
@@ -868,7 +802,6 @@
                                     event.preventDefault();
                                 }, true);
 
-
                                 element.appendChild(UI.create("img", function (element) {
                                     element.src = "/images/button-down.png";
                                 }));
@@ -884,7 +817,6 @@
                                     if (index !== -1) {
                                         macros.splice(index, 1);
                                         macros.splice(index + boxes.length, 0, item.info);
-
                                     }
                                 });
 
@@ -893,7 +825,6 @@
                                 UI.scrollTo(boxes[boxes.length - 1], wrapper);
                             }
                         });
-
 
                         remove = container.button({
                             text: "Remove selected",
@@ -919,12 +850,10 @@
                             }
                         });
 
-
                         container.space({ height: "10px" });
 
                         container["DOM.Element"].appendChild(wrapper);
                     },
-
 
 
                     "Popup": function (container) {
@@ -947,7 +876,6 @@
 
                         container.separator();
                         container.space({ height: "10px" });
-
 
                         container["DOM.Element"].appendChild(UI.create("table", function (element) {
                             element.style.backgroundColor = "slategray";
@@ -1056,6 +984,7 @@
                                         width: "2.5em"
                                     }));
                                 }));
+
                                 element.appendChild(UI.create("div", function (element) {
                                     element.appendChild(container.input("number", {
                                         option: "popup.offsetY",
@@ -1065,9 +994,9 @@
                                     }));
                                 }));
                             }));
+
                             element.appendChild(UI.create("td", function (element) {
                                 element.className = "align-right";
-
 
                                 element.appendChild(UI.create("div", function (element) {
                                     element.appendChild(container.input("number", {
@@ -1080,6 +1009,7 @@
                                         }
                                     }));
                                 }));
+
                                 element.appendChild(UI.create("div", function (element) {
                                     element.appendChild(container.input("number", {
                                         option: "popup.height",
@@ -1094,7 +1024,6 @@
                             }));
                         }));
                     },
-
 
 
                     "Privacy": function (container) {
@@ -1121,7 +1050,6 @@
                     },
 
 
-
                     "Search": function (container) {
                         container.input("number", {
                             text: "Show ",
@@ -1135,7 +1063,6 @@
                     },
 
 
-
                     "Tabs": function (container) {
                         container.group(function (container) {
                             container.input("dropdown-list", {
@@ -1147,7 +1074,7 @@
                                 }, {
                                     value: "left",
                                     text: "left"
-                                }],
+                                }]
                             });
 
                             container.input("dropdown-list", {
@@ -1183,7 +1110,6 @@
                             });
                         });
                     },
-
 
 
                     "Theme": function (container) {
@@ -1229,17 +1155,16 @@
                             }]
                         });
 
-                            container["DOM.Element"].style.display = "-webkit-box";
-                            container["DOM.Element"].style.webkitBoxOrient = "vertical";
-                            container["DOM.Element"].appendChild(UI.create("iframe", function (element) {
-                                element.style.webkitBoxFlex = "1";
-                                element.style.display = "block";
-                                element.style.border = "none";
-                                element.style.marginTop = "10px";
-                                element.src = "/themes/window-viewer.html";
-                            }));
+                        container["DOM.Element"].style.display = "-webkit-box";
+                        container["DOM.Element"].style.webkitBoxOrient = "vertical";
+                        container["DOM.Element"].appendChild(UI.create("iframe", function (element) {
+                            element.style.webkitBoxFlex = "1";
+                            element.style.display = "block";
+                            element.style.border = "none";
+                            element.style.marginTop = "10px";
+                            element.src = "/themes/window-viewer.html";
+                        }));
                     },
-
 
 
                     "Undo": function (container) {
@@ -1286,6 +1211,7 @@
                         });
                     }
                 };
+
 
                 /**
                  *
@@ -1337,48 +1263,13 @@
 
                     "Favorites",
                     "Macros",
-                    "Experimental",
+                    "Experimental"
+
                 ].forEach(function (name) {
                     container.category(name, function (container) {
                         categories[name](container);
                     });
                 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
             });
         </script>
     </body>

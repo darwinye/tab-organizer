@@ -17,10 +17,10 @@ button.UI-link {
 .UI-contextMenu-submenu-list, .UI-contextMenu {
     -webkit-box-shadow: dimgray 0px 1px 5px; /*! 1px 1px 4px */
 
-    padding: 2px 2px; 
+    padding: 2px 2px;
 
     background-color: white;
-    border: 1px solid dimgray; 
+    border: 1px solid dimgray;
 
     list-style: none;
     cursor: default;
@@ -33,7 +33,6 @@ button.UI-link {
 
     overflow-x: hidden;
     overflow-y: scroll;
-
 }
 
 .UI-contextMenu {
@@ -54,7 +53,7 @@ button.UI-link {
 .UI-contextMenu-separator {
     border: none;
     border-top: 1px solid #dcdcdc; /*! #acacac */
-    margin: 3px 4px; 
+    margin: 3px 4px;
 }
 
 .UI-contextMenu-item {
@@ -63,7 +62,7 @@ button.UI-link {
 
 .UI-contextMenu-item,
 .UI-contextMenu-submenu {
-    padding: 1px 6px 2px; 
+    padding: 1px 6px 2px;
     border: 1px solid transparent;
     color: black;
 }
@@ -87,7 +86,6 @@ button.UI-link {
     padding-left: 9px;
     padding-right: 9px;
 
-
     outline: none !important;
 }
 
@@ -97,7 +95,6 @@ button.UI-link {
     margin-top: 5px;
     margin-right: -4px;
 }
-
 
 
 .UI-contextMenu-submenu-padding {
@@ -119,9 +116,7 @@ button.UI-link {
     margin-right: -21px;
 }
 
-
 .UI-contextMenu-submenu-mask {
-
     position: absolute;
     z-index: 1;
     left: 0px;
@@ -134,6 +129,7 @@ button.UI-link {
     margin-top: -12px;
     margin-left: -12px;
 }
+
 
 .UI-contextMenu-submenu-list,
 .UI-contextMenu-submenu-mask,

@@ -11,8 +11,8 @@
     <script src="/lib/Array.js"></script>
     <script src="/lib/Analytics.js"></script>
     <script>
+        /*global _gaq, Options, Platform */
         "use strict";
-        /*global Options, Platform */
 
         var defaults = {
             "popup.type": "popup",
@@ -76,7 +76,6 @@
         }
 
 
-
         var config = Options.snapshot().user;
         var code = "usage-tracking";
 
@@ -116,8 +115,7 @@
 
             "Theme": ["color.theme"],
 
-            "Undo": ["undo.new-tab", "undo.rename-window", "undo.select-tabs", "undo.move-tabs", "undo.close-tabs", "undo.timer"],
-
+            "Undo": ["undo.new-tab", "undo.rename-window", "undo.select-tabs", "undo.move-tabs", "undo.close-tabs", "undo.timer"]
         };
 
         Object.keys(categories).forEach(function (category) {
@@ -130,18 +128,15 @@
                         } else {
                             _gaq.push(["_trackEvent", category, name, value + ""]);
                         }
-
                     }
                 }
             });
         });
 
 
-
         var state = {};
 
         var counter = Options.get("counter.state");
-
 
         counter.reset = function (should) {
             var reset = Options.get("counter.reset.number");
@@ -173,7 +168,7 @@
                 switch (Options.get("counter.type")) {
                 case "total":
                     value = counter.get("total-number");
-                    if (!value) { 
+                    if (!value) {
                         value = "";
                     }
                     Platform.icon.setBackgroundColor({ color: [0, 0, 0, 255] });
@@ -191,7 +186,6 @@
                         Platform.icon.setBackgroundColor({ color: [0, 100, 0, 255] });
                     }
                 }
-
 
                 Platform.icon.setText({ text: value });
             } else {
@@ -214,7 +208,7 @@
 
             if (Options.get("counter.reset.idle")) {
                 var hours = Options.get("counter.reset.idle.hour") * 60 * 60;
-                chrome.idle.queryState(hours, function (state) {
+                Platform.idle.queryState(hours, function (state) {
                     if (state === "idle") {
                         counter.reset();
                     }
@@ -253,7 +247,6 @@
                 }
                 Platform.tabs.addEventListener("create", add, true);
                 Platform.tabs.addEventListener("remove", subtract, true);
-
             });
         }, true);
 
@@ -310,8 +303,6 @@
         updateTitle();
 
 
-
-
         var openPopup = (function () {
             function popup(url, info, options) {
                 info = Object(info);
@@ -329,7 +320,6 @@
             }
 
             return function () {
-
                 if (state.opened) {
                     Platform.tabs.remove(state.opened.id);
                 }
@@ -380,19 +370,11 @@
             if (state.opened && state.opened.id === id) {
                 delete state.opened;
             }
-
         }, true);
-
 
 
         (function () {
             var visitedByURL = Options.get("tabs.visited.byURL");
-
-            function add(url) {
-
-                visitedByURL.set(url, Date.now());
-            }
-
 
             var offset = Date.now() - 1000 * 60 * 60 * 24 * 7;
 
@@ -404,11 +386,16 @@
             });
 
 
+            function add(url) {
+                visitedByURL.set(url, Date.now());
+            }
+
             Platform.tabs.addEventListener("focus", function (id) {
                 Platform.tabs.get(id, function (tab) {
                     add(tab.url);
                 });
             }, true);
+
             Platform.tabs.addEventListener("update", function (id, info, tab) {
                 if (tab.status === "loading" && tab.selected) {
                     add(tab.url);
@@ -418,7 +405,6 @@
 
         Platform.windows.addEventListener("focus", function (win) {
             if (win !== null) {
-
                 Platform.windows.get(win, function (win) {
                     if (win.type === "normal") {
                         Options.set("window.lastfocused", win.id);
@@ -429,11 +415,8 @@
 
         Platform.message.addEventListener("lib.keyboard", function (event) {
             if (event.type === "keyup") {
-
-
                 var ctrl = Options.get("popup.hotkey.ctrl");
                 var letter = String.fromCharCode(event.which);
-
 
                 if (event.ctrlKey === ctrl || event.metaKey === ctrl) {
                     if (event.shiftKey === Options.get("popup.hotkey.shift")) {

@@ -29,11 +29,13 @@
 <body>
     <script src="/lib/UI%20Helper.js"></script>
     <script>
+        /*global UI */
+
         (function () {
+            "use strict";
+
             var list = document.createElement("div");
             list.className = "window-list";
-
-
 
             var index = 1;
 
@@ -42,46 +44,53 @@
 
                 list.appendChild(UI.create("div", function (element) {
                     element.className = "window";
+
                     if (info.selected) {
                         element.setAttribute("data-focused", "");
                     }
                     if (info.last) {
                         element.setAttribute("data-last", "");
                     }
-                                element.appendChild(UI.create("div", function (element) {
-                                    element.className = "tab-icon-border";
-                                    element.appendChild(UI.create("div", function (element) {
-                                        element.className = "tab-icon-container";
-                                        element.appendChild(UI.create("div", function (element) {
-                                            element.className = "tab-icon";
-                                                        element.appendChild(UI.create("input", function (element) {
-                                                            element.className = "tab-icon-text";
-                                                                element.value = index; 
-                                                            index += 1;
 
-                                                            element.setAttribute("spellcheck", "false");
-                                                        }));
-                                                        element.appendChild(UI.create("div", function (element) {
-                                                            element.className = "tab-icon-dropdown";
-                                                        }));
-                                        }));
-                                    }));
+                    element.appendChild(UI.create("div", function (element) {
+                        element.className = "tab-icon-border";
+
+                        element.appendChild(UI.create("div", function (element) {
+                            element.className = "tab-icon-container";
+
+                            element.appendChild(UI.create("div", function (element) {
+                                element.className = "tab-icon";
+
+                                element.appendChild(UI.create("input", function (element) {
+                                    element.className = "tab-icon-text";
+                                    element.value = index;
+
+                                    index += 1;
+
+                                    element.setAttribute("spellcheck", "false");
                                 }));
-                                    element.appendChild(UI.create("div", function (element) {
-                                        element.className = "tab-list-border";
-                                        element.appendChild(UI.create("div", function (element) {
-                                            element.className = "tab-list";
-                                        }));
-                                    }));
+
+                                element.appendChild(UI.create("div", function (element) {
+                                    element.className = "tab-icon-dropdown";
+                                }));
+                            }));
+                        }));
+                    }));
+
+                    element.appendChild(UI.create("div", function (element) {
+                        element.className = "tab-list-border";
+
+                        element.appendChild(UI.create("div", function (element) {
+                            element.className = "tab-list";
+                        }));
+                    }));
                 }));
             }
             makeWindow({ selected: true });
             makeWindow({ last: true });
 
-
             document.body.appendChild(list);
         }());
-
     </script>
 </body>
 </html>

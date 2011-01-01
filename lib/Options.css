@@ -44,10 +44,10 @@ button.Options-button {
 
     background-color: #feffff;
     background-image: -webkit-gradient(linear, 0% 0%, 0% 100%,
-        from(transparent),
-        color-stop(0.2, rgba(0, 0, 0, 0.04)),
-        color-stop(0.7, rgba(0, 0, 0, 0.05)),
-        to(rgba(0, 0, 0, 0.1)));
+                                       from(transparent),
+                                       color-stop(0.2, rgba(0, 0, 0, 0.04)),
+                                       color-stop(0.7, rgba(0, 0, 0, 0.05)),
+                                       to(rgba(0, 0, 0, 0.1)));
 
     vertical-align: middle;
     cursor: pointer;
@@ -63,10 +63,10 @@ button.Options-button:not(:disabled):active {
     border: 1px inset dimgray;
 
     background-image: -webkit-gradient(linear, 0% 100%, 0% 0%,
-        from(transparent),
-        color-stop(0.05, rgba(0, 0, 0, 0.05)),
-        color-stop(0.95, rgba(0, 0, 0, 0.05)),
-        to(rgba(0, 0, 0, 0.1)));
+                                       from(transparent),
+                                       color-stop(0.05, rgba(0, 0, 0, 0.05)),
+                                       color-stop(0.95, rgba(0, 0, 0, 0.05)),
+                                       to(rgba(0, 0, 0, 0.1)));
 }
 button.Options-button:disabled {
     cursor: default;
@@ -140,16 +140,14 @@ input[type="radio"][data-options-changed] + span {
 
     background-color: #feffff;
     background-image: -webkit-gradient(linear, 0% 0%, 0% 100%,
-        from(transparent),
-        color-stop(0.2, rgba(0, 0, 0, 0.04)),
-        color-stop(0.7, rgba(0, 0, 0, 0.05)),
-        to(rgba(0, 0, 0, 0.1)));
+                                       from(transparent),
+                                       color-stop(0.2, rgba(0, 0, 0, 0.04)),
+                                       color-stop(0.7, rgba(0, 0, 0, 0.05)),
+                                       to(rgba(0, 0, 0, 0.1)));
 }
 
 
 #Options-root {
-
-
     position: absolute;
     top: 0px;
     left: 0px;
@@ -157,7 +155,9 @@ input[type="radio"][data-options-changed] + span {
     height: 100%;
 
     background: #6BACCF repeat-x top left;
-    background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(rgba(0, 0, 0, 0.1)), to(transparent));
+    background-image: -webkit-gradient(linear, 0% 0%, 0% 100%,
+                                       from(rgba(0, 0, 0, 0.1)),
+                                       to(transparent));
 
     cursor: default;
 }
@@ -186,8 +186,6 @@ input[type="radio"][data-options-changed] + span {
     letter-spacing: 2px;
 }
 #Options-inner {
-
-
     width: 100%;
     height: 100%;
     max-height: 600px;
@@ -196,7 +194,6 @@ input[type="radio"][data-options-changed] + span {
     padding: 0px 0px 15px;
     border-bottom: 1px inset #eeeeee;
 
-
     vertical-align: top;
 }
 #Options-inner hr {
@@ -204,14 +201,13 @@ input[type="radio"][data-options-changed] + span {
     border-left: none;
 }
 #Options-list {
-
     position: relative;
     z-index: 9001;
 
     height: 100%;
     padding: 0px;
     margin: 0px;
-    margin-right: 18px; 
+    margin-right: 18px;
 
     background-color: #f9fcff;
     background-color: white;
@@ -229,7 +225,9 @@ input[type="radio"][data-options-changed] + span {
     cursor: pointer;
 }
 .Options-list-item[data-selected] {
-    background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(rgb(153, 197, 251)), to(rgb(95, 160, 240)));
+    background-image: -webkit-gradient(linear, 0% 0%, 0% 100%,
+                                       from(rgb(153, 197, 251)),
+                                       to(rgb(95, 160, 240)));
     border-color: dimgray;
     color: white;
 

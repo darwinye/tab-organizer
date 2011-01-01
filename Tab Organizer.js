@@ -1,7 +1,9 @@
-"use strict";
 /*global action, events, Options, Platform, state, UI, Undo, window */
+"use strict";
 
-var Tab = {
+var Tab, Window;
+
+Tab = {
     focus: function (tab) {
         Platform.tabs.focus(tab);
 
@@ -11,6 +13,8 @@ var Tab = {
             });
         }
     },
+
+
     move: function (item, info, action) {
         var tab = item.tab;
         Platform.tabs.move(tab.id, info, function () {
@@ -22,27 +26,28 @@ var Tab = {
             });
         });
     },
+
+
     proxy: function (tab) {
         return UI.create("div", function (container) {
             container.className = "tab";
             container.draggable = true;
-
+            container.tab = tab;
+            container.undoState = {};
 
             if (state.favorites.get(tab.url)) {
                 container.setAttribute("data-favorited", "");
             }
-
             if (tab.pinned) {
                 container.setAttribute("data-pinned", "");
             }
+            if (tab.selected) {
+                container.setAttribute("data-focused", "");
+            }
 
             state.tabsByURL.add(tab.url, container);
-
-
             state.tabsByID[tab.id] = container;
-            container.tab = tab;
 
-            container.undoState = {};
 
             container.queueAdd = function () {
                 var is = container.parentNode.queue.add(container);
@@ -52,6 +57,7 @@ var Tab = {
 
                 state.search();
             };
+
             container.queueRemove = function () {
                 var is = container.parentNode.queue.remove(container);
                 container.undoState.selected = is;
@@ -60,6 +66,7 @@ var Tab = {
 
                 state.search();
             };
+
             container.queueToggle = function () {
                 var toggle = container.parentNode.queue.toggle(container);
                 container.undoState.selected = toggle;
@@ -75,51 +82,51 @@ var Tab = {
 
             container.addEventListener("DOMNodeRemovedFromDocument", container.queueRemove, true); //! Hacky
 
-            if (tab.selected) {
-                container.setAttribute("data-focused", "");
-            }
 
             var url = UI.create("span", function (element) {
-
                 var url = decodeURI(tab.url);
                 var match = /^([^:]+)(:\/\/)([^\/]*)([^?#]*\/)([^#]*)(#.*)?$/.exec(url);
                 var secure = {
                     "https": true
                 };
 
-
                 if (match) {
-                        if (match[1] !== "http") {
-                            element.appendChild(UI.create("span", function (element) {
-                                element.className = "protocol";
-                                if (secure[match[1]]) {
-                                    element.setAttribute("data-secure", "");
-                                }
-                                element.textContent = match[1];
-                            }));
-                            element.appendChild(document.createTextNode(match[2]));
-                        }
+                    if (match[1] !== "http") {
                         element.appendChild(UI.create("span", function (element) {
-                            element.className = "domain";
-                            element.textContent = match[3];
+                            element.className = "protocol";
+                            if (secure[match[1]]) {
+                                element.setAttribute("data-secure", "");
+                            }
+                            element.textContent = match[1];
                         }));
+                        element.appendChild(document.createTextNode(match[2]));
+                    }
+                    element.appendChild(UI.create("span", function (element) {
+                        element.className = "domain";
+                        element.textContent = match[3];
+                    }));
 
-                        element.appendChild(document.createTextNode(match[4]));
+                    element.appendChild(document.createTextNode(match[4]));
 
-                        if (match[5]) {
-                            element.appendChild(UI.create("span", function (element) {
-                                element.className = "query";
-                                element.textContent = match[5];
-                            }));
-                        }
-                        if (match[6]) {
-                            element.appendChild(UI.create("span", function (element) {
-                                element.className = "fragment";
-                                element.textContent = match[6];
-                            }));
-                        }
+                    if (match[5]) {
+                        element.appendChild(UI.create("span", function (element) {
+                            element.className = "query";
+                            element.textContent = match[5];
+                        }));
+                    }
+                    if (match[6]) {
+                        element.appendChild(UI.create("span", function (element) {
+                            element.className = "fragment";
+                            element.textContent = match[6];
+                        }));
+                    }
                 }
             });
+
+            container.addEventListener("mouseout", function (event) {
+                state.urlBar.setAttribute("hidden", "");
+            }, true);
+
             container.addEventListener("mouseover", function (event) {
                 var bar = state.urlBar;
 
@@ -130,12 +137,9 @@ var Tab = {
 
                 bar.removeAttribute("hidden");
             }, true);
-            container.addEventListener("mouseout", function (event) {
-                state.urlBar.setAttribute("hidden", "");
-            }, true);
+
 
             container.addEventListener("click", function (event) {
-
                 var range, parent = this.parentNode;
 
                 if (event.button === 0) {
@@ -147,11 +151,8 @@ var Tab = {
                         } else {
                             delete parent.queue.shiftNode;
                         }
-
-
                     } else if (event.shiftKey) {
                         parent.queue.reset();
-
 
                         if (parent.queue.shiftNode) {
 
@@ -172,11 +173,13 @@ var Tab = {
                                         list: range
                                     });
 
-                                    if (range.length === 1) {
-                                        state.undoBar.show("You selected " + range.length + " tab.");
-                                    } else {
-                                        state.undoBar.show("You selected " + range.length + " tabs.");
-                                    }
+                                    var text = "You selected " +
+                                                range.length +
+                                                (range.length === 1
+                                                    ? " tab."
+                                                    : " tabs.");
+
+                                    state.undoBar.show(text);
                                 }
                             } else {
                                 delete parent.queue.shiftNode;
@@ -184,21 +187,16 @@ var Tab = {
                         } else {
                             parent.queue.shiftNode = this;
                             this.queueAdd();
-
                         }
                     } else if (event.altKey) {
                         Platform.tabs.remove(tab.id);
                     } else {
                         switch (Options.get("tabs.click.type")) {
                         case "select-focus":
-
                             if (this.hasAttribute("data-selected")) {
-
                                 Tab.focus(container.tab);
                             } else {
                                 parent.queue.reset();
-
-
                                 parent.queue.shiftNode = this;
                                 this.queueAdd();
                             }
@@ -213,6 +211,7 @@ var Tab = {
                     }
                 }
             }, false);
+
             container.addEventListener("mouseup", function (event) {
                 if (event.button === 1) {
                     Platform.tabs.remove(tab.id);
@@ -221,16 +220,12 @@ var Tab = {
 
 
             container.addEventListener("dragover", function swapnodes(event) {
-
-                    var parent = this.parentNode;
-                        if (event.offsetY < (this.offsetHeight / 2)) {
-                            parent.insertBefore(state.placeholder, this);
-                        } else {
-                            parent.insertBefore(state.placeholder, this.nextSibling);
-                        }
-
-
-
+                var parent = this.parentNode;
+                if (event.offsetY < (this.offsetHeight / 2)) {
+                    parent.insertBefore(state.placeholder, this);
+                } else {
+                    parent.insertBefore(state.placeholder, this.nextSibling);
+                }
             }, true);
 
 
@@ -249,19 +244,8 @@ var Tab = {
                 if (!state.currentQueue.length) {
                     state.currentQueue.add(state.highlighted);
                 }
-
-
-
-
-
-
-
-
-
-
-
-
             }, true);
+
             /*! container.addEventListener("dragend", function (event) {
                 container.addEventListener("dragover", events.disable, true);
             }, true);*/
@@ -290,13 +274,10 @@ var Tab = {
                     element.addEventListener("click", function () {
                         if (container.hasAttribute("data-favorited")) {
                             state.favorites.set(tab.url, null);
-
                         } else {
                             state.favorites.set(tab.url, state.tabsByURL[tab.url].length);
-
                         }
                     }, true);
-
                 }),
                 text: UI.create("div", function (element) {
                     element.className = "tab-text";
@@ -304,7 +285,6 @@ var Tab = {
                     element.textContent = text;
 
                     container.tabText = element;
-
 
                     /*! container.addEventListener("dblclick", function (event) {
                         if (false) {
@@ -342,17 +322,14 @@ var Tab = {
                 close: UI.create("div", function (element) {
                     element.className = "tab-button-close";
                     element.title = "Close (Alt Click)";
+                    element.draggable = true;
 
-                        element.draggable = true;
+                    element.addEventListener("dragstart", events.disable, true);
 
-                        element.addEventListener("dragstart", events.disable, true);
-
-                        element.addEventListener("click", function (event) {
-                            event.stopPropagation();
-                            Platform.tabs.remove(tab.id);
-                        }, true);
-
-                    
+                    element.addEventListener("click", function (event) {
+                        event.stopPropagation();
+                        Platform.tabs.remove(tab.id);
+                    }, true);
                 })
             };
 
@@ -372,7 +349,6 @@ var Tab = {
 
                 switch (Options.get("tabs.close.display")) {
                 case "hover":
-
                     cell.close.setAttribute("data-display-hover", "");
                     break;
                 case "focused":
@@ -400,26 +376,15 @@ var Tab = {
             container.updateButtonPositions();
         });
     }
-
-
-
-
-
-
-
-
 };
 
 
 
-var Window = {
+Window = {
     create: function (array, info) {
         info = Object(info);
 
-
         Platform.windows.create({ url: "lib/remove.html" }, function (win) {
-
-
             if (info.title) {
                 var proxy = state.windows[win.id];
                 proxy.tabIcon.indexText.value = info.title;
@@ -437,8 +402,9 @@ var Window = {
             }
         });
     },
-    proxy: function (win) {
 
+
+    proxy: function (win) {
         var fragment = document.createDocumentFragment();
 
         fragment.appendChild(UI.create("div", function (container) {
@@ -456,7 +422,6 @@ var Window = {
                 //! UI.scrollIntoView(container.tabList, document.body, 41);
             }
 
-
             container.select = function () {
                 action.unselectWindow();
 
@@ -473,11 +438,7 @@ var Window = {
             };
 
             container.setWindowFocus = function () {
-
                 container.select();
-
-
-
                 scrollTo();
             };
 
@@ -487,12 +448,12 @@ var Window = {
 
                 container.unselect();
             }, true);
-            container.addEventListener("focus", function (event) {
 
-                    /*! if (!state.dragging) {
-                        scrollTo.call(this);
-                    }*/
-                
+            container.addEventListener("focus", function (event) {
+                /*! if (!state.dragging) {
+                    scrollTo.call(this);
+                }*/
+
                 this.setAttribute("data-selected", "");
 
                 container.select();
@@ -506,23 +467,17 @@ var Window = {
                     return;
                 }
 
-
-
                 if (event.which === 38 || event.which === 40) { //* Up/Down
                     query = this.querySelector(".tab[data-focused]");
                     if (query) {
-                        var element = (event.which === 38) ?
-                            query.previousSibling :
-                            query.nextSibling;
+                        var element = (event.which === 38
+                                        ? query.previousSibling
+                                        : query.nextSibling);
 
                         if (element) {
                             event.preventDefault();
 
-
-
-
                             Tab.focus(element.tab);
-
                         }
                     }
                 } else if (event.which === 32 || event.which === 13) { //* Space/Enter
@@ -551,9 +506,11 @@ var Window = {
 
             container.addEventListener("dragenter", container.focus, true);
             container.addEventListener("dragover", events.disable, true);
+
             container.addEventListener("dragenter", function (event) {
                 var list = this.tabList;
                 var coords = list.getBoundingClientRect();
+
                 if (!list.contains(event.target)) {
                     if (event.clientX > coords.left && event.clientX < coords.right) {
                         if (event.clientY < coords.top) {
@@ -563,487 +520,455 @@ var Window = {
                         }
                     }
                 }
-
-
-                
             }, true);
+
             container.addEventListener("drop", function (event) {
-                    var index = Array.indexOf(this.tabList.children, state.placeholder);
+                var index = Array.indexOf(this.tabList.children, state.placeholder);
 
-                        state.currentQueue.moveTabs(win.id, index);
-                        state.currentQueue.reset();
-                        delete state.currentQueue.shiftNode;
+                state.currentQueue.moveTabs(win.id, index);
+                state.currentQueue.reset();
+                delete state.currentQueue.shiftNode;
             }, true);
 
 
+            container.appendChild(UI.create("div", function (element) {
+                element.className = "tab-icon-border";
+
+                function invalid(element, event) {
+                    var box = element.getBoundingClientRect();
+
+                    var height = event.pageY > box.bottom;
+                    var options = !Options.get("windows.middle-close");
+                    var selected = !container.hasAttribute("data-selected");
+
+                    return height || options || selected;
+                }
+
+                element.addEventListener("mousedown", function (event) {
+                    if (invalid(this, event)) {
+                        return;
+                    }
+
+                    if (event.button === 1) {
+                        Platform.windows.remove(win.id);
+                    }
+                }, true);
+
+                element.appendChild(UI.create("div", function (stack) {
+                    stack.className = "tab-icon-container";
+
+                    stack.appendChild(UI.create("div", function (icon) {
+                        icon.className = "tab-icon";
+
+                        container.tabIcon = icon;
+
+                        icon.appendChild(UI.create("input", function (element) {
+                            element.setAttribute("spellcheck", "false");
+                            element.className = "tab-icon-text";
+                            element.type = "text";
+                            element.tabIndex = -1;
+
+                            icon.indexText = element;
 
 
-                        container.appendChild(UI.create("div", function (element) {
-                            element.className = "tab-icon-border";
+                            var value, index = state.list.indexOf(container);
 
-                            function invalid(element, event) {
-                                var box = element.getBoundingClientRect();
-
-                                var height = event.pageY > box.bottom;
-                                var options = !Options.get("windows.middle-close");
-                                var selected = !container.hasAttribute("data-selected");
-
-                                return height || options || selected;
-                            }
+                            element.value = action.returnTitle(index);
 
                             element.addEventListener("mousedown", function (event) {
-                                if (invalid(this, event)) {
-                                    return;
-                                }
+                                if (container.hasAttribute("data-focused")) {
+                                    element.addEventListener("click", element.select, true);
+                                } else {
+                                    element.removeEventListener("click", element.select, true);
+                                    container.focus();
 
-                                if (event.button === 1) {
-                                    Platform.windows.remove(win.id);
+                                    event.preventDefault();
                                 }
                             }, true);
 
-                            element.appendChild(UI.create("div", function (stack) {
-                                stack.className = "tab-icon-container";
-
-                                stack.appendChild(UI.create("div", function (icon) {
-                                    icon.className = "tab-icon";
-
-                                    container.tabIcon = icon;
-
-
-
-                                            icon.appendChild(UI.create("input", function (element) {
-                                                element.setAttribute("spellcheck", "false");
-                                                element.className = "tab-icon-text";
-                                                element.type = "text";
-                                                element.tabIndex = -1;
-
-                                                icon.indexText = element;
-
-
-                                                var value, index = state.list.indexOf(container);
-
-                                                    element.value = action.returnTitle(index);
-
-                                                    element.addEventListener("mousedown", function (event) {
-                                                        if (container.hasAttribute("data-focused")) {
-                                                            element.addEventListener("click", element.select, true);
-                                                        } else {
-                                                            element.removeEventListener("click", element.select, true);
-                                                            container.focus();
-
-                                                            event.preventDefault();
-                                                        }
-                                                    }, true);
-                                                    element.addEventListener("focus", function (event) {
-                                                        value = this.value;
-                                                    }, true);
-                                                    element.addEventListener("blur", function (event) {
-                                                        if (this.value) {
-                                                            state.titles[index] = this.value;
-                                                        } else {
-                                                            delete state.titles[index];
-                                                        }
-                                                        this.value = action.returnTitle(index);
-
-                                                        if (this.value !== value) {
-                                                            if (Options.get("undo.rename-window")) {
-                                                                Undo.push("rename-window", {
-                                                                    focus: container.tabList,
-                                                                    value: value,
-                                                                    index: index,
-                                                                    node: this
-                                                                });
-                                                                state.undoBar.show("You renamed the window \"" + 
-                                                                    this.value + "\".");
-                                                            }
-                                                        }
-
-                                                    }, true);
-                                                    element.addEventListener("keydown", function (event) {
-                                                        if (event.which === 27) { //* Escape
-                                                            event.preventDefault();
-                                                        }
-                                                    }, true);
-                                                    element.addEventListener("keyup", function (event) {
-                                                        if (event.which === 13 || event.which === 27) { //* Enter/Escape
-                                                            if (event.which === 27) { //* Escape
-                                                                this.value = value;
-
-                                                                container.tabList.focus();
-                                                                //! container.tabList.focus();
-                                                            }
-                                                            this.blur();
-                                                        }
-                                                    }, true);
-                                            }));
-
-                                            icon.appendChild(UI.create("div", function (element) {
-                                                element.className = "tab-icon-dropdown";
-                                                element.title = "Open menu (Ctrl M)";
-
-                                                var contextMenu = UI.contextMenu(function (menu) {
-
-                                                    element.addEventListener("mousedown", function (event) {
-                                                        if (event.button !== 2) {
-                                                            menu.show();
-                                                        }
-                                                    }, true);
-
-                                                    container.addEventListener("contextmenu", function (event) {
-                                                        if (event.target.localName === "input") {
-                                                            return;
-                                                        } else if (event.defaultPrevented) {
-                                                            return;
-                                                        }
-
-                                                        event.preventDefault();
-
-
-
-
-                                                        menu.show({
-                                                            x: event.clientX,
-                                                            y: event.clientY
-
-
-                                                        });
-                                                    }, false);
-
-                                                    container.addEventListener("keypress", function (event) {
-                                                        if (event.which === 13 && (event.ctrlKey || event.metaKey)) {
-                                                            if (!event.altKey && !event.shiftKey) {
-                                                                menu.show();
-                                                            }
-                                                        }
-                                                    }, true);
-
-
-                                                    /*! menu.addItem("<u>B</u>ack", function () {
-                                                        alert("Back");
-                                                    }).disable();
-                                                    menu.addItem("<u>F</u>orward", function () {
-                                                        alert("Forward");
-                                                    }).disable();
-                                                    menu.addItem("Re<u>l</u>oad");
-                                                    menu.separator();
-                                                    menu.addItem("Save <u>A</u>s...");
-                                                    menu.addItem("P<u>r</u>int...");
-                                                    menu.addItem("<u>T</u>ranslate to English").disable();
-                                                    menu.addItem("<u>V</u>iew Page Source");
-                                                    menu.addItem("View Page <u>I</u>nfo");
-                                                    menu.separator();
-                                                    menu.addItem("I<u>n</u>spect Element");
-                                                    menu.separator();
-                                                    menu.addItem("Input <u>M</u>ethods").disable();
-                                                    return;*/
-
-                                                    menu.addItem("New <u>T</u>ab", {
-                                                        keys: ["T"],
-                                                        action: function () {
-                                                            Platform.tabs.create({
-                                                                windowId: win.id
-                                                            }, function (tab) {
-                                                                if (Options.get("undo.new-tab")) {
-                                                                    Undo.push("new-tab", {
-                                                                        id: tab.id
-                                                                    });
-                                                                    state.undoBar.show("You created a new tab.");
-                                                                }
-                                                            });
-                                                        }
-                                                    });
-
-                                                    menu.separator();
-
-                                                    menu.addItem("<u>R</u>ename window", {
-                                                        keys: ["R"],
-                                                        action: function (event) {
-                                                            event.preventDefault();
-                                                            container.tabIcon.indexText.select();
-                                                        }
-                                                    });
-
-                                                    menu.separator();
-
-                                                    menu.addItem("Select <u>a</u>ll", {
-                                                        keys: ["A"],
-                                                        onshow: function (menu) {
-                                                            var queue = container.tabList.queue.length;
-                                                            var tabs = container.tabList.children.length;
-
-                                                            if (queue === tabs) {
-                                                                menu.disable();
-                                                            } else {
-                                                                menu.enable();
-                                                            }
-                                                        },
-                                                        action: function () {
-                                                            var range = [];
-
-                                                            Array.slice(container.tabList.children).forEach(function (item) {
-                                                                if (!item.hasAttribute("hidden")) {
-                                                                    if (!item.hasAttribute("data-selected")) {
-                                                                        range.push(item);
-                                                                        item.queueAdd();
-                                                                    }
-                                                                }
-                                                            });
-
-                                                            if (Options.get("undo.select-tabs")) {
-                                                                if (range.length) {
-                                                                    Undo.push("select-tabs", {
-                                                                        queue: container.tabList.queue,
-                                                                        type: "select",
-                                                                        list: range
-                                                                    });
-
-                                                                    if (range.length === 1) {
-                                                                        state.undoBar.show("You selected " + range.length + " tab.");
-                                                                    } else {
-                                                                        state.undoBar.show("You selected " + range.length + " tabs.");
-                                                                    }
-                                                                }
-                                                            }
-                                                            delete container.tabList.queue.shiftNode;
-                                                        }
-                                                    });
-                                                    menu.addItem("Select <u>n</u>one", {
-                                                        keys: ["N"],
-                                                        onshow: function (menu) {
-                                                            if (container.tabList.queue.length) {
-                                                                menu.enable();
-                                                            } else {
-                                                                menu.disable();
-                                                            }
-                                                        },
-                                                        action: function () {
-                                                            var range = [];
-
-                                                            Array.slice(container.tabList.children).forEach(function (item) {
-                                                                if (!item.hasAttribute("hidden")) {
-                                                                    if (item.hasAttribute("data-selected")) {
-                                                                        range.push(item);
-                                                                        item.queueRemove();
-                                                                    }
-                                                                }
-                                                            });
-
-                                                            if (Options.get("undo.select-tabs")) {
-                                                                if (range.length) {
-                                                                    Undo.push("select-tabs", {
-                                                                        queue: container.tabList.queue,
-                                                                        type: "unselect",
-                                                                        list: range
-                                                                    });
-
-                                                                    if (range.length === 1) {
-                                                                        state.undoBar.show("You unselected " + range.length + " tab.");
-                                                                    } else {
-                                                                        state.undoBar.show("You unselected " + range.length + " tabs.");
-                                                                    }
-                                                                }
-                                                            }
-                                                            delete container.tabList.queue.shiftNode;
-                                                        }
-                                                    });
-
-                                                    menu.separator();
-
-                                                    menu.submenu("<u>S</u>elected...", {
-                                                        keys: ["S"],
-                                                        onshow: function (menu) {
-                                                            if (container.tabList.queue.length) {
-                                                                menu.enable();
-                                                            } else {
-                                                                menu.disable();
-                                                            }
-                                                        },
-                                                        create: function (menu) {
-                                                            menu.addItem("Re<u>l</u>oad selected", {
-                                                                keys: ["L"],
-                                                                action: function () {
-                                                                    container.tabList.queue.forEach(function (item) {
-                                                                        Platform.tabs.update(item.tab.id, {
-                                                                            url: item.tab.url
-                                                                        });
-                                                                    });
-
-                                                                    container.tabList.queue.reset();
-                                                                }
-                                                            });
-
-
-                                                            menu.addItem("<u>C</u>lose selected", {
-                                                                keys: ["C"],
-                                                                action: function () {
-                                                                    container.tabList.queue.forEach(function (item) {
-                                                                        Platform.tabs.remove(item.tab.id);
-                                                                    });
-                                                                    container.tabList.queue.reset();
-                                                                    delete container.tabList.queue.shiftNode;
-                                                                }
-                                                            });
-
-                                                            menu.separator();
-
-                                                            menu.addItem("<u>F</u>avorite selected", {
-                                                                keys: ["F"],
-                                                                onshow: function (menu) {
-                                                                    var some = container.tabList.queue.some(function (item) {
-                                                                        return !item.hasAttribute("data-favorited");
-                                                                    });
-
-                                                                    if (some) {
-                                                                        menu.enable();
-                                                                    } else {
-                                                                        menu.disable();
-                                                                    }
-                                                                },
-                                                                action: function () {
-
-                                                                    container.tabList.queue.forEach(function (item) {
-                                                                        var url = item.tab.url;
-                                                                        state.favorites.set(url, state.tabsByURL[url].length);
-                                                                    });
-
-                                                                    container.tabList.queue.reset();
-
-                                                                }
-                                                            });
-
-                                                            menu.addItem("<u>U</u>nfavorite selected", {
-                                                                keys: ["U"],
-                                                                onshow: function (menu) {
-                                                                    var some = container.tabList.queue.some(function (item) {
-                                                                        return item.hasAttribute("data-favorited");
-                                                                    });
-
-                                                                    if (some) {
-                                                                        menu.enable();
-                                                                    } else {
-                                                                        menu.disable();
-                                                                    }
-                                                                },
-                                                                action: function () {
-
-                                                                    container.tabList.queue.forEach(function (item) {
-                                                                        state.favorites.set(item.tab.url, null);
-                                                                    });
-
-                                                                    container.tabList.queue.reset();
-
-                                                                }
-                                                            });
-
-
-
-
-                                                        }
-                                                    });
-
-                                                    menu.separator();
-
-
-                                                    menu.submenu("<u>M</u>ove selected to...", {
-                                                        keys: ["M"],
-                                                        onshow: function (menu) {
-                                                            if (container.tabList.queue.length) {
-                                                                menu.enable();
-                                                            } else {
-                                                                menu.disable();
-                                                            }
-                                                        },
-                                                        onopen: function (menu) {
-                                                            menu.clear();
-
-                                                            menu.addItem("New Window", {
-                                                                action: function () {
-                                                                    Window.create(container.tabList.queue);
-                                                                }
-                                                            });
-
-                                                            if (state.list.length) {
-                                                                menu.separator();
-
-                                                                state.list.forEach(function (item, i) {
-                                                                    var name = item.tabIcon.indexText.value;
-                                                                    if (item === container) {
-                                                                        name = "<strong>" + name + "</strong>";
-                                                                    }
-
-                                                                    menu.addItem(name, {
-                                                                        action: function () {
-                                                                            container.tabList.queue.moveTabs(item.window.id);
-                                                                            container.tabList.queue.reset();
-                                                                            delete container.tabList.queue.shiftNode;
-                                                                        }
-                                                                    });
-
-                                                                });
-                                                            }
-
-                                                        }
+                            element.addEventListener("focus", function (event) {
+                                value = this.value;
+                            }, true);
+
+                            element.addEventListener("blur", function (event) {
+                                if (this.value) {
+                                    state.titles[index] = this.value;
+                                } else {
+                                    delete state.titles[index];
+                                }
+                                this.value = action.returnTitle(index);
+
+                                if (this.value !== value) {
+                                    if (Options.get("undo.rename-window")) {
+                                        Undo.push("rename-window", {
+                                            focus: container.tabList,
+                                            value: value,
+                                            index: index,
+                                            node: this
+                                        });
+
+                                        var text =
+                                                "You renamed the window \"" +
+                                                this.value +
+                                                "\".";
+
+                                        state.undoBar.show(text);
+                                    }
+                                }
+                            }, true);
+
+                            element.addEventListener("keydown", function (event) {
+                                if (event.which === 27) { //* Escape
+                                    event.preventDefault();
+                                }
+                            }, true);
+
+                            element.addEventListener("keyup", function (event) {
+                                if (event.which === 13 || event.which === 27) { //* Enter/Escape
+                                    if (event.which === 27) { //* Escape
+                                        this.value = value;
+
+                                        container.tabList.focus();
+                                        //! container.tabList.focus();
+                                    }
+                                    this.blur();
+                                }
+                            }, true);
+                        }));
+
+                        icon.appendChild(UI.create("div", function (element) {
+                            element.className = "tab-icon-dropdown";
+                            element.title = "Open menu (Ctrl M)";
+
+                            var contextMenu = UI.contextMenu(function (menu) {
+                                element.addEventListener("mousedown", function (event) {
+                                    if (event.button !== 2) {
+                                        menu.show();
+                                    }
+                                }, true);
+
+                                container.addEventListener("contextmenu", function (event) {
+                                    if (event.target.localName === "input") {
+                                        return;
+                                    } else if (event.defaultPrevented) {
+                                        return;
+                                    }
+
+                                    event.preventDefault();
+
+                                    menu.show({
+                                        x: event.clientX,
+                                        y: event.clientY
+                                    });
+                                }, false);
+
+                                container.addEventListener("keypress", function (event) {
+                                    if (event.which === 13 && (event.ctrlKey || event.metaKey)) {
+                                        if (!event.altKey && !event.shiftKey) {
+                                            menu.show();
+                                        }
+                                    }
+                                }, true);
+
+
+                                /*! menu.addItem("<u>B</u>ack", function () {
+                                    alert("Back");
+                                }).disable();
+                                menu.addItem("<u>F</u>orward", function () {
+                                    alert("Forward");
+                                }).disable();
+                                menu.addItem("Re<u>l</u>oad");
+                                menu.separator();
+                                menu.addItem("Save <u>A</u>s...");
+                                menu.addItem("P<u>r</u>int...");
+                                menu.addItem("<u>T</u>ranslate to English").disable();
+                                menu.addItem("<u>V</u>iew Page Source");
+                                menu.addItem("View Page <u>I</u>nfo");
+                                menu.separator();
+                                menu.addItem("I<u>n</u>spect Element");
+                                menu.separator();
+                                menu.addItem("Input <u>M</u>ethods").disable();
+                                return;*/
+
+                                menu.addItem("New <u>T</u>ab", {
+                                    keys: ["T"],
+                                    action: function () {
+                                        Platform.tabs.create({
+                                            windowId: win.id
+                                        }, function (tab) {
+                                            if (Options.get("undo.new-tab")) {
+                                                Undo.push("new-tab", {
+                                                    id: tab.id
+                                                });
+                                                state.undoBar.show("You created a new tab.");
+                                            }
+                                        });
+                                    }
+                                });
+
+                                menu.separator();
+
+                                menu.addItem("<u>R</u>ename window", {
+                                    keys: ["R"],
+                                    action: function (event) {
+                                        event.preventDefault();
+                                        container.tabIcon.indexText.select();
+                                    }
+                                });
+
+                                menu.separator();
+
+                                menu.addItem("Select <u>a</u>ll", {
+                                    keys: ["A"],
+                                    onshow: function (menu) {
+                                        var queue = container.tabList.queue.length;
+                                        var tabs = container.tabList.children.length;
+
+                                        if (queue === tabs) {
+                                            menu.disable();
+                                        } else {
+                                            menu.enable();
+                                        }
+                                    },
+                                    action: function () {
+                                        var range = [];
+
+                                        Array.slice(container.tabList.children).forEach(function (item) {
+                                            if (!item.hasAttribute("hidden")) {
+                                                if (!item.hasAttribute("data-selected")) {
+                                                    range.push(item);
+                                                    item.queueAdd();
+                                                }
+                                            }
+                                        });
+
+                                        if (Options.get("undo.select-tabs")) {
+                                            if (range.length) {
+                                                Undo.push("select-tabs", {
+                                                    queue: container.tabList.queue,
+                                                    type: "select",
+                                                    list: range
+                                                });
+
+                                                if (range.length === 1) {
+                                                    state.undoBar.show("You selected " + range.length + " tab.");
+                                                } else {
+                                                    state.undoBar.show("You selected " + range.length + " tabs.");
+                                                }
+                                            }
+                                        }
+                                        delete container.tabList.queue.shiftNode;
+                                    }
+                                });
+
+                                menu.addItem("Select <u>n</u>one", {
+                                    keys: ["N"],
+                                    onshow: function (menu) {
+                                        if (container.tabList.queue.length) {
+                                            menu.enable();
+                                        } else {
+                                            menu.disable();
+                                        }
+                                    },
+                                    action: function () {
+                                        var range = [];
+
+                                        Array.slice(container.tabList.children).forEach(function (item) {
+                                            if (!item.hasAttribute("hidden")) {
+                                                if (item.hasAttribute("data-selected")) {
+                                                    range.push(item);
+                                                    item.queueRemove();
+                                                }
+                                            }
+                                        });
+
+                                        if (Options.get("undo.select-tabs")) {
+                                            if (range.length) {
+                                                Undo.push("select-tabs", {
+                                                    queue: container.tabList.queue,
+                                                    type: "unselect",
+                                                    list: range
+                                                });
+
+                                                if (range.length === 1) {
+                                                    state.undoBar.show("You unselected " + range.length + " tab.");
+                                                } else {
+                                                    state.undoBar.show("You unselected " + range.length + " tabs.");
+                                                }
+                                            }
+                                        }
+                                        delete container.tabList.queue.shiftNode;
+                                    }
+                                });
+
+                                menu.separator();
+
+                                menu.submenu("<u>S</u>elected...", {
+                                    keys: ["S"],
+                                    onshow: function (menu) {
+                                        if (container.tabList.queue.length) {
+                                            menu.enable();
+                                        } else {
+                                            menu.disable();
+                                        }
+                                    },
+                                    create: function (menu) {
+                                        menu.addItem("Re<u>l</u>oad selected", {
+                                            keys: ["L"],
+                                            action: function () {
+                                                container.tabList.queue.forEach(function (item) {
+                                                    Platform.tabs.update(item.tab.id, {
+                                                        url: item.tab.url
                                                     });
                                                 });
 
-                                                element.appendChild(contextMenu);
-                                            }));
+                                                container.tabList.queue.reset();
+                                            }
+                                        });
 
 
+                                        menu.addItem("<u>C</u>lose selected", {
+                                            keys: ["C"],
+                                            action: function () {
+                                                container.tabList.queue.forEach(function (item) {
+                                                    Platform.tabs.remove(item.tab.id);
+                                                });
+                                                container.tabList.queue.reset();
+                                                delete container.tabList.queue.shiftNode;
+                                            }
+                                        });
 
+                                        menu.separator();
 
+                                        menu.addItem("<u>F</u>avorite selected", {
+                                            keys: ["F"],
+                                            onshow: function (menu) {
+                                                var some = container.tabList.queue.some(function (item) {
+                                                    return !item.hasAttribute("data-favorited");
+                                                });
 
+                                                if (some) {
+                                                    menu.enable();
+                                                } else {
+                                                    menu.disable();
+                                                }
+                                            },
+                                            action: function () {
+                                                container.tabList.queue.forEach(function (item) {
+                                                    var url = item.tab.url;
+                                                    state.favorites.set(url, state.tabsByURL[url].length);
+                                                });
 
+                                                container.tabList.queue.reset();
+                                            }
+                                        });
 
+                                        menu.addItem("<u>U</u>nfavorite selected", {
+                                            keys: ["U"],
+                                            onshow: function (menu) {
+                                                var some = container.tabList.queue.some(function (item) {
+                                                    return item.hasAttribute("data-favorited");
+                                                });
 
+                                                if (some) {
+                                                    menu.enable();
+                                                } else {
+                                                    menu.disable();
+                                                }
+                                            },
+                                            action: function () {
+                                                container.tabList.queue.forEach(function (item) {
+                                                    state.favorites.set(item.tab.url, null);
+                                                });
 
+                                                container.tabList.queue.reset();
+                                            }
+                                        });
+                                    }
+                                });
 
+                                menu.separator();
 
+                                menu.submenu("<u>M</u>ove selected to...", {
+                                    keys: ["M"],
+                                    onshow: function (menu) {
+                                        if (container.tabList.queue.length) {
+                                            menu.enable();
+                                        } else {
+                                            menu.disable();
+                                        }
+                                    },
+                                    onopen: function (menu) {
+                                        menu.clear();
 
+                                        menu.addItem("New Window", {
+                                            action: function () {
+                                                Window.create(container.tabList.queue);
+                                            }
+                                        });
 
-                                }));
-                            }));
-                        }));
+                                        if (state.list.length) {
+                                            menu.separator();
 
+                                            state.list.forEach(function (item, i) {
+                                                var name = item.tabIcon.indexText.value;
+                                                if (item === container) {
+                                                    name = "<strong>" + name + "</strong>";
+                                                }
 
-
-                            container.appendChild(UI.create("div", function (element) {
-                                element.className = "tab-list-border";
-
-                                container.tabContainer = element;
-
-                                element.appendChild(UI.create("div", function (list) {
-                                    list.className = "tab-list";
-                                    list.tabIndex = 1;
-
-                                        container.tabList = list;
-
-                                        list.container = container;
-
-                                        list.queue = [];
-
-
-
-                                        /*! var update = function anon(event) {
-                                            clearTimeout(anon.timeout);
-
-                                            var self = this;
-                                            anon.timeout = setTimeout(function () {
-                                                container.tabIcon.title = "Tabs: " + self.children.length;
-                                            }, 2000);
-                                        };
-                                        list.addEventListener("DOMNodeInserted", update, true);
-                                        list.addEventListener("DOMNodeRemoved", update, true);*/
-
-                                        if (win.tabs) {
-                                            win.tabs.forEach(function (tab) {
-
-
-                                                list.appendChild(Tab.proxy(tab));
+                                                menu.addItem(name, {
+                                                    action: function () {
+                                                        container.tabList.queue.moveTabs(item.window.id);
+                                                        container.tabList.queue.reset();
+                                                        delete container.tabList.queue.shiftNode;
+                                                    }
+                                                });
                                             });
                                         }
-                                }));
-                            }));
+                                    }
+                                });
+                            });
+
+                            element.appendChild(contextMenu);
+                        }));
+                    }));
+                }));
+            }));
+
+
+
+            container.appendChild(UI.create("div", function (element) {
+                element.className = "tab-list-border";
+
+                container.tabContainer = element;
+
+                element.appendChild(UI.create("div", function (list) {
+                    list.className = "tab-list";
+                    list.tabIndex = 1;
+
+                    list.container = container;
+                    list.queue = [];
+
+                    container.tabList = list;
+
+                    /*! var update = function anon(event) {
+                        clearTimeout(anon.timeout);
+
+                        var self = this;
+                        anon.timeout = setTimeout(function () {
+                            container.tabIcon.title = "Tabs: " + self.children.length;
+                        }, 2000);
+                    };
+                    list.addEventListener("DOMNodeInserted", update, true);
+                    list.addEventListener("DOMNodeRemoved", update, true);*/
+
+                    if (win.tabs) {
+                        win.tabs.forEach(function (tab) {
+                            list.appendChild(Tab.proxy(tab));
+                        });
+                    }
+                }));
+            }));
         }));
 
         return fragment;

@@ -1,26 +1,25 @@
-"use strict";
-/*global */
+/*global action, state, UI, Window */
 
-document.body.appendChild(UI.create("div", function (element) {
-    element.className = "window-list";
+(function () {
+    "use strict";
 
-    state.windowList = element;
+    document.body.appendChild(UI.create("div", function (element) {
+        element.className = "window-list";
 
-    action.attachEvents(element);
+        state.windowList = element;
 
+        action.attachEvents(element);
+    }));
 
+    state.createView = function (windows) {
+        var fragment = document.createDocumentFragment();
 
-}));
+        windows.forEach(function (win) {
+            if (win.type === "normal") {
+                fragment.appendChild(Window.proxy(win));
+            }
+        });
 
-
-state.createView = function (windows) {
-    var fragment = document.createDocumentFragment();
-
-    windows.forEach(function (win) {
-        if (win.type === "normal") {
-            fragment.appendChild(Window.proxy(win));
-        }
-    });
-
-    state.windowList.appendChild(fragment);
-};
+        state.windowList.appendChild(fragment);
+    };
+}());

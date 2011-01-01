@@ -1,31 +1,34 @@
-"use strict";
-/*global */
+/*global action, state, UI, Window */
 
-document.body.appendChild(UI.create("div", function (element) {
-    element.className = "window-list";
+(function () {
+    "use strict";
 
-    UI.scrollBar(element, { side: "left" });
+    document.body.appendChild(UI.create("div", function (element) {
+        element.className = "window-list";
 
-    state.createView = function (windows) {
-        var fragment = document.createDocumentFragment();
+        UI.scrollBar(element, { side: "left" });
 
-        windows.forEach(function (win) {
-            if (win.type === "normal") {
-                fragment.appendChild(Window.proxy(win));
-                element.appendChild(Window.proxy(win));
-            }
-        });
+        state.createView = function (windows) {
+            var fragment = document.createDocumentFragment();
 
-        state.windowList.appendChild(fragment);
-    };
-}));
+            windows.forEach(function (win) {
+                if (win.type === "normal") {
+                    fragment.appendChild(Window.proxy(win));
+                    element.appendChild(Window.proxy(win));
+                }
+            });
 
-document.body.appendChild(UI.create("div", function (element) {
-    element.className = "window-list";
+            state.windowList.appendChild(fragment);
+        };
+    }));
 
-    UI.scrollBar(element, { side: "right" });
+    document.body.appendChild(UI.create("div", function (element) {
+        element.className = "window-list";
 
-    state.windowList = element;
+        UI.scrollBar(element, { side: "right" });
 
-    action.attachEvents(element);
-}));
+        state.windowList = element;
+
+        action.attachEvents(element);
+    }));
+}());
