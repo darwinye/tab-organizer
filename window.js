@@ -167,7 +167,7 @@ Platform.bookmarks.getTree(function recurse(array) {
     }
 });
 
-Platform.bookmarks.addEventListener("change", function (id, info) {
+Platform.bookmarks.on("change", function (id, info) {
     var bookmark = state.bookmarksByID[id],
         url = state.bookmarksByURL;
 
@@ -181,7 +181,7 @@ Platform.bookmarks.addEventListener("change", function (id, info) {
     }
 }, true);
 
-Platform.bookmarks.addEventListener("create", function (id, bookmark) {
+Platform.bookmarks.on("create", function (id, bookmark) {
     var url = state.bookmarksByURL;
     if (bookmark.url) {
         state.bookmarksByID[id] = bookmark;
@@ -190,7 +190,7 @@ Platform.bookmarks.addEventListener("create", function (id, bookmark) {
     }
 }, true);
 
-Platform.bookmarks.addEventListener("remove", function (id, info) {
+Platform.bookmarks.on("remove", function (id, info) {
     var bookmark = state.bookmarksByID[id];
     if (bookmark) {
         state.bookmarksByURL[bookmark.url] -= 1;
@@ -754,7 +754,9 @@ fragment.appendChild(UI.create("div", function (container) {
                 focused.setWindowFocus();
             }
             scroll.forEach(function (item) {
-                UI.scrollTo(item.selected, item.tabList);
+                if (item.selected) {
+                    UI.scrollTo(item.selected, item.tabList);
+                }
             });
 
 

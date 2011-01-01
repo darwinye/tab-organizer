@@ -936,7 +936,6 @@ Window = {
             }));
 
 
-
             container.appendChild(UI.create("div", function (element) {
                 element.className = "tab-list-border";
 
