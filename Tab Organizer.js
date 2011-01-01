@@ -3,19 +3,13 @@
 
 var Tab = {
     focus: function (tab) {
-        Platform.tabs.focus(tab/*, function () {
-            console.log("Hiya");
-        }*/);
+        Platform.tabs.focus(tab);
 
         if (Options.get("popup.type") !== "tab") {
             Platform.message.connect("lib.action", function (port) {
                 port.sendMessage({ type: "focus" });
             });
         }
-//        window.blur();
-//        setTimeout(function () {
-//            window.focus();
-//        }, 0);
     },
     move: function (item, info, action) {
         var tab = item.tab;
@@ -32,9 +26,7 @@ var Tab = {
         return UI.create("div", function (container) {
             container.className = "tab";
             container.draggable = true;
-            //container.tabIndex = -1; //!
 
-            //container.title = tab.title;
 
             if (state.favorites.get(tab.url)) {
                 container.setAttribute("data-favorited", "");
@@ -46,12 +38,8 @@ var Tab = {
 
             state.tabsByURL.add(tab.url, container);
 
-//            container.addEventListener("DOMNodeRemovedFromDocument", function (event) {
-//                console.log(this === event.target);
-//            }, true);
 
             state.tabsByID[tab.id] = container;
-//            state.tabs.add(container);
             container.tab = tab;
 
             container.undoState = {};
@@ -62,7 +50,7 @@ var Tab = {
 
                 container.setAttribute("data-selected", "");
 
-                state.search(/*{ tabs: [container] }*/);
+                state.search();
             };
             container.queueRemove = function () {
                 var is = container.parentNode.queue.remove(container);
@@ -70,7 +58,7 @@ var Tab = {
 
                 container.removeAttribute("data-selected");
 
-                state.search(/*{ tabs: [container] }*/);
+                state.search();
             };
             container.queueToggle = function () {
                 var toggle = container.parentNode.queue.toggle(container);
@@ -82,7 +70,7 @@ var Tab = {
                     container.removeAttribute("data-selected");
                 }
 
-                state.search(/*{ tabs: [container] }*/);
+                state.search();
             };
 
             container.addEventListener("DOMNodeRemovedFromDocument", container.queueRemove, true); //! Hacky
@@ -92,30 +80,24 @@ var Tab = {
             }
 
             var url = UI.create("span", function (element) {
-                //element.style.whiteSpace = "pre";
 
                 var url = decodeURI(tab.url);
                 var match = /^([^:]+)(:\/\/)([^\/]*)([^?#]*\/)([^#]*)(#.*)?$/.exec(url);
                 var secure = {
-                    //"chrome": true,
                     "https": true
                 };
 
-                //console.log(match);
 
                 if (match) {
-//                    if (match[1] === "file") {
-//                        element.textContent = url;
-//                    } else {
                         if (match[1] !== "http") {
                             element.appendChild(UI.create("span", function (element) {
                                 element.className = "protocol";
                                 if (secure[match[1]]) {
                                     element.setAttribute("data-secure", "");
                                 }
-                                element.textContent = match[1]/* + ":"*/;
+                                element.textContent = match[1];
                             }));
-                            element.appendChild(document.createTextNode(match[2]/* + ""*/));
+                            element.appendChild(document.createTextNode(match[2]));
                         }
                         element.appendChild(UI.create("span", function (element) {
                             element.className = "domain";
@@ -123,27 +105,19 @@ var Tab = {
                         }));
 
                         element.appendChild(document.createTextNode(match[4]));
-                        //element.appendChild(document.createTextNode(match[4].replace(/\/(?=[^\/]+$)/g, "/ ")));
 
-//                        //if (match[5]) {
-//                            element.appendChild(UI.create("span", function (element) {
-//                                //element.style.color = "darkred";
-//                                element.textContent = match[5];
-//                            }));
-//                        //}
                         if (match[5]) {
                             element.appendChild(UI.create("span", function (element) {
                                 element.className = "query";
-                                element.textContent = /*"" + */match[5];
+                                element.textContent = match[5];
                             }));
                         }
                         if (match[6]) {
                             element.appendChild(UI.create("span", function (element) {
                                 element.className = "fragment";
-                                element.textContent = /*"" + */match[6];
+                                element.textContent = match[6];
                             }));
                         }
-//                    }
                 }
             });
             container.addEventListener("mouseover", function (event) {
@@ -157,12 +131,10 @@ var Tab = {
                 bar.removeAttribute("hidden");
             }, true);
             container.addEventListener("mouseout", function (event) {
-                //state.urlBar.hide();
                 state.urlBar.setAttribute("hidden", "");
             }, true);
 
             container.addEventListener("click", function (event) {
-                //event.preventDefault();
 
                 var range, parent = this.parentNode;
 
@@ -176,34 +148,12 @@ var Tab = {
                             delete parent.queue.shiftNode;
                         }
 
-//                        if (Options.get("undo.select-tabs")) {
-//                            Undo.push("select-tabs", {
-//                                list: [ this ]
-//                            });
 
-//                            if (this.undoState.selected) {
-//                                state.undoBar.show("You selected 1 tab.");
-//                            } else {
-//                                state.undoBar.show("You unselected 1 tab.");
-//                            }
-//                        }
                     } else if (event.shiftKey) {
                         parent.queue.reset();
-//                        if (parent.shiftRange) {
-//                            parent.shiftRange.forEach(function (item) {
-//                                item.queueRemove();
-//                            });
-//                        }
 
-//                        if (parent !== parent.shiftNode.parentNode) {
-//                            delete parent.shiftNode;
-//                        }
 
                         if (parent.queue.shiftNode) {
-//                            var range = document.createRange();
-//                            range.setStart(parent.shiftNode);
-//                            range.setEnd(this);
-//                            console.log(range);
 
                             range = Array.slice(parent.children);
                             range = range.range(this, parent.queue.shiftNode);
@@ -231,48 +181,30 @@ var Tab = {
                             } else {
                                 delete parent.queue.shiftNode;
                             }
-//                            alert(range);
                         } else {
-                        //if (!parent.shiftNode) {
                             parent.queue.shiftNode = this;
                             this.queueAdd();
 
-//                            if (Options.get("undo.select-tabs")) {
-//                                Undo.push("select-tabs", {
-//                                    list: [ this ]
-//                                });
-//                                state.undoBar.show("You selected 1 tab.");
-//                            }
                         }
                     } else if (event.altKey) {
                         Platform.tabs.remove(tab.id);
                     } else {
                         switch (Options.get("tabs.click.type")) {
                         case "select-focus":
-                            //parent.queue.reset();
 
                             if (this.hasAttribute("data-selected")) {
-                                //delete parent.queue.shiftNode;
 
                                 Tab.focus(container.tab);
                             } else {
-                                //if (!parent.queue.has(this)) {
                                 parent.queue.reset();
 
-//                                if (this.hasAttribute("data-selected")) {
 
-//                                } else {
-//                                    delete parent.queue.shiftNode;
-//                                }
-//                                delete parent.queue.shiftNode;
-                                //}
                                 parent.queue.shiftNode = this;
                                 this.queueAdd();
                             }
                             break;
                         case "focus":
                             if (!this.hasAttribute("data-selected")) {
-                            //if (!parent.queue.has(this)) {
                                 parent.queue.reset();
                                 delete parent.queue.shiftNode;
                             }
@@ -286,101 +218,25 @@ var Tab = {
                     Platform.tabs.remove(tab.id);
                 }
             }, false);
-            /*container.addEventListener("focus", function (event) {
-                this.draggable = false;
-            }, true);
-            container.addEventListener("mouseup", function () {
-                this.draggable = true;
-            }, true);*/
 
-            /*container.addEventListener("drop", function (event) {
-                state.queue.reset();
-            }, true);*/
 
-            /*container.addEventListener("dragover", function anon(event) {
-                return;
-                var parent = this.parentNode;
-                //if (this === parent.firstChild || this === parent.lastChild) {
-                    swapnodes.call(this, event);
-                //}
-            }, true);*/
             container.addEventListener("dragover", function swapnodes(event) {
-                //clearTimeout(swapnodes.timeout);
 
-                //swapnodes.timeout = setTimeout(function () {
                     var parent = this.parentNode;
-                    //if (this !== state.highlighted && !state.queue.has(this)) {
-                        //if (/**/event.offsetY < (this.offsetHeight / 2) + 1) {
-                        if (/*this.previousSibling !== state.highlighted && !state.queue.has(this.previousSibling) && */event.offsetY < (this.offsetHeight / 2)) {
+                        if (event.offsetY < (this.offsetHeight / 2)) {
                             parent.insertBefore(state.placeholder, this);
-                        } else/* if (this.nextSibling !== state.highlighted && !state.queue.has(this.nextSibling))*/ {
+                        } else {
                             parent.insertBefore(state.placeholder, this.nextSibling);
                         }
-                        //console.log((this.offsetHeight / 2), event.offsetY);
-//                        if (this.nextSibling === state.placeholder) {
-//                        //if (!state.queue.has(this)) {
 
-//                        //}
-//                        } else if (this.previousSibling === state.placeholder) {
 
-//                        } else {
 
-//                        }
-                    //}
-                    //state.old = this;
-                //}.bind(this), 25);
             }, true);
 
-            /*container.addEventListener("dragenter", function anon(event) {
-                return;
-                if (!state.queue.has(this)) {
-                    var index = Array.indexOf(this.parentNode.children, this);
-                    //! var index = Array.slice(this.parentNode.children).indexOf(this);
 
-                    //state.queue.add(state.highlighted);
-
-                    if (false) { //!
-                        if (anon.screenY && false) {
-                            if (event.screenY < anon.screenY) {
-                                state.queue.sort(function (a, b) {
-                                    return b.tab.index - a.tab.index;
-                                });
-                                //! state.queue.reverse();
-//                                state.queue.sort(function (a, b) {
-//                                    return a.tab.index - b.tab.index;
-//                                    console.log((b.tab.index + 1) - a.tab.index);
-//                                    return (b.tab.index + 1) - a.tab.index;
-//                                });
-                                //! this.parentNode.insertBefore(state.highlighted, this);
-                            } else {
-                                state.queue.sort(function (a, b) {
-                                    return a.tab.index - b.tab.index;
-                                });
-                                //! state.queue.reverse();
-//                                state.queue.sort(function (a, b) {
-//                                    return b.tab.index - a.tab.index;
-//                                });
-                                //! this.parentNode.insertBefore(state.highlighted, this.nextSibling);
-                            }
-                        }
-
-//                        state.queue.forEach(function (item) {
-//                            if (item.parentNode) {
-//                                item.parentNode.removeChild(item);
-//                            }
-//                        });
-                    }
-
-                    state.queue.moveTabs(container.tab.windowId, index);
-                }
-                //! anon.screenY = event.screenY;
-            }, true);*/
-
-            //container.addEventListener("dragover", events.disable, true);
             container.addEventListener("dragstart", function (event) {
                 //! container.removeEventListener("dragover", events.disable, true);
 
-                //state.urlBar.hide();
                 state.urlBar.setAttribute("hidden", "");
 
                 event.dataTransfer.effectAllowed = "move";
@@ -394,29 +250,15 @@ var Tab = {
                     state.currentQueue.add(state.highlighted);
                 }
 
-                //console.log("dragstart");
 
-                //event.preventDefault();
 
-//                this.setAttribute("data-selected", "");
 
-//                state.dragBox.innerHTML = "";
 
-//                var fragment = document.createDocumentFragment();
 
-//                state.currentQueue.forEach(function (item, i) {
-//                    var clone = item.cloneNode(true);
-//                    clone.setAttribute("data-queue", "");
-//                    fragment.appendChild(clone);
-//                });
 
-//                console.log(fragment);
 
-//                event.dataTransfer.setDragImage(this, 0, 0);
 
-                //document.body.appendChild(state.dragBox);
 
-//                console.log(state.dragBox);
 
 
             }, true);
@@ -431,13 +273,10 @@ var Tab = {
                 favicon: UI.create("img", function (element) {
                     element.className = "tab-favicon";
                     element.title = text;
-                    //element.className = "stretch";
                     element.setAttribute("alt", "");
 
                     if (tab.favIconUrl) {
-//                            element.src = tab.favIconUrl;
                         element.src = "chrome://favicon/" + tab.url;
-//                            console.log(element.src);
                     } else {
                         element.src = "/images/blank.png";
                     }
@@ -451,33 +290,13 @@ var Tab = {
                     element.addEventListener("click", function () {
                         if (container.hasAttribute("data-favorited")) {
                             state.favorites.set(tab.url, null);
-//                            delete state.favorites[tab.url];
 
-//                            Options.event.trigger("change", {
-//                                name: "tabs.favorites.urls",
-//                                value: tab.url,
-//                                remove: true
-//                            });
                         } else {
                             state.favorites.set(tab.url, state.tabsByURL[tab.url].length);
-//                            state.favorites[tab.url] = state.tabsByURL[tab.url].length;
 
-//                            Options.event.trigger("change", {
-//                                name: "tabs.favorites.urls",
-//                                value: tab.url,
-//                                remove: false
-//                            });
-                            //Options.set(, state.favorites);
-                            //this.style.backgroundImage = "url(images/unfavorite.png)";
                         }
                     }, true);
 
-                    /*element.appendChild(UI.create("img", function (element) {
-                        element.className = "stretch";
-                        element.setAttribute("alt", "");
-
-                        element.src = "/images/favorite.png";
-                    }));*/
                 }),
                 text: UI.create("div", function (element) {
                     element.className = "tab-text";
@@ -486,9 +305,6 @@ var Tab = {
 
                     container.tabText = element;
 
-                    /*container.editURL = function () {
-
-                    };*/
 
                     /*! container.addEventListener("dblclick", function (event) {
                         if (false) {
@@ -527,13 +343,8 @@ var Tab = {
                     element.className = "tab-button-close";
                     element.title = "Close (Alt Click)";
 
-                    //element.appendChild(UI.create("img", function (element) {
-                        //element.src = "/images/button-close.png";
                         element.draggable = true;
 
-                        //element.addEventListener("mousedown", events.stop, true);
-                        //element.addEventListener("click", events.stop, true);
-                        //element.addEventListener("mouseup", events.stop, true);
                         element.addEventListener("dragstart", events.disable, true);
 
                         element.addEventListener("click", function (event) {
@@ -541,11 +352,7 @@ var Tab = {
                             Platform.tabs.remove(tab.id);
                         }, true);
 
-                        /*element.appendChild(UI.create("img", function (element) {
-                            element.src = "/images/button-close.png";
-
-                        }));*/
-                    //}));
+                    
                 })
             };
 
@@ -553,8 +360,6 @@ var Tab = {
                 cell.close.setAttribute("hidden", "");
             }
             function focus() {
-                //var parent = container.parentNode;
-                //var query = parent.querySelector(".tab[data-focused]");
                 cell.close.removeAttribute("hidden");
             }
 
@@ -567,14 +372,7 @@ var Tab = {
 
                 switch (Options.get("tabs.close.display")) {
                 case "hover":
-//                        cell.close.setAttribute("hidden", "");
 
-//                        container.addEventListener("mouseover", function () {
-//                            cell.close.removeAttribute("hidden");
-//                        }, true);
-//                        container.addEventListener("mouseout", function () {
-//                            cell.close.setAttribute("hidden", "");
-//                        }, true);
                     cell.close.setAttribute("data-display-hover", "");
                     break;
                 case "focused":
@@ -583,9 +381,6 @@ var Tab = {
                     }
                     container.addEventListener("Platform-blur", blur, true);
                     container.addEventListener("Platform-focus", focus, true);
-//                        break;
-//                    case "every":
-//                        cell.close.style.display = "table-cell !important";
                 }
 
                 switch (Options.get("tabs.close.location")) {
@@ -605,67 +400,25 @@ var Tab = {
             container.updateButtonPositions();
         });
     }
-//    gotoURL: function (tab, url) {
-//        if (url !== tab.url) {
-//            if (!/^[^:]+:\/\//.test(url)) {
-//                url = "http://" + url;
-//            }
-//            Platform.tabs.update(tab.id, { url: url });
-//        }
-//    },
-//    editURL: function (tab) {
-//        var container = state.tabsByID[tab.id];
 
-//        var span = container.tabText;
-//        var parent = span.parentNode;
 
-//        container.draggable = !container.draggable;
 
-//        var input = document.createElement("input");
-//        input.className = "url-input";
-//        input.type = "text";
 
-//        input.value = tab.url;
-//        input.tabIndex = -1;
 
-//        input.addEventListener("keyup", function (event) {
-//            if (event.which === 13 || event.which === 27) {
-//                if (event.which === 13) {
-//                    Tab.gotoURL(tab, this.value);
-//                }
-//                container.parentNode.focus();
-//            }
-//        }, true);
-//        input.addEventListener("blur", function (event) {
-//            parent.replaceChild(span, input);
 
-//            container.draggable = !container.draggable;
-//        }, true);
 
-//        //input.addEventListener("mousedown", events.stop, true);
-//        input.addEventListener("click", events.stop, true);
 
-//        parent.replaceChild(input, span);
-//        input.select();
-//    }
 };
 
 
 
 var Window = {
-    //pending: {},
     create: function (array, info) {
         info = Object(info);
 
-//        if (info.title) {
-//            state.titles.push(info.title);
-//        }
-        //console.log(state.titles);
 
         Platform.windows.create({ url: "lib/remove.html" }, function (win) {
-            //Window.pending[win.id] = info;
 
-            //console.log(win.id, state.windows[win.id]);
 
             if (info.title) {
                 var proxy = state.windows[win.id];
@@ -685,7 +438,6 @@ var Window = {
         });
     },
     proxy: function (win) {
-        //info = Object(info);
 
         var fragment = document.createDocumentFragment();
 
@@ -703,7 +455,6 @@ var Window = {
                 UI.scrollTo(container.tabContainer, document.body);
                 //! UI.scrollIntoView(container.tabList, document.body, 41);
             }
-            //container.addEventListener("mouseup", scrollTo, true);
 
 
             container.select = function () {
@@ -722,20 +473,12 @@ var Window = {
             };
 
             container.setWindowFocus = function () {
-                //Options.set("window.lastfocused", win.id);
 
                 container.select();
 
-//                container.setAttribute("data-selected", "");
-//                addEventListener("blur", function anon(event) {
-//                    this.removeEventListener(event.type, anon, true);
 
-//                    container.removeAttribute("data-selected");
-//                }, true);
 
-//                setTimeout(function () {
                 scrollTo();
-//                }, 0);
             };
 
 
@@ -745,14 +488,11 @@ var Window = {
                 container.unselect();
             }, true);
             container.addEventListener("focus", function (event) {
-                //console.log(event.type);
-                //if (event.target === this) { //!
-                    //this.tabList.focus();
 
                     /*! if (!state.dragging) {
                         scrollTo.call(this);
                     }*/
-                //}
+                
                 this.setAttribute("data-selected", "");
 
                 container.select();
@@ -766,14 +506,7 @@ var Window = {
                     return;
                 }
 
-//                var keys = {
-//                    13: true,
-//                    32: true,
-//                    38: true,
-//                    40: true
-//                };
 
-//                console.log(event.which);
 
                 if (event.which === 38 || event.which === 40) { //* Up/Down
                     query = this.querySelector(".tab[data-focused]");
@@ -785,22 +518,11 @@ var Window = {
                         if (element) {
                             event.preventDefault();
 
-//                            var info = document.createEvent("MouseEvents");
-//                            info.initMouseEvent("click", true, false, window, 0, 0, 0, 0, 0,
-//                                event.ctrlKey, event.altKey, event.shiftKey, event.metaKey, 0, null);
 
-//                            element.dispatchEvent(info);
 
-                            //element.scrollIntoView();
-                            //UI.scrollTo(query, this.tabList);
-                            //UI.scrollIntoView(element, this.tabList, 110);
 
                             Tab.focus(element.tab);
 
-//                            Platform.tabs.focus(element.tab);
-//                            Platform.message.connect("lib.action", function (port) {
-//                                port.sendMessage({ type: "focus" });
-//                            });
                         }
                     }
                 } else if (event.which === 32 || event.which === 13) { //* Space/Enter
@@ -817,7 +539,6 @@ var Window = {
                 }
             }, true);
 
-            //container.addEventListener("mousedown", container.blur, true);
 
             container.addEventListener("dragstart", function (event) {
                 //! container.removeEventListener("dragover", events.disable, true);
@@ -827,18 +548,12 @@ var Window = {
                     event.stopPropagation();
                 }, true);
             }, true);
-            /*container.addEventListener("dragend", function (event) {
-                //! container.addEventListener("dragover", events.disable, true);
-            }, true);*/
 
-            //container.addEventListener("dragenter", events.disable, true);
             container.addEventListener("dragenter", container.focus, true);
             container.addEventListener("dragover", events.disable, true);
-            //container.addEventListener("dragover", events.stop, true);
             container.addEventListener("dragenter", function (event) {
                 var list = this.tabList;
                 var coords = list.getBoundingClientRect();
-                //console.log(event.clientX, coords.left, coords.right);
                 if (!list.contains(event.target)) {
                     if (event.clientX > coords.left && event.clientX < coords.right) {
                         if (event.clientY < coords.top) {
@@ -848,36 +563,20 @@ var Window = {
                         }
                     }
                 }
-                //if (event.target === element) {
 
 
-                    /*state.queue.add(state.highlighted);
-                    state.queue.moveTabs(win.id);
-                    //! state.queue.reset();
-                    */
-                //}
+                
             }, true);
             container.addEventListener("drop", function (event) {
-                //if (event.dataTransfer.dropEffect !== "none") {
                     var index = Array.indexOf(this.tabList.children, state.placeholder);
 
-                    //if (!this.tabList.contains(event.target)) {
-                        //state.queue.add(state.highlighted);
                         state.currentQueue.moveTabs(win.id, index);
                         state.currentQueue.reset();
                         delete state.currentQueue.shiftNode;
-                    //}
-                    //state.placeholder.parentNode.removeChild(state.placeholder);
-                //}
             }, true);
 
-            //container.appendChild(UI.create("div", function (element) {
-                //element.className = "window-div";
 
-                //element.appendChild(UI.create("table", function (element) {
-                    //element.className = "stretch";
 
-                    //container.appendChild(UI.create("tr", function (element) {
 
                         container.appendChild(UI.create("div", function (element) {
                             element.className = "tab-icon-border";
@@ -910,10 +609,7 @@ var Window = {
 
                                     container.tabIcon = icon;
 
-                                    //icon.appendChild(UI.create("table", function (element) {
-                                        //element.className = "tab-icon-table";
 
-                                        //element.appendChild(UI.create("td", function (element) {
 
                                             icon.appendChild(UI.create("input", function (element) {
                                                 element.setAttribute("spellcheck", "false");
@@ -923,19 +619,10 @@ var Window = {
 
                                                 icon.indexText = element;
 
-                                                //if (false) {
 
-                                                //if (win.name) {
-                                                    //element.value = win.name;
-                                                //} else {
                                                 var value, index = state.list.indexOf(container);
 
-                                                //if (info.title) {
-                                                    //element.value = info.title;
-                                                    //console.log(element, info.title, element.value);
-                                                //} else {
                                                     element.value = action.returnTitle(index);
-                                                //}
 
                                                     element.addEventListener("mousedown", function (event) {
                                                         if (container.hasAttribute("data-focused")) {
@@ -950,33 +637,13 @@ var Window = {
                                                     element.addEventListener("focus", function (event) {
                                                         value = this.value;
                                                     }, true);
-//                                                    element.addEventListener("keyup", function (event) {
-//                                                        state.titles[index] = (this.value) ? this.value : null;
-////                                                        console.log(this.value);
-////                                                        if (this.value) {
-////
-////                                                        } else {
-////                                                            state.titles[index] = null;
-////                                                            //this.value = action.returnTitle(index); //index + 1;
-////                                                        }
-//                                                    }, true);
                                                     element.addEventListener("blur", function (event) {
-//                                                        if (this.value) {
-//                                                            state.titles[index] = this.value;
-//                                                            console.log(this.value);
-//                                                        } else {
-//                                                            state.titles[index] = null;
-//                                                            this.value = action.returnTitle(index); //index + 1;
-//                                                        }
                                                         if (this.value) {
                                                             state.titles[index] = this.value;
                                                         } else {
                                                             delete state.titles[index];
                                                         }
-                                                        //console.log(this.value, event.target);
-                                                        //var temp = this.value || action.returnTitle(index);//index + 1;
-                                                        this.value = action.returnTitle(index);//index + 1;
-                                                        //console.log(this.value);
+                                                        this.value = action.returnTitle(index);
 
                                                         if (this.value !== value) {
                                                             if (Options.get("undo.rename-window")) {
@@ -986,12 +653,11 @@ var Window = {
                                                                     index: index,
                                                                     node: this
                                                                 });
-                                                                state.undoBar.show("You renamed the window \"" + /* <span style='font-variant: small-caps;'>" */
+                                                                state.undoBar.show("You renamed the window \"" + 
                                                                     this.value + "\".");
                                                             }
                                                         }
 
-                                                        //container.tabList.focus();
                                                     }, true);
                                                     element.addEventListener("keydown", function (event) {
                                                         if (event.which === 27) { //* Escape
@@ -1009,18 +675,13 @@ var Window = {
                                                             this.blur();
                                                         }
                                                     }, true);
-                                                //}
-                                                //}
                                             }));
-                                        //}));
 
-                                        //element.appendChild(UI.create("td", function (element) {
                                             icon.appendChild(UI.create("div", function (element) {
                                                 element.className = "tab-icon-dropdown";
                                                 element.title = "Open menu (Ctrl M)";
 
                                                 var contextMenu = UI.contextMenu(function (menu) {
-//                                                    menu["DOM.Element"].title = "\0";
 
                                                     element.addEventListener("mousedown", function (event) {
                                                         if (event.button !== 2) {
@@ -1034,41 +695,17 @@ var Window = {
                                                         } else if (event.defaultPrevented) {
                                                             return;
                                                         }
-                                                        //console.log(event.target);
-                                                        /*if (event.target === element) {
-                                                            return;
-                                                        }*/
 
                                                         event.preventDefault();
 
-//                                                        var style = UI.style(contextMenu, {
-//                                                            position: "fixed",
-//                                                            left: event.clientX + 5 + "px",
-//                                                            top: event.clientY + 7 + "px"
-//                                                        });
 
-//                                                        var x = event.clientX,
-//                                                            y = event.clientY;
 
-                                                        //document.body.appendChild(contextMenu);
 
                                                         menu.show({
                                                             x: event.clientX,
                                                             y: event.clientY
-//                                                            onhide: function () {
-//                                                                //console.log(info);
-//                                                                //style.reset();
 
-//    //                                                            if (contextMenu.style.position !== info.position) {
-//    //                                                            }
-//    //                                                            if (contextMenu.style.left !== info.left) {
-//    //                                                            }
-//    //                                                            if (contextMenu.style.top !== info.top) {
-//    //                                                            }
 
-//                                                                //element.appendChild(contextMenu);
-//                                                                //container.focus();
-//                                                            }
                                                         });
                                                     }, false);
 
@@ -1104,7 +741,6 @@ var Window = {
                                                         keys: ["T"],
                                                         action: function () {
                                                             Platform.tabs.create({
-                                                                //url: "chrome://newtab/",
                                                                 windowId: win.id
                                                             }, function (tab) {
                                                                 if (Options.get("undo.new-tab")) {
@@ -1113,11 +749,6 @@ var Window = {
                                                                     });
                                                                     state.undoBar.show("You created a new tab.");
                                                                 }
-                                                                //console.log("onEnded!", state.tabsByID[tab.id].parentNode);
-                                                                //console.log(state.tabsByID[tab.id].parentNode);
-//                                                                setTimeout(function () {
-//                                                                    Tab.editURL(tab);//state.tabsByID[tab.id].editURL();
-//                                                                }, 1000);
                                                             });
                                                         }
                                                     });
@@ -1128,10 +759,6 @@ var Window = {
                                                         keys: ["R"],
                                                         action: function (event) {
                                                             event.preventDefault();
-                                                            //console.warn(event);
-                                                            //var text = ;
-                                                            //text.addEventListener("keydown", events.stop, true);
-                                                            //text.addEventListener("keyup", events.stop, true);
                                                             container.tabIcon.indexText.select();
                                                         }
                                                     });
@@ -1245,7 +872,6 @@ var Window = {
                                                                 }
                                                             });
 
-//                                                            menu.separator();
 
                                                             menu.addItem("<u>C</u>lose selected", {
                                                                 keys: ["C"],
@@ -1255,12 +881,6 @@ var Window = {
                                                                     });
                                                                     container.tabList.queue.reset();
                                                                     delete container.tabList.queue.shiftNode;
-                                                                    /*var length = container.tabList.children.length;
-                                                                    var text = "Do you want to close " + length + " tabs?";
-
-                                                                    if (length === 1 || confirm(text)) {
-                                                                        Platform.windows.remove(win.id);
-                                                                    }*/
                                                                 }
                                                             });
 
@@ -1269,7 +889,6 @@ var Window = {
                                                             menu.addItem("<u>F</u>avorite selected", {
                                                                 keys: ["F"],
                                                                 onshow: function (menu) {
-                                                                    //console.log(container.tabList.queue);
                                                                     var some = container.tabList.queue.some(function (item) {
                                                                         return !item.hasAttribute("data-favorited");
                                                                     });
@@ -1281,21 +900,14 @@ var Window = {
                                                                     }
                                                                 },
                                                                 action: function () {
-                                                                    //var saved = state.search;
-                                                                    //state.search = function () {};
 
-                                                                    //Function.store(state, "search", function () {
                                                                     container.tabList.queue.forEach(function (item) {
                                                                         var url = item.tab.url;
                                                                         state.favorites.set(url, state.tabsByURL[url].length);
-                                                                        //favorites.set(item.info.url, null);
                                                                     });
 
                                                                     container.tabList.queue.reset();
-                                                                    //});
 
-                                                                    //state.search = saved;
-                                                                    //state.search();
                                                                 }
                                                             });
 
@@ -1313,66 +925,27 @@ var Window = {
                                                                     }
                                                                 },
                                                                 action: function () {
-                                                                    //var saved = state.search;
-                                                                    //state.search = function () {};
 
-                                                                    //Function.store(state, "search", function () {
                                                                     container.tabList.queue.forEach(function (item) {
                                                                         state.favorites.set(item.tab.url, null);
                                                                     });
 
                                                                     container.tabList.queue.reset();
-                                                                    //});
 
-                                                                    //state.search = saved;
-                                                                    //state.search();
                                                                 }
                                                             });
 
-//                                                            menu.submenu("<u>T</u>esting", {
-//                                                                keys: ["T"],
-//                                                                create: function (menu) {
-//                                                                    menu.addItem("<u>F</u>oo", {
-//                                                                        keys: ["F"]
-//                                                                    });
 
-//                                                                    menu.addItem("<u>B</u>ar", {
-//                                                                        keys: ["B"]
-//                                                                    });
 
-//                                                                    menu.addItem("<u>Q</u>ux", {
-//                                                                        keys: ["Q"]
-//                                                                    });
-//                                                                }
-//                                                            });
 
-//                                                            menu.addItem("<u>C</u>lose selected");
-//                                                            menu.addItem("<u>C</u>lose selected");
-//                                                            menu.addItem("<u>C</u>lose selected");
-//                                                            menu.addItem("<u>C</u>lose selected");
-//                                                            menu.addItem("<u>C</u>lose selected");
-//                                                            menu.addItem("<u>C</u>lose selected");
-//                                                            menu.addItem("<u>C</u>lose selected");
-//                                                            menu.separator();
-//                                                            menu.addItem("<u>C</u>lose selected");
                                                         }
                                                     });
 
                                                     menu.separator();
 
-//                                                    menu.addItem("<u>M</u>ove all selected", {
-//                                                        keys: ["M"],
-//                                                        action: function () {
-//                                                            state.queues.moveAllTabs(win.id);
-//                                                            state.queues.resetAll();
-//                                                        }
-//                                                    });
 
                                                     menu.submenu("<u>M</u>ove selected to...", {
                                                         keys: ["M"],
-//                                                        onhide: function (menu) {
-//                                                            menu.clear();
-//                                                        },
                                                         onshow: function (menu) {
                                                             if (container.tabList.queue.length) {
                                                                 menu.enable();
@@ -1381,17 +954,11 @@ var Window = {
                                                             }
                                                         },
                                                         onopen: function (menu) {
-//                                                            console.log("onopen");
                                                             menu.clear();
 
                                                             menu.addItem("New Window", {
                                                                 action: function () {
                                                                     Window.create(container.tabList.queue);
-//                                                                    Platform.windows.create({ url: "lib/remove.html" }, function (win) {
-//                                                                        container.tabList.queue.moveTabs(win.id);
-//                                                                        container.tabList.queue.reset();
-//                                                                        delete container.tabList.queue.shiftNode;
-//                                                                    });
                                                                 }
                                                             });
 
@@ -1403,9 +970,6 @@ var Window = {
                                                                     if (item === container) {
                                                                         name = "<strong>" + name + "</strong>";
                                                                     }
-//                                                                    if (item === container && i > 0) {
-//                                                                        menu.separator();
-//                                                                    }
 
                                                                     menu.addItem(name, {
                                                                         action: function () {
@@ -1415,140 +979,33 @@ var Window = {
                                                                         }
                                                                     });
 
-//                                                                    if (item === container && state.list[i + 1]) {
-//                                                                        menu.separator();
-//                                                                    }
                                                                 });
                                                             }
 
-//                                                            menu.addItem(container.tabIcon.indexText.value, {
-//                                                                action: function () {
-//                                                                    container.tabList.queue.moveTabs(win.id);
-//                                                                    container.tabList.queue.reset();
-//                                                                    delete container.tabList.queue.shiftNode;
-//                                                                }
-//                                                            });
                                                         }
                                                     });
                                                 });
 
                                                 element.appendChild(contextMenu);
                                             }));
-//                                            element.appendChild(UI.create("div", function (dropdown) {
-//                                                dropdown.className = "tab-icon-dropdown";
 
-//                                                /*var img = document.createElement("img");
-//                                                img.src = "/images/button-menu.png";*/
 
-//                                                dropdown.addEventListener("mousedown",  {
-//                                                    build: function (menu) {
 
-//                                                    }
-//                                                }), true);
 
-//                                                //dropdown.appendChild(element);
-//                                                //dropdown.appendChild(img);
-////                                                UI.create("ul", function (element) {
-////                                                    element.className = "tab-icon-buttons";
 
-////                                                    function menuitem(name, action) {
-////                                                        element.appendChild(UI.create("li", function (element) {
-////                                                            element.textContent = name;
-////                                                            element.addEventListener("mouseup", action, true);
-////                                                        }));
-////                                                    }
-////                                                    function separator() {
-////                                                        element.appendChild(document.createElement("hr"));
-////                                                    }
 
-////                                                    function hide() {
-////                                                        element.style.display = "none !important";
-////                                                    }
-////                                                    hide();
 
-////                                                    /*element.addEventListener("click", function () {
-////                                                        UI.modal(false);
-////                                                    }, true);*/
 
-////                                                    dropdown.addEventListener("mousedown", function () {
-////                                                        element.style.display = "";
 
-////                                                        UI.modal(element, hide);
 
-////                                                        /*addEventListener("mousedown", events.disable, true);
-////                                                        addEventListener("mousedown", events.stop, true);
-////                                                        addEventListener("click", hide, true);*/
-////                                                    }, true);
-////                                                    dropdown.addEventListener("mouseup", function (event) {
-////                                                        if (event.target.localName === "li") {
-////                                                            UI.modal(null);
-////                                                        }
-////                                                    }, true);
-////                                                    /*dropdown.addEventListener("click", function () {
-////                                                        element.style.display = "";
 
-////                                                        UI.modal(element, hide);
-////                                                    }, false);*/
 
-////                                                    /*element.appendChild(UI.create("li", function (element) {
-////                                                        element.textContent = "New Tab";
 
-////                                                        element.addEventListener("mouseup", function () {
-
-////                                                        }, true);
-////                                                    }));
-
-////                                                    element.appendChild(document.createElement("hr"));
-
-////                                                    element.appendChild(UI.create("li", function (element) {
-////                                                        element.textContent = "Close All";
-
-////                                                        element.addEventListener("mouseup", function () {
-////                                                            var length = container.tabList.children.length;
-////                                                            var text = "Do you want to close " + length + " tabs?";
-
-////                                                            if (length === 1 || confirm(text)) {
-////                                                                Platform.windows.remove(win.id);
-////                                                            }
-////                                                        }, true);
-////                                                    }));*/
-
-////                                                    /*element.innerHTML += "\
-////                                                        <li><u>B</u>ack</li>\
-////                                                        <li disabled><u>F</u>orward</li>\
-////                                                        <li>Re<u>l</u>oad</li>\
-////                                                        <hr />\
-////                                                        <li>Save <u>A</u>s...</li>\
-////                                                        <li>P<u>r</u>int...</li>\
-////                                                        <li><u>T</u>ranslate to English</li>\
-////                                                        <li><u>V</u>iew Page Source</li>\
-////                                                        <li>View Page <u>I</u>nfo</li>\
-////                                                        <hr />\
-////                                                        <li>I<u>n</u>spect Element</li>\
-////                                                        <hr />\
-////                                                        <li disabled>Input <u>M</u>ethods</li>\
-////                                                    "*/
-
-////                                                    /*element.appendChild(UI.create("li", function (element) {
-////                                                        element.textContent = "Back";
-////                                                    }));
-////                                                    element.appendChild(UI.create("li", function (element) {
-////                                                        element.textContent = "Forward";
-////                                                    }));*/
-////                                                }));
-//                                            }));
-                                        //}));
-                                    //}));
                                 }));
                             }));
                         }));
-                    //}));
 
-                    //container.appendChild(UI.create("tr", function (element) {
-                        //element.className = "stretch";
 
-                        //element.appendChild(UI.create("div", function (element) {
-                            //element.className = "stretch";
 
                             container.appendChild(UI.create("div", function (element) {
                                 element.className = "tab-list-border";
@@ -1559,20 +1016,13 @@ var Window = {
                                     list.className = "tab-list";
                                     list.tabIndex = 1;
 
-                                    //element.appendChild(UI.create("div", function (list) {
                                         container.tabList = list;
-                                        //list.scroll = list;
 
                                         list.container = container;
 
                                         list.queue = [];
 
-                                        //list.addEventListener("DOMNodeInserted", state.search, true);
-                                        //list.addEventListener("DOMNodeRemoved", state.search, true);
 
-//                                        /*addEventListener("keydown", function (event) {
-//                                            console.warn(event);
-//                                        }, true);*/
 
                                         /*! var update = function anon(event) {
                                             clearTimeout(anon.timeout);
@@ -1587,24 +1037,13 @@ var Window = {
 
                                         if (win.tabs) {
                                             win.tabs.forEach(function (tab) {
-    //                                            var element = Tab.proxy(tab);
 
-    //                                            /*if (tab.selected) {
-    //                                                setTimeout(function () {
-    //                                                    UI.scrollTo(element, list);
-    //                                                }, 0);
-    //                                            }*/
 
                                                 list.appendChild(Tab.proxy(tab));
                                             });
                                         }
-                                    //}));
                                 }));
                             }));
-                        //}));
-                    //}));
-                //}));
-            //}));
         }));
 
         return fragment;

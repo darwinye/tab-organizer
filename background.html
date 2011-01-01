@@ -75,17 +75,7 @@
             Options.set("counter.reset.time.minute", "00");
         }
 
-        //Options.set("usage-tracking", true);
 
-/*
-        Object.values = function (object) {
-            if (typeof action === "function") {
-                Object.keys(object).forEach(function (item, i, array) {
-                    action(object[item], i, array);
-                });
-            }
-        };
-*/
 
         var config = Options.snapshot().user;
         var code = "usage-tracking";
@@ -93,7 +83,6 @@
         if (Options.get(code)) {
             _gaq.push(["_trackEvent", "Version", "number", "3.4"]);
 
-            //_gaq.push(["_trackEvent", "Version", "type", "normal"]);
             _gaq.push(["_trackEvent", "Version", "type", "developer"]);
 
             (function () {
@@ -109,7 +98,6 @@
             }());
         }
 
-        //console.log(config);
 
         var categories = {
             "Counter": ["counter.enabled", "counter.type", "counter.reset.whenlower", "counter.reset.number", "counter.reset.time", "counter.reset.time.hour", "counter.reset.time.minute", "counter.reset.idle", "counter.reset.idle.hour"],
@@ -130,16 +118,12 @@
 
             "Undo": ["undo.new-tab", "undo.rename-window", "undo.select-tabs", "undo.move-tabs", "undo.close-tabs", "undo.timer"],
 
-            //"Favorites": [],
-            //"Macros": [],
         };
 
         Object.keys(categories).forEach(function (category) {
-            //if (key in defaults) {
             categories[category].forEach(function (name) {
                 if (Options.get(code) || name === code) {
                     if (!Options.isDefault(name)) {
-                    //if (config[key] !== defaults[key]) {
                         var value = Options.get(name);
                         if (typeof value === "number") {
                             _gaq.push(["_trackEvent", category, name, value + "", value]);
@@ -147,48 +131,17 @@
                             _gaq.push(["_trackEvent", category, name, value + ""]);
                         }
 
-                        //console.log("tracked -", category, name, value);
                     }
                 }
             });
-            //}
         });
 
-//        Object.keys(config).forEach(function (key) {
-//            if (key in defaults) {
-//                if (Options.get(code) || key === code) {
-//                    //if (!Options.isDefault(key)) {
-//                    if (config[key] !== defaults[key]) {
-//                        var value = config[key];
-//                        if (typeof value !== "number") {
-//                            value += "";
-//                        }
-//                        _gaq.push(["_trackEvent", "Options", key, value]);
-//    //                    console.log("tracked -", key, config[key] + "");
-//                    }
-//                }
-////                else {
-////                    //console.log(true, key, config[key]);
-////                }
-//            }
-////            else {
-////                //console.log(false, key, config[key]);
-////            }
-////            setTimeout(function () {
-////                command.next();
-////            }, 1000);
-//        });
-        //console.log(_gaq);
 
-        //_gaq.push(["_trackEvent", "Options", "name", "value]);
 
         var state = {};
 
         var counter = Options.get("counter.state");
 
-        //if (typeof counter.get("total-number") !== "number") {
-            //counter.set("total-number", "");
-        //}
 
         counter.reset = function (should) {
             var reset = Options.get("counter.reset.number");
@@ -214,19 +167,13 @@
         };
         counter.timestamp();
 
-/*        if (!counter.get("timestamp")) {
-
-        }*/
-/*        if (!counter.get("hour")) {
-            container.set("hour", Date
-        }*/
 
         counter.update = function (value) {
             if (Options.get("counter.enabled")) {
                 switch (Options.get("counter.type")) {
                 case "total":
                     value = counter.get("total-number");
-                    if (!value) { // === 0
+                    if (!value) { 
                         value = "";
                     }
                     Platform.icon.setBackgroundColor({ color: [0, 0, 0, 255] });
@@ -236,8 +183,6 @@
 
                     if (typeof value === "undefined") {
                         value = Options.get("counter.reset.number");
-                        //counter.reset();
-                        //return;
                     }
 
                     if (value > 0) {
@@ -247,9 +192,6 @@
                     }
                 }
 
-                /*if (isNaN(value)) {
-                    value = "";
-                }*/
 
                 Platform.icon.setText({ text: value });
             } else {
@@ -282,7 +224,6 @@
             setTimeout(anon, 60000);
         }());
 
-//        var startCounter, stopCounter;
 
         addEventListener("load", function () {
             Platform.windows.getAll({ populate: true }, function (windows) {
@@ -313,32 +254,15 @@
                 Platform.tabs.addEventListener("create", add, true);
                 Platform.tabs.addEventListener("remove", subtract, true);
 
-    //            startCounter = function () {
-    //                Platform.icon.setText({ text: counter.get("session-number") });
-    //            };
-    //            stopCounter = function () {
-    //                Platform.icon.setText({ text: "" });
-    //                //Platform.tabs.removeEventListener("create", add, true);
-    //                //Platform.tabs.removeEventListener("remove", subtract, true);
-    //            };
             });
         }, true);
 
-        //addEventListener("beforeunload", function (event) {
-            //return "Are you sure?";
-        //}, true);
 
 
-//        if (Options.get("counter.enabled")) {
-//            startCounter();
-//        }
         if (Options.get("popup.type") === "bubble") {
             Platform.icon.setPopup({ popup: "window.html" });
         }
 
-//        Options.event.on("change", function (event) {
-//            console.log(event);
-//        });
 
         Options.event.on("change", function (event) {
             switch (event.name) {
@@ -357,11 +281,6 @@
                     }
                 }
                 counter.update();
-//                if (event.value) {
-//                    startCounter();
-//                } else {
-//                    stopCounter();
-//                }
                 break;
             case "popup.type":
                 Platform.icon.setPopup({
@@ -391,10 +310,6 @@
         updateTitle();
 
 
-/*        function updateText() {
-            Platform.icon.setText({ text: counter.get("session-number") });
-        }
-        updateText();*/
 
 
         var openPopup = (function () {
@@ -410,14 +325,10 @@
                 options += ",width=" + info.width;
                 options += ",outerHeight=" + info.height;
                 options += ",height=" + info.height;
-//                options += "alwaysRaised=yes";
                 return open(url, "TabOrganizer", options);
             }
 
             return function () {
-                /*if (state.opened) {
-                    Platform.tabs.focus(state.opened);
-                }*/
 
                 if (state.opened) {
                     Platform.tabs.remove(state.opened.id);
@@ -464,36 +375,21 @@
             }
         };
         Platform.icon.addEventListener("click", showTabOrganizer, true);
-//        Platform.icon.event.on("click", showTabOrganizer);
 
         Platform.tabs.addEventListener("remove", function (id) {
             if (state.opened && state.opened.id === id) {
                 delete state.opened;
             }
 
-//                subtract(id);
-//                delete idToVisitedURL[id];
         }, true);
 
-/*
-        function keycheck(event, input) {
-            return (event.ctrlKey === input.ctrlKey || event.metaKey === input.ctrlKey) &&
-                event.shiftKey === input.shiftKey && event.altKey === event.altKey &&
-                event.which === input.which;
-        }
-*/
 
-//        Options.set("tabs.visited.byID", null);
-//        Options.set("tabs.visited.byURL", null);
 
         (function () {
-//            var idToVisitedURL = {};
             var visitedByURL = Options.get("tabs.visited.byURL");
 
             function add(url) {
-//                if (!visitedByURL.has(url)) {
 
-//                }
                 visitedByURL.set(url, Date.now());
             }
 
@@ -507,100 +403,37 @@
                 }
             });
 
-//            function add(tab) {
-//                var old = idToVisitedURL[tab.id];
-//                if (!old || old.url !== tab.url) {
-//                    visitedByURL[tab.url] = visitedByURL[tab.url] + 1 || 1;
-//                    idToVisitedURL[tab.id] = tab;
-//                }
-//            }
-//            function subtract(id) {
-//                var old = idToVisitedURL[id];
-//                if (old) {
-//                    var visit = visitedByURL[old.url];
-//                    if (visit) {
-//                        if (visit > 1) {
-//                            visit -= 1;
-//                        } else {
-//                            delete visitedByURL[old.url];
-//                        }
-//                    }
-//                }
-//            }
 
             Platform.tabs.addEventListener("focus", function (id) {
                 Platform.tabs.get(id, function (tab) {
                     add(tab.url);
-    //                add(tab.url);
-    //                visitedByURL[tab.url] = visitedByURL[tab.url] + 1 || 1;
-    //                visitedByURL[tab.url] = true;
                 });
             }, true);
-    //        Platform.tabs.addEventListener("create", function (tab) {
-    //            if (tab.selected) {
-    //                visitedByURL[tab.url] = visitedByURL[tab.url] + 1 || 1;
-    //            }
-    //        }, true);
             Platform.tabs.addEventListener("update", function (id, info, tab) {
                 if (tab.status === "loading" && tab.selected) {
-//                    subtract(id);
                     add(tab.url);
-//                    idToVisitedURL[id] = tab;
-    //                visitedByURL[tab.url] = visitedByURL[tab.url] + 1 || 1;
-    //                visitedByURL[tab.url] = true;
                 }
             }, true);
         }());
 
         Platform.windows.addEventListener("focus", function (win) {
-//            console.log(win);
-//            clearTimeout(anon.timer);
             if (win !== null) {
-//                if (anon.timer) {
-//                    setTimeout(function () {
-//                        anon.timer = false;
-//                    }, 100);
-//                } else {
-//                    //                    anon.timer = true;
-//    //                alert();
-//                    Options.set("window.lastfocused", null, { verbatim: true });
 
-//                    //action.unselectWindow();
-//                    //state.search();
-//                }
-//            } else {
-//                anon.timer = true;
                 Platform.windows.get(win, function (win) {
                     if (win.type === "normal") {
                         Options.set("window.lastfocused", win.id);
-                        //state.windows[win.id].setWindowFocus();
-                        //state.search();
                     }
                 });
             }
         }, true);
 
         Platform.message.addEventListener("lib.keyboard", function (event) {
-            //console.log(event);
-            //showTabOrganizer();
             if (event.type === "keyup") {
-                /*
-                if (keycheck(event, {
-                    ctrlKey: Options.get("popup.hotkey.ctrl"),
-                    shiftKey: Options.get("popup.hotkey.shift"),
-                    altKey: Options.get("popup.hotkey.alt"),
-                    which: Options.get("popup.hotkey.code")
-                })) {
-                    showTabOrganizer()
-                }
-                */
 
-                //console.log(event.which);
 
                 var ctrl = Options.get("popup.hotkey.ctrl");
                 var letter = String.fromCharCode(event.which);
 
-                //console.log(event);
 
                 if (event.ctrlKey === ctrl || event.metaKey === ctrl) {
                     if (event.shiftKey === Options.get("popup.hotkey.shift")) {

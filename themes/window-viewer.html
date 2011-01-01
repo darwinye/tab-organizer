@@ -17,8 +17,6 @@
             background-color: transparent;
         }
         .window-list {
-            /*padding: 15px;
-            padding-top: 10px;*/
             padding-top: 11px;
             padding-bottom: 10px;
             padding-left: 13px;
@@ -26,22 +24,15 @@
         .window[data-last] {
             padding-right: 12px;
         }
-        /*#URL-bar {
-            border-left: 1px solid black;
-            border-bottom: 1px solid black;
-        }*/
     </style>
 </head>
 <body>
     <script src="/lib/UI%20Helper.js"></script>
     <script>
-        //console.log(Platform.getBackgroundPage() === this);
         (function () {
             var list = document.createElement("div");
             list.className = "window-list";
-            //table.className = "stretch";
 
-            //table.appendChild(UI.create("td"));
 
 
             var index = 1;
@@ -57,105 +48,40 @@
                     if (info.last) {
                         element.setAttribute("data-last", "");
                     }
-                    //element.appendChild(UI.create("div", function (element) {
-                        //element.className = "window-div";
-                        //element.appendChild(UI.create("table", function (element) {
-                            //element.className = "stretch";
-                            //element.appendChild(UI.create("tr", function (element) {
                                 element.appendChild(UI.create("div", function (element) {
                                     element.className = "tab-icon-border";
                                     element.appendChild(UI.create("div", function (element) {
                                         element.className = "tab-icon-container";
                                         element.appendChild(UI.create("div", function (element) {
                                             element.className = "tab-icon";
-                                            //element.appendChild(UI.create("table", function (element) {
-                                                //element.className = "tab-icon-table";
-                                                //element.appendChild(UI.create("tr", function (element) {
-                                                    //element.appendChild(UI.create("td", function (element) {
                                                         element.appendChild(UI.create("input", function (element) {
                                                             element.className = "tab-icon-text";
-                                                            //element.tabIndex = -1;
-//                                                            if (info.selected) {
-                                                                element.value = index; // "Example"
-//                                                                element.addEventListener("blur", function () {
-//                                                                    this.value = value;
-//                                                                }, true);
-//                                                            }
+                                                                element.value = index; 
                                                             index += 1;
 
                                                             element.setAttribute("spellcheck", "false");
                                                         }));
-                                                    //}));
-                                                    //element.appendChild(UI.create("td", function (element) {
                                                         element.appendChild(UI.create("div", function (element) {
                                                             element.className = "tab-icon-dropdown";
                                                         }));
-                                                    //}));
-                                                //}));
-                                            //}));
                                         }));
                                     }));
                                 }));
-                            //}));
-                            //element.appendChild(UI.create("tr", function (element) {
-                                //element.className = "stretch";
-                                //element.appendChild(UI.create("div", function (element) {
-                                    //element.className = "stretch";
                                     element.appendChild(UI.create("div", function (element) {
                                         element.className = "tab-list-border";
                                         element.appendChild(UI.create("div", function (element) {
                                             element.className = "tab-list";
-                                            //element.appendChild(UI.create("div"));
                                         }));
                                     }));
-                                //}));
-                            //}));
-                        //}));
-                    //}));
                 }));
             }
             makeWindow({ selected: true });
             makeWindow({ last: true });
 
 
-            //table.appendChild(UI.create("td"));
             document.body.appendChild(list);
         }());
-/*
-        document.body.appendChild(UI.create("div", function (element) {
-            element.id = "URL-bar";
 
-            element.appendChild(UI.create("span", function (element) {
-                element.appendChild(UI.create("span", function (element) {
-                    element.className = "protocol";
-                    element.setAttribute("data-secure", "");
-                    element.textContent = "https";
-                }));
-
-                element.appendChild(document.createTextNode("://"));
-
-                element.appendChild(UI.create("span", function (element) {
-                    element.className = "domain";
-                    element.textContent = "example.com";
-                }));
-
-                element.appendChild(document.createTextNode("/foo/bar/"));
-
-                element.appendChild(UI.create("span", function (element) {
-                    element.className = "query";
-                    element.textContent = "search?query=qux";
-                }));
-                element.appendChild(UI.create("span", function (element) {
-                    element.className = "fragment";
-                    element.textContent = "#corge";
-                }));
-            }));
-        }));
-*/
-
-//        addEventListener("beforeunload", function () {
-//            console.log("Hiya!!");
-//        }, true);
     </script>
 </body>
 </html>
