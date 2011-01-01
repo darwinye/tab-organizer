@@ -60,6 +60,7 @@
         Options.setDefaults(defaults);
 
         Options.setObject("tabs.favorites.urls");
+        Options.setObject("tabs.visited.byURL");
         Options.setObject("counter.state");
 
         Options.setArray("windows.offsets");
@@ -462,13 +463,17 @@
                 }
             }
         };
+        Platform.icon.addEventListener("click", showTabOrganizer, true);
+//        Platform.icon.event.on("click", showTabOrganizer);
+
         Platform.tabs.addEventListener("remove", function (id) {
             if (state.opened && state.opened.id === id) {
                 delete state.opened;
             }
-        }, true);
 
-        Platform.icon.addEventListener("click", showTabOrganizer, true);
+//                subtract(id);
+//                delete idToVisitedURL[id];
+        }, true);
 
 /*
         function keycheck(event, input) {
@@ -479,15 +484,73 @@
 */
 
 //        Options.set("tabs.visited.byID", null);
-        Options.set("tabs.visited.byURL", {});
+//        Options.set("tabs.visited.byURL", null);
 
-        var visitedByURL = Options.get("tabs.visited.byURL");
+        (function () {
+//            var idToVisitedURL = {};
+            var visitedByURL = Options.get("tabs.visited.byURL");
 
-        Platform.tabs.addEventListener("focus", function (id) {
-            Platform.tabs.get(id, function (tab) {
-                visitedByURL[tab.url] = true;
+            function add(url) {
+//                if (!visitedByURL.has(url)) {
+
+//                }
+                visitedByURL.set(url, Date.now());
+            }
+
+
+            var offset = Date.now() - 1000 * 60 * 60 * 24 * 7;
+
+            visitedByURL.keys().forEach(function (key) {
+                var value = visitedByURL.get(key);
+                if (offset > value) {
+                    visitedByURL.set(key, null);
+                }
             });
-        }, true);
+
+//            function add(tab) {
+//                var old = idToVisitedURL[tab.id];
+//                if (!old || old.url !== tab.url) {
+//                    visitedByURL[tab.url] = visitedByURL[tab.url] + 1 || 1;
+//                    idToVisitedURL[tab.id] = tab;
+//                }
+//            }
+//            function subtract(id) {
+//                var old = idToVisitedURL[id];
+//                if (old) {
+//                    var visit = visitedByURL[old.url];
+//                    if (visit) {
+//                        if (visit > 1) {
+//                            visit -= 1;
+//                        } else {
+//                            delete visitedByURL[old.url];
+//                        }
+//                    }
+//                }
+//            }
+
+            Platform.tabs.addEventListener("focus", function (id) {
+                Platform.tabs.get(id, function (tab) {
+                    add(tab.url);
+    //                add(tab.url);
+    //                visitedByURL[tab.url] = visitedByURL[tab.url] + 1 || 1;
+    //                visitedByURL[tab.url] = true;
+                });
+            }, true);
+    //        Platform.tabs.addEventListener("create", function (tab) {
+    //            if (tab.selected) {
+    //                visitedByURL[tab.url] = visitedByURL[tab.url] + 1 || 1;
+    //            }
+    //        }, true);
+            Platform.tabs.addEventListener("update", function (id, info, tab) {
+                if (tab.status === "loading" && tab.selected) {
+//                    subtract(id);
+                    add(tab.url);
+//                    idToVisitedURL[id] = tab;
+    //                visitedByURL[tab.url] = visitedByURL[tab.url] + 1 || 1;
+    //                visitedByURL[tab.url] = true;
+                }
+            }, true);
+        }());
 
         Platform.windows.addEventListener("focus", function (win) {
 //            console.log(win);
