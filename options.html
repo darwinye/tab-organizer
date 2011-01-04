@@ -14,7 +14,7 @@
         </style>
     </head>
     <body>
-        <script src="/lib/Platform.js"></script>
+        <!--<script src="/lib/Platform.js"></script>-->
         <script src="/lib/Options.js"></script>
         <script src="/lib/UI%20Helper.js"></script>
         <script src="/lib/Array.js"></script>
@@ -1209,6 +1209,45 @@
                                 min: 0
                             }
                         });
+                    },
+
+
+                    "Windows": function (container) {
+//                        container.space({ height: "0.5em" });
+
+                        container.header("Display windows:");
+
+                        container.indent(function (container) {
+                            container.input("radio-button", {
+                                option: "windows.type",
+                                value: "horizontal",
+                                text: "...horizontally"
+                            });
+
+                            container.input("radio-button", {
+                                option: "windows.type",
+                                value: "grid",
+                                text: "...in a grid"
+                            });
+
+                            container.indent(function (container) {
+                                container.input("number", {
+                                    option: "windows.grid.columns",
+                                    unit: "column",
+                                    limit: {
+                                        min: 1
+                                    }
+                                });
+
+                                container.input("number", {
+                                    option: "windows.grid.rows",
+                                    unit: "row",
+                                    limit: {
+                                        min: 1
+                                    }
+                                });
+                            });
+                        });
                     }
                 };
 
@@ -1257,6 +1296,7 @@
                     "Keyboard",
 
                     "Tabs",
+                    "Windows",
                     "Counter",
                     "Undo",
                     "Search",

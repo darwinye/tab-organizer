@@ -19,7 +19,7 @@ var state = {
     tabsByURL: {},
     visitedByURL: Options.get("tabs.visited.byURL"),
 
-    queues: {
+    /*queues: {
         moveAllTabs: function (id, index) {
             var queue = [];
             state.list.forEach(function (item) {
@@ -45,6 +45,73 @@ var state = {
                 delete item.tabList.queue.shiftNode;
             });
         }
+    },*/
+
+    sortWindows: (function () {
+        function rearrange() {
+            var fragment = document.createDocumentFragment();
+            state.sorted.forEach(function (item) {
+                fragment.appendChild(item);
+            });
+            state.windowList.appendChild(fragment);
+        }
+
+        function sort(func) {
+            state.sorted = state.list.slice().sort(func);
+            rearrange();
+        }
+
+        var sorters = {
+            "date-created": function () {
+                state.sorted = state.list;
+                rearrange();
+    //                            console.log(state.list);
+//                Options.set("windows.sort.type", "date-created");
+            },
+            "tab-number": function () {
+                sort(function (a, b) {
+                    return b.tabList.children.length -
+                           a.tabList.children.length;
+                });
+            }
+        };
+
+        var hooks = {
+            "tab-number": function () {
+                Platform.tabs.on("create", sorters["tab-number"]);
+                Platform.tabs.on("remove", sorters["tab-number"]);
+            }
+        };
+
+        return function (name) {
+            Platform.tabs.removeListener("create", sorters["tab-number"]);
+            Platform.tabs.removeListener("remove", sorters["tab-number"]);
+
+            if (hooks[name]) {
+                hooks[name]();
+            }
+
+            if (sorters[name]) {
+                sorters[name]();
+                Options.set("windows.sort.type", name);
+            }
+        };
+    }()),
+
+    createSearchList: function () {
+        return Array.slice(document.getElementsByClassName("tab"));
+    },
+
+    createView: function (windows) {
+        var fragment = document.createDocumentFragment();
+
+        windows.forEach(function (win) {
+            if (win.type === "normal") {
+                fragment.appendChild(Window.proxy(win));
+            }
+        });
+
+        state.windowList.appendChild(fragment);
     },
 
     urlBar: UI.create("div", function (container) {
@@ -57,6 +124,8 @@ var state = {
         container.id = "placeholder";
     })
 };
+
+state.sorted = state.list;
 
 
 state.tabsByURL.add = function (url, node) {
@@ -303,6 +372,35 @@ fragment.appendChild(UI.create("div", function (container) {
                 }
             });
 
+            menu.space();
+
+            menu.submenu("<u>S</u>ort windows by...", {
+                keys: ["S"],
+                onopen: function (menu) {
+                    menu.clear();
+
+                    var keys = {
+                        "date-created": "<u>D</u>ate created",
+                        "tab-number": "<u>N</u>umber of tabs"
+                    };
+
+                    var type = Options.get("windows.sort.type");
+                    keys[type] = "<strong>" + keys[type] + "</strong>";
+
+                    function item(name, key) {
+                        menu.addItem(keys[name], {
+                            keys: [key],
+                            action: function () {
+                                state.sortWindows(name);
+                            }
+                        });
+                    }
+
+                    item("date-created", "D");
+                    item("tab-number", "N");
+                }
+            });
+
             menu.separator();
 
 
@@ -311,24 +409,29 @@ fragment.appendChild(UI.create("div", function (container) {
                     info.tabs = info.tabs || Array.slice(document.getElementsByClassName("tab"));
 
                     if (macro.search) {
-                        var results = action.parse(macro.search)(info.tabs);
+//                        var results = action.parse(macro.search)(info.tabs);
+                        var results = action.search(info.tabs, macro.search);
+
+//                        action.search = function (array, string) {
+//                            return action.parse(string)(array);
+//                        };
 
                         if (results.length) {
                             switch (macro.action) {
                             case "require": //* FALLTHRU
                             case "move":
                                 if (macro.window) {
-                                    var list = state.list.filter(function (item) {
+                                    var first = state.list.find(function (item) {
                                         return item.tabIcon.indexText.value === macro.window;
                                     });
 
-                                    if (list.length) {
-                                        var moved = results.moveTabs(list[0].window.id, null, false);//!info.moved);
+                                    if (first) {
+                                        var moved = results.moveTabs(first.window.id, null, false);//!info.moved);
 
                                         info.moved = info.moved.concat(moved);
 
                                         if (macro.action === "require") {
-                                            var odd = Array.slice(list[0].tabList.children);
+                                            var odd = Array.slice(first.tabList.children);
 
                                             odd = odd.filter(function (item) {
                                                 return info.tabs.indexOf(item) !== -1 && results.indexOf(item) === -1;
@@ -449,7 +552,7 @@ fragment.appendChild(UI.create("div", function (container) {
                         text.push(item.action);
 
                         if (item.search) {
-                            text.push("<b>" + item.search + "</b>");
+                            text.push("<strong>" + item.search + "</strong>");
                         } else {
                             text.push("all tabs");
                         }
@@ -632,11 +735,13 @@ fragment.appendChild(UI.create("div", function (container) {
         var input = document.createElement("input");
         input.setAttribute("spellcheck", "false");
         input.setAttribute("results", "");
+//        input.setAttribute("autosave", Platform.getURL(""));
         input.setAttribute("incremental", "");
         input.setAttribute("placeholder", "Search");
 
         input.title = "(Ctrl F)";
         input.type = "search";
+//        input.name = "s"
         input.tabIndex = 1;
 
 
@@ -681,9 +786,7 @@ fragment.appendChild(UI.create("div", function (container) {
                 cache.input = input.value;
             }
 
-            var array = (state.createSearchList)
-                          ? state.createSearchList()
-                          : Array.slice(document.getElementsByClassName("tab"));
+            var array = state.createSearchList();
 
             var results = cache.filter(array);
             var focused, scroll = [];
@@ -705,6 +808,8 @@ fragment.appendChild(UI.create("div", function (container) {
 
             var list = windows.filter(function (item) {
                 item.removeAttribute("data-last");
+
+//                item.update();
 
                 var children = Array.slice(item.tabList.children);
 
@@ -747,7 +852,9 @@ fragment.appendChild(UI.create("div", function (container) {
 
 
             if (list.length) {
-                list[list.length - 1].setAttribute("data-last", "");
+                var last = list[list.length - 1];
+                last.setAttribute("data-last", "");
+//                last.update();
             }
 
             if (focused) {
@@ -775,7 +882,9 @@ fragment.appendChild(UI.create("div", function (container) {
             document.title = string.join("");
 
 
-            document.body.scrollTop = 0; //* Issue 87
+            if (Options.get("windows.type") === "horizontal") {
+                document.body.scrollTop = 0; //* Issue 87
+            }
         }
 
         state.search = function anon(info) {
@@ -784,7 +893,7 @@ fragment.appendChild(UI.create("div", function (container) {
             function wrapper() {
                 console.log("Searching.");
 
-                search(state.list, info);
+                search(state.sorted, info);
             }
 
             if (info.nodelay) {
@@ -816,6 +925,7 @@ fragment.appendChild(UI.create("div", function (container) {
             input.focus();
             input.select();
         }, 0);
+//        return;
 
 
         span.appendChild(UI.create("div", function (container) {
@@ -1129,6 +1239,12 @@ fragment.appendChild(UI.create("div", function (container) {
     var script = document.createElement("script");
     script.src = "/views/" + Options.get("windows.type") + ".js";
 
+//    Options.event.on("change", function (event) {
+//        if (event.name === "windows.type") {
+//            script.src = "/views/" + event.value + ".js";
+//        }
+//    });
+
     fragment.appendChild(script);
 }());
 
@@ -1138,6 +1254,22 @@ document.body.appendChild(fragment);
 addEventListener("load", function (event) { //* Issue 69
     Platform.windows.getAll({ populate: true }, function (windows) {
         state.createView(windows);
+
+        var type = Options.get("windows.sort.type");
+        if (type !== "date-created") {
+            state.sortWindows(type);
+        }
+
+        Options.event.on("change", function (event) {
+            if (event.name === "windows.sort.type") {
+//                console.log("foo!");
+                state.search({ scroll: true, focused: true, nodelay: true });
+            }
+        });
+
+        state.list.forEach(function (item) {
+            item.update();
+        });
 
         Options.event.on("change", function (event) {
             if (event.name === "window.lastfocused") {
@@ -1187,6 +1319,20 @@ addEventListener("load", function (event) { //* Issue 69
                 //! anon.timer = setTimeout(function () {
                 state.search();
                 //! }, 0);
+            }
+        });
+
+        Options.event.on("change", function (event) {
+            var columns = (event.name === "windows.grid.columns"),
+                rows = (event.name === "windows.grid.rows"),
+                type = (event.name === "windows.type");
+
+            if (columns || rows || type) {
+                state.list.forEach(function (item) {
+                    item.update();
+                });
+
+                state.search({ scroll: true, focused: true, nodelay: true });
             }
         });
 

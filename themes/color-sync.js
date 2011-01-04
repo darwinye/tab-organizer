@@ -19,11 +19,3 @@
 
     document.head.appendChild(link);
 }());
-
-(function () {
-    var link = document.createElement("link");
-    link.rel = "stylesheet";
-    link.type = "text/css";
-    link.href = "/views/" + Options.get("windows.type") + ".css";
-    document.head.appendChild(link);
-}());

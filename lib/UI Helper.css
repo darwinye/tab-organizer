@@ -50,6 +50,10 @@ button.UI-link {
     white-space: nowrap;
 }
 
+.UI-contextMenu-space {
+    /*border-top: 1px solid transparent;*/
+    margin: 2px 0px;
+}
 .UI-contextMenu-separator {
     border: none;
     border-top: 1px solid #dcdcdc; /*! #acacac */

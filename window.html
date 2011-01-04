@@ -4,15 +4,38 @@
     <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
     <title>Tab Organizer</title>
 
-    <script src="/lib/Platform.js"></script>
     <script src="/lib/Options.js"></script>
     <script src="/themes/color-sync.js"></script>
+    <script>
+        /*global Options */
+        "use strict";
+
+        (function () {
+            var link = document.createElement("link");
+            link.rel = "stylesheet";
+            link.type = "text/css";
+
+            function href(value) {
+                link.href = "/views/" + value + ".css";
+            }
+            href(Options.get("windows.type"));
+
+            Options.event.on("change", function (event) {
+                if (event.name === "windows.type") {
+                    href(event.value);
+                }
+            });
+
+            document.head.appendChild(link);
+        }());
+    </script>
 
     <link rel="stylesheet" type="text/css" href="/lib/Options.css" />
     <link rel="stylesheet" type="text/css" href="/lib/UI%20Helper.css" />
     <link rel="stylesheet" type="text/css" href="/window.css" />
 </head>
 <body>
+    <script src="/lib/Platform.js"></script>
     <script src="/lib/Undo.js"></script>
     <script src="/lib/Array.js"></script>
     <script src="/lib/Global%20Helper.js"></script>

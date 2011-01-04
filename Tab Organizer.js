@@ -407,6 +407,9 @@ Window = {
     proxy: function (win) {
         var fragment = document.createDocumentFragment();
 
+//        var wrapper = document.createElement("div");
+//        wrapper.className = "window-wrapper";
+
         fragment.appendChild(UI.create("div", function (container) {
             container.className = "window";
 
@@ -418,7 +421,8 @@ Window = {
 
 
             function scrollTo() {
-                UI.scrollTo(container.tabContainer, document.body);
+//                UI.scrollTo(container.tabContainer, document.body);
+                UI.scrollIntoView(container.tabContainer, document.body);
                 //! UI.scrollIntoView(container.tabList, document.body, 41);
             }
 
@@ -440,6 +444,29 @@ Window = {
             container.setWindowFocus = function () {
                 container.select();
                 scrollTo();
+            };
+
+            container.update = function () {
+                switch (Options.get("windows.type")) {
+                case "grid":
+                    var width = Options.get("windows.grid.columns");
+//                    var minus = (31 / state.windowList.clientWidth) * 100;
+                    container.style.width = 100 / width + "%";
+//                    container.style.width = "calc(" + (100 / width) + "% - 30px)";
+
+                    var height = Options.get("windows.grid.rows");
+                    container.style.height = 100 / height + "%";
+                    break;
+                default:
+                    container.style.width = "";
+                    container.style.height = "";
+                }
+//                if (container.hasAttribute("data-last")) {
+//                    container.style.minWidth = width;
+//                } else {
+//                    container.style.minWidth = "";
+//                }
+//                //container.tabContainer.style.width = width;
             };
 
 
@@ -907,10 +934,10 @@ Window = {
                                             }
                                         });
 
-                                        if (state.list.length) {
+                                        if (state.sorted.length) {
                                             menu.separator();
 
-                                            state.list.forEach(function (item, i) {
+                                            state.sorted.forEach(function (item, i) {
                                                 var name = item.tabIcon.indexText.value;
                                                 if (item === container) {
                                                     name = "<strong>" + name + "</strong>";
@@ -969,6 +996,8 @@ Window = {
                 }));
             }));
         }));
+
+//        fragment.appendChild(wrapper);
 
         return fragment;
     }
