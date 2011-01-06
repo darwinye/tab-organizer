@@ -83,9 +83,10 @@
         var code = "usage-tracking";
 
         if (Options.get(code)) {
-            _gaq.push(["_trackEvent", "Version", "number", "3.4"]);
+            _gaq.push(["_trackEvent", "Version", "number", "3.5"]);
 
             _gaq.push(["_trackEvent", "Version", "type", "developer"]);
+            //!_gaq.push(["_trackEvent", "Version", "type", "normal"]);
 
             (function () {
                 var favorites = Options.get("tabs.favorites.urls").keys().length;
@@ -118,7 +119,11 @@
 
             "Theme": ["color.theme"],
 
-            "Undo": ["undo.new-tab", "undo.rename-window", "undo.select-tabs", "undo.move-tabs", "undo.close-tabs", "undo.timer"]
+            "Undo": ["undo.new-tab", "undo.rename-window", "undo.select-tabs", "undo.move-tabs", "undo.close-tabs", "undo.timer"],
+
+            "Windows": ["windows.type", "windows.grid.columns", "windows.grid.rows"],
+
+            "Statistics": ["windows.sort.type"],
         };
 
         Object.keys(categories).forEach(function (category) {
@@ -236,6 +241,7 @@
                 if (Options.get(code)) {
                     _gaq.push(["_trackEvent", "Statistics", "windows.length", windows.length + "", windows.length]);
                     _gaq.push(["_trackEvent", "Statistics", "tabs.length", tabcount + "", tabcount]);
+//                    _gaq.push(["_trackEvent", "Statistics", "windows.sort.type", Options.get()]);
                 }
 
                 function add() {
