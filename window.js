@@ -51,6 +51,7 @@ var state = {
         function rearrange() {
             var fragment = document.createDocumentFragment();
             state.sorted.forEach(function (item) {
+//                state.windowList.appendChild(item);
                 fragment.appendChild(item);
             });
             state.windowList.appendChild(fragment);
@@ -80,12 +81,14 @@ var state = {
             "tab-number": function () {
                 Platform.tabs.on("create", sorters["tab-number"]);
                 Platform.tabs.on("remove", sorters["tab-number"]);
+                Platform.tabs.on("attach", sorters["tab-number"]);
             }
         };
 
         return function (name) {
             Platform.tabs.removeListener("create", sorters["tab-number"]);
             Platform.tabs.removeListener("remove", sorters["tab-number"]);
+            Platform.tabs.removeListener("attach", sorters["tab-number"]);
 
             if (hooks[name]) {
                 hooks[name]();
@@ -269,37 +272,112 @@ Platform.bookmarks.on("remove", function (id, info) {
 }, true);
 
 
-document.body.tabIndex = -1;
+//document.body.tabIndex = -1;
 
-addEventListener("focus", function (event) {
-    var target = event.target;
+//addEventListener("focus", function (event) {
+//    var target = event.target;
 
-    if (target.setAttribute) {
-        target.setAttribute("data-selected", "");
-    }
+////    console.log(event.type, target);
 
-    if (target === this && state.focused) { //! Fixes a bug with the window titles.
-        state.focused.triggerEvent("blur", false, false);
-    }
-}, true);
+//    if (target.setAttribute) {
+//        target.setAttribute("data-selected", "");
+//    }
 
-addEventListener("blur", function (event) {
-    var target = event.target;
+////    if (!state.focused && state.windowList) {
+////        if (state.windowList.contains(target)) {
+////            state.focused = target;
+////        }
+////    }
 
-    if (target.removeAttribute) {
-        target.removeAttribute("data-selected");
+//    if (target !== this) {
+//        if (state.focused === target) {
+////            delete state.focused;
+//        } else if (target.triggerEvent) {
+//            target.triggerEvent("KAE-user-focus", false, false);
+//            state.focused = target;
+//            console.log(event.type, state.focused);
+//        }
+//    }
 
-        if (state.windowList.contains(target)) {
-            state.focused = target;
-        } else {
-            delete state.focused;
-        }
-    }
+////    if (target === this) {
+////        delete state.focused;
+////    } else if (state.windowList) {
 
-    if (target === this && state.focused) {
-        state.focused.triggerEvent("focus", false, false);
-    }
-}, true);
+////    }
+
+////    if (target === state.focused) {
+////        delete state.focused;
+////    } else if (state.windowList) {
+
+////    }
+
+////    if (target === this && state.focused) { //! Fixes a bug with the window titles.
+////        var focused = state.focused;
+////        delete state.focused;
+////        focused.triggerEvent("blur", false, false);
+////        delete state.focused;
+////    }
+//}, true);
+
+//addEventListener("blur", function anon(event) {
+//    var target = event.target;
+
+//    if (target.removeAttribute) {
+//        target.removeAttribute("data-selected");
+//    }
+
+////    if (target !== this && state.focused === target) {
+////        if (target.triggerEvent) {
+////            target.triggerEvent("KAE-user-blur", false, false);
+////            delete state.focused;
+////            console.log(event.type, state.focused);
+////        }
+////    }
+//    if (target.triggerEvent) {
+//        target.triggerEvent("KAE-user-blur", false, false);
+//    }
+
+//    if (state.focused) {
+//        if (target === this) {
+//            var focused = state.focused;
+//    //            delete state.focused;
+//            focused.triggerEvent("KAE-user-focus", false, false);
+//    //            delete state.focused;
+//    //        console.log(state.focused);
+//        }// else {
+////            delete state.focused;
+////        }
+//        delete state.focused;
+//    }
+
+////    if (target === state.focused) {
+////        console.log(event.type, target);
+////        delete state.focused;
+////    } else if (target === this && state.focused) {
+////        var focused = state.focused;
+//////            delete state.focused;
+////        focused.triggerEvent("focus", false, false);
+//////            delete state.focused;
+//////        console.log(state.focused);
+////    } else if (state.windowList.contains(target)) {
+////        state.focused = target;
+
+////        removeEventListener(event.type, anon, true);
+
+////        function blur(event) {
+
+////        }
+////        function focus(event) {
+////            removeEventListener("blur", blur, true);
+////            removeEventListener("focus", focus, true);
+////            addEventListener(event.type, anon, true);
+////        }
+////        addEventListener("blur", blur, true);
+////        addEventListener("focus", focus, true);
+////    }// else {
+//////            delete state.focused;
+//////        }
+//}, true);
 
 
 addEventListener("dragstart", function () {
