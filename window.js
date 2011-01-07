@@ -188,7 +188,7 @@ if (localStorage["window.titles"]) {
         var proxy = {};
 
         info.list.forEach(function (item) {
-            Queue.push(function (queue) {
+            Queue.sync(function (queue) {
                 var undo = item.undoState;
                 var info = {
                     index: undo.index
