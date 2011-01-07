@@ -241,9 +241,6 @@ input[data-special], .search-past-item[data-special] {
     padding: 70px 0px 30px 18px; /** 70px 0px 30px 58px */
 }
 
-/*.window-wrapper {
-    display: inline-block;
-}*/
 .window {
     -webkit-box-flex: 1;
 

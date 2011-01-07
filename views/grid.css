@@ -1,33 +1,11 @@
 @charset "UTF-8";
-/*.window-list {
-    -webkit-columns: 3;
-}*/
 .window {
-    /*display: table-cell;*/
     -webkit-box-sizing: border-box;
 
-    /*width: 50%;
-    height: 100%;*/
     float: left;
 
     min-width: 152px;
 
-    /*border: 0px solid transparent;
-    border-right-width: 32px;
-    border-bottom-width: 30px;*/
-
-    /*margin-bottom: -7px;*/
-
-    /*width: -webkit-calc(50% - 30px);*/
-
     padding-right: 30px;
     padding-bottom: 30px;
 }
-/*.window[data-selected] {
-    position: relative;
-    z-index: 2;
-}*/
-
-/*.window-wrapper {
-
-}*/
