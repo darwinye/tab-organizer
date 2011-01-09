@@ -1344,10 +1344,10 @@ addEventListener("load", function (event) { //* Issue 69
                 state.search({ scroll: true, focused: true, nodelay: true });
             }
         });
-
-        state.list.forEach(function (item) {
-            item.update();
-        });
+//
+//        state.list.forEach(function (item) {
+//            item.update();
+//        });
 
         Options.event.on("change", function (event) {
             if (event.name === "window.lastfocused") {
@@ -1397,20 +1397,6 @@ addEventListener("load", function (event) { //* Issue 69
                 //! anon.timer = setTimeout(function () {
                 state.search();
                 //! }, 0);
-            }
-        });
-
-        Options.event.on("change", function (event) {
-            var columns = (event.name === "windows.grid.columns"),
-                rows = (event.name === "windows.grid.rows"),
-                type = (event.name === "windows.type");
-
-            if (columns || rows || type) {
-                state.list.forEach(function (item) {
-                    item.update();
-                });
-
-                state.search({ scroll: true, focused: true, nodelay: true });
             }
         });
 

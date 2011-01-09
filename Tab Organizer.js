@@ -441,21 +441,10 @@ Window = {
                 container.select();
                 scrollTo();
             };
-
-            container.update = function () {
-                switch (Options.get("windows.type")) {
-                case "grid":
-                    var width = Options.get("windows.grid.columns");
-                    container.style.width = 100 / width + "%";
-
-                    var height = Options.get("windows.grid.rows");
-                    container.style.height = 100 / height + "%";
-                    break;
-                default:
-                    container.style.width = "";
-                    container.style.height = "";
-                }
-            };
+//
+//            container.update = function () {
+//
+//            };
 
 
             container.addEventListener("blur", function (event) {

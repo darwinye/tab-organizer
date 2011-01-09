@@ -19,10 +19,57 @@
                 link.href = "/views/" + value + ".css";
             }
             href(Options.get("windows.type"));
+//
+//            Options.event.on("change", function (event) {
+//
+//            });
+
+            function find(text, func) {
+                var rules = link.sheet.cssRules;
+
+                for (var i = 0; i < rules.length; i += 1) {
+                    if (rules[i].selectorText === text) {
+                        return func(rules[i]);
+                    }
+                }
+            }
+
+            var types = {
+                "grid": function () {
+                    find(".window", function (rule) {
+                        var width = Options.get("windows.grid.columns");
+                        rule.style.width = 100 / width + "%";
+
+                        var height = Options.get("windows.grid.rows");
+                        rule.style.height = 100 / height + "%";
+                    });
+                }
+            };
+
+            function update() {
+                var action = types[Options.get("windows.type")];
+                if (action) {
+                    action();
+                }
+            }
+            addEventListener("DOMContentLoaded", update, true);
 
             Options.event.on("change", function (event) {
-                if (event.name === "windows.type") {
+                var columns = (event.name === "windows.grid.columns"),
+                    rows = (event.name === "windows.grid.rows"),
+                    type = (event.name === "windows.type");
+
+                if (type) {
                     href(event.value);
+                }
+
+                if (columns || rows || type) {
+//                    state.list.forEach(function (item) {
+//                        item.update();
+//                    });
+                    update();
+
+                    state.search({ scroll: true, focused: true, nodelay: true });
                 }
             });
 
