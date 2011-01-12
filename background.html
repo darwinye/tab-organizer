@@ -66,6 +66,8 @@
         Options.setObject("tabs.visited.byURL");
         Options.setObject("counter.state");
 
+        Options.setArray("windows.tab-indent");
+        Options.set("windows.indent-level", null);
         Options.setArray("windows.offsets");
         Options.setArray("windows.titles");
         Options.setArray("macros.list");
@@ -220,11 +222,57 @@
 
 
         addEventListener("load", function () {
+/*            var focusedByID = {};
+            var indexByID = {};
+            var tabsByID = {};
+
+            var indent = Options.get("windows.tab-indent");
+
+            Platform.event.on("tab-create", function (tab) {
+                tabsByID[tab.id] = tab;
+
+                var focused = focusedByID[tab.windowId];
+                if (focused) {
+                    console.log(focused.index);
+                }
+            });
+
+            Platform.event.on("tab-remove", function (id) {
+                indent.splice(indexByID[tabsByID[id].windowId], 1);
+            });
+
+            Platform.event.on("tab-focus", function (id, info) {
+//                focusedByID[info.windowId] = node;
+                Platform.tabs.get(id, function (tab) {
+                    focusedByID[info.windowId] = tab;
+//                    var list = state.windows[info.windowId],
+//                        node = state.tabsByID[id];
+
+//                    if (list && node) {
+//                        var scroll = list.tabList;
+
+//                        var old = focusedByID[info.windowId];
+//                        if (old) {
+//                            node.indentParent = old.index;
+//                        }
+//                    }
+                });
+            });
+*/
             Platform.windows.getAll({ populate: true }, function (windows) {
                 var tabcount = 0;
 
-                windows.forEach(function (item) {
+                windows.forEach(function (item, i) {
+//                    indent[i] = indent[i] || [];
+//                    windowsByID[item.id] = i;
+
                     tabcount += item.tabs.length;
+
+                    /*item.tabs.forEach(function (tab) {
+                        if (tab.selected) {
+                            focusedByID[item.id] = tab;
+                        }
+                    });*/
                 });
 
                 counter.set("total-number", tabcount);
@@ -245,8 +293,8 @@
                     counter.set("session-number", counter.get("session-number") - 1);
                     counter.update();
                 }
-                Platform.tabs.on("create", add, true);
-                Platform.tabs.on("remove", subtract, true);
+                Platform.event.on("tab-create", add);
+                Platform.event.on("tab-remove", subtract);
             });
         }, true);
 
@@ -321,7 +369,7 @@
 
             return function () {
                 if (state.opened) {
-                    Platform.tabs.remove(state.opened.id);
+                    Platform.tabs.remove(state.opened);
                 }
 
                 return popup("window.html", {
@@ -352,7 +400,7 @@
                 break;
             case "tab":
                 if (state.opened) {
-                    Platform.tabs.focus(state.opened);
+                    Platform.tabs.focus(state.opened, true);
                 } else if (state.opened !== null) {
                     state.opened = null;
 
@@ -364,13 +412,13 @@
                 }
             }
         };
-        Platform.icon.on("click", showTabOrganizer, true);
+        Platform.event.on("icon-click", showTabOrganizer);
 
-        Platform.tabs.on("remove", function (id) {
-            if (state.opened && state.opened.id === id) {
+        Platform.event.on("tab-remove", function (tab) {
+            if (state.opened && state.opened.id === tab.id) {
                 delete state.opened;
             }
-        }, true);
+        });
 
 
         (function () {
@@ -390,28 +438,30 @@
                 visitedByURL.set(url, Date.now());
             }
 
-            Platform.tabs.on("focus", function (id) {
-                Platform.tabs.get(id, function (tab) {
-                    add(tab.url);
-                });
-            }, true);
+            Platform.event.on("tab-focus", function (tab) {
+                add(tab.url);
+//                Platform.tabs.get(id, function (tab) {
+//
+//                });
+            });
 
-            Platform.tabs.on("update", function (id, info, tab) {
+            Platform.event.on("tab-update", function (tab) {
                 if (tab.status === "loading" && tab.selected) {
                     add(tab.url);
                 }
-            }, true);
+            });
         }());
 
-        Platform.windows.on("focus", function (win) {
-            if (win !== null) {
-                Platform.windows.get(win, function (win) {
-                    if (win.type === "normal") {
-                        Options.set("window.lastfocused", win.id);
-                    }
-                });
+        Platform.event.on("window-focus", function (win) {
+            if (win.type === "normal") {
+                Options.set("window.lastfocused", win.id);
             }
-        }, true);
+//            if (win !== null) {
+//                Platform.windows.get(win, function (win) {
+//
+//                });
+//            }
+        });
 
         Platform.message.on("lib.keyboard", function (event) {
             if (event.type === "keyup") {
@@ -428,17 +478,7 @@
                     }
                 }
             }
-        }, true);
-
-        Platform.message.on("lib.action", function (json, port) {
-            switch (json.type) {
-            case "focus":
-                Platform.tabs.focus(port.tab);
-                break;
-            case "remove":
-                Platform.tabs.remove(port.tab.id);
-            }
-        }, true);
+        });
     </script>
 </body>
 </html>

@@ -5,25 +5,29 @@ var Tab, Window;
 
 Tab = {
     focus: function (tab) {
-        Platform.tabs.focus(tab);
+        var focused = Options.get("window.lastfocused");
+        Platform.tabs.focus(tab, focused !== tab.windowId);
 
         if (Options.get("popup.type") !== "tab") {
-            Platform.message.connect("lib.action", function (port) {
-                port.sendMessage({ type: "focus" });
+            Platform.tabs.getCurrent(function (tab) {
+                Platform.tabs.focus(tab, true);
             });
+//            Platform.message.connect("lib.action", function (port) {
+//                port.sendMessage({ type: "focus" });
+//            });
         }
     },
 
 
     move: function (item, info, action) {
         var tab = item.tab;
-        Platform.tabs.move(tab.id, info, function () {
-            Platform.tabs.get(tab.id, function (tab) {
-                item.tab = tab;
-                if (typeof action === "function") {
-                    action();
-                }
-            });
+        Platform.tabs.move(tab, info, function (tab) {
+//            Platform.tabs.get(tab.id, function (tab) {
+            item.tab = tab;
+            if (typeof action === "function") {
+                action();
+            }
+//            });
         });
     },
 
@@ -47,6 +51,12 @@ Tab = {
 
             state.tabsByURL.add(tab.url, container);
             state.tabsByID[tab.id] = container;
+
+
+            /*var indent = state.indentByID[tab.id];
+            if (indent) {
+                container.style.marginLeft = indent * 5 + "px";
+            }*/
 
 
             container.queueAdd = function () {
@@ -189,7 +199,7 @@ Tab = {
                             this.queueAdd();
                         }
                     } else if (event.altKey) {
-                        Platform.tabs.remove(tab.id);
+                        Platform.tabs.remove(tab);
                     } else {
                         switch (Options.get("tabs.click.type")) {
                         case "select-focus":
@@ -214,7 +224,7 @@ Tab = {
 
             container.addEventListener("mouseup", function (event) {
                 if (event.button === 1) {
-                    Platform.tabs.remove(tab.id);
+                    Platform.tabs.remove(tab);
                 }
             }, false);
 
@@ -328,7 +338,7 @@ Tab = {
 
                     element.addEventListener("click", function (event) {
                         event.stopPropagation();
-                        Platform.tabs.remove(tab.id);
+                        Platform.tabs.remove(tab);
                     }, true);
                 })
             };
@@ -554,7 +564,7 @@ Window = {
                     }
 
                     if (event.button === 1) {
-                        Platform.windows.remove(win.id);
+                        Platform.windows.remove(win);
                     }
                 }, true);
 
@@ -702,7 +712,7 @@ Window = {
                                         }, function (tab) {
                                             if (Options.get("undo.new-tab")) {
                                                 Undo.push("new-tab", {
-                                                    id: tab.id
+                                                    tab: tab
                                                 });
                                                 state.undoBar.show("You created a new tab.");
                                             }
@@ -821,7 +831,7 @@ Window = {
                                             keys: ["L"],
                                             action: function () {
                                                 container.tabList.queue.forEach(function (item) {
-                                                    Platform.tabs.update(item.tab.id, {
+                                                    Platform.tabs.update(item.tab, {
                                                         url: item.tab.url
                                                     });
                                                 });
@@ -835,7 +845,7 @@ Window = {
                                             keys: ["C"],
                                             action: function () {
                                                 container.tabList.queue.forEach(function (item) {
-                                                    Platform.tabs.remove(item.tab.id);
+                                                    Platform.tabs.remove(item.tab);
                                                 });
                                                 container.tabList.queue.reset();
                                                 delete container.tabList.queue.shiftNode;

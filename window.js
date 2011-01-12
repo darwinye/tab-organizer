@@ -18,6 +18,8 @@ var state = {
     tabsByID: {},
     tabsByURL: {},
     visitedByURL: Options.get("tabs.visited.byURL"),
+//    indent: Options.get("windows.indent-level"),
+//    indentByID: {},
 
     /*queues: {
         moveAllTabs: function (id, index) {
@@ -74,21 +76,26 @@ var state = {
                     return b.tabList.children.length -
                            a.tabList.children.length;
                 });
-            }
+            },
+            /*"starting-tab": function () {
+                sort(function (a, b) {
+                    return b.
+                });
+            }*/
         };
 
         var hooks = {
             "tab-number": function () {
-                Platform.tabs.on("create", sorters["tab-number"]);
-                Platform.tabs.on("remove", sorters["tab-number"]);
-                Platform.tabs.on("attach", sorters["tab-number"]);
+                Platform.event.on("tab-create", sorters["tab-number"]);
+                Platform.event.on("tab-remove", sorters["tab-number"]);
+                Platform.event.on("tab-attach", sorters["tab-number"]);
             }
         };
 
         return function (name) {
-            Platform.tabs.removeListener("create", sorters["tab-number"]);
-            Platform.tabs.removeListener("remove", sorters["tab-number"]);
-            Platform.tabs.removeListener("attach", sorters["tab-number"]);
+            Platform.event.remove("tab-create", sorters["tab-number"]);
+            Platform.event.remove("tab-remove", sorters["tab-number"]);
+            Platform.event.remove("tab-attach", sorters["tab-number"]);
 
             if (hooks[name]) {
                 hooks[name]();
@@ -163,7 +170,7 @@ if (localStorage["window.titles"]) {
 
 (function () {
     Undo.setRule("new-tab", function (info) {
-        Platform.tabs.remove(info.id);
+        Platform.tabs.remove(info.tab);
         Undo.reset();
     });
 
@@ -233,13 +240,14 @@ Platform.bookmarks.getTree(function recurse(array) {
             url[item.url] = url[item.url] + 1 || 1;
         }
     });
+
     if (state.loaded) {
         state.search();
         //! state.search({ scroll: true, focused: true, nodelay: true });
     }
 });
 
-Platform.bookmarks.on("change", function (id, info) {
+Platform.event.on("bookmark-change", function (id, info) {
     var bookmark = state.bookmarksByID[id],
         url = state.bookmarksByURL;
 
@@ -251,25 +259,25 @@ Platform.bookmarks.on("change", function (id, info) {
 
         state.search();
     }
-}, true);
+});
 
-Platform.bookmarks.on("create", function (id, bookmark) {
+Platform.event.on("bookmark-create", function (id, bookmark) {
     var url = state.bookmarksByURL;
     if (bookmark.url) {
         state.bookmarksByID[id] = bookmark;
         url[bookmark.url] = url[bookmark.url] + 1 || 1;
         state.search({ tabs: state.tabsByURL[bookmark.url] });
     }
-}, true);
+});
 
-Platform.bookmarks.on("remove", function (id, info) {
+Platform.event.on("bookmark-remove", function (id, info) {
     var bookmark = state.bookmarksByID[id];
     if (bookmark) {
         state.bookmarksByURL[bookmark.url] -= 1;
         delete state.bookmarksByID[id];
         state.search({ tabs: state.tabsByURL[bookmark.url] });
     }
-}, true);
+});
 
 
 //document.body.tabIndex = -1;
@@ -532,7 +540,7 @@ fragment.appendChild(UI.create("div", function (container) {
                                 break;
                             case "close":
                                 results.forEach(function (item) {
-                                    Platform.tabs.remove(item.tab.id);
+                                    Platform.tabs.remove(item.tab);
                                 });
 
                                 info.closed = info.closed.concat(results);
