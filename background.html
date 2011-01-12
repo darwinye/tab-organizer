@@ -67,10 +67,11 @@
         Options.setObject("counter.state");
 
         Options.setArray("windows.tab-indent");
-        Options.set("windows.indent-level", null);
         Options.setArray("windows.offsets");
         Options.setArray("windows.titles");
         Options.setArray("macros.list");
+
+//        Options.deleteDefault("windows.indent-level");
 
 
         var config = Options.snapshot().user;
