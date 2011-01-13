@@ -1405,6 +1405,12 @@ addEventListener("load", function (event) { //* Issue 69
                 //! anon.timer = setTimeout(function () {
                 state.search();
                 //! }, 0);
+
+                document.body.setAttribute("hidden", "");
+                document.body.removeAttribute("hidden");
+//
+//                document.body.style.display = "none !important";
+//                document.body.style.display = "";
             }
         });
 
