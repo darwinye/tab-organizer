@@ -94,7 +94,11 @@ Tab = {
 
 
             var url = UI.create("span", function (element) {
-                var url = decodeURI(tab.url);
+                var url = tab.url;
+                try {
+                    url = decodeURI(url);
+                } catch (e) {}
+
                 var match = /^([^:]+)(:\/\/)([^\/]*)([^?#]*\/)([^#]*)(#.*)?$/.exec(url);
                 var secure = {
                     "https": true
