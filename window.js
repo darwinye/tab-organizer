@@ -138,6 +138,12 @@ var state = {
 state.sorted = state.list;
 
 
+state.tabsByURL.update = function (url) {
+    if (state.favorites.has(url)) {
+        state.favorites.set(url, state.tabsByURL[url].length);
+    }
+};
+
 state.tabsByURL.add = function (url, node) {
     state.tabsByURL[url] = state.tabsByURL[url] || [];
     state.tabsByURL[url].push(node);
@@ -145,14 +151,13 @@ state.tabsByURL.add = function (url, node) {
 };
 
 state.tabsByURL.remove = function (url, node) {
+//    try {
     state.tabsByURL[url].remove(node);
+//    } catch (e) {
+//        console.log(url);
+//        console.error(e);
+//    }
     state.tabsByURL.update(url);
-};
-
-state.tabsByURL.update = function (url) {
-    if (state.favorites.has(url)) {
-        state.favorites.set(url, state.tabsByURL[url].length);
-    }
 };
 
 

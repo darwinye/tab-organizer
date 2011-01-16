@@ -70,8 +70,12 @@ Tab = {
             };
 
             container.queueRemove = function () {
+//                try {
                 var is = container.parentNode.queue.remove(container);
                 container.undoState.selected = is;
+//                } catch (e) {
+//                    console.error(e);
+//                }
 
                 container.removeAttribute("data-selected");
 
