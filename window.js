@@ -1337,8 +1337,18 @@ fragment.appendChild(UI.create("div", function (container) {
 document.body.appendChild(fragment);
 
 
-addEventListener("load", function (event) { //* Issue 69
-    Platform.windows.getAll({ populate: true }, function (windows) {
+(function () {
+    var windows = Platform.windows.getAll();
+
+    function init() {
+    //
+    //    windows.forEach(function (win) {
+    //        win.tabs.forEach(function (tab) {
+    //            indentByID[tab.id] = indent[tab.globalIndex];
+    //        });
+    //    });
+    //
+    //    ({ populate: true }, function (windows) {
         state.createView(windows);
 
         var type = Options.get("windows.sort.type");
@@ -1348,14 +1358,14 @@ addEventListener("load", function (event) { //* Issue 69
 
         Options.event.on("change", function (event) {
             if (event.name === "windows.sort.type") {
-//                console.log("foo!");
+    //                console.log("foo!");
                 state.search({ scroll: true, focused: true, nodelay: true });
             }
         });
-//
-//        state.list.forEach(function (item) {
-//            item.update();
-//        });
+    //
+    //        state.list.forEach(function (item) {
+    //            item.update();
+    //        });
 
         Options.event.on("change", function (event) {
             if (event.name === "window.lastfocused") {
@@ -1408,9 +1418,9 @@ addEventListener("load", function (event) { //* Issue 69
 
                 document.body.setAttribute("hidden", "");
                 document.body.removeAttribute("hidden");
-//
-//                document.body.style.display = "none !important";
-//                document.body.style.display = "";
+    //
+    //                document.body.style.display = "none !important";
+    //                document.body.style.display = "";
             }
         });
 
@@ -1418,5 +1428,12 @@ addEventListener("load", function (event) { //* Issue 69
         state.search({ scroll: true, focused: true, nodelay: true });
 
         state.loaded = true;
-    });
-}, true);
+    //    });
+    }
+
+    if (windows.length) {
+        addEventListener("load", init, true); //* Issue 69
+    } else {
+        Platform.event.on("load", init);
+    }
+}());

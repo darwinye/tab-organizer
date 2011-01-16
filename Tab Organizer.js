@@ -53,9 +53,10 @@ Tab = {
             state.tabsByID[tab.id] = container;
 
 
-            /*var indent = state.indentByID[tab.id];
-            if (indent) {
-                container.style.marginLeft = indent * 5 + "px";
+            /*var indent = state.indentByID[tab.id];*/
+            /*var parent = state.tabsByID[tab.parentId];
+            if (parent) {
+                container.style.marginLeft = parent.style.marginLeft + 5 + "px";
             }*/
 
 

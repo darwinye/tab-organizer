@@ -62,16 +62,21 @@
         };
         Options.setDefaults(defaults);
 
+//        Options.deleteDefault("windows.indent-level");
+//        Options.deleteDefault("windows.tab-indent");
+        Options.deleteDefault("tabs.indent-level");
+        Options.deleteDefault("windows.offsets");
+//        Options.set("tabs.indent-by-id", {});
+
         Options.setObject("tabs.favorites.urls");
         Options.setObject("tabs.visited.byURL");
         Options.setObject("counter.state");
 
         Options.setArray("windows.tab-indent");
-        Options.setArray("windows.offsets");
+//        Options.setArray("tabs.indent-level");
+//        Options.setArray("windows.offsets");
         Options.setArray("windows.titles");
         Options.setArray("macros.list");
-
-//        Options.deleteDefault("windows.indent-level");
 
 
         var config = Options.snapshot().user;
@@ -222,12 +227,12 @@
         }());
 
 
-        addEventListener("load", function () {
+        Platform.event.on("load", function (windows) {
 /*            var focusedByID = {};
             var indexByID = {};
             var tabsByID = {};
 
-            var indent = Options.get("windows.tab-indent");
+
 
             Platform.event.on("tab-create", function (tab) {
                 tabsByID[tab.id] = tab;
@@ -260,44 +265,84 @@
                 });
             });
 */
-            Platform.windows.getAll({ populate: true }, function (windows) {
-                var tabcount = 0;
+//            var index = 0;
+//
+//            var indent = Options.get("windows.tab-indent");
+            var tabcount = 0;
 
-                windows.forEach(function (item, i) {
-//                    indent[i] = indent[i] || [];
-//                    windowsByID[item.id] = i;
+//            var lastfocused;
+//
+//            Platform.event.on("tab-focus", function (tab, old) {
+//
+//            });
 
-                    tabcount += item.tabs.length;
+            /*Platform.event.on("tab-update", function (tab) {
+                if (tab.status === "loading") {
+                    Platform.history.lastVisit(tab.url, function (visit) {
+                        if (visit.transition === "link") {
+                            console.log(visit.referringVisitId);
 
-                    /*item.tabs.forEach(function (tab) {
-                        if (tab.selected) {
-                            focusedByID[item.id] = tab;
+                            var focused = Platform.tabs.getSelected(tab.windowId);
+
+                            tab.parentId = focused.id;
+
+                            Platform.event.trigger("tab-indent", tab);
+//                            console.log(tab, focused);
                         }
-                    });*/
-                });
-
-                counter.set("total-number", tabcount);
-                counter.update();
-
-                if (Options.get(code)) {
-                    _gaq.push(["_trackEvent", "Statistics", "windows.length", windows.length + "", windows.length]);
-                    _gaq.push(["_trackEvent", "Statistics", "tabs.length", tabcount + "", tabcount]);
+//                        console.log(visit.transition);
+                    });
                 }
+            });*/
 
-                function add() {
-                    counter.set("total-number", counter.get("total-number") + 1);
-                    counter.set("session-number", counter.get("session-number") + 1);
-                    counter.update();
-                }
-                function subtract() {
-                    counter.set("total-number", counter.get("total-number") - 1);
-                    counter.set("session-number", counter.get("session-number") - 1);
-                    counter.update();
-                }
-                Platform.event.on("tab-create", add);
-                Platform.event.on("tab-remove", subtract);
+            windows.forEach(function (item) {
+//                indent[i] = indent[i] || [];
+//                var level = indent[i];
+//                    windowsByID[item.id] = i;
+//
+                tabcount += item.tabs.length;
+//
+//                item.tabs.forEach(function (tab, i) {
+//                    level[i] = level[i]
+//                    tab.indentLevel = indent[tab.globalIndex];
+//                    console.log(tab.globalIndex);
+//                    if (!(tab.globalIndex in indent)) {
+//                        indent[tab.globalIndex] = 0;
+//                    }
+//                    index += 1;
+//                });
+//
+                /*item.tabs.forEach(function (tab) {
+                    if (tab.selected) {
+                        focusedByID[item.id] = tab;
+                    }
+                });*/
             });
-        }, true);
+
+//            Platform.windows.getAll().forEach(function (windows) {
+//
+//            });
+
+            counter.set("total-number", tabcount);
+            counter.update();
+
+            if (Options.get(code)) {
+                _gaq.push(["_trackEvent", "Statistics", "windows.length", windows.length + "", windows.length]);
+                _gaq.push(["_trackEvent", "Statistics", "tabs.length", tabcount + "", tabcount]);
+            }
+
+            function add() {
+                counter.set("total-number", counter.get("total-number") + 1);
+                counter.set("session-number", counter.get("session-number") + 1);
+                counter.update();
+            }
+            function subtract() {
+                counter.set("total-number", counter.get("total-number") - 1);
+                counter.set("session-number", counter.get("session-number") - 1);
+                counter.update();
+            }
+            Platform.event.on("tab-create", add);
+            Platform.event.on("tab-remove", subtract);
+        });
 
 
 
