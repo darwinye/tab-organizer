@@ -1388,10 +1388,11 @@ fragment.appendChild(UI.create("div", function (container) {
         });
 
         Options.event.on("change", function (event) {
-            var location = (event.name === "tabs.close.location"),
+            var treestyle = (event.name === "tabs.tree-style.enabled"),
+                location = (event.name === "tabs.close.location"),
                 display = (event.name === "tabs.close.display");
 
-            if (location || display) {
+            if (treestyle || location || display) {
                 var query = document.querySelectorAll(".tab");
                 for (var i = 0; i < query.length; i += 1) {
                     query[i].updateButtonPositions();

@@ -39,6 +39,7 @@
             "tabs.close.location": "right",
             "tabs.close.display": "hover",
             "tabs.click.type": "focus",
+            "tabs.tree-style.enabled": true,
 
             "windows.middle-close": false,
             "windows.type": "horizontal",
@@ -115,7 +116,7 @@
 
             "Search": ["search.show-number"],
 
-            "Tabs": ["tabs.close.location", "tabs.close.display", "tabs.click.type"],
+            "Tabs": ["tabs.close.location", "tabs.close.display", "tabs.tree-style.enabled", "tabs.click.type"],
 
             "Theme": ["color.theme"],
 
@@ -458,51 +459,74 @@
                 });
             });*/
 
-            Platform.event.on("tab-create", function anon(tab, focused) {
-                focused = focused || Platform.tabs.getSelected(tab.windowId);
+            var focusedByID = {};
 
-//                console.log(tab.url);
-                if (tab.url) {
+            function check(tab, focused) {
+//                console.log(tab, focused);
+//                try {
+                if (tab.index !== focused.index) {
 //                if (tab.status === "loading") {
                     Platform.history.lastVisit(tab.url, function (visit) {
                         if (visit.transition === "link") {
 //                            console.log(visit.referringVisitId);
 //
-                            if (tab.index !== focused.index) {
 //                                try {
-                                var index = tab.window.index;
+                            var index = tab.window.index;
 //                                } catch (e) {
 //                                    console.error(e);
 //                                }
 
-                                if (!indent[index]) {
-                                    indent[index] = [];
-                                }
-                                var level = indent[index];
+                            if (!indent[index]) {
+                                indent[index] = [];
+                            }
+                            var level = indent[index];
 
-                                var amount = level[focused.index] + 1 || 1;
+                            var amount = level[focused.index] + 1 || 1;
 
-                                if (level.length < tab.index) {
-                                    level.length = tab.index;
-                                }
+                            if (level.length < tab.index) {
+                                level.length = tab.index;
+                            }
 //
 //                                console.log(tab.index);
 
-                                level.splice(tab.index, 0, amount);
+                            level.splice(tab.index, 0, amount);
 //                                tab.parentId = focused.id;
 
-                                Platform.event.trigger("tab-indent", tab, amount);
-                            }
+                            Platform.event.trigger("tab-indent", tab, amount);
 //                            console.log(tab, focused);
                         }
 //                        console.log(visit.transition);
                     });
-                } else {
-                    console.log("Refreshing");
-                    setTimeout(function () {
-                        anon(tab, focused);
-                    }, 25);
-//                    console.error(tab);
+                }
+//                } catch (e) {
+//                    console.error(e);
+//                }
+            }
+
+            Platform.event.on("tab-update", function (tab) {
+                var focused = focusedByID[tab.id];
+                if (focused) {
+                    check(tab, focused);
+                    delete focusedByID[tab.id];
+                }
+            });
+
+            Platform.event.on("tab-create", function (tab) {
+//                focused = focused || Platform.tabs.getSelected(tab.windowId);
+//
+//                console.log(tab.url);
+                var focused = Platform.tabs.getSelected(tab.windowId);
+                if (focused) {
+                    if (tab.url) {
+                        check(tab, focused);
+                    } else {
+                        focusedByID[tab.id] = focused;
+    /*                    console.log("Refreshing");
+                        setTimeout(function () {
+                            anon(tab, focused);
+                        }, 25);*/
+    //                    console.error(tab);
+                    }
                 }
             });
 

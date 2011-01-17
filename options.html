@@ -1094,6 +1094,13 @@
 
                         container.space({ height: "0.5em" });
 
+                        container.input("checkbox", {
+                            option: "tabs.tree-style.enabled",
+                            text: "Show tabs in a tree, like <a href='https://addons.mozilla.org/en-US/firefox/addon/tree-style-tab/'>Tree Style Tabs</a>"
+                        });
+
+                        container.space({ height: "0.75em" });
+
                         container.header("Click behavior:");
 
                         container.indent(function (container) {

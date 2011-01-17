@@ -54,17 +54,12 @@ Tab = {
 
 
             container.indent = function (indent) {
-                container.style.marginLeft = (indent
-                                               ? indent * 5 + "px"
-                                               : "");
+                if (indent && Options.get("tabs.tree-style.enabled")) {
+                    container.style.marginLeft = indent * 5 + "px";
+                } else {
+                    container.style.marginLeft = "";
+                }
             };
-
-            var indent = state.indent[tab.window.index];
-            /*var parent = state.tabsByID[tab.parentId];*/
-            if (indent && (indent = indent[tab.index])) {
-//                console.log(indent, tab.index);
-                container.indent(indent);
-            }
 
 
             container.queueAdd = function () {
@@ -373,6 +368,17 @@ Tab = {
                 container.removeEventListener("Platform-blur", blur, true);
                 container.removeEventListener("Platform-focus", focus, true);
 
+
+//                if (Options.get("tabs.tree-style.enabled")) {
+                var indent = state.indent[tab.window.index];
+                /*var parent = state.tabsByID[tab.parentId];*/
+                if (indent && (indent = indent[tab.index])) {
+    //                console.log(indent, tab.index);
+                    container.indent(indent);
+                }
+//                }
+
+
                 switch (Options.get("tabs.close.display")) {
                 case "hover":
                     cell.close.setAttribute("data-display-hover", "");
@@ -384,6 +390,7 @@ Tab = {
                     container.addEventListener("Platform-blur", blur, true);
                     container.addEventListener("Platform-focus", focus, true);
                 }
+
 
                 switch (Options.get("tabs.close.location")) {
                 case "left":
