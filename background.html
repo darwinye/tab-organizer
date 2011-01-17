@@ -64,8 +64,8 @@
 
 //        Options.deleteDefault("windows.indent-level");
 //        Options.deleteDefault("windows.tab-indent");
-        Options.deleteDefault("tabs.indent-level");
-        Options.deleteDefault("windows.offsets");
+//        Options.deleteDefault("tabs.indent-level");
+//        Options.deleteDefault("windows.offsets");
 //        Options.set("tabs.indent-by-id", {});
 
         Options.setObject("tabs.favorites.urls");
@@ -267,32 +267,247 @@
 */
 //            var index = 0;
 //
-//            var indent = Options.get("windows.tab-indent");
-            var tabcount = 0;
+            var indent = Options.get("windows.tab-indent");
 
 //            var lastfocused;
 //
 //            Platform.event.on("tab-focus", function (tab, old) {
 //
 //            });
+//
+            /*indent.forEach(function (tabs) {
+                tabs.forEach(function (tab, i) {
+                    tab.parentId = tabs[tab];
+                });
+            });*/
+//
+//            console.warn("foobaaar");
 
-            /*Platform.event.on("tab-update", function (tab) {
-                if (tab.status === "loading") {
+            function trim(array, action) {
+                var last = -1;
+
+                array.forEach(function (item, i) {
+//                    console.log(!!item);
+                    if (item) {
+                        last = i;
+
+                        if (typeof action === "function") {
+                            action(item, i);
+                        }
+                    }
+                });
+
+                array.length = last + 1;
+            }
+
+            trim(indent, function (item, i) {
+                trim(item);
+
+                if (item.length === 0) {
+                    delete indent[i];
+                }
+            });
+
+
+            Platform.event.on("window-remove", function (win) {
+//                var level = indent[win.index];
+//                if (level) {
+//                    console.log("foo");
+                indent.splice(win.index, 1);
+//                }
+            });
+
+            function insert(tab, index) {
+                var level = indent[tab.window.index];
+                if (level) {
+    //                var index = tab.index;
+    /*                if (index < 1) {
+                        index = null;
+                    } else {
+
+                    }*/
+//
+                    index = (index < 1 ? null : level[index]);
+
+                    level.splice(tab.index, 0, index);
+
+                    Platform.event.trigger("tab-indent", tab, index);
+                }
+            }
+
+            function moveup(tab, index) {
+                var level = indent[tab.window.index];
+                if (level) {
+                    var parent = level[index];
+                    var list = tab.window.tabs;
+//
+//                    var removed = [];
+
+                    level.splice(index, 1);
+
+                    for (var i = index; i < level.length; i += 1) {
+//                        console.log(level[i], parent);
+                        if (!level[i] || level[i] <= parent) {
+                            break;
+                        }
+//                        if (typeof parent !== "number" && level[i] === tab.index) {
+////                            if () {
+////                                level[i] = parent;
+////                            } else {
+//                            removed.push(i);
+////                            }
+////
+////                            recurse(i, level[i]);
+//                        } else {
+                        level[i] -= 1;
+
+                        if (level[i] === 0) {
+                            delete level[i];
+//                            Platform.event.trigger("tab-indent", list[index]);
+//                            removed.push(i);
+                        }/* else {
+
+                        }*/
+
+                        Platform.event.trigger("tab-indent", list[i], level[i]);
+//                        }
+                    }
+//
+                    /*var lastindex = tab.index;
+
+                    for (var i = tab.index; i < level.length; i += 1) {
+                        if (level[i]) {
+                            lastindex = i;
+                        }
+                    }
+
+                    level.length = lastindex;*/
+/*
+                    function recurse(index, parent) {
+                        level.forEach(function (item, i) {
+
+                        });
+                    }
+                    recurse(, );*/
+/*
+                    removed.forEach(function (index, i) {
+                        level.splice(index - i, 1);
+
+                        Platform.event.trigger("tab-indent", list[index]);
+                    });*/
+                }
+            }
+
+            Platform.event.on("tab-move", function (tab, info) {
+//                var level = indent[tab.window.index];
+//                if (level) {
+////                    var parent = level[info.fromIndex];
+////                    var index = tab.index;
+////
+////                    level.splice(info.fromIndex, 1);
+                moveup(tab, info.fromIndex);
+                insert(tab, tab.index);
+//                }
+            });
+
+            Platform.event.on("tab-detach", function (tab) {
+                moveup(tab, tab.index);
+//                var level = indent[tab.window.index];
+//                if (level) {
+//                    level.splice(tab.index, 1);
+
+                Platform.event.trigger("tab-indent", tab);
+//                }
+            });
+
+            Platform.event.on("tab-attach", function (tab) {
+//                var level = indent[tab.window.index];
+//                if (level) {
+                insert(tab, tab.index - 1);
+/*                    var index = ;
+                    if (index < 1) {
+                        index = null;
+                    } else {
+                        index = level[index];
+                    }
+
+                    level.splice(tab.index, 0, index);
+
+                    Platform.event.trigger("tab-indent", tab, index);*/
+//                }
+            });
+/*
+            Platform.event.on("tab-indent", function (tab, indent) {
+                console.log(indent, tab.url);
+            });*/
+
+            Platform.event.on("tab-remove", function (tab) {
+                moveup(tab, tab.index);
+            });
+/*
+            Platform.event.on("tab-indent", function (tab, indent) {
+//                var level = indent[tab.window.index];
+//                if (level) {
+                console.log(tab, indent);
+//                }
+            });*/
+/*!
+            ["tab-update", "tab-create", "window-create"].forEach(function (name) {
+                Platform.event.on(name, function () {
+                    console.warn(name);
+                });
+            });*/
+
+            Platform.event.on("tab-create", function anon(tab, focused) {
+                focused = focused || Platform.tabs.getSelected(tab.windowId);
+
+//                console.log(tab.url);
+                if (tab.url) {
+//                if (tab.status === "loading") {
                     Platform.history.lastVisit(tab.url, function (visit) {
                         if (visit.transition === "link") {
-                            console.log(visit.referringVisitId);
+//                            console.log(visit.referringVisitId);
+//
+                            if (tab.index !== focused.index) {
+//                                try {
+                                var index = tab.window.index;
+//                                } catch (e) {
+//                                    console.error(e);
+//                                }
 
-                            var focused = Platform.tabs.getSelected(tab.windowId);
+                                if (!indent[index]) {
+                                    indent[index] = [];
+                                }
+                                var level = indent[index];
 
-                            tab.parentId = focused.id;
+                                var amount = level[focused.index] + 1 || 1;
 
-                            Platform.event.trigger("tab-indent", tab);
+                                if (level.length < tab.index) {
+                                    level.length = tab.index;
+                                }
+//
+//                                console.log(tab.index);
+
+                                level.splice(tab.index, 0, amount);
+//                                tab.parentId = focused.id;
+
+                                Platform.event.trigger("tab-indent", tab, amount);
+                            }
 //                            console.log(tab, focused);
                         }
 //                        console.log(visit.transition);
                     });
+                } else {
+                    console.log("Refreshing");
+                    setTimeout(function () {
+                        anon(tab, focused);
+                    }, 25);
+//                    console.error(tab);
                 }
-            });*/
+            });
+
+
+            var tabcount = 0;
 
             windows.forEach(function (item) {
 //                indent[i] = indent[i] || [];

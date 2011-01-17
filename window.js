@@ -18,7 +18,7 @@ var state = {
     tabsByID: {},
     tabsByURL: {},
     visitedByURL: Options.get("tabs.visited.byURL"),
-//    indent: Options.get("windows.indent-level"),
+    indent: Options.get("windows.tab-indent"),
 //    indentByID: {},
 
     /*queues: {
@@ -111,6 +111,8 @@ var state = {
     createSearchList: function () {
         return Array.slice(document.getElementsByClassName("tab"));
     },
+//
+//    windowList: function
 
     createView: function (windows) {
         var fragment = document.createDocumentFragment();
@@ -1336,16 +1338,10 @@ fragment.appendChild(UI.create("div", function (container) {
 //        }
 //    });
 
-    fragment.appendChild(script);
-}());
-
-document.body.appendChild(fragment);
-
-
-(function () {
     var windows = Platform.windows.getAll();
 
     function init() {
+//        console.log(document.readyState);
     //
     //    windows.forEach(function (win) {
     //        win.tabs.forEach(function (tab) {
@@ -1437,8 +1433,22 @@ document.body.appendChild(fragment);
     }
 
     if (windows.length) {
-        addEventListener("load", init, true); //* Issue 69
+        script.addEventListener("load", init, true); //* Issue 69
+//        addEventListener("load", init, true); //* Issue 69
     } else {
         Platform.event.on("load", init);
     }
+/*
+    script.addEventListener("load", function () {
+        console.log(document.readyState);
+    }, true);*/
+
+    fragment.appendChild(script);
 }());
+
+document.body.appendChild(fragment);
+/*
+
+(function () {
+
+}());*/

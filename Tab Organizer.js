@@ -53,11 +53,18 @@ Tab = {
             state.tabsByID[tab.id] = container;
 
 
-            /*var indent = state.indentByID[tab.id];*/
-            /*var parent = state.tabsByID[tab.parentId];
-            if (parent) {
-                container.style.marginLeft = parent.style.marginLeft + 5 + "px";
-            }*/
+            container.indent = function (indent) {
+                container.style.marginLeft = (indent
+                                               ? indent * 5 + "px"
+                                               : "");
+            };
+
+            var indent = state.indent[tab.window.index];
+            /*var parent = state.tabsByID[tab.parentId];*/
+            if (indent && (indent = indent[tab.index])) {
+//                console.log(indent, tab.index);
+                container.indent(indent);
+            }
 
 
             container.queueAdd = function () {
