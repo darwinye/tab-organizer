@@ -269,6 +269,41 @@
 //            var index = 0;
 //
             var indent = Options.get("windows.tab-indent");
+            var tabcount = 0;
+
+            windows.forEach(function (item, i) {
+//                indent[i] = indent[i] || [];
+//                var level = indent[i];
+//                    windowsByID[item.id] = i;
+//
+                var length = item.tabs.length;
+                tabcount += length;
+
+                var level = indent[i];
+                if (level && level.length > length) {
+                    level.length = length;
+                }
+//
+//                item.tabs.forEach(function (tab, i) {
+//                    level[i] = level[i]
+//                    tab.indentLevel = indent[tab.globalIndex];
+//                    console.log(tab.globalIndex);
+//                    if (!(tab.globalIndex in indent)) {
+//                        indent[tab.globalIndex] = 0;
+//                    }
+//                    index += 1;
+//                });
+//
+                /*item.tabs.forEach(function (tab) {
+                    if (tab.selected) {
+                        focusedByID[item.id] = tab;
+                    }
+                });*/
+            });
+
+            if (indent.length > windows.length) {
+                indent.length = windows.length;
+            }
 
 //            var lastfocused;
 //
@@ -528,33 +563,6 @@
     //                    console.error(tab);
                     }
                 }
-            });
-
-
-            var tabcount = 0;
-
-            windows.forEach(function (item) {
-//                indent[i] = indent[i] || [];
-//                var level = indent[i];
-//                    windowsByID[item.id] = i;
-//
-                tabcount += item.tabs.length;
-//
-//                item.tabs.forEach(function (tab, i) {
-//                    level[i] = level[i]
-//                    tab.indentLevel = indent[tab.globalIndex];
-//                    console.log(tab.globalIndex);
-//                    if (!(tab.globalIndex in indent)) {
-//                        indent[tab.globalIndex] = 0;
-//                    }
-//                    index += 1;
-//                });
-//
-                /*item.tabs.forEach(function (tab) {
-                    if (tab.selected) {
-                        focusedByID[item.id] = tab;
-                    }
-                });*/
             });
 
 //            Platform.windows.getAll().forEach(function (windows) {
