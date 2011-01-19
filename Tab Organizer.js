@@ -4,11 +4,13 @@
 var Tab, Window;
 
 Tab = {
-    focus: function (tab) {
+    focus: function (tab, focus) {
         var focused = Options.get("window.lastfocused");
-        Platform.tabs.focus(tab, focused !== tab.windowId);
+        var should = (focus !== false && focused !== tab.windowId);
 
-        if (Options.get("popup.type") !== "tab") {
+        Platform.tabs.focus(tab, should);
+
+        if (should && Options.get("popup.type") !== "tab") {
             Platform.tabs.getCurrent(function (tab) {
                 Platform.tabs.focus(tab, true);
             });
@@ -514,7 +516,16 @@ Window = {
                         if (element) {
                             event.preventDefault();
 
-                            Tab.focus(element.tab);
+                            Tab.focus(element.tab, false);
+                        }
+                    }
+                } else if (event.which === 37 || event.which === 39) { //* Left/Right
+                    query = this.querySelector(".tab[data-focused]");
+                    if (query && query.previousSibling) {
+                        if (event.which === 37) {
+                            state.indent.sub(query.tab);
+                        } else {
+                            state.indent.add(query.tab);
                         }
                     }
                 } else if (event.which === 32 || event.which === 13) { //* Space/Enter
