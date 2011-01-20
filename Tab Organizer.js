@@ -22,15 +22,16 @@ Tab = {
 
 
     move: function (item, info, action) {
-        var tab = item.tab;
-        Platform.tabs.move(tab, info, function (tab) {
+//        var tab = item.tab;
+        Platform.tabs.move(item.tab, info, action);
+/*        Platform.tabs.move(tab, info, function () {
 //            Platform.tabs.get(tab.id, function (tab) {
 //            item.tab = tab;
             if (typeof action === "function") {
                 action();
             }
 //            });
-        });
+        });*/
     },
 
 
@@ -622,6 +623,10 @@ Window = {
                 array.moveTabs(win.id, null, info.undo);
 //                array.reset();
 //                delete array.shiftNode;
+            }
+
+            if (typeof info.action === "function") {
+                info.action(win);
             }
         });
     },

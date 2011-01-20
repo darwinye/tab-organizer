@@ -630,12 +630,6 @@
                 console.log(tab, indent);
 //                }
             });*/
-/*
-            ["tab-update", "tab-create", "window-create"].forEach(function (name) {
-                Platform.event.on(name, function () {
-                    console.warn(name);
-                });
-            });*/
 
             Platform.event.on("tab-update", function (tab) {
                 var focused = focusedByID[tab.id];

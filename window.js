@@ -239,11 +239,19 @@ if (localStorage["window.titles"]) {
                     Tab.move(item, info, item.queueAdd);
                     queue.next();
                 } else {
-                    Platform.windows.create({ url: "lib/remove.html" }, function (win) {
+                    Window.create(null, {
+                        title: undo.windowName,
+                        action: function (win) {
+                            info.windowId = proxy[undo.windowId] = win.id;
+                            Tab.move(item, info, item.queueAdd);
+                            queue.next();
+                        }
+                    });
+/*                    Platform.windows.create({ url: "lib/remove.html" }, function (win) {
                         info.windowId = proxy[undo.windowId] = win.id;
                         Tab.move(item, info, item.queueAdd);
                         queue.next();
-                    });
+                    });*/
                 }
             });
         });
