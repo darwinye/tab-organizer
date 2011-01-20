@@ -195,18 +195,39 @@ if (localStorage["window.titles"]) {
                 item.queueRemove();
             }
         });
+
+        delete info.queue.shiftNode;
+
         Undo.reset();
     });
 
     function move(info) {
         var proxy = {};
+//
+        var length = info.list.length - 1;
 
-        info.list.forEach(function (item) {
+        info.list.forEach(function (item, i) {
             Queue.sync(function (queue) {
                 var undo = item.undoState;
                 var info = {
                     index: undo.index
                 };
+
+                var tab = item.tab;
+                if (tab.windowId === undo.windowId && tab.index < info.index) {
+//                    console.log(tab.index, info.index);
+                    info.index += length - i;
+//                    info.index -= length - i; //*
+//
+//                    if (info.index < 0) {
+//                        console.error(info.index, i);
+//                        info.index = 0;
+//                    }
+    //                console.log(tab.index, index);
+                }
+//                console.log(info.index);
+//
+//                info.index -= i;
 
                 if (state.windows[undo.windowId]) {
                     info.windowId = undo.windowId;
@@ -402,6 +423,7 @@ addEventListener("dragstart", function () {
 addEventListener("dragover", function (event) {
     if (!event.defaultPrevented) {
         document.activeElement.blur();
+        state.placeholder.remove();
     }
 }, false);
 

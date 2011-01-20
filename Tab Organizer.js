@@ -25,7 +25,7 @@ Tab = {
         var tab = item.tab;
         Platform.tabs.move(tab, info, function (tab) {
 //            Platform.tabs.get(tab.id, function (tab) {
-            item.tab = tab;
+//            item.tab = tab;
             if (typeof action === "function") {
                 action();
             }
@@ -242,14 +242,195 @@ Tab = {
             }, false);
 
 
-            container.addEventListener("dragover", function swapnodes(event) {
+//            function check(node, has) {
+///*                var prev, next;
+//
+//                if ((prev = node.previousSibling)) {
+//                    prev = (prev === state.draggedTab ||
+//                            prev.hasAttribute("data-selected"));
+//                }
+//
+//                if ((next = node.nextSibling)) {
+//                    next = (next === state.draggedTab ||
+//                            next.hasAttribute("data-selected"));
+//                }
+//
+//                return prev || next ||
+//                       node === state.draggedTab ||
+//                       node.hasAttribute("data-selected");
+//*/
+//                if (node) {
+//                    if (node === state.draggedTab || (!has && node.hasAttribute("data-selected"))) {
+////                        if (node.hasAttribute("data-selected")) {
+//                        state.placeholder.remove();
+//                        return;
+////                        }
+//                    }// else if (node === state.draggedTab) {
+////                        state.placeholder.remove();
+////                        return;
+////                    }
+//                }
+//
+//                return true;
+//            }
+//
+//            function attr(node) {
+///*                var prev, next;
+//
+//                if ((prev = node.previousSibling)) {
+//                    prev = (has
+//                             ? prev === state.draggedTab
+//                             : prev.hasAttribute("data-selected"));
+//                }
+//
+//                if ((next = node.nextSibling)) {
+//                    next = (has
+//                             ? next === state.draggedTab
+//                             : next.hasAttribute("data-selected"));
+//                }
+//
+//                return prev || next;*/
+////
+//                if (node) {
+//                    if (node === state.draggedTab) {
+////                        if (node.hasAttribute("data-selected")) {
+//                        state.placeholder.remove();
+//                        return;
+////                        }
+//                    }// else if (node === state.draggedTab) {
+////                        state.placeholder.remove();
+////                        return;
+////                    }
+//                }
+//
+//                return true;
+//            }
+//
+//            function attr(node, has) {
+//                if (node) {
+//                    if (node === state.draggedTab || (!has && node.hasAttribute("data-selected"))) {
+////                        if (node.hasAttribute("data-selected")) {
+////                        state.placeholder.remove();
+//                        return;
+////                        }
+//                    }// else if (node === state.draggedTab) {
+////                        state.placeholder.remove();
+////                        return;
+////                    }
+//                }
+//
+//                return true;
+////                return node === state.draggedTab || node.hasAttribute("data-selected");
+//            }
+//
+            function check(node, sibling) {
+                var has = state.draggedTab.hasAttribute("data-selected");
+
+                if (has) {
+                    if (!sibling) {
+                        return true;
+                    }
+
+                    if (!node.hasAttribute("data-selected") || !sibling.hasAttribute("data-selected")) {
+                        return true;
+                    }
+                } else if (node !== state.draggedTab && sibling !== state.draggedTab) {
+                    return true;
+                }
+
+                state.placeholder.remove();
+                /*if (!has && attr(node, has) || attr(sibling, has)) {
+                    state.placeholder.remove();
+                } else {
+                    return true;
+                }*/
+            }
+
+            container.addEventListener("dragover", function (event) {
+//                this.setAttribute("data-dropindent", "");
+//
+//                var has = !state.draggedTab.hasAttribute("data-selected");
+//
+//                if (/*attr(this, has) || */has && this === state.draggedTab) {
+//                    state.placeholder.remove();
+//                } else {
                 var parent = this.parentNode;
                 if (event.offsetY < (this.offsetHeight / 2)) {
-                    parent.insertBefore(state.placeholder, this);
-                } else {
+                    if (check(this, this.previousSibling)) {
+                        parent.insertBefore(state.placeholder, this);
+                    }
+                } else if (check(this, this.nextSibling)) {
                     parent.insertBefore(state.placeholder, this.nextSibling);
                 }
+//                }
+//
+//                document.body.setAttribute("hidden", "");
+//                document.body.removeAttribute("hidden");
             }, true);
+/*!
+
+            function findtop(node, top) {
+//                console.log(node);
+//                try {
+                if (node === top) {
+                    return null;
+                } else if (node.className === "tab") {
+                    return node;
+                } else {
+                    return findtop(node.parentNode, top);
+                }
+//                } catch (e) {
+//
+//                }
+            }
+
+            var oldnode;
+
+            function removeHighlight() {
+                if (oldnode) {
+                    oldnode.removeAttribute("data-dropindent");
+                    oldnode = null;
+                }
+            }
+            container.addEventListener("dragend", removeHighlight, true);
+
+            container.addEventListener("drag", function (event) {
+//                if (oldnode) {
+//
+//                }
+                removeHighlight();
+                delete this.tab.dropIndent;
+
+                var target = document.elementFromPoint(event.clientX, event.clientY);
+
+                var node = findtop(target, this.parentNode);
+//                console.log(node);
+                if (node) {
+                    node.setAttribute("data-dropindent", "");
+                    this.tab.dropIndent = true;
+                    oldnode = node;
+                }// else {
+//                    console.log(event.type);
+//                }
+            }, true);*/
+//
+//            container.addEventListener("
+/*
+            container.addEventListener("dragenter", function (event) {
+                var query = document.body.querySelector(".tab[data-dropindent]");
+                if (query) {
+                    query.removeAttribute("data-dropindent");
+                }
+
+//                console.log(event.type, this);
+                this.setAttribute("data-dropindent", "");
+//                event.preventDefault();
+            }, true);*/
+/*
+            container.addEventListener("dragleave", function (event) {
+//                console.log(event.type, this);
+                this.removeAttribute("data-dropindent");
+            }, true);*/
 
 
             container.addEventListener("dragstart", function (event) {
@@ -267,6 +448,10 @@ Tab = {
                 if (!state.currentQueue.length) {
                     state.currentQueue.add(state.highlighted);
                 }
+
+                state.draggedTab = this;
+//
+//                this.tab.dropIndent = true;
             }, true);
 
             /*! container.addEventListener("dragend", function (event) {
@@ -431,9 +616,12 @@ Window = {
             }
 
             if (array) {
+/*                console.log(array.map(function (item) {
+                    return item.tab.title;
+                }));*/
                 array.moveTabs(win.id, null, info.undo);
-                array.reset();
-                delete array.shiftNode;
+//                array.reset();
+//                delete array.shiftNode;
             }
         });
     },
@@ -569,13 +757,19 @@ Window = {
                     }
                 }
             }, true);
+/*
+            container.addEventListener("dragleave", function (event) {
+                state.placeholder.remove();
+            }, true);*/
 
             container.addEventListener("drop", function (event) {
                 var index = Array.indexOf(this.tabList.children, state.placeholder);
+//
+//                console.log(index);
 
                 state.currentQueue.moveTabs(win.id, index);
-                state.currentQueue.reset();
-                delete state.currentQueue.shiftNode;
+//                state.currentQueue.reset();
+//                delete state.currentQueue.shiftNode;
             }, true);
 
 
@@ -881,6 +1075,7 @@ Window = {
                                                 container.tabList.queue.forEach(function (item) {
                                                     Platform.tabs.remove(item.tab);
                                                 });
+
                                                 container.tabList.queue.reset();
                                                 delete container.tabList.queue.shiftNode;
                                             }
@@ -967,8 +1162,8 @@ Window = {
                                                 menu.addItem(name, {
                                                     action: function () {
                                                         container.tabList.queue.moveTabs(item.window.id);
-                                                        container.tabList.queue.reset();
-                                                        delete container.tabList.queue.shiftNode;
+//                                                        container.tabList.queue.reset();
+//                                                        delete container.tabList.queue.shiftNode;
                                                     }
                                                 });
                                             });

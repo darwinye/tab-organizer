@@ -360,8 +360,9 @@
             }
 
             function insert(tab, index) {
-                var level = indent[tab.window.index];
-                if (level) {
+//                var level = indent[tab.window.index];
+                var level = make(tab);
+//                if (level) {
     //                var index = tab.index;
     /*                if (index < 1) {
                         index = null;
@@ -369,12 +370,21 @@
 
                     }*/
 //
-                    index = (index < 1 ? null : level[index]);
+                index = (index < 1 ? null : level[index]);
+//
+//                console.log(tab.dropIndent);
+/*!
+                if (tab.dropIndent) {
+                    index = index + 1 || 1;
+                    delete tab.dropIndent;
+                }*/
 
-                    level.splice(tab.index, 0, index);
+//                if (index) {
+                level.splice(tab.index, 0, index);
+//                }
 
-                    Platform.event.trigger("tab-indent", tab, index);
-                }
+                Platform.event.trigger("tab-indent", tab, index);
+//                }
             }
 
             function sub(level, list, parent, i) {
@@ -479,8 +489,11 @@
 
                 var list = tab.window.tabs;
                 var value = level[index];
+//
+//                console.log(level[index - 1]);
 
-                if (value && value > level[index - 1]) {
+                if (value && value > (level[index - 1] || 0)) {
+                    var prev, curr;
                     /*for (var i = index; i > 0; i -= 1) {
                         if (level[i - 1] >= level[i]) {
                             level[i] += 1;
@@ -495,11 +508,16 @@
                     }*/
 //
                     for (i = index - 1; i > 0; i -= 1) {
-//                        console.log(i === index);
-                        if (level[i - 1] >= level[i]) {
+                        prev = level[i - 1],
+                        curr = level[i];
+
+                        if ((prev || 0) >= (curr || 0)) {
+//                            console.log(i, index, prev || 0, curr || 0);
+//                            console.log(i, index);
 //                            var value = level[i];
                             for (i; i <= index; i += 1) {
-                                Platform.event.trigger("tab-indent", list[i], level[i] += 1);
+                                level[i] = level[i] + 1 || 1;
+                                Platform.event.trigger("tab-indent", list[i], level[i]);
                             }
 //                            level[i] += 1;
 //                            add(level, list, level[i] + 1, i);

@@ -461,6 +461,9 @@ input[data-special], .search-past-item[data-special] {
     background-color: oldlace;
     border: 1px solid goldenrod;
 }
+/*!.tab[data-dropindent] {
+    outline: 1px solid black;
+}*/
 .tab[data-selected] {
     /*! background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(rgba(124, 252, 0, 0.4)), to(rgba(124, 252, 0, 0.5)));*/
     /*! background-image: -webkit-gradient(linear, 0% 0%, 0% 100%,
