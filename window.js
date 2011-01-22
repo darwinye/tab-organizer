@@ -1421,6 +1421,10 @@ fragment.appendChild(UI.create("div", function (container) {
             var treestyle = (event.name === "tabs.tree-style.enabled"),
                 location = (event.name === "tabs.close.location"),
                 display = (event.name === "tabs.close.display");
+//
+//            var test = event.name.equals("tabs.tree-style.enabled",
+//                                         "tabs.close.location",
+//                                         "tabs.close.display");
 
             if (treestyle || location || display) {
                 var query = document.querySelectorAll(".tab");
