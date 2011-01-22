@@ -620,7 +620,7 @@ Window = {
 /*                console.log(array.map(function (item) {
                     return item.tab.title;
                 }));*/
-                array.moveTabs(win.id, null, info.undo);
+                array.moveTabs(win.id, null, { undo: info.undo });
 //                array.reset();
 //                delete array.shiftNode;
             }

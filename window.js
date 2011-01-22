@@ -529,61 +529,22 @@ fragment.appendChild(UI.create("div", function (container) {
 
             var perform = (function () {
                 function go(macro, info) {
-                    info.tabs = info.tabs || Array.slice(document.getElementsByClassName("tab"));
-
+                    var first, moved, odd/*, parser*/, results;
+//                    info.tabs = info.tabs || state.createSearchList();
+//
                     if (macro.search) {
+//                        parser = action.parse(macro.search);
 //                        var results = action.parse(macro.search)(info.tabs);
-                        var results = action.search(info.tabs, macro.search);
+                        results = action.search(info.tabs, macro.search);
+                        //action.search(info.tabs, macro.search);
 
 //                        action.search = function (array, string) {
 //                            return action.parse(string)(array);
 //                        };
-
+//                        console.log(results.length);
+//
+//                        console.log(info.tabs.length);
                         if (results.length) {
-                            switch (macro.action) {
-                            case "require": //* FALLTHRU
-                            case "move":
-                                if (macro.window) {
-                                    var first = state.list.find(function (item) {
-                                        return item.tabIcon.indexText.value === macro.window;
-                                    });
-
-                                    if (first) {
-                                        var moved = results.moveTabs(first.window.id, null, false);//!info.moved);
-
-                                        info.moved = info.moved.concat(moved);
-
-                                        if (macro.action === "require") {
-                                            var odd = Array.slice(first.tabList.children);
-
-                                            odd = odd.filter(function (item) {
-                                                return info.tabs.indexOf(item) !== -1 && results.indexOf(item) === -1;
-                                            });
-
-                                            if (odd.length) {
-                                                info.makeNew = info.makeNew.concat(odd);
-                                            }
-                                        }
-                                    } else {
-                                        Window.create(results, { title: macro.window, undo: false });
-
-                                        info.moved = info.moved.concat(results);
-                                    }
-                                } else {
-                                    Window.create(results, { undo: false });
-
-                                    info.moved = info.moved.concat(results);
-                                }
-                                break;
-                            case "close":
-                                results.forEach(function (item) {
-                                    Platform.tabs.remove(item.tab);
-                                });
-
-                                info.closed = info.closed.concat(results);
-                            }
-
-
                             info.makeNew = info.makeNew.filter(function (item) {
                                 return results.indexOf(item) === -1;
                             });
@@ -591,6 +552,57 @@ fragment.appendChild(UI.create("div", function (container) {
                             info.tabs = info.tabs.filter(function (item) {
                                 return results.indexOf(item) === -1;
                             });
+//
+//                            console.log(results.length, info.tabs.length);
+
+                            switch (macro.action) {
+                            case "require": //* FALLTHRU
+                            case "move":
+                                if (macro.window) {
+                                    first = state.list.find(function (item) {
+                                        return item.tabIcon.indexText.value === macro.window;
+                                    });
+
+                                    if (first) {
+//
+//                                        console.log(macro.search, first.tabIcon.indexText.value, results);
+//
+                                        if (macro.action === "require") {
+                                            odd = Array.slice(first.tabList.children);
+
+                                            odd = odd.filter(function (item) {
+                                                return /*results.indexOf(item) === -1 && */info.tabs.indexOf(item) !== -1;
+                                            });
+
+                                            if (odd.length) {
+//                                                console.log(macro.search, odd.length);
+                                                info.makeNew = info.makeNew.concat(odd);
+                                            }
+                                        }
+
+                                        moved = results.moveTabs(first.window.id, null, { undo: false });//!info.moved);
+
+                                        info.moved = info.moved.concat(moved);
+                                    } else {
+                                        info.moved = info.moved.concat(results);
+
+                                        Window.create(results, { title: macro.window, undo: false });
+                                    }
+                                } else {
+                                    info.moved = info.moved.concat(results);
+
+                                    Window.create(results, { undo: false });
+                                }
+                                break;
+                            case "close":
+                                info.closed = info.closed.concat(results);
+
+                                results.forEach(function (item) {
+                                    Platform.tabs.remove(item.tab);
+                                });
+//                                break;
+                            }
+//                            console.log(macro.search, results.length, info.makeNew.length, info.tabs.length);
                         }
                     }
 
@@ -603,6 +615,8 @@ fragment.appendChild(UI.create("div", function (container) {
                         closed: [],
                         moved: []
                     };
+
+                    info.tabs = state.createSearchList();
 
                     array.forEach(function (item) {
                         info = go(item, info);
@@ -638,6 +652,22 @@ fragment.appendChild(UI.create("div", function (container) {
                         text.push(".");
 
                         state.undoBar.show(text.join(""));
+
+                    } else if (closed.length) {
+                        text.push("You closed ", closed.length, " tab");
+
+                        if (closed.length !== 1) {
+                            text.push("s");
+                        }
+
+//!                        text.push(" and closed ", closed.length, " tab");
+//!                        if (closed.length !== 1) {
+//!                            text.push("s");
+//!                        }
+                        text.push(".");
+
+                        state.undoBar.show(text.join(""), { undo: false });
+
                     } else {
                         state.undoBar.show("Nothing changed.", { undo: false });
                     }
