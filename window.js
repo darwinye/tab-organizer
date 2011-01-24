@@ -134,6 +134,49 @@ var state = {
 
     placeholder: UI.create("div", function (container) {
         container.id = "placeholder";
+
+        function removeHighlight() {
+            var node = document.querySelector(".tab[data-dropindent]");
+            if (node) {
+                node.removeAttribute("data-dropindent");
+//                delete node.tab.dropIndent;
+    //                    oldnode = null;
+            }
+        }
+
+        var saved = container.remove;
+//        console.log(saved);
+
+        container.remove = function () {
+            removeHighlight();
+//                state.placeholder.style.marginTop = "";
+            saved.call(container);
+        };
+
+        container.update = removeHighlight;
+
+        container.check = function (node, sibling) {
+            var has = state.draggedTab.hasAttribute("data-selected");
+
+            if (has) {
+                if (!sibling) {
+                    return true;
+                }
+
+                if (!node.hasAttribute("data-selected") || !sibling.hasAttribute("data-selected")) {
+                    return true;
+                }
+            } else if (node !== state.draggedTab && sibling !== state.draggedTab) {
+                return true;
+            }
+//
+//                state.placeholder.remove();
+            /*if (!has && attr(node, has) || attr(sibling, has)) {
+                state.placeholder.remove();
+            } else {
+                return true;
+            }*/
+        };
     })
 };
 
@@ -235,15 +278,25 @@ if (localStorage["window.titles"]) {
                     info.windowId = proxy[undo.windowId];
                 }
 
+                function reindent(tab) {
+                    var level = state.indent[tab.window.index];
+                    if (level) {
+                        level[tab.index] = undo.indentLevel;
+                        Platform.event.trigger("tab-indent", tab, level[tab.index]);
+                    }
+
+                    item.queueAdd();
+                }
+
                 if (info.windowId) {
-                    Tab.move(item, info, item.queueAdd);
+                    Tab.move(item, info, reindent);
                     queue.next();
                 } else {
                     Window.create(null, {
                         title: undo.windowName,
                         action: function (win) {
                             info.windowId = proxy[undo.windowId] = win.id;
-                            Tab.move(item, info, item.queueAdd);
+                            Tab.move(item, info, reindent);
                             queue.next();
                         }
                     });
@@ -316,6 +369,7 @@ Platform.event.on("bookmark-remove", function (id, info) {
 });
 
 
+//document.body.draggable = false;
 //document.body.tabIndex = -1;
 
 //addEventListener("focus", function (event) {
@@ -427,11 +481,28 @@ Platform.event.on("bookmark-remove", function (id, info) {
 addEventListener("dragstart", function () {
     state.dragging = true;
 }, true);
+/*
+document.body.addEventListener("dragover", function (event) {
+    console.log(event.target);
+}, false);
+
+addEventListener("dragleave", function (event) {
+    console.log(event.target);
+}, false);*/
 
 addEventListener("dragover", function (event) {
+//    console.log(event.target);
     if (!event.defaultPrevented) {
         document.activeElement.blur();
         state.placeholder.remove();
+/*
+        state.placeholder.update();
+
+        var node = document.querySelector(".tab[data-dropindent]");
+        if (node) {
+            node.removeAttribute("data-dropindent");
+            delete node.tab.dropIndent;
+        }*/
     }
 }, false);
 

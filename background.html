@@ -352,6 +352,8 @@
                         if (typeof action === "function") {
                             action(item, i);
                         }
+                    } else {
+                        delete array[i];
                     }
                 });
 
@@ -391,11 +393,13 @@
                     } else {
 
                     }*/
+
+//                console.log(level[index]);
 //
                 index = (index < 1 ? null : level[index]);
 //
 //                console.log(tab.dropIndent);
-/*!
+/*
                 if (tab.dropIndent) {
                     index = index + 1 || 1;
                     delete tab.dropIndent;
@@ -474,6 +478,8 @@
 //
 //                                try {
                             var level = make(tab);
+//
+//                            console.log(tab);
 
                             if (level.length < tab.index) {
                                 level.length = tab.index;
@@ -645,8 +651,8 @@
 ////                    var index = tab.index;
 ////
 ////                    level.splice(info.fromIndex, 1);
-                moveup(tab, info.fromIndex);
                 insert(tab, tab.index);
+                moveup(tab, info.fromIndex);
 //                }
             });
 

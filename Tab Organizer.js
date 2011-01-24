@@ -324,44 +324,45 @@ Tab = {
 ////                return node === state.draggedTab || node.hasAttribute("data-selected");
 //            }
 //
-            function check(node, sibling) {
-                var has = state.draggedTab.hasAttribute("data-selected");
-
-                if (has) {
-                    if (!sibling) {
-                        return true;
-                    }
-
-                    if (!node.hasAttribute("data-selected") || !sibling.hasAttribute("data-selected")) {
-                        return true;
-                    }
-                } else if (node !== state.draggedTab && sibling !== state.draggedTab) {
-                    return true;
-                }
-
-                state.placeholder.remove();
-                /*if (!has && attr(node, has) || attr(sibling, has)) {
-                    state.placeholder.remove();
-                } else {
-                    return true;
-                }*/
-            }
+//
+//            var oldnode;
+//
+//            state.placeholder.
+//            container.addEventListener("dragend", state.placeholder.remove, true);
 
             container.addEventListener("dragover", function (event) {
-//                this.setAttribute("data-dropindent", "");
+                state.placeholder.remove();
+//                this.removeAttribute("data-dropindent");
 //
 //                var has = !state.draggedTab.hasAttribute("data-selected");
 //
 //                if (/*attr(this, has) || */has && this === state.draggedTab) {
 //                    state.placeholder.remove();
 //                } else {
+
+                var alpha = (this.offsetHeight / 5), // 3
+                    omega = (this.offsetHeight - alpha);
+//
+//                console.log(top, omega);
+
                 var parent = this.parentNode;
-                if (event.offsetY < (this.offsetHeight / 2)) {
-                    if (check(this, this.previousSibling)) {
-                        parent.insertBefore(state.placeholder, this);
-                    }
-                } else if (check(this, this.nextSibling)) {
+                var check = state.placeholder.check;
+
+                if (event.offsetY < alpha && check(this, this.previousSibling)) {
+//                    if () {
+                    parent.insertBefore(state.placeholder, this);
+//                    }
+                } else if (event.offsetY > omega && check(this, this.nextSibling)) {
+//                    if () {
                     parent.insertBefore(state.placeholder, this.nextSibling);
+//                    }
+                } else if (check(this)) {
+//                    parent.insertBefore(state.placeholder, this);
+//                    state.placeholder.style.marginTop = this.offsetHeight / 2 - 4 + "px";
+                    this.setAttribute("data-dropindent", "");
+//                    this.tab.dropIndent = true;
+//                    oldnode = this;
+//                    this.setAttribute("data-dropindent", "");
                 }
 //                }
 //
@@ -384,16 +385,6 @@ Tab = {
 //
 //                }
             }
-
-            var oldnode;
-
-            function removeHighlight() {
-                if (oldnode) {
-                    oldnode.removeAttribute("data-dropindent");
-                    oldnode = null;
-                }
-            }
-            container.addEventListener("dragend", removeHighlight, true);
 
             container.addEventListener("drag", function (event) {
 //                if (oldnode) {
@@ -679,13 +670,15 @@ Window = {
                 this.removeAttribute("data-selected");
 
                 container.unselect();
+
+                state.placeholder.remove();
             }, true);
 
             container.addEventListener("focus", function (event) {
                 /*! if (!state.dragging) {
                     scrollTo.call(this);
-                }*/
-
+                }
+*/
                 this.setAttribute("data-selected", "");
 
                 container.select();
@@ -748,19 +741,48 @@ Window = {
             container.addEventListener("dragenter", container.focus, true);
             container.addEventListener("dragover", events.disable, true);
 
-            container.addEventListener("dragenter", function (event) {
+            container.addEventListener("dragover", function (event) {
                 var list = this.tabList;
-                var coords = list.getBoundingClientRect();
+//                var coords = list.getBoundingClientRect();
 
-                if (!list.contains(event.target)) {
-                    if (event.clientX > coords.left && event.clientX < coords.right) {
-                        if (event.clientY < coords.top) {
-                            list.insertBefore(state.placeholder, list.firstChild);
-                        } else {
-                            list.appendChild(state.placeholder);
-                        }
-                    }
+                var last = list.lastChild;
+                if (last === state.placeholder) {
+                    last = last.previousSibling;
                 }
+
+                var alpha = list.firstChild.getBoundingClientRect(),
+                    omega = last.getBoundingClientRect();
+
+                var check = state.placeholder.check;
+
+//                var last = list.lastChild.getBoundingClientRect();
+                if (event.clientY > omega.bottom) {
+                    if (check(last)) {
+                        list.appendChild(state.placeholder);
+                        state.placeholder.update();
+                    }/* else {
+
+                    }*/
+                } else if (event.clientY < alpha.top) {
+                    if (check(list.firstChild)) {
+                        list.insertBefore(state.placeholder, list.firstChild);
+                        state.placeholder.update();
+                    }/* else {
+                        state.placeholder.remove();
+                    }*/
+                }
+/*
+                if (event.clientX > coords.left - 2 && event.clientX < coords.right - 2) {
+                    if (event.clientY <= coords.top + 2) {
+//                        if (!list.contains(event.target)) {
+                            list.insertBefore(state.placeholder, list.firstChild);
+                            state.placeholder.update();
+//                        }
+                    } else if (list === event.target) {
+                        list.appendChild(state.placeholder);
+                        state.placeholder.update();
+                    }
+                }*/
             }, true);
 /*
             container.addEventListener("dragleave", function (event) {
@@ -768,13 +790,23 @@ Window = {
             }, true);*/
 
             container.addEventListener("drop", function (event) {
-                var index = Array.indexOf(this.tabList.children, state.placeholder);
-//
-//                console.log(index);
+                var node = document.querySelector(".tab[data-dropindent]");
+/*                if (!node) {
+                    node = state.placeholder;
+                }*/
 
-                state.currentQueue.moveTabs(win.id, index);
-//                state.currentQueue.reset();
-//                delete state.currentQueue.shiftNode;
+                var index = Array.indexOf(this.tabList.children, node || state.placeholder);
+                if (index !== -1) {
+                    if (node) {
+                        index += 1;
+                    }
+    //
+    //                console.log(index);
+
+                    state.currentQueue.moveTabs(win.id, index, { indent: !!node });
+    //                state.currentQueue.reset();
+    //                delete state.currentQueue.shiftNode;
+                }
             }, true);
 
 
