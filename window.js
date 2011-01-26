@@ -135,37 +135,37 @@ var state = {
     placeholder: UI.create("div", function (container) {
         container.id = "placeholder";
 
-        function removeHighlight() {
+        container.update = function () {
             var node = document.querySelector(".tab[data-dropindent]");
             if (node) {
                 node.removeAttribute("data-dropindent");
 //                delete node.tab.dropIndent;
     //                    oldnode = null;
             }
-        }
+        };
 
         var saved = container.remove;
 //        console.log(saved);
 
         container.remove = function () {
-            removeHighlight();
+            container.update();
 //                state.placeholder.style.marginTop = "";
             saved.call(container);
         };
-
-        container.update = removeHighlight;
 
         container.check = function (node, sibling) {
             var has = state.draggedTab.hasAttribute("data-selected");
 
             if (has) {
-                if (!sibling) {
+                if (node && !node.hasAttribute("data-selected")) {
+                    return true;
+                } else if (sibling && !sibling.hasAttribute("data-selected")) {
                     return true;
                 }
-
+/*
                 if (!node.hasAttribute("data-selected") || !sibling.hasAttribute("data-selected")) {
                     return true;
-                }
+                }*/
             } else if (node !== state.draggedTab && sibling !== state.draggedTab) {
                 return true;
             }
@@ -651,7 +651,7 @@ fragment.appendChild(UI.create("div", function (container) {
                                             }
                                         }
 
-                                        moved = results.moveTabs(first.window.id, null, { undo: false });//!info.moved);
+                                        moved = results.moveTabs(first.window, { undo: false });//!info.moved);
 
                                         info.moved = info.moved.concat(moved);
                                     } else {

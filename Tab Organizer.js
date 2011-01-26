@@ -340,21 +340,26 @@ Tab = {
 //                    state.placeholder.remove();
 //                } else {
 
-                var alpha = (this.offsetHeight / 5), // 3
-                    omega = (this.offsetHeight - alpha);
-//
-//                console.log(top, omega);
-
                 var parent = this.parentNode;
                 var check = state.placeholder.check;
 
-                if (event.offsetY < alpha && check(this, this.previousSibling)) {
+                var alpha = (this.offsetHeight / 5), // 3
+                    omega = (this.offsetHeight - alpha);
+
+                var prev = this.previousSibling,
+                    next = this.nextSibling;
+//
+//                console.log(top, omega);
+
+                var test = (prev || state.draggedTab !== this);
+
+                if (event.offsetY < alpha && test && check(null, prev)) {
 //                    if () {
                     parent.insertBefore(state.placeholder, this);
 //                    }
-                } else if (event.offsetY > omega && check(this, this.nextSibling)) {
+                } else if (event.offsetY > omega && check(this, next)) {
 //                    if () {
-                    parent.insertBefore(state.placeholder, this.nextSibling);
+                    parent.insertBefore(state.placeholder, next);
 //                    }
                 } else if (check(this)) {
 //                    parent.insertBefore(state.placeholder, this);
@@ -611,7 +616,26 @@ Window = {
 /*                console.log(array.map(function (item) {
                     return item.tab.title;
                 }));*/
-                array.moveTabs(win.id, null, { undo: info.undo });
+                array.moveTabs(win, { undo: info.undo/*,
+                    action: function (tab, item) {
+                        var old = level[tab.index];
+
+                        var undo = item.undoState.indentLevel;
+                        if (undo) {
+                            level[tab.index] = undo;
+                        }
+
+                        var to = indent + push;
+                        if (to <= 0) {
+                            delete level[tab.index];
+                        } else {
+                            level[tab.index] = to;
+                        }
+
+                        if (old !== level[tab.index]) {
+                            Platform.event.trigger("tab-indent", tab, level[tab.index]);
+                        }
+                    }*/ });
 //                array.reset();
 //                delete array.shiftNode;
             }
@@ -708,6 +732,8 @@ Window = {
                 } else if (event.which === 37 || event.which === 39) { //* Left/Right
                     query = this.querySelector(".tab[data-focused]");
                     if (query && query.previousSibling) {
+                        event.preventDefault();
+
                         if (event.which === 37) {
                             state.indent.sub(query.tab);
                         } else {
@@ -795,15 +821,19 @@ Window = {
                     node = state.placeholder;
                 }*/
 
-                var index = Array.indexOf(this.tabList.children, node || state.placeholder);
+                var children = Array.slice(this.tabList.children);
+
+                var index = children.indexOf(node || state.placeholder);
                 if (index !== -1) {
                     if (node) {
                         index += 1;
                     }
+//
+//                    console.log(index, node.hasAttribute("data-dropindent"));
     //
     //                console.log(index);
 
-                    state.currentQueue.moveTabs(win.id, index, { indent: !!node });
+                    state.currentQueue.moveTabs(win, { index: index, indent: !!node });
     //                state.currentQueue.reset();
     //                delete state.currentQueue.shiftNode;
                 }
@@ -1198,7 +1228,7 @@ Window = {
 
                                                 menu.addItem(name, {
                                                     action: function () {
-                                                        container.tabList.queue.moveTabs(item.window.id);
+                                                        container.tabList.queue.moveTabs(item.window);
 //                                                        container.tabList.queue.reset();
 //                                                        delete container.tabList.queue.shiftNode;
                                                     }
