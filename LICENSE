@@ -1,9 +1,14 @@
-    You can find the full text of the GPL within the
-    file called "GNU GPL" and the full text of the
-    Lesser GPL within the file called "GNU Lesser GPL".
+-- EXCEPTIONS:
+  /images/favicon.png
+    - BSD License <http://code.google.com/intl/en/chromium/terms.html>
 
-    Unless otherwise noted, all files contained within
-    this extension are under the following license:
+
+   You can find the full text of the GPL within the
+   file called "GNU GPL" and the full text of the
+   Lesser GPL within the file called "GNU Lesser GPL".
+
+   Unless otherwise noted, all files contained within
+   this extension are under the following license:
 
 
  Copyright © 2010, 2011 Paul Chapman <pcxunlimited@gmail.com>

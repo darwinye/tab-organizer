@@ -471,6 +471,7 @@ Tab = {
                         element.src = "/images/favicon.png";
                     }
                 }),
+
                 favorite: UI.create("div", function (element) {
                     element.className = "tab-favorite";
                     element.title = "Favorite this tab";
@@ -485,6 +486,7 @@ Tab = {
                         }
                     }, true);
                 }),
+
                 text: UI.create("div", function (element) {
                     element.className = "tab-text";
                     element.title = text;
@@ -525,6 +527,7 @@ Tab = {
                         }
                     }, true);*/
                 }),
+
                 close: UI.create("div", function (element) {
                     element.className = "tab-button-close";
                     element.title = "Close (Alt Click)";

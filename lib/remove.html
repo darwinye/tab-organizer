@@ -4,14 +4,17 @@
     <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
     <title>-</title>
 
-    <script src="Platform.js"></script>
+<!--    <script src="Platform.js"></script>-->
     <script>
         "use strict";
-        /*global Platform */
 
+        chrome.tabs.getCurrent(function (tab) {
+            chrome.tabs.remove(tab.id);
+        });
+/*
         Platform.tabs.getCurrent(function (tab) {
             Platform.tabs.remove(tab);
-        });
+        });*/
 //
 //        Platform.tabs.remove();
 //
