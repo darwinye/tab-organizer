@@ -467,7 +467,8 @@ Tab = {
                     if (tab.favIconUrl) {
                         element.src = "chrome://favicon/" + tab.url;
                     } else {
-                        element.src = "/images/blank.png";
+//                        element.src = "chrome://favicon";//tab.url;
+                        element.src = "/images/favicon.png";
                     }
                 }),
                 favorite: UI.create("div", function (element) {
@@ -603,6 +604,7 @@ Window = {
 
         Platform.windows.create({ url: "lib/remove.html" }, function (win) {
             if (info.title) {
+//                console.log(win.title, info.title);
 //                var proxy = state.windows[win.id];
                 win.title = info.title;
 //                proxy.tabIcon.indexText.value = info.title;
@@ -896,7 +898,8 @@ Window = {
                                         delete state.titles[index];
                                     }
                                     element.value = action.returnTitle(index);
-                                }
+                                },
+                                configurable: true
                             });
 
                             element.addEventListener("mousedown", function (event) {
