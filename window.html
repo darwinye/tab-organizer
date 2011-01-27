@@ -19,10 +19,6 @@
                 link.href = "/views/" + value + ".css";
             }
             href(Options.get("windows.type"));
-//
-//            Options.event.on("change", function (event) {
-//
-//            });
 
             function find(text, func) {
                 var rules = link.sheet.cssRules;
@@ -64,9 +60,6 @@
                 }
 
                 if (columns || rows || type) {
-//                    state.list.forEach(function (item) {
-//                        item.update();
-//                    });
                     update();
 
                     state.search({ scroll: true, focused: true, nodelay: true });

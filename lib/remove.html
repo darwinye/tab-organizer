@@ -4,23 +4,13 @@
     <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
     <title>-</title>
 
-<!--    <script src="Platform.js"></script>-->
     <script>
         "use strict";
 
         chrome.tabs.getCurrent(function (tab) {
             chrome.tabs.remove(tab.id);
         });
-/*
-        Platform.tabs.getCurrent(function (tab) {
-            Platform.tabs.remove(tab);
-        });*/
-//
-//        Platform.tabs.remove();
-//
-//        Platform.message.connect("lib.action", function (port) {
-//            port.sendMessage({ type: "remove" });
-//        });
+
     </script>
 </head>
 </html>

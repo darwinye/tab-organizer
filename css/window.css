@@ -494,8 +494,6 @@ input[data-special], .search-past-item[data-special] {
 }
 .tab[data-dropindent] {
     border: 1px solid black/* !important*/;
-/*    margin: -1px;*/
-/*    outline: 1px solid black;*/
 }
 .tab[data-selected] {
     /*! background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(rgba(124, 252, 0, 0.4)), to(rgba(124, 252, 0, 0.5)));*/

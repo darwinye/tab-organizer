@@ -337,42 +337,24 @@ Tab = {
 //                var has = !state.draggedTab.hasAttribute("data-selected");
 //
 //                if (/*attr(this, has) || */has && this === state.draggedTab) {
-//                    state.placeholder.remove();
-//                } else {
-
                 var parent = this.parentNode;
                 var check = state.placeholder.check;
 
-                var alpha = (this.offsetHeight / 5), // 3
+                var alpha = (this.offsetHeight / 5),
                     omega = (this.offsetHeight - alpha);
 
                 var prev = this.previousSibling,
                     next = this.nextSibling;
-//
-//                console.log(top, omega);
 
                 var test = (prev || state.draggedTab !== this);
 
                 if (event.offsetY < alpha && test && check(null, prev)) {
-//                    if () {
                     parent.insertBefore(state.placeholder, this);
-//                    }
                 } else if (event.offsetY > omega && check(this, next)) {
-//                    if () {
                     parent.insertBefore(state.placeholder, next);
-//                    }
                 } else if (check(this)) {
-//                    parent.insertBefore(state.placeholder, this);
-//                    state.placeholder.style.marginTop = this.offsetHeight / 2 - 4 + "px";
                     this.setAttribute("data-dropindent", "");
-//                    this.tab.dropIndent = true;
-//                    oldnode = this;
-//                    this.setAttribute("data-dropindent", "");
                 }
-//                }
-//
-//                document.body.setAttribute("hidden", "");
-//                document.body.removeAttribute("hidden");
             }, true);
 /*!
 
@@ -642,8 +624,6 @@ Window = {
                             Platform.event.trigger("tab-indent", tab, level[tab.index]);
                         }
                     }*/ });
-//                array.reset();
-//                delete array.shiftNode;
             }
 
             if (typeof info.action === "function") {
@@ -690,10 +670,6 @@ Window = {
                 container.select();
                 scrollTo();
             };
-//
-//            container.update = function () {
-//
-//            };
 
 
             container.addEventListener("blur", function (event) {
@@ -775,7 +751,6 @@ Window = {
 
             container.addEventListener("dragover", function (event) {
                 var list = this.tabList;
-//                var coords = list.getBoundingClientRect();
 
                 var last = list.lastChild;
                 if (last === state.placeholder) {
@@ -787,7 +762,6 @@ Window = {
 
                 var check = state.placeholder.check;
 
-//                var last = list.lastChild.getBoundingClientRect();
                 if (event.clientY > omega.bottom) {
                     if (check(last)) {
                         list.appendChild(state.placeholder);
@@ -803,29 +777,10 @@ Window = {
                         state.placeholder.remove();
                     }*/
                 }
-/*
-                if (event.clientX > coords.left - 2 && event.clientX < coords.right - 2) {
-                    if (event.clientY <= coords.top + 2) {
-//                        if (!list.contains(event.target)) {
-                            list.insertBefore(state.placeholder, list.firstChild);
-                            state.placeholder.update();
-//                        }
-                    } else if (list === event.target) {
-                        list.appendChild(state.placeholder);
-                        state.placeholder.update();
-                    }
-                }*/
             }, true);
-/*
-            container.addEventListener("dragleave", function (event) {
-                state.placeholder.remove();
-            }, true);*/
 
             container.addEventListener("drop", function (event) {
                 var node = document.querySelector(".tab[data-dropindent]");
-/*                if (!node) {
-                    node = state.placeholder;
-                }*/
 
                 var children = Array.slice(this.tabList.children);
 
@@ -834,14 +789,8 @@ Window = {
                     if (node) {
                         index += 1;
                     }
-//
-//                    console.log(index, node.hasAttribute("data-dropindent"));
-    //
-    //                console.log(index);
 
                     state.currentQueue.moveTabs(win, { index: index, indent: !!node });
-    //                state.currentQueue.reset();
-    //                delete state.currentQueue.shiftNode;
                 }
             }, true);
 
@@ -1238,7 +1187,6 @@ Window = {
 
                                             state.sorted.forEach(function (item, i) {
                                                 var name = item.window.title;
-//                                                var name = item.tabIcon.indexText.value;
                                                 if (item === container) {
                                                     name = "<strong>" + name + "</strong>";
                                                 }
@@ -1246,8 +1194,6 @@ Window = {
                                                 menu.addItem(name, {
                                                     action: function () {
                                                         container.tabList.queue.moveTabs(item.window);
-//                                                        container.tabList.queue.reset();
-//                                                        delete container.tabList.queue.shiftNode;
                                                     }
                                                 });
                                             });

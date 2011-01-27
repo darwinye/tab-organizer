@@ -500,20 +500,9 @@ fragment.appendChild(UI.create("div", function (container) {
             var perform = (function () {
                 function go(macro, info) {
                     var first, moved, odd/*, parser*/, results;
-//                    info.tabs = info.tabs || state.createSearchList();
-//
                     if (macro.search) {
-//                        parser = action.parse(macro.search);
-//                        var results = action.parse(macro.search)(info.tabs);
                         results = action.search(info.tabs, macro.search);
-                        //action.search(info.tabs, macro.search);
 
-//                        action.search = function (array, string) {
-//                            return action.parse(string)(array);
-//                        };
-//                        console.log(results.length);
-//
-//                        console.log(info.tabs.length);
                         if (results.length) {
                             info.makeNew = info.makeNew.filter(function (item) {
                                 return results.indexOf(item) === -1;
@@ -522,8 +511,6 @@ fragment.appendChild(UI.create("div", function (container) {
                             info.tabs = info.tabs.filter(function (item) {
                                 return results.indexOf(item) === -1;
                             });
-//
-//                            console.log(results.length, info.tabs.length);
 
                             switch (macro.action) {
                             case "require": //* FALLTHRU
@@ -531,22 +518,17 @@ fragment.appendChild(UI.create("div", function (container) {
                                 if (macro.window) {
                                     first = state.list.find(function (item) {
                                         return item.window.title === macro.window;
-//                                        return item.tabIcon.indexText.value === macro.window;
                                     });
 
                                     if (first) {
-//
-//                                        console.log(macro.search, first.tabIcon.indexText.value, results);
-//
                                         if (macro.action === "require") {
                                             odd = Array.slice(first.tabList.children);
 
                                             odd = odd.filter(function (item) {
-                                                return /*results.indexOf(item) === -1 && */info.tabs.indexOf(item) !== -1;
+                                                return info.tabs.indexOf(item) !== -1;
                                             });
 
                                             if (odd.length) {
-//                                                console.log(macro.search, odd.length);
                                                 info.makeNew = info.makeNew.concat(odd);
                                             }
                                         }
@@ -571,9 +553,7 @@ fragment.appendChild(UI.create("div", function (container) {
                                 results.forEach(function (item) {
                                     Platform.tabs.remove(item.tab);
                                 });
-//                                break;
                             }
-//                            console.log(macro.search, results.length, info.makeNew.length, info.tabs.length);
                         }
                     }
 
@@ -859,13 +839,11 @@ fragment.appendChild(UI.create("div", function (container) {
         var input = document.createElement("input");
         input.setAttribute("spellcheck", "false");
         input.setAttribute("results", "");
-//        input.setAttribute("autosave", Platform.getURL(""));
         input.setAttribute("incremental", "");
         input.setAttribute("placeholder", "Search");
 
         input.title = "(Ctrl F)";
         input.type = "search";
-//        input.name = "s"
         input.tabIndex = 1;
 
 
@@ -933,8 +911,6 @@ fragment.appendChild(UI.create("div", function (container) {
             var list = windows.filter(function (item) {
                 item.removeAttribute("data-last");
 
-//                item.update();
-
                 var children = Array.slice(item.tabList.children);
 
                 var test = children.some(function (child) {
@@ -978,7 +954,6 @@ fragment.appendChild(UI.create("div", function (container) {
             if (list.length) {
                 var last = list[list.length - 1];
                 last.setAttribute("data-last", "");
-//                last.update();
             }
 
             if (focused) {
@@ -1022,7 +997,7 @@ fragment.appendChild(UI.create("div", function (container) {
 
             if (info.nodelay) {
                 wrapper();
-            } else {//if (!anon.delay) {
+            } else {
                 clearTimeout(anon.timer);
 
                 anon.timer = setTimeout(wrapper, 0);
@@ -1049,7 +1024,6 @@ fragment.appendChild(UI.create("div", function (container) {
             input.focus();
             input.select();
         }, 0);
-//        return;
 
 
         span.appendChild(UI.create("div", function (container) {
@@ -1455,9 +1429,6 @@ fragment.appendChild(UI.create("div", function (container) {
 
                 document.body.setAttribute("hidden", "");
                 document.body.removeAttribute("hidden");
-    //
-    //                document.body.style.display = "none !important";
-    //                document.body.style.display = "";
             }
         });
 
@@ -1465,26 +1436,15 @@ fragment.appendChild(UI.create("div", function (container) {
         state.search({ scroll: true, focused: true, nodelay: true });
 
         state.loaded = true;
-    //    });
     }
 
     if (windows.length) {
         script.addEventListener("load", init, true); //* Issue 69
-//        addEventListener("load", init, true); //* Issue 69
     } else {
         Platform.event.on("load", init);
     }
-/*
-    script.addEventListener("load", function () {
-        console.log(document.readyState);
-    }, true);*/
 
     fragment.appendChild(script);
 }());
 
 document.body.appendChild(fragment);
-/*
-
-(function () {
-
-}());*/

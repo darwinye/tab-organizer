@@ -30,7 +30,6 @@
 
     function move(info) {
         var proxy = {};
-//
         var length = info.list.length - 1;
 
         info.list.forEach(function (item, i) {
@@ -42,19 +41,8 @@
 
                 var tab = item.tab;
                 if (tab.windowId === undo.windowId && tab.index < info.index) {
-//                    console.log(tab.index, info.index);
                     info.index += length - i;
-//                    info.index -= length - i; //*
-//
-//                    if (info.index < 0) {
-//                        console.error(info.index, i);
-//                        info.index = 0;
-//                    }
-    //                console.log(tab.index, index);
                 }
-//                console.log(info.index);
-//
-//                info.index -= i;
 
                 if (state.windows[undo.windowId]) {
                     info.windowId = undo.windowId;
@@ -84,11 +72,6 @@
                             queue.next();
                         }
                     });
-/*                    Platform.windows.create({ url: "lib/remove.html" }, function (win) {
-                        info.windowId = proxy[undo.windowId] = win.id;
-                        Tab.move(item, info, item.queueAdd);
-                        queue.next();
-                    });*/
                 }
             });
         });

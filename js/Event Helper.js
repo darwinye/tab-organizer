@@ -37,32 +37,10 @@ var action = {
 
         Platform.event.on("tab-create", function (tab) {
             var node, list = state.windows[tab.windowId];
-//            var index = state.list.indexOf(list);
 
             if (list && (list = list.tabList)) {
                 node = Tab.proxy(tab);
                 list.moveChild(node, tab.index);
-//
-//                Platform.tabs.getAllInWindow(tab.windowId, function (array) {
-//                    state.indent[index] = state.indent[index] || [];
-//                    var indent = state.indent[index];
-//                    console.log(index, state.indent[index]);
-//                    if (tab.index !== array.length - 1) {
-//                        indent[tab.index] = indent[tab.index - 1] + 1 || 1;
-//                        state.indentByID[tab.id] = indent[tab.index];
-//                        console.log(indent[tab.index]);
-////                        state.indent.set(tab.index, state.indent.get(tab.index - 1) + 1);
-////                        node.starter = list.children[tab.index - 1];
-////                        list.children[tab.index - 1].appendChild(node);
-////                        node.style.marginLeft = "5px";
-////                        console.log();
-//                    }// else {
-////                        list.appendChild(node);
-////
-////                    }
-//                    list.moveChild(node, tab.index);
-//                    console.log(array.length - 1, tab.index);
-//                });
 
                 state.search({ scroll: true, tabs: [node] });
             }
@@ -72,13 +50,7 @@ var action = {
             var list, node = state.tabsByID[tab.id];
 
             if (node && (list = node.parentNode)) {
-//                try {
-//                console.log(state);
-//                console.log(state.tabsByURL.remove);
                 state.tabsByURL.remove(old.url, node);
-//                } catch (e) {
-//                    console.error(e);
-//                }
 
                 var selected = node.hasAttribute("data-selected");
 
@@ -90,8 +62,6 @@ var action = {
                 }
 
                 state.search({ tabs: [element] });
-//
-//                console.log(element, node);
             }
         });
 
@@ -161,12 +131,7 @@ var action = {
         Platform.event.on("tab-indent", function (tab, indent) {
             var node = state.tabsByID[tab.id];
             if (node) {
-//                var parent = state.tabsByID[tab.parentId];
-//                if (parent) {
                 node.indent(indent);
-//                node.style.marginLeft = indent * 5 + "px";
-//                }
-//                node.style.marginLeft = tab.indent * 5 + "px";
             }
         });
 
@@ -197,7 +162,6 @@ var action = {
             }
             delete state.windows[win.id];
 
-//            state.list.remove(list);
             state.list.forEach(function (item, i) {
                 item.tabIcon.indexText.value = action.returnTitle(i);
             });

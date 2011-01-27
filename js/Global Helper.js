@@ -177,27 +177,16 @@
 //            delete item.undoState.windowId;
 //            delete item.undoState.index;
 
-            if (tab.window === win && /*(*/to === null/* || tab.index === to)*/) {
-//                if (to !== null) {
-//                    Platform.event.trigger("tab-indent", tab, (level[tab.index] = indent));
-//                }
-//
+            if (tab.window === win && /*(*/to === null) {
                 return false;
             }
-/*
-            var title = state.list.find(function (item) {
-                return item.window === tab.window;
-            }); //! HACKY*/
 
             item.undoState.windowId = tab.windowId;
             item.undoState.index = tab.index;
-//            item.undoState.windowName = title.tabIcon.indexText.value;
-//            console.log(item.tab.window.title);
             item.undoState.windowName = item.tab.window.title;
 
             var push = 0;
 
-//            try {
             (function () {
                 var level = state.indent[tab.window.index];
                 if (level) {
@@ -209,10 +198,8 @@
 
                 if (i === 0) {
                     first = previous = level;
-//                    push = level - previous;
                 } else {
                     var diff = level - previous;
-//                    console.log(level, previous);
                     if (diff > 1) {
                         previous += 1;
                         push = previous;
@@ -220,107 +207,27 @@
                         previous += diff;
                         push = previous - first;
                     }
-//
-//                    console.log(push, diff, level, previous);
-//                    console.log(diff, previous);
-//                    console.log(diff, level, previous, first);
-//                    console.log(push, first);
                 }
-//
-//                console.log(push);
-//
-//                console.log(push);
-//                console.log(push);
-//                previous = level;
-//                console.log(level, previous, push);
-//
-//                previous = level;
-//
             }());
-//            } catch (e) {
-//                console.error(e);
-//            }
-//
-//            console.log(item.undoState.windowName);
-//
-//            console.log(tab.window.index, state.titles[tab.window.index], state.titles.slice());
-//
-//            index -= 1;
-//
 
             var index = (to === null) ? 9999999 : to;
-//
-//            if (
-//
-//            console.log(index);
-//            console.log(tab.index, index - 1, i);
-/*
-            var test = (i === 0
-                         ? tab.index + 1 < index
-                         : tab.index + 1 < index);
-*/
             var test = (tab.index + 1 < index);
-//
-//            console.log(tab.index + 1, index, test);
 
             if (tab.window === win) {
-//                if (i === self.length - 1) {
                 if (test) {
-//                    item.undoState.index += 1;
                     index -= 1;
-//                    console.log(index);
-//                    index += i;
-    //                item.undoState.index += 1;
-    //                item.undoState.index -= 1;
-//                    index += 1;
-    //                console.log(tab.index, index);
-                } else {//if (tab.index !== index - 1) {
-//                    console.log(i, tab.title, tab.index, index - 1);
-//                    item.undoState.index += i;
+                } else {
                     index += i;
-//                    console.log(index);
                 }
             } else {
                 index += i;
-//                console.log(index);
             }
-/*
-            if (i === 0 && tab.index + 1 === index) {
-                return;
-            }*/
-//
-//
-//            console.log(index, indent + push);
 
-//            (function (push) {
+
             Tab.move(item, {
                 windowId: win.id,
                 index: index
             }, function (tab) {
-//                var index = ;// - (item.undoState.indentLevel || 0);
-//                console.log(indent, push);
-//                console.log(push);
-/*
-                if (level[tab.index] < indent) {
-                    level[tab.index] = indent;
-                }
-
-                if (info.indent) {
-
-                }*/
-//                console.log(indent);
-//
-//                console.log(index);
-//
-//                console.log(slice, indent, to - 1);
-//                console.log(indent, info.index - 1, level.slice());
-//
-//                console.log(indent, push);
-//
-/*
-                if (level) {
-                    old = level[tab.index];
-                }*/
                 var index = tab.window.index;
 
                 var level = state.indent[index];
@@ -335,26 +242,15 @@
                 } else {
                     level[tab.index] = to;
                 }
-//
-//                console.log(indent, to);
 
                 if (level[tab.index] !== item.undoState.indentLevel) {
                     Platform.event.trigger("tab-indent", tab, level[tab.index]);
                 }
-/*
-                if (typeof info.action === "function") {
-                    info.action(tab, item);
-                }*/
-//                console.log(i, indent, push);
-//                console.log(indent, to - 1, index, level.slice());
-//                console.log(tab.index, level[tab.index]);
+
             });
-//            }(push));
 
             return true;
         });
-//
-//        var list = Platform.tabs.moveArray(this, info);
 
         if (list.length) {
             if (info.undo !== false && Options.get("undo.move-tabs")) {

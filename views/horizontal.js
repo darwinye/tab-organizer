@@ -7,8 +7,6 @@
         element.className = "window-list";
 
         state.windowList = element;
-//
-//        console.log("Foo!");
 
         action.attachEvents(element);
     }));

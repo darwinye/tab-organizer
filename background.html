@@ -63,19 +63,12 @@
         };
         Options.setDefaults(defaults);
 
-//        Options.deleteDefault("windows.indent-level");
-//        Options.deleteDefault("windows.tab-indent");
-//        Options.deleteDefault("tabs.indent-level");
-//        Options.deleteDefault("windows.offsets");
-//        Options.set("tabs.indent-by-id", {});
 
         Options.setObject("tabs.favorites.urls");
         Options.setObject("tabs.visited.byURL");
         Options.setObject("counter.state");
 
         Options.setArray("windows.tab-indent");
-//        Options.setArray("tabs.indent-level");
-//        Options.setArray("windows.offsets");
         Options.setArray("windows.titles");
         Options.setArray("macros.list");
 
@@ -239,55 +232,13 @@
 
 
         Platform.event.on("load", function (windows) {
-/*            var focusedByID = {};
-            var indexByID = {};
-            var tabsByID = {};
 
-
-
-            Platform.event.on("tab-create", function (tab) {
-                tabsByID[tab.id] = tab;
-
-                var focused = focusedByID[tab.windowId];
-                if (focused) {
-                    console.log(focused.index);
-                }
-            });
-
-            Platform.event.on("tab-remove", function (id) {
-                indent.splice(indexByID[tabsByID[id].windowId], 1);
-            });
-
-            Platform.event.on("tab-focus", function (id, info) {
-//                focusedByID[info.windowId] = node;
-                Platform.tabs.get(id, function (tab) {
-                    focusedByID[info.windowId] = tab;
-//                    var list = state.windows[info.windowId],
-//                        node = state.tabsByID[id];
-
-//                    if (list && node) {
-//                        var scroll = list.tabList;
-
-//                        var old = focusedByID[info.windowId];
-//                        if (old) {
-//                            node.indentParent = old.index;
-//                        }
-//                    }
-                });
-            });
-*/
-//            var index = 0;
-//
             var titles = Options.get("windows.titles"),
                 indent = state.indent;
 
             var tabcount = 0;
 
             windows.forEach(function (item, i) {
-//                indent[i] = indent[i] || [];
-//                var level = indent[i];
-//                    windowsByID[item.id] = i;
-//
                 var length = item.tabs.length;
                 tabcount += length;
 
@@ -295,22 +246,6 @@
                 if (level && level.length > length) {
                     level.length = length;
                 }
-//
-//                item.tabs.forEach(function (tab, i) {
-//                    level[i] = level[i]
-//                    tab.indentLevel = indent[tab.globalIndex];
-//                    console.log(tab.globalIndex);
-//                    if (!(tab.globalIndex in indent)) {
-//                        indent[tab.globalIndex] = 0;
-//                    }
-//                    index += 1;
-//                });
-//
-                /*item.tabs.forEach(function (tab) {
-                    if (tab.selected) {
-                        focusedByID[item.id] = tab;
-                    }
-                });*/
             });
 
             function fit() {
@@ -322,33 +257,13 @@
             }
 
             fit(indent, titles);
-/*
-            if (indent.length > windows.length) {
-                indent.length = windows.length;
-            }
-            if (titles.length > windows.length) {
-                titles.length = windows.length;
-            }*/
 
-//            var lastfocused;
-//
-//            Platform.event.on("tab-focus", function (tab, old) {
-//
-//            });
-//
-            /*indent.forEach(function (tabs) {
-                tabs.forEach(function (tab, i) {
-                    tab.parentId = tabs[tab];
-                });
-            });*/
-//
-//            console.warn("foobaaar");
+
 
             function trim(array, action) {
                 var last = -1;
 
                 array.forEach(function (item, i) {
-//                    console.log(!!item);
                     if (item) {
                         last = i;
 
@@ -371,9 +286,6 @@
                 }
             });
 
-//            Platform.windows.getAll().forEach(function (windows) {
-//
-//            });
 
             counter.set("total-number", tabcount);
             counter.update();
@@ -538,9 +450,6 @@
 
             Platform.event.on("tab-focus", function (tab) {
                 add(tab.url);
-//                Platform.tabs.get(id, function (tab) {
-//
-//                });
             });
 
             Platform.event.on("tab-update", function (tab) {
@@ -554,11 +463,6 @@
             if (win.type === "normal") {
                 Options.set("window.lastfocused", win.id);
             }
-//            if (win !== null) {
-//                Platform.windows.get(win, function (win) {
-//
-//                });
-//            }
         });
 
         Platform.message.on("lib.keyboard", function (event) {
