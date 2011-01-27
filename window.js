@@ -631,7 +631,8 @@ fragment.appendChild(UI.create("div", function (container) {
                             case "move":
                                 if (macro.window) {
                                     first = state.list.find(function (item) {
-                                        return item.tabIcon.indexText.value === macro.window;
+                                        return item.window.title === macro.window;
+//                                        return item.tabIcon.indexText.value === macro.window;
                                     });
 
                                     if (first) {

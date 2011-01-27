@@ -603,13 +603,14 @@ Window = {
 
         Platform.windows.create({ url: "lib/remove.html" }, function (win) {
             if (info.title) {
-                var proxy = state.windows[win.id];
-                proxy.tabIcon.indexText.value = info.title;
-
+//                var proxy = state.windows[win.id];
+                win.title = info.title;
+//                proxy.tabIcon.indexText.value = info.title;
+/*
                 var index = state.list.indexOf(proxy);
                 if (index !== -1) {
                     state.titles[index] = info.title;
-                }
+                }*/
             }
 
             if (array) {
@@ -884,6 +885,20 @@ Window = {
 
                             element.value = action.returnTitle(index);
 
+                            Object.defineProperty(win, "title", {
+                                get: function () {
+                                    return element.value;
+                                },
+                                set: function (value) {
+                                    if (value) {
+                                        state.titles[index] = value;
+                                    } else {
+                                        delete state.titles[index];
+                                    }
+                                    element.value = action.returnTitle(index);
+                                }
+                            });
+
                             element.addEventListener("mousedown", function (event) {
                                 if (container.hasAttribute("data-focused")) {
                                     element.addEventListener("click", element.select, true);
@@ -900,12 +915,7 @@ Window = {
                             }, true);
 
                             element.addEventListener("blur", function (event) {
-                                if (this.value) {
-                                    state.titles[index] = this.value;
-                                } else {
-                                    delete state.titles[index];
-                                }
-                                this.value = action.returnTitle(index);
+                                win.title = this.value;
 
                                 if (this.value !== value) {
                                     if (Options.get("undo.rename-window")) {
@@ -1221,7 +1231,8 @@ Window = {
                                             menu.separator();
 
                                             state.sorted.forEach(function (item, i) {
-                                                var name = item.tabIcon.indexText.value;
+                                                var name = item.window.title;
+//                                                var name = item.tabIcon.indexText.value;
                                                 if (item === container) {
                                                     name = "<strong>" + name + "</strong>";
                                                 }
