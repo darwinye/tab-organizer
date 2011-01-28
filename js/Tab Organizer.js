@@ -446,12 +446,14 @@ Tab = {
                     element.title = text;
                     element.setAttribute("alt", "");
 
+                    element.src = "chrome://favicon/" + tab.url;
+/*
                     if (tab.favIconUrl) {
                         element.src = "chrome://favicon/" + tab.url;
                     } else {
 //                        element.src = "chrome://favicon";//tab.url;
                         element.src = "/images/favicon.png";
-                    }
+                    }*/
                 }),
 
                 favorite: UI.create("div", function (element) {
@@ -701,14 +703,15 @@ Window = {
                 if (event.which === 38 || event.which === 40) { //* Up/Down
                     query = this.querySelector(".tab[data-focused]");
                     if (query) {
+                        event.preventDefault();
+
                         var element = (event.which === 38
                                         ? query.previousSibling
                                         : query.nextSibling);
 
                         if (element) {
-                            event.preventDefault();
-
-                            Tab.focus(element.tab, false);
+//                            Tab.focus(element.tab, false);
+                            Platform.event.trigger("tab-focus", element.tab);
                         }
                     }
                 } else if (event.which === 37 || event.which === 39) { //* Left/Right
