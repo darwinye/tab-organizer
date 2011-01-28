@@ -101,7 +101,7 @@ var action = {
             }
         });
 
-        Platform.event.on("tab-focus", function (tab) {
+        state.event.on("tab-focus", function (tab) {
             var list = state.windows[tab.windowId],
                 node = state.tabsByID[tab.id];
 
@@ -123,9 +123,12 @@ var action = {
                 //! UI.scrollTo(node, node.parentNode);
 
                 node.triggerEvent("Platform-focus", false, false);
-
-                state.search({ tabs: [node] });
             }
+        });
+
+        Platform.event.on("tab-focus", function (tab) {
+            state.event.trigger("tab-focus", tab);
+            state.search({ tabs: [/*!node*/] });
         });
 
         Platform.event.on("tab-indent", function (tab, indent) {

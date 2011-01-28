@@ -8,6 +8,7 @@ if (Options.get("popup.type") === "bubble") {
 
 
 var state = {
+    event: KAE.make.events(),
     titles: Options.get("windows.titles"),
     macros: Options.get("macros.list"),
     favorites: Options.get("tabs.favorites.urls"),

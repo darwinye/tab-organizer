@@ -6,7 +6,7 @@ var Tab, Window;
 Tab = {
     focus: function (tab, focus) {
         var focused = Options.get("window.lastfocused");
-        var should = (focus !== false && focused !== tab.windowId);
+        var should = (focus !== false && focused !== tab.windowId); // !tab.window.focused);
 
         Platform.tabs.focus(tab, should);
 
@@ -693,6 +693,20 @@ Window = {
             }, true);
 
 
+            function iter(element, which) {
+                element = (which
+                            ? element.previousSibling
+                            : element.nextSibling);
+
+                if (element) {
+                    if (!element.hasAttribute("hidden")) {
+                        return element;
+                    } else {
+                        return iter(element, which);
+                    }
+                }
+            }
+
             container.addEventListener("keydown", function (event) {
                 var query;
 
@@ -705,13 +719,10 @@ Window = {
                     if (query) {
                         event.preventDefault();
 
-                        var element = (event.which === 38
-                                        ? query.previousSibling
-                                        : query.nextSibling);
-
+                        var element = iter(query, event.which === 38);
                         if (element) {
 //                            Tab.focus(element.tab, false);
-                            Platform.event.trigger("tab-focus", element.tab);
+                            state.event.trigger("tab-focus", element.tab);
                         }
                     }
                 } else if (event.which === 37 || event.which === 39) { //* Left/Right
