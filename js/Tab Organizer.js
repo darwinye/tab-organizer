@@ -716,13 +716,15 @@ Window = {
                     }
                 } else if (event.which === 37 || event.which === 39) { //* Left/Right
                     query = this.querySelector(".tab[data-focused]");
-                    if (query && query.previousSibling) {
+                    if (query) {
                         event.preventDefault();
 
-                        if (event.which === 37) {
-                            state.indent.sub(query.tab);
-                        } else {
-                            state.indent.add(query.tab);
+                        if (query.previousSibling) {
+                            if (event.which === 37) {
+                                state.indent.sub(query.tab);
+                            } else {
+                                state.indent.add(query.tab);
+                            }
                         }
                     }
                 } else if (event.which === 32 || event.which === 13) { //* Space/Enter
