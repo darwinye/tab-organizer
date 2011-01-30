@@ -135,6 +135,8 @@ var state = {
 
     placeholder: UI.create("div", function (container) {
         container.id = "placeholder";
+//
+//        container.addEventListener("dragover", events.disable, true);
 
         container.update = function () {
             var node = document.querySelector(".tab[data-dropindent]");

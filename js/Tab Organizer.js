@@ -796,8 +796,22 @@ Window = {
             }, true);
 
             container.addEventListener("drop", function (event) {
-                var node = document.querySelector(".tab[data-dropindent]");
+                var index = 0;
 
+                var node = document.querySelector(".tab[data-dropindent]");
+                if (node) {
+                    index = node.tab.index + 1;
+                } else {
+                    var sib = state.placeholder.previousSibling;
+                    if (sib) {
+                        index = sib.tab.index + 1;
+                    }
+                }
+//
+//                console.log(index, !!node);
+
+                state.currentQueue.moveTabs(win, { index: index, child: !!node });
+/*
                 var children = Array.slice(this.tabList.children);
 
                 var index = children.indexOf(node || state.placeholder);
@@ -806,8 +820,8 @@ Window = {
                         index += 1;
                     }
 
-                    state.currentQueue.moveTabs(win, { index: index, indent: !!node });
-                }
+                    state.currentQueue.moveTabs(win, { index: index, child: !!node });
+                }*/
             }, true);
 
 

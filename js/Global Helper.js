@@ -141,7 +141,7 @@
         console.log(this.map(function (item) {
             return item.tab.title;
         }));*/
-
+/*
         var indent, level = state.indent[win.index];
 
         if (level) {
@@ -150,11 +150,11 @@
         indent = indent || 0;
 //
 //        var old = level[to - 1];
-/*
-        Queue.sync(function (queue) {
-            console.log(to - 1, slice);
-            queue.next();
-        });*/
+//
+//        Queue.sync(function (queue) {
+//            console.log(to - 1, slice);
+//            queue.next();
+//        });
 
         if (info.indent && to !== 0) {
             indent += 1;
@@ -164,8 +164,8 @@
 //
 //        console.log(indent, to - 1, level.slice());
 //
-
-        var first, previous = 0;
+*/
+        var /*first, */previous = 0;
 //
 //        var slice = level.slice();
 //
@@ -188,6 +188,8 @@
             var push = 0;
 
             (function () {
+                delete item.undoState.indentLevel;
+
                 var level = state.indent[tab.window.index];
                 if (level) {
                     level = level[tab.index];
@@ -197,16 +199,28 @@
                 level = level || 0;
 
                 if (i === 0) {
-                    first = previous = level;
+                    /*first = */previous = level;
                 } else {
+//                    push = diff;
                     var diff = level - previous;
+/*
+                    if (push > 1) {
+                        push = 1;
+//                        previous += 1;
+//                        push = previous;
+                    }*//* else {
+
+//                        push = previous - first;
+                    }*/
+
+                    previous += diff;
+//                    console.log(push);
+
                     if (diff > 1) {
-                        previous += 1;
-                        push = previous;
-                    } else {
-                        previous += diff;
-                        push = previous - first;
+                        diff = 1;
                     }
+
+                    push = diff;
                 }
             }());
 
@@ -235,18 +249,27 @@
                     level = state.indent[index] = [];
                 }
 
-                var to = indent + push;
-
-                if (to <= 0) {
+                if (tab.index === 0) {
                     delete level[tab.index];
                 } else {
-                    level[tab.index] = to;
+                    var indent = level[tab.index - 1] || 0;
+
+                    if (info.child && i === 0/* && tab.index !== 0*/) {
+                        indent += 1;
+                    }
+
+                    var to = indent + push;
+
+                    if (to <= 0) {
+                        delete level[tab.index];
+                    } else {
+                        level[tab.index] = to;
+                    }
                 }
 
                 if (level[tab.index] !== item.undoState.indentLevel) {
                     Platform.event.trigger("tab-indent", tab, level[tab.index]);
                 }
-
             });
 
             return true;
