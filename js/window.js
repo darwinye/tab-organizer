@@ -427,10 +427,10 @@ addEventListener("keydown", function (event) {
 
 var fragment = document.createDocumentFragment();
 
-fragment.appendChild(UI.create("div", function (container) {
-    container.id = "toolbar";
+fragment.appendChild(UI.create("div", function (toolbar) {
+    toolbar.id = "toolbar";
 
-    container.appendChild(UI.create("button", function (element) {
+    toolbar.appendChild(UI.create("button", function (element) {
         element.id = "button-menu";
         element.className = "Options-button";
         element.textContent = "Menu";
@@ -690,19 +690,19 @@ fragment.appendChild(UI.create("div", function (container) {
     }));
 
 
-    container.appendChild(UI.link(function (element) {
+    toolbar.appendChild(UI.link(function (element) {
         element.href = "/options.html";
         element.target = "_blank";
         element.textContent = "Options";
         element.tabIndex = 1;
     }));
 
-    container.appendChild(UI.create("span", function (element) {
+    toolbar.appendChild(UI.create("span", function (element) {
         element.className = "separator";
         element.textContent = "|";
     }));
 
-    container.appendChild(UI.link(function (element) {
+    toolbar.appendChild(UI.link(function (element) {
         element.href = "http://documentation.tab-organizer.googlecode.com/hg/Tab%20Organizer%20FAQ.html";
         element.target = "_blank";
 
@@ -711,7 +711,7 @@ fragment.appendChild(UI.create("div", function (container) {
     }));
 
 
-    container.appendChild(UI.create("div", function (element) {
+    toolbar.appendChild(UI.create("div", function (element) {
         element.id = "Undo-bar";
 
         element.appendChild(UI.create("div", function (container) {
@@ -746,10 +746,26 @@ fragment.appendChild(UI.create("div", function (container) {
                 }
             };
 
+            addEventListener("blur", function (event) {
+                if (event.target === this) {
+                    timer.reset();
+                }
+            }, true);
+
+            addEventListener("focus", function (event) {
+                if (event.target === this) {
+                    if (!state.undoBar.style.opacity) {
+                        if (!timer.mouseover) {
+                            timer.set();
+                        }
+                    }
+                }
+            }, true);
+
             addEventListener("mouseover", function (event) {
                 var element = event.target;
 
-                if (container.contains(element)) {
+                if (toolbar.contains(element)) {
                     if (!timer.mouseover) {
                         timer.mouseover = true;
                         timer.reset();
@@ -836,7 +852,7 @@ fragment.appendChild(UI.create("div", function (container) {
     }));
 
 
-    container.appendChild(UI.create("div", function (span) {
+    toolbar.appendChild(UI.create("div", function (span) {
         span.id = "search-box";
 
         var input = document.createElement("input");
