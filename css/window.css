@@ -274,9 +274,10 @@ input[data-special], .search-past-item[data-special] {
 
 .window {
     -webkit-box-flex: 1;
+    -webkit-box-orient: vertical;
 
     display: -webkit-box;
-    -webkit-box-orient: vertical;
+    position: relative;
 
     outline: none;
 }
@@ -303,6 +304,7 @@ input[data-special], .search-past-item[data-special] {
     -webkit-box-orient: vertical;
 
     position: relative;
+    /*z-index: -2;*/
 
     margin-top: -10px;
 
@@ -323,10 +325,13 @@ input[data-special], .search-past-item[data-special] {
 
 .tab-icon-border {
     -webkit-box-sizing: border-box;
-
-    position: relative;
+/*
+    position: relative;*/
+    /*top: 0px;*/
+    /*z-index: -1;*/
 
     width: 105px;
+
     margin-bottom: 9px;
 
     border-bottom: none;
@@ -336,7 +341,10 @@ input[data-special], .search-past-item[data-special] {
 }
 .tab-icon-container {
     position: relative;
+    /*top: -1px;*/
     z-index: 1;
+
+    /*width: 105px;*/
     height: 22px;
 
     background-color: inherit;
@@ -348,6 +356,9 @@ input[data-special], .search-past-item[data-special] {
     -webkit-box-align: start;
 
     padding: 1px 2px;
+    /*margin-left: 8px;
+    margin-top: -22px;*/
+
     background-color: white;
 
     border-bottom: 1px dashed rgba(0, 0, 0, 0.03);
@@ -383,8 +394,15 @@ input[data-special], .search-past-item[data-special] {
 .tab-icon-dropdown {
     display: none;
 
+    position: absolute;
+    top: 10px;
+    left: 75px; /** 105 - 1 - 17 - 10 */
+    z-index: 1;
+
     width: 17px;
     height: 16px;
+
+    background-color: white;
 
     border: 1px solid transparent;
     border-radius: 5px;

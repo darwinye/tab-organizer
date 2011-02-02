@@ -848,6 +848,7 @@ Window = {
                     }
                 }, true);
 
+
                 element.appendChild(UI.create("div", function (stack) {
                     stack.className = "tab-icon-container";
 
@@ -939,303 +940,304 @@ Window = {
                                 }
                             }, true);
                         }));
-
-                        icon.appendChild(UI.create("div", function (element) {
-                            element.className = "tab-icon-dropdown";
-                            element.title = "Open menu (Ctrl M)";
-
-                            var contextMenu = UI.contextMenu(function (menu) {
-                                element.addEventListener("mousedown", function (event) {
-                                    if (event.button !== 2) {
-                                        menu.show();
-                                    }
-                                }, true);
-
-                                container.addEventListener("contextmenu", function (event) {
-                                    if (event.target.localName === "input") {
-                                        return;
-                                    } else if (event.defaultPrevented) {
-                                        return;
-                                    }
-
-                                    event.preventDefault();
-
-                                    menu.show({
-                                        x: event.clientX,
-                                        y: event.clientY
-                                    });
-                                }, false);
-
-                                container.addEventListener("keypress", function (event) {
-                                    if (event.which === 13 && (event.ctrlKey || event.metaKey)) {
-                                        if (!event.altKey && !event.shiftKey) {
-                                            menu.show();
-                                        }
-                                    }
-                                }, true);
-
-
-                                /*! menu.addItem("<u>B</u>ack", function () {
-                                    alert("Back");
-                                }).disable();
-                                menu.addItem("<u>F</u>orward", function () {
-                                    alert("Forward");
-                                }).disable();
-                                menu.addItem("Re<u>l</u>oad");
-                                menu.separator();
-                                menu.addItem("Save <u>A</u>s...");
-                                menu.addItem("P<u>r</u>int...");
-                                menu.addItem("<u>T</u>ranslate to English").disable();
-                                menu.addItem("<u>V</u>iew Page Source");
-                                menu.addItem("View Page <u>I</u>nfo");
-                                menu.separator();
-                                menu.addItem("I<u>n</u>spect Element");
-                                menu.separator();
-                                menu.addItem("Input <u>M</u>ethods").disable();
-                                return;*/
-
-                                menu.addItem("New <u>T</u>ab", {
-                                    keys: ["T"],
-                                    action: function () {
-                                        Platform.tabs.create({
-                                            windowId: win.id
-                                        }, function (tab) {
-                                            if (Options.get("undo.new-tab")) {
-                                                Undo.push("new-tab", {
-                                                    tab: tab
-                                                });
-                                                state.undoBar.show("You created a new tab.");
-                                            }
-                                        });
-                                    }
-                                });
-
-                                menu.separator();
-
-                                menu.addItem("<u>R</u>ename window", {
-                                    keys: ["R"],
-                                    action: function (event) {
-                                        event.preventDefault();
-                                        container.tabIcon.indexText.select();
-                                    }
-                                });
-
-                                menu.separator();
-
-                                menu.addItem("Select <u>a</u>ll", {
-                                    keys: ["A"],
-                                    onshow: function (menu) {
-                                        var queue = container.tabList.queue.length;
-                                        var tabs = container.tabList.children.length;
-
-                                        if (queue === tabs) {
-                                            menu.disable();
-                                        } else {
-                                            menu.enable();
-                                        }
-                                    },
-                                    action: function () {
-                                        var range = [];
-
-                                        Array.slice(container.tabList.children).forEach(function (item) {
-                                            if (!item.hasAttribute("hidden")) {
-                                                if (!item.hasAttribute("data-selected")) {
-                                                    range.push(item);
-                                                    item.queueAdd();
-                                                }
-                                            }
-                                        });
-
-                                        if (Options.get("undo.select-tabs")) {
-                                            if (range.length) {
-                                                Undo.push("select-tabs", {
-                                                    queue: container.tabList.queue,
-                                                    type: "select",
-                                                    list: range
-                                                });
-
-                                                if (range.length === 1) {
-                                                    state.undoBar.show("You selected " + range.length + " tab.");
-                                                } else {
-                                                    state.undoBar.show("You selected " + range.length + " tabs.");
-                                                }
-                                            }
-                                        }
-                                        delete container.tabList.queue.shiftNode;
-                                    }
-                                });
-
-                                menu.addItem("Select <u>n</u>one", {
-                                    keys: ["N"],
-                                    onshow: function (menu) {
-                                        if (container.tabList.queue.length) {
-                                            menu.enable();
-                                        } else {
-                                            menu.disable();
-                                        }
-                                    },
-                                    action: function () {
-                                        var range = [];
-
-                                        Array.slice(container.tabList.children).forEach(function (item) {
-                                            if (!item.hasAttribute("hidden")) {
-                                                if (item.hasAttribute("data-selected")) {
-                                                    range.push(item);
-                                                    item.queueRemove();
-                                                }
-                                            }
-                                        });
-
-                                        if (Options.get("undo.select-tabs")) {
-                                            if (range.length) {
-                                                Undo.push("select-tabs", {
-                                                    queue: container.tabList.queue,
-                                                    type: "unselect",
-                                                    list: range
-                                                });
-
-                                                if (range.length === 1) {
-                                                    state.undoBar.show("You unselected " + range.length + " tab.");
-                                                } else {
-                                                    state.undoBar.show("You unselected " + range.length + " tabs.");
-                                                }
-                                            }
-                                        }
-                                        delete container.tabList.queue.shiftNode;
-                                    }
-                                });
-
-                                menu.separator();
-
-                                menu.submenu("<u>S</u>elected...", {
-                                    keys: ["S"],
-                                    onshow: function (menu) {
-                                        if (container.tabList.queue.length) {
-                                            menu.enable();
-                                        } else {
-                                            menu.disable();
-                                        }
-                                    },
-                                    create: function (menu) {
-                                        menu.addItem("Re<u>l</u>oad selected", {
-                                            keys: ["L"],
-                                            action: function () {
-                                                container.tabList.queue.forEach(function (item) {
-                                                    Platform.tabs.update(item.tab, {
-                                                        url: item.tab.url
-                                                    });
-                                                });
-
-                                                container.tabList.queue.reset();
-                                            }
-                                        });
-
-
-                                        menu.addItem("<u>C</u>lose selected", {
-                                            keys: ["C"],
-                                            action: function () {
-                                                container.tabList.queue.forEach(function (item) {
-                                                    Platform.tabs.remove(item.tab);
-                                                });
-
-                                                container.tabList.queue.reset();
-                                                delete container.tabList.queue.shiftNode;
-                                            }
-                                        });
-
-                                        menu.separator();
-
-                                        menu.addItem("<u>F</u>avorite selected", {
-                                            keys: ["F"],
-                                            onshow: function (menu) {
-                                                var some = container.tabList.queue.some(function (item) {
-                                                    return !item.hasAttribute("data-favorited");
-                                                });
-
-                                                if (some) {
-                                                    menu.enable();
-                                                } else {
-                                                    menu.disable();
-                                                }
-                                            },
-                                            action: function () {
-                                                container.tabList.queue.forEach(function (item) {
-                                                    var url = item.tab.url;
-                                                    state.favorites.set(url, state.tabsByURL[url].length);
-                                                });
-
-                                                container.tabList.queue.reset();
-                                            }
-                                        });
-
-                                        menu.addItem("<u>U</u>nfavorite selected", {
-                                            keys: ["U"],
-                                            onshow: function (menu) {
-                                                var some = container.tabList.queue.some(function (item) {
-                                                    return item.hasAttribute("data-favorited");
-                                                });
-
-                                                if (some) {
-                                                    menu.enable();
-                                                } else {
-                                                    menu.disable();
-                                                }
-                                            },
-                                            action: function () {
-                                                container.tabList.queue.forEach(function (item) {
-                                                    state.favorites.set(item.tab.url, null);
-                                                });
-
-                                                container.tabList.queue.reset();
-                                            }
-                                        });
-                                    }
-                                });
-
-                                menu.separator();
-
-                                menu.submenu("<u>M</u>ove selected to...", {
-                                    keys: ["M"],
-                                    onshow: function (menu) {
-                                        if (container.tabList.queue.length) {
-                                            menu.enable();
-                                        } else {
-                                            menu.disable();
-                                        }
-                                    },
-                                    onopen: function (menu) {
-                                        menu.clear();
-
-                                        menu.addItem("New Window", {
-                                            action: function () {
-                                                Window.create(container.tabList.queue);
-                                            }
-                                        });
-
-                                        if (state.sorted.length) {
-                                            menu.separator();
-
-                                            state.sorted.forEach(function (item, i) {
-                                                var name = item.window.title;
-                                                if (item === container) {
-                                                    name = "<strong>" + name + "</strong>";
-                                                }
-
-                                                menu.addItem(name, {
-                                                    action: function () {
-                                                        container.tabList.queue.moveTabs(item.window);
-                                                    }
-                                                });
-                                            });
-                                        }
-                                    }
-                                });
-                            });
-
-                            element.appendChild(contextMenu);
-                        }));
                     }));
                 }));
+            }));
+
+
+            container.appendChild(UI.create("div", function (element) {
+                element.className = "tab-icon-dropdown";
+                element.title = "Open menu (Ctrl M)";
+
+                var contextMenu = UI.contextMenu(function (menu) {
+                    element.addEventListener("mousedown", function (event) {
+                        if (event.button !== 2) {
+                            menu.show();
+                        }
+                    }, true);
+
+                    container.addEventListener("contextmenu", function (event) {
+                        if (event.target.localName === "input") {
+                            return;
+                        } else if (event.defaultPrevented) {
+                            return;
+                        }
+
+                        event.preventDefault();
+
+                        menu.show({
+                            x: event.clientX,
+                            y: event.clientY
+                        });
+                    }, false);
+
+                    container.addEventListener("keypress", function (event) {
+                        if (event.which === 13 && (event.ctrlKey || event.metaKey)) {
+                            if (!event.altKey && !event.shiftKey) {
+                                menu.show();
+                            }
+                        }
+                    }, true);
+
+
+                    /*! menu.addItem("<u>B</u>ack", function () {
+                        alert("Back");
+                    }).disable();
+                    menu.addItem("<u>F</u>orward", function () {
+                        alert("Forward");
+                    }).disable();
+                    menu.addItem("Re<u>l</u>oad");
+                    menu.separator();
+                    menu.addItem("Save <u>A</u>s...");
+                    menu.addItem("P<u>r</u>int...");
+                    menu.addItem("<u>T</u>ranslate to English").disable();
+                    menu.addItem("<u>V</u>iew Page Source");
+                    menu.addItem("View Page <u>I</u>nfo");
+                    menu.separator();
+                    menu.addItem("I<u>n</u>spect Element");
+                    menu.separator();
+                    menu.addItem("Input <u>M</u>ethods").disable();
+                    return;*/
+
+                    menu.addItem("New <u>T</u>ab", {
+                        keys: ["T"],
+                        action: function () {
+                            Platform.tabs.create({
+                                windowId: win.id
+                            }, function (tab) {
+                                if (Options.get("undo.new-tab")) {
+                                    Undo.push("new-tab", {
+                                        tab: tab
+                                    });
+                                    state.undoBar.show("You created a new tab.");
+                                }
+                            });
+                        }
+                    });
+
+                    menu.separator();
+
+                    menu.addItem("<u>R</u>ename window", {
+                        keys: ["R"],
+                        action: function (event) {
+                            event.preventDefault();
+                            container.tabIcon.indexText.select();
+                        }
+                    });
+
+                    menu.separator();
+
+                    menu.addItem("Select <u>a</u>ll", {
+                        keys: ["A"],
+                        onshow: function (menu) {
+                            var queue = container.tabList.queue.length;
+                            var tabs = container.tabList.children.length;
+
+                            if (queue === tabs) {
+                                menu.disable();
+                            } else {
+                                menu.enable();
+                            }
+                        },
+                        action: function () {
+                            var range = [];
+
+                            Array.slice(container.tabList.children).forEach(function (item) {
+                                if (!item.hasAttribute("hidden")) {
+                                    if (!item.hasAttribute("data-selected")) {
+                                        range.push(item);
+                                        item.queueAdd();
+                                    }
+                                }
+                            });
+
+                            if (Options.get("undo.select-tabs")) {
+                                if (range.length) {
+                                    Undo.push("select-tabs", {
+                                        queue: container.tabList.queue,
+                                        type: "select",
+                                        list: range
+                                    });
+
+                                    if (range.length === 1) {
+                                        state.undoBar.show("You selected " + range.length + " tab.");
+                                    } else {
+                                        state.undoBar.show("You selected " + range.length + " tabs.");
+                                    }
+                                }
+                            }
+                            delete container.tabList.queue.shiftNode;
+                        }
+                    });
+
+                    menu.addItem("Select <u>n</u>one", {
+                        keys: ["N"],
+                        onshow: function (menu) {
+                            if (container.tabList.queue.length) {
+                                menu.enable();
+                            } else {
+                                menu.disable();
+                            }
+                        },
+                        action: function () {
+                            var range = [];
+
+                            Array.slice(container.tabList.children).forEach(function (item) {
+                                if (!item.hasAttribute("hidden")) {
+                                    if (item.hasAttribute("data-selected")) {
+                                        range.push(item);
+                                        item.queueRemove();
+                                    }
+                                }
+                            });
+
+                            if (Options.get("undo.select-tabs")) {
+                                if (range.length) {
+                                    Undo.push("select-tabs", {
+                                        queue: container.tabList.queue,
+                                        type: "unselect",
+                                        list: range
+                                    });
+
+                                    if (range.length === 1) {
+                                        state.undoBar.show("You unselected " + range.length + " tab.");
+                                    } else {
+                                        state.undoBar.show("You unselected " + range.length + " tabs.");
+                                    }
+                                }
+                            }
+                            delete container.tabList.queue.shiftNode;
+                        }
+                    });
+
+                    menu.separator();
+
+                    menu.submenu("<u>S</u>elected...", {
+                        keys: ["S"],
+                        onshow: function (menu) {
+                            if (container.tabList.queue.length) {
+                                menu.enable();
+                            } else {
+                                menu.disable();
+                            }
+                        },
+                        create: function (menu) {
+                            menu.addItem("Re<u>l</u>oad selected", {
+                                keys: ["L"],
+                                action: function () {
+                                    container.tabList.queue.forEach(function (item) {
+                                        Platform.tabs.update(item.tab, {
+                                            url: item.tab.url
+                                        });
+                                    });
+
+                                    container.tabList.queue.reset();
+                                }
+                            });
+
+
+                            menu.addItem("<u>C</u>lose selected", {
+                                keys: ["C"],
+                                action: function () {
+                                    container.tabList.queue.forEach(function (item) {
+                                        Platform.tabs.remove(item.tab);
+                                    });
+
+                                    container.tabList.queue.reset();
+                                    delete container.tabList.queue.shiftNode;
+                                }
+                            });
+
+                            menu.separator();
+
+                            menu.addItem("<u>F</u>avorite selected", {
+                                keys: ["F"],
+                                onshow: function (menu) {
+                                    var some = container.tabList.queue.some(function (item) {
+                                        return !item.hasAttribute("data-favorited");
+                                    });
+
+                                    if (some) {
+                                        menu.enable();
+                                    } else {
+                                        menu.disable();
+                                    }
+                                },
+                                action: function () {
+                                    container.tabList.queue.forEach(function (item) {
+                                        var url = item.tab.url;
+                                        state.favorites.set(url, state.tabsByURL[url].length);
+                                    });
+
+                                    container.tabList.queue.reset();
+                                }
+                            });
+
+                            menu.addItem("<u>U</u>nfavorite selected", {
+                                keys: ["U"],
+                                onshow: function (menu) {
+                                    var some = container.tabList.queue.some(function (item) {
+                                        return item.hasAttribute("data-favorited");
+                                    });
+
+                                    if (some) {
+                                        menu.enable();
+                                    } else {
+                                        menu.disable();
+                                    }
+                                },
+                                action: function () {
+                                    container.tabList.queue.forEach(function (item) {
+                                        state.favorites.set(item.tab.url, null);
+                                    });
+
+                                    container.tabList.queue.reset();
+                                }
+                            });
+                        }
+                    });
+
+                    menu.separator();
+
+                    menu.submenu("<u>M</u>ove selected to...", {
+                        keys: ["M"],
+                        onshow: function (menu) {
+                            if (container.tabList.queue.length) {
+                                menu.enable();
+                            } else {
+                                menu.disable();
+                            }
+                        },
+                        onopen: function (menu) {
+                            menu.clear();
+
+                            menu.addItem("New Window", {
+                                action: function () {
+                                    Window.create(container.tabList.queue);
+                                }
+                            });
+
+                            if (state.sorted.length) {
+                                menu.separator();
+
+                                state.sorted.forEach(function (item, i) {
+                                    var name = item.window.title;
+                                    if (item === container) {
+                                        name = "<strong>" + name + "</strong>";
+                                    }
+
+                                    menu.addItem(name, {
+                                        action: function () {
+                                            container.tabList.queue.moveTabs(item.window);
+                                        }
+                                    });
+                                });
+                            }
+                        }
+                    });
+                });
+
+                element.appendChild(contextMenu);
             }));
 
 

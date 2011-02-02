@@ -163,6 +163,10 @@
                 return state.bookmarksByURL[item.tab.url] > 0;
             },
 
+            "child": function (item) {
+                return item.style.marginLeft;
+            },
+
             "favorited": function (item) {
                 return item.hasAttribute("data-favorited");
             },

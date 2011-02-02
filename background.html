@@ -79,6 +79,9 @@
         if (Options.get("counter.reset.time.minute") === 0) {
             Options.set("counter.reset.time.minute", "00");
         }
+        if (Options.get("windows.sort.type") === "tab-number") {
+            Options.set("windows.sort.type", "tab-number >");
+        }
 
 
         var config = Options.snapshot().user;

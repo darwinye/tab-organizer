@@ -72,10 +72,16 @@ var state = {
     //                            console.log(state.list);
 //                Options.set("windows.sort.type", "date-created");
             },
-            "tab-number": function () {
+            "tab-number >": function () {
                 sort(function (a, b) {
                     return b.tabList.children.length -
                            a.tabList.children.length;
+                });
+            },
+            "tab-number <": function () {
+                sort(function (a, b) {
+                    return a.tabList.children.length -
+                           b.tabList.children.length;
                 });
             },
             /*"starting-tab": function () {
@@ -86,17 +92,26 @@ var state = {
         };
 
         var hooks = {
-            "tab-number": function () {
-                Platform.event.on("tab-create", sorters["tab-number"]);
-                Platform.event.on("tab-remove", sorters["tab-number"]);
-                Platform.event.on("tab-attach", sorters["tab-number"]);
-            }
+            "tab-number >": function () {
+                Platform.event.on("tab-create", sorters["tab-number >"]);
+                Platform.event.on("tab-remove", sorters["tab-number >"]);
+                Platform.event.on("tab-attach", sorters["tab-number >"]);
+            },
+            "tab-number <": function () {
+                Platform.event.on("tab-create", sorters["tab-number <"]);
+                Platform.event.on("tab-remove", sorters["tab-number <"]);
+                Platform.event.on("tab-attach", sorters["tab-number <"]);
+            },
         };
 
         return function (name) {
-            Platform.event.remove("tab-create", sorters["tab-number"]);
-            Platform.event.remove("tab-remove", sorters["tab-number"]);
-            Platform.event.remove("tab-attach", sorters["tab-number"]);
+            Platform.event.remove("tab-create", sorters["tab-number >"]);
+            Platform.event.remove("tab-remove", sorters["tab-number >"]);
+            Platform.event.remove("tab-attach", sorters["tab-number >"]);
+
+            Platform.event.remove("tab-create", sorters["tab-number <"]);
+            Platform.event.remove("tab-remove", sorters["tab-number <"]);
+            Platform.event.remove("tab-attach", sorters["tab-number <"]);
 
             if (hooks[name]) {
                 hooks[name]();
@@ -429,6 +444,8 @@ var fragment = document.createDocumentFragment();
 
 fragment.appendChild(UI.create("div", function (toolbar) {
     toolbar.id = "toolbar";
+//
+//    state.toolbar = toolbar;
 
     toolbar.appendChild(UI.create("button", function (element) {
         element.id = "button-menu";
@@ -470,22 +487,26 @@ fragment.appendChild(UI.create("div", function (toolbar) {
 
             menu.space();
 
-            menu.submenu("<u>S</u>ort windows by...", {
-                keys: ["S"],
+            menu.submenu("Sort <u>w</u>indows by...", {
+                keys: ["W"],
                 onopen: function (menu) {
                     menu.clear();
 
                     var keys = {
-                        "date-created": "<u>D</u>ate created",
-                        "tab-number": "<u>N</u>umber of tabs"
+                        "date-created": "<u>D</u>efault",
+                        "tab-number >": "Number of tabs >",
+                        "tab-number <": "Number of tabs <"
                     };
 
                     var type = Options.get("windows.sort.type");
                     keys[type] = "<strong>" + keys[type] + "</strong>";
 
                     function item(name, key) {
+                        if (key) {
+                            key = [ key ];
+                        }
                         menu.addItem(keys[name], {
-                            keys: [key],
+                            keys: key,
                             action: function () {
                                 state.sortWindows(name);
                             }
@@ -493,9 +514,55 @@ fragment.appendChild(UI.create("div", function (toolbar) {
                     }
 
                     item("date-created", "D");
-                    item("tab-number", "N");
+
+                    menu.separator();
+
+                    item("tab-number >");
+                    item("tab-number <");
                 }
             });
+
+            /*menu.submenu("Sort <u>t</u>abs by...", {
+                keys: ["T"],
+                onopen: function (menu) {
+                    menu.clear();
+
+                    var keys = {
+                        "index": "<u>D</u>efault",
+                        "title >": "Title >",
+                        "title <": "Title <",
+                        "url >": "URL >",
+                        "url <": "URL <"
+                    };
+
+                    var type = Options.get("tabs.sort.type");
+                    keys[type] = "<strong>" + keys[type] + "</strong>";
+
+                    function item(name, key) {
+                        if (key) {
+                            key = [ key ];
+                        }
+                        menu.addItem(keys[name], {
+                            keys: key,
+                            action: function () {
+                                state.sortTabs(name);
+                            }
+                        });
+                    }
+
+                    item("index", "D");
+
+                    menu.separator();
+
+                    item("title >");
+                    item("title <");
+
+                    menu.separator();
+
+                    item("url >");
+                    item("url <");
+                }
+            });*/
 
             menu.separator();
 
@@ -1352,6 +1419,7 @@ fragment.appendChild(UI.create("div", function (toolbar) {
 }));
 
 
+
 (function () {
     var script = document.createElement("script");
     script.src = "/views/" + Options.get("windows.type") + ".js";
@@ -1375,6 +1443,8 @@ fragment.appendChild(UI.create("div", function (toolbar) {
     //
     //    ({ populate: true }, function (windows) {
         state.createView(windows);
+//
+//        document.body.appendChild(state.toolbar);
 
         var type = Options.get("windows.sort.type");
         if (type !== "date-created") {
