@@ -192,6 +192,17 @@
     });
 
 
+    parser.prefix({ priority: 20, token: "last:",
+        output: dictionary({
+            "moved": function (item) {
+                if (state.last.moved) {
+                    return state.last.moved.indexOf(item) !== -1;
+                }
+            }
+        })
+    });
+
+
     parser.prefix({ priority: 20, token: "same:",
         output: dictionary({
             "domain": (function () {

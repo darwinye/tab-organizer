@@ -12,6 +12,7 @@ var state = {
     titles: Options.get("windows.titles"),
     macros: Options.get("macros.list"),
     favorites: Options.get("tabs.favorites.urls"),
+    last: {},
     list: [],
     windows: {},
     bookmarksByID: {},
@@ -945,6 +946,7 @@ fragment.appendChild(UI.create("div", function (toolbar) {
         var precoded = {
             "h": ["has:macro"],
             "i": ["inurl:", "intitle:", "is:child", "is:image", "is:pinned", "is:favorited", "is:selected", "is:bookmarked"],
+            "l": ["last:moved"],
             "s": ["same:url", "same:title", "same:domain"],
             "w": ["window:", "window:focused"]
         };

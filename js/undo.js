@@ -3,6 +3,18 @@
 (function () {
     "use strict";
 
+    Undo.setHook("move-tabs", function (info) {
+        if (info.list.length) {
+            state.last.moved = info.list;
+        }
+    });
+    Undo.setHook("macro-trigger", function (info) {
+        if (info.moved.length) {
+            state.last.moved = info.moved;
+        }
+    });
+
+
     Undo.setRule("new-tab", function (info) {
         Platform.tabs.remove(info.tab);
         Undo.reset();
