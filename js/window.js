@@ -944,7 +944,7 @@ fragment.appendChild(UI.create("div", function (toolbar) {
 
         var precoded = {
             "h": ["has:macro"],
-            "i": ["inurl:", "intitle:", "is:image", "is:pinned", "is:favorited", "is:selected", "is:bookmarked"],
+            "i": ["inurl:", "intitle:", "is:child", "is:image", "is:pinned", "is:favorited", "is:selected", "is:bookmarked"],
             "s": ["same:url", "same:title", "same:domain"],
             "w": ["window:", "window:focused"]
         };
@@ -994,6 +994,9 @@ fragment.appendChild(UI.create("div", function (toolbar) {
                 child.setAttribute("hidden", "");
             });
 
+
+            var last = Options.get("window.lastfocused");
+
             var list = windows.filter(function (item) {
                 item.removeAttribute("data-last");
 
@@ -1009,7 +1012,9 @@ fragment.appendChild(UI.create("div", function (toolbar) {
                     item.removeAttribute("hidden");
 
                     if (info.focused) {
-                        var last = Options.get("window.lastfocused");
+/*                        if (item.hasAttribute("data-focused")) {
+                            focused = item;
+                        }*/
                         var win = item.window;
 
                         if (win.focused || (!focused && last === win.id)) {
@@ -1038,31 +1043,34 @@ fragment.appendChild(UI.create("div", function (toolbar) {
 
 
             if (list.length) {
-                var last = list[list.length - 1];
-                last.setAttribute("data-last", "");
+//                var last = ;
+                list[list.length - 1].setAttribute("data-last", "");
             }
 
-            if (focused) {
-                focused.setWindowFocus();
-            }
             scroll.forEach(function (item) {
                 if (item.selected) {
                     UI.scrollTo(item.selected, item.tabList);
                 }
             });
 
+            if (focused) {
+//                console.log();
+//                debugger;
+                focused.setWindowFocus();
+            }
+
 
             var length, string = [ cache.title, " (" ];
 
             length = results.length;
-            string.push(length, (length === 1)
+            string.push(length, (length === 1
                                   ? " tab in "
-                                  : " tabs in ");
+                                  : " tabs in "));
 
             length = list.length;
-            string.push(length, (length === 1)
+            string.push(length, (length === 1
                                   ? " window)"
-                                  : " windows)");
+                                  : " windows)"));
 
             document.title = string.join("");
 
@@ -1090,8 +1098,10 @@ fragment.appendChild(UI.create("div", function (toolbar) {
             }
         };
 
+        Platform.event.on("tab-indent", state.search);
+
         input.addEventListener("search", function () {
-            state.search({ scroll: true, focused: true });
+            state.search({ /*scroll: true, */focused: true });
         }, true);
 
         addEventListener("keydown", function (event) {
@@ -1454,7 +1464,7 @@ fragment.appendChild(UI.create("div", function (toolbar) {
         Options.event.on("change", function (event) {
             if (event.name === "windows.sort.type") {
     //                console.log("foo!");
-                state.search({ scroll: true, focused: true, nodelay: true });
+                state.search({ /*scroll: true, */focused: true, nodelay: true });
             }
         });
     //
@@ -1473,8 +1483,8 @@ fragment.appendChild(UI.create("div", function (toolbar) {
 
                         state.search({
                             focused: Options.get("popup.type") !== "tab",
-                            nodelay: true,
-                            scroll: true
+                            nodelay: true//,
+                            //scroll: true
                         });
                     }
                 }

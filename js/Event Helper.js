@@ -36,13 +36,18 @@ var action = {
         });
 
         Platform.event.on("tab-create", function (tab) {
-            var node, list = state.windows[tab.windowId];
+            var node, tabs, list = state.windows[tab.windowId];
 
-            if (list && (list = list.tabList)) {
-                node = Tab.proxy(tab);
-                list.moveChild(node, tab.index);
+            if (list) {
+                list.updateTooltip();
 
-                state.search({ scroll: true, tabs: [node] });
+                tabs = list.tabList;
+                if (tabs) {
+                    node = Tab.proxy(tab);
+                    tabs.moveChild(node, tab.index);
+
+                    state.search({ scroll: true, tabs: [node] });
+                }
             }
         });
 
@@ -80,10 +85,15 @@ var action = {
         });
 
         Platform.event.on("tab-detach", function (tab) {
-            var list = state.windows[tab.windowId];
+            var tabs, list = state.windows[tab.windowId];
 
-            if (list && (list = list.tabList)) {
-                delete list.queue.shiftNode;
+            if (list) {
+                list.updateTooltip();
+
+                tabs = list.tabList;
+                if (tabs) {
+                    delete tabs.queue.shiftNode;
+                }
             }
         });
 
@@ -91,13 +101,18 @@ var action = {
             var list = state.windows[tab.windowId],
                 node = state.tabsByID[tab.id];
 
-            if (list && node && (list = list.tabList)) {
-                node.removeAttribute("data-focused");
-                list.moveChild(node, tab.index);
+            if (list && node) {
+                list.updateTooltip();
 
-                node.tab.windowId = tab.windowId;
+                list = list.tabList;
+                if (list) {
+                    node.removeAttribute("data-focused");
+                    list.moveChild(node, tab.index);
 
-                state.search({ scroll: true, tabs: [node] });
+                    node.tab.windowId = tab.windowId;
+
+                    state.search({ scroll: true, tabs: [node] });
+                }
             }
         });
 
@@ -139,14 +154,22 @@ var action = {
         });
 
         Platform.event.on("tab-remove", function (tab) {
-            var list, node = state.tabsByID[tab.id];
+//            var list, node = state.tabsByID[tab.id];
+//
+            var list = state.windows[tab.windowId],
+                node = state.tabsByID[tab.id];
 
-            if (node && (list = node.parentNode)) {
-                state.tabsByURL.remove(node.tab.url, node);
+            if (node && list) {//(list = node.parentNode)) {
+                list.updateTooltip();
 
-                list.removeChild(node);
+                list = list.tabList;
+                if (list) {
+                    state.tabsByURL.remove(node.tab.url, node);
 
-                state.search({ tabs: [] });
+                    list.removeChild(node);
+
+                    state.search({ tabs: [] });
+                }
             }
             delete state.tabsByID[tab.id];
         });

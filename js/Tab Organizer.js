@@ -828,6 +828,33 @@ Window = {
             container.appendChild(UI.create("div", function (element) {
                 element.className = "tab-icon-border";
 
+
+                container.updateTooltip = function () {
+                    var length = win.tabs.length;
+                    if (length && win.title) {
+//                        console.log("action");
+//
+                        var text = [ win.title ];
+
+                        text.push(" (");
+                        text.push(length);
+
+                        if (length === 1) {
+                            text.push(" tab)");
+                        } else {
+                            text.push(" tabs)");
+                        }
+
+                        element.title = text.join("");
+                    } else {
+//                        console.log("no action");
+                        element.title = "";
+                    }
+                };
+
+                container.updateTooltip();
+
+
                 function invalid(element, event) {
                     var box = element.getBoundingClientRect();
 

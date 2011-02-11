@@ -292,6 +292,7 @@
 
     function OR(left, right) {
         return function (item) {
+//            console.log(left, right);
             return left(item) || right(item);
         };
     }
@@ -303,6 +304,7 @@
         return function (item) {
             if (item instanceof Object) {
                 if (item.literal) {
+//                    console.log("foo");
                     if (item.literal === value) {
                         return true;
                     }
@@ -318,14 +320,18 @@
 
     parser.quotes({ token: '"', match: /(")((?:[^"\n\\]|\\[\s\S])*)(")/,
         output: function (right) {
+//            console.log(right);
             return tester(new RegExp("\\b" + right.escape() + "\\b", "i"));
         }
     });
 
 
-    parser.quotes({ token: "r/", match: /(r\/)((?:[^\/\\]|\\[\s\S])+\/[i]{0,1})$/,
+    parser.quotes({
+        open: "r/", close: "/",
+        match: /(r\/)((?:[^\/\\]|\\[\s\S])+\/[i]{0,1})/,
         output: function (right) {
             var split = right.split(/\/(?=[i]{0,1}$)/);
+//            console.log(new RegExp(split[0], split[1]));
             return tester(new RegExp(split[0], split[1]));
         }
     });

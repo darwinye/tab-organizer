@@ -235,13 +235,16 @@
 
 
         Platform.event.on("load", function (windows) {
-
             var titles = Options.get("windows.titles"),
                 indent = state.indent;
 
             var tabcount = 0;
 
             windows.forEach(function (item, i) {
+/*                if (item.focused && item.type === "normal") {
+                    Options.set("window.lastfocused", item.id);
+                }
+*/
                 var length = item.tabs.length;
                 tabcount += length;
 
