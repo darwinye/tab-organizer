@@ -725,12 +725,16 @@ fragment.appendChild(UI.create("div", function (toolbar) {
                         var text = [];
 
                         text.push(item.action);
+//
+//                        text.push("<div>");
 
                         if (item.search) {
                             text.push("<strong>" + item.search + "</strong>");
                         } else {
                             text.push("all tabs");
                         }
+//
+//                        text.push("</div><div>");
 
                         if (item.action === "move") {
                             text.push("to");
@@ -745,8 +749,102 @@ fragment.appendChild(UI.create("div", function (toolbar) {
                                 text.push("new window");
                             }
                         }
+//
+//                        text.push("</div>");
+/*
+                        function text(type, content) {
+                            var element = document.createElement(type);
+                            element.textContent = content;
+                            return element;
+                        }*/
 
                         menu.addItem(text.join(" "), {
+/*                            create: function (element) {
+                                element.style.display = "-webkit-box";
+//                                element.style.whiteSpace = "nowrap";
+//
+//                                console.log(element.children);
+
+//                                element.style.display = "table";
+//                                element.style.width = "100%";
+
+                                var strong = element.children[0];
+                                strong.style.overflow = "hidden";
+                                strong.style.textOverflow = "ellipsis";
+//                                strong.style.webkitBoxFlex = "1";
+//                                strong.style.maxWidth = "100%";
+//                                strong.style.display = "table-cell";
+//                                strong.style.textAlign = "left";
+//                                strong.style.width = "100%";
+
+                                var cell = element.children[1];
+                                cell.style.webkitBoxFlex = "1";
+//                                cell.style.display = "table-cell";
+//                                cell.style.textAlign = "left";
+//                                cell.style.width = "100%";
+
+//                                var parent = element.children[0];
+//                                parent.style.display = "-webkit-box";
+//                                parent.style.webkitBoxFlex = "1";
+
+//                                var strong = element.children[0];
+//                                if (strong) {
+////                                    strong.textContent = item.search;
+//                                    strong.style.display = "table-cell";
+////                                    strong.style.maxWidth = "100%";
+//                                    strong.style.overflow = "hidden";
+//                                    strong.style.textOverflow = "ellipsis";
+////                                    strong.style.webkitBoxFlex = "1";
+//                                }
+
+//                                console.log(strong);
+
+
+
+
+//                                var span = element.children[1];
+//                                span.style.webkitBoxFlex = "1";
+
+//                                element.appendChild(UI.create("div", function (element) {
+//                                    element.textContent = item.action + " ";
+
+//                                    if (!item.search) {
+//                                        element.textContent += "all tabs";
+////                                        element.appendChild(text("span", "all tabs"));
+//                                    }
+//                                }));
+
+//                                if (item.search) {
+//                                    element.appendChild(UI.create("strong", function (element) {
+
+//                                    }));
+//                                }
+
+//                                var text = [];
+
+//                                if (item.action === "move") {
+//                                    text.push(" to");
+//                                } else if (item.action === "require") {
+//                                    text.push(" in");
+//                                }
+
+//                                if (item.action !== "close") {
+//                                    if (item.window) {
+//                                        text.push('"' + item.window + '"');
+//                                    } else {
+//                                        text.push("new window");
+//                                    }
+//                                }
+
+//                                var span = document.createElement("span");
+//                                span.textContent = text.join(" ");
+//                                element.appendChild(span);
+//
+//                                element.appendChild(text("span", text.join(" ")));
+//                                item.style.display = "-webkit-box";
+//                                item.children[0].style.webkitBoxFlex = "1";
+//                                console.log();
+                            },*/
                             action: function () {
                                 perform([item]);
                             }
