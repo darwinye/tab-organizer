@@ -25,14 +25,6 @@
         return this.toString(base);
     };
 
-/*
-    String.prototype.equals = function () {
-        for (var i = 0; i < arguments.length; i += 1) {
-            if (this === arguments[i]) {
-                return true;
-            }
-        }
-    };*/
 
     String.prototype.fromBase = function (base) {
         return parseInt(this, base);
@@ -97,33 +89,6 @@
             state.undoBar.hide();
         }
     };
-/*
-    Array.prototype.undoMove = function () {
-        var list = this.filter(function (item) {
-            var tab = item.tab;
-
-            if (tab.windowId === id && (index === null || tab.index === index)) {
-                return false;
-            }
-
-            item.undoState.windowId = tab.windowId;
-            item.undoState.index = tab.index;
-//
-            index = (index === null) ? 9999999 : index;
-
-            if (tab.index < index) {
-                index -= 1;
-//                console.log(tab.index, index);
-            }
-
-            Tab.move(item, {
-                windowId: id,
-                index: index
-            });
-
-            return true;
-        });
-    };*/
 
     Array.prototype.moveTabs = function (win, info) {
         info = Object(info);
@@ -137,47 +102,13 @@
         this.sort(function (a, b) {
             return a.tab.index - b.tab.index;
         });
-/*
-        console.log(this.map(function (item) {
-            return item.tab.title;
-        }));*/
-/*
-        var indent, level = state.indent[win.index];
 
-        if (level) {
-            indent = level[to - 1];
-        }
-        indent = indent || 0;
-//
-//        var old = level[to - 1];
-//
-//        Queue.sync(function (queue) {
-//            console.log(to - 1, slice);
-//            queue.next();
-//        });
-
-        if (info.indent && to !== 0) {
-            indent += 1;
-        }
-//
-//        var slice = level.slice();
-//
-//        console.log(indent, to - 1, level.slice());
-//
-*/
-        var /*first, */previous = 0;
-//
-//        var slice = level.slice();
-//
-//        var self = this;
+        var previous = 0;
 
         var list = this.filter(function (item, i) {
             var tab = item.tab;
-//
-//            delete item.undoState.windowId;
-//            delete item.undoState.index;
 
-            if (tab.window === win && /*(*/to === null) {
+            if (tab.window === win && to === null) {
                 return false;
             }
 
@@ -199,22 +130,11 @@
                 level = level || 0;
 
                 if (i === 0) {
-                    /*first = */previous = level;
+                    previous = level;
                 } else {
-//                    push = diff;
                     var diff = level - previous;
-/*
-                    if (push > 1) {
-                        push = 1;
-//                        previous += 1;
-//                        push = previous;
-                    }*//* else {
-
-//                        push = previous - first;
-                    }*/
 
                     previous += diff;
-//                    console.log(push);
 
                     if (diff > 1) {
                         diff = 1;
@@ -254,7 +174,7 @@
                 } else {
                     var indent = level[tab.index - 1] || 0;
 
-                    if (info.child && i === 0/* && tab.index !== 0*/) {
+                    if (info.child && i === 0) {
                         indent += 1;
                     }
 

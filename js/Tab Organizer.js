@@ -6,7 +6,7 @@ var Tab, Window;
 Tab = {
     focus: function (tab, focus) {
         var focused = Options.get("window.lastfocused");
-        var should = (focus !== false && focused !== tab.windowId); // !tab.window.focused);
+        var should = (focus !== false && focused !== tab.windowId);
 
         Platform.tabs.focus(tab, should);
 
@@ -14,24 +14,12 @@ Tab = {
             Platform.tabs.getCurrent(function (tab) {
                 Platform.tabs.focus(tab, true);
             });
-//            Platform.message.connect("lib.action", function (port) {
-//                port.sendMessage({ type: "focus" });
-//            });
         }
     },
 
 
     move: function (item, info, action) {
-//        var tab = item.tab;
         Platform.tabs.move(item.tab, info, action);
-/*        Platform.tabs.move(tab, info, function () {
-//            Platform.tabs.get(tab.id, function (tab) {
-//            item.tab = tab;
-            if (typeof action === "function") {
-                action();
-            }
-//            });
-        });*/
     },
 
 
@@ -75,12 +63,8 @@ Tab = {
             };
 
             container.queueRemove = function () {
-//                try {
                 var is = container.parentNode.queue.remove(container);
                 container.undoState.selected = is;
-//                } catch (e) {
-//                    console.error(e);
-//                }
 
                 container.removeAttribute("data-selected");
 
@@ -243,100 +227,13 @@ Tab = {
             }, false);
 
 
-//            function check(node, has) {
 ///*                var prev, next;
-//
-//                if ((prev = node.previousSibling)) {
-//                    prev = (prev === state.draggedTab ||
-//                            prev.hasAttribute("data-selected"));
-//                }
-//
-//                if ((next = node.nextSibling)) {
-//                    next = (next === state.draggedTab ||
-//                            next.hasAttribute("data-selected"));
-//                }
-//
-//                return prev || next ||
-//                       node === state.draggedTab ||
-//                       node.hasAttribute("data-selected");
 //*/
-//                if (node) {
-//                    if (node === state.draggedTab || (!has && node.hasAttribute("data-selected"))) {
-////                        if (node.hasAttribute("data-selected")) {
-//                        state.placeholder.remove();
-//                        return;
-////                        }
-//                    }// else if (node === state.draggedTab) {
-////                        state.placeholder.remove();
-////                        return;
-////                    }
-//                }
-//
-//                return true;
-//            }
-//
-//            function attr(node) {
+
 ///*                var prev, next;
-//
-//                if ((prev = node.previousSibling)) {
-//                    prev = (has
-//                             ? prev === state.draggedTab
-//                             : prev.hasAttribute("data-selected"));
-//                }
-//
-//                if ((next = node.nextSibling)) {
-//                    next = (has
-//                             ? next === state.draggedTab
-//                             : next.hasAttribute("data-selected"));
-//                }
-//
-//                return prev || next;*/
-////
-//                if (node) {
-//                    if (node === state.draggedTab) {
-////                        if (node.hasAttribute("data-selected")) {
-//                        state.placeholder.remove();
-//                        return;
-////                        }
-//                    }// else if (node === state.draggedTab) {
-////                        state.placeholder.remove();
-////                        return;
-////                    }
-//                }
-//
-//                return true;
-//            }
-//
-//            function attr(node, has) {
-//                if (node) {
-//                    if (node === state.draggedTab || (!has && node.hasAttribute("data-selected"))) {
-////                        if (node.hasAttribute("data-selected")) {
-////                        state.placeholder.remove();
-//                        return;
-////                        }
-//                    }// else if (node === state.draggedTab) {
-////                        state.placeholder.remove();
-////                        return;
-////                    }
-//                }
-//
-//                return true;
-////                return node === state.draggedTab || node.hasAttribute("data-selected");
-//            }
-//
-//
-//            var oldnode;
-//
-//            state.placeholder.
-//            container.addEventListener("dragend", state.placeholder.remove, true);
 
             container.addEventListener("dragover", function (event) {
                 state.placeholder.remove();
-//                this.removeAttribute("data-dropindent");
-//
-//                var has = !state.draggedTab.hasAttribute("data-selected");
-//
-//                if (/*attr(this, has) || */has && this === state.draggedTab) {
                 var parent = this.parentNode;
                 var check = state.placeholder.check;
 
@@ -392,24 +289,6 @@ Tab = {
 //                    console.log(event.type);
 //                }
             }, true);*/
-//
-//            container.addEventListener("
-/*
-            container.addEventListener("dragenter", function (event) {
-                var query = document.body.querySelector(".tab[data-dropindent]");
-                if (query) {
-                    query.removeAttribute("data-dropindent");
-                }
-
-//                console.log(event.type, this);
-                this.setAttribute("data-dropindent", "");
-//                event.preventDefault();
-            }, true);*/
-/*
-            container.addEventListener("dragleave", function (event) {
-//                console.log(event.type, this);
-                this.removeAttribute("data-dropindent");
-            }, true);*/
 
 
             container.addEventListener("dragstart", function (event) {
@@ -429,8 +308,6 @@ Tab = {
                 }
 
                 state.draggedTab = this;
-//
-//                this.tab.dropIndent = true;
             }, true);
 
             /*! container.addEventListener("dragend", function (event) {
@@ -447,13 +324,6 @@ Tab = {
                     element.setAttribute("alt", "");
 
                     element.src = "chrome://favicon/" + tab.url;
-/*
-                    if (tab.favIconUrl) {
-                        element.src = "chrome://favicon/" + tab.url;
-                    } else {
-//                        element.src = "chrome://favicon";//tab.url;
-                        element.src = "/images/favicon.png";
-                    }*/
                 }),
 
                 favorite: UI.create("div", function (element) {
@@ -541,14 +411,10 @@ Tab = {
                 container.removeEventListener("Platform-focus", focus, true);
 
 
-//                if (Options.get("tabs.tree-style.enabled")) {
                 var indent = state.indent[tab.window.index];
-                /*var parent = state.tabsByID[tab.parentId];*/
                 if (indent && (indent = indent[tab.index])) {
-    //                console.log(indent, tab.index);
                     container.indent(indent);
                 }
-//                }
 
 
                 switch (Options.get("tabs.close.display")) {
@@ -591,41 +457,11 @@ Window = {
 
         Platform.windows.create({ url: "lib/remove.html" }, function (win) {
             if (info.title) {
-//                console.log(win.title, info.title);
-//                var proxy = state.windows[win.id];
                 win.title = info.title;
-//                proxy.tabIcon.indexText.value = info.title;
-/*
-                var index = state.list.indexOf(proxy);
-                if (index !== -1) {
-                    state.titles[index] = info.title;
-                }*/
             }
 
             if (array) {
-/*                console.log(array.map(function (item) {
-                    return item.tab.title;
-                }));*/
-                array.moveTabs(win, { undo: info.undo/*,
-                    action: function (tab, item) {
-                        var old = level[tab.index];
-
-                        var undo = item.undoState.indentLevel;
-                        if (undo) {
-                            level[tab.index] = undo;
-                        }
-
-                        var to = indent + push;
-                        if (to <= 0) {
-                            delete level[tab.index];
-                        } else {
-                            level[tab.index] = to;
-                        }
-
-                        if (old !== level[tab.index]) {
-                            Platform.event.trigger("tab-indent", tab, level[tab.index]);
-                        }
-                    }*/ });
+                array.moveTabs(win, { undo: info.undo });
             }
 
             if (typeof info.action === "function") {
@@ -781,16 +617,12 @@ Window = {
                     if (check(last)) {
                         list.appendChild(state.placeholder);
                         state.placeholder.update();
-                    }/* else {
-
-                    }*/
+                    }
                 } else if (event.clientY < alpha.top) {
                     if (check(list.firstChild)) {
                         list.insertBefore(state.placeholder, list.firstChild);
                         state.placeholder.update();
-                    }/* else {
-                        state.placeholder.remove();
-                    }*/
+                    }
                 }
             }, true);
 

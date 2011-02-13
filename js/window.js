@@ -21,61 +21,17 @@ var state = {
     tabsByURL: {},
     visitedByURL: Options.get("tabs.visited.byURL"),
     indent: Options.get("windows.tab-indent"),
-//    indentByID: {},
-
-    /*queues: {
-        moveAllTabs: function (id, index) {
-            var queue = [];
-            state.list.forEach(function (item) {
-                queue = queue.concat(item.tabList.queue);
-                item.tabList.queue.moveTabs(id, index, false);
-            });
-
-            if (queue.length && Options.get("undo.move-tabs")) {
-                Undo.push("move-tabs", {
-                    list: queue
-                });
-
-                if (queue.length === 1) {
-                    state.undoBar.show("You moved " + queue.length + " tab.");
-                } else {
-                    state.undoBar.show("You moved " + queue.length + " tabs.");
-                }
-            }
-        },
-        resetAll: function () {
-            state.list.forEach(function (item) {
-                item.tabList.queue.reset();
-                delete item.tabList.queue.shiftNode;
-            });
-        }
-    },*/
 
     sortWindows: (function () {
-/*        function insertsort(array, func) {
-            var output = [];
-
-            for (var i = 1; i < array.length - 1; i += 1) {
-                var key = array[i];
-                while (func(key) > 0) {
-
-                }
-            }
-
-            return output;
-        }
-*/
         function rearrange() {
             var fragment = document.createDocumentFragment();
             state.sorted.forEach(function (item) {
-//                state.windowList.appendChild(item);
                 fragment.appendChild(item);
             });
             state.windowList.appendChild(fragment);
         }
 
         function sort(func) {
-            //state.sorted = state.list.slice().sort(func);
             state.sorted = KAE.array.stablesort(state.list, func);
             rearrange();
         }
@@ -88,12 +44,9 @@ var state = {
             "date-created": function () {
                 state.sorted = state.list;
                 rearrange();
-    //                            console.log(state.list);
-//                Options.set("windows.sort.type", "date-created");
             },
 
             "name <": function () {
-//                console.warn("Sorting");
                 sort(function (a, b) {
                     var test = a.window.title - b.window.title;
 
@@ -102,37 +55,6 @@ var state = {
                     }
 
                     return test;
-/*
-                    var l = a.isCustomTitle(),
-                        r = b.isCustomTitle();
-
-                    return (l && r
-                             ? comp(a.window.title, b.window.title)
-                             : (l
-                                 ? 1
-                                 : (r
-                                     ? -1
-                                     : 0)));*/
-//
-//                    return test;
-/*
-                    if (isNaN(test)) {
-                        if (!a.isUserTitle()) {
-                            return 1;
-                        } else if (!b.isUserTitle()) {
-                            return -1;
-                        } else {
-
-                        }
-                    }
-
-                    return test;*/
-/*
-                    if (!a.isUserTitle() && !b.isUserTitle()) {
-                        return a.window.title - b.window.title;
-                    }
-
-                    return a.window.title.localeCompare(b.window.title);*/
                 });
             },
             "name >": function () {
@@ -144,24 +66,6 @@ var state = {
                     }
 
                     return test;
-/*
-                    var l = a.isCustomTitle(),
-                        r = b.isCustomTitle();
-
-                    return (l && r
-                             ? comp(b.window.title, a.window.title)
-                             : (l
-                                 ? -1
-                                 : (r
-                                     ? 1
-                                     : 0)));*/
-//                    if (a.isCustomTitle() || b.isCustomTitle()) {
-//                        return comp(b.window.title, a.window.title);
-//                    } else {
-//                        return 0;
-//                    }
-//
-//                    return test;
                 });
             },
 
@@ -169,23 +73,14 @@ var state = {
                 sort(function (a, b) {
                     return a.window.tabs.length -
                            b.window.tabs.length;
-//                    return a.tabList.children.length -
-//                           b.tabList.children.length;
                 });
             },
             "tab-number >": function () {
                 sort(function (a, b) {
                     return b.window.tabs.length -
                            a.window.tabs.length;
-//                    return b.tabList.children.length -
-//                           a.tabList.children.length;
                 });
             },
-            /*"starting-tab": function () {
-                sort(function (a, b) {
-                    return b.
-                });
-            }*/
         };
 
         var addHooks = {},
@@ -237,8 +132,6 @@ var state = {
     createSearchList: function () {
         return Array.slice(document.getElementsByClassName("tab"));
     },
-//
-//    windowList: function
 
     createView: function (windows) {
         var fragment = document.createDocumentFragment();
@@ -260,24 +153,18 @@ var state = {
 
     placeholder: UI.create("div", function (container) {
         container.id = "placeholder";
-//
-//        container.addEventListener("dragover", events.disable, true);
 
         container.update = function () {
             var node = document.querySelector(".tab[data-dropindent]");
             if (node) {
                 node.removeAttribute("data-dropindent");
-//                delete node.tab.dropIndent;
-    //                    oldnode = null;
             }
         };
 
         var saved = container.remove;
-//        console.log(saved);
 
         container.remove = function () {
             container.update();
-//                state.placeholder.style.marginTop = "";
             saved.call(container);
         };
 
@@ -290,20 +177,9 @@ var state = {
                 } else if (sibling && !sibling.hasAttribute("data-selected")) {
                     return true;
                 }
-/*
-                if (!node.hasAttribute("data-selected") || !sibling.hasAttribute("data-selected")) {
-                    return true;
-                }*/
             } else if (node !== state.draggedTab && sibling !== state.draggedTab) {
                 return true;
             }
-//
-//                state.placeholder.remove();
-            /*if (!has && attr(node, has) || attr(sibling, has)) {
-                state.placeholder.remove();
-            } else {
-                return true;
-            }*/
         };
     })
 };
@@ -324,12 +200,7 @@ state.tabsByURL.add = function (url, node) {
 };
 
 state.tabsByURL.remove = function (url, node) {
-//    try {
     state.tabsByURL[url].remove(node);
-//    } catch (e) {
-//        console.log(url);
-//        console.error(e);
-//    }
     state.tabsByURL.update(url);
 };
 
@@ -396,140 +267,14 @@ Platform.event.on("bookmark-remove", function (id, info) {
 });
 
 
-//document.body.draggable = false;
-//document.body.tabIndex = -1;
-
-//addEventListener("focus", function (event) {
-//    var target = event.target;
-
-////    console.log(event.type, target);
-
-//    if (target.setAttribute) {
-//        target.setAttribute("data-selected", "");
-//    }
-
-////    if (!state.focused && state.windowList) {
-////        if (state.windowList.contains(target)) {
-////            state.focused = target;
-////        }
-////    }
-
-//    if (target !== this) {
-//        if (state.focused === target) {
-////            delete state.focused;
-//        } else if (target.triggerEvent) {
-//            target.triggerEvent("KAE-user-focus", false, false);
-//            state.focused = target;
-//            console.log(event.type, state.focused);
-//        }
-//    }
-
-////    if (target === this) {
-////        delete state.focused;
-////    } else if (state.windowList) {
-
-////    }
-
-////    if (target === state.focused) {
-////        delete state.focused;
-////    } else if (state.windowList) {
-
-////    }
-
-////    if (target === this && state.focused) { //! Fixes a bug with the window titles.
-////        var focused = state.focused;
-////        delete state.focused;
-////        focused.triggerEvent("blur", false, false);
-////        delete state.focused;
-////    }
-//}, true);
-
-//addEventListener("blur", function anon(event) {
-//    var target = event.target;
-
-//    if (target.removeAttribute) {
-//        target.removeAttribute("data-selected");
-//    }
-
-////    if (target !== this && state.focused === target) {
-////        if (target.triggerEvent) {
-////            target.triggerEvent("KAE-user-blur", false, false);
-////            delete state.focused;
-////            console.log(event.type, state.focused);
-////        }
-////    }
-//    if (target.triggerEvent) {
-//        target.triggerEvent("KAE-user-blur", false, false);
-//    }
-
-//    if (state.focused) {
-//        if (target === this) {
-//            var focused = state.focused;
-//    //            delete state.focused;
-//            focused.triggerEvent("KAE-user-focus", false, false);
-//    //            delete state.focused;
-//    //        console.log(state.focused);
-//        }// else {
-////            delete state.focused;
-////        }
-//        delete state.focused;
-//    }
-
-////    if (target === state.focused) {
-////        console.log(event.type, target);
-////        delete state.focused;
-////    } else if (target === this && state.focused) {
-////        var focused = state.focused;
-//////            delete state.focused;
-////        focused.triggerEvent("focus", false, false);
-//////            delete state.focused;
-//////        console.log(state.focused);
-////    } else if (state.windowList.contains(target)) {
-////        state.focused = target;
-
-////        removeEventListener(event.type, anon, true);
-
-////        function blur(event) {
-
-////        }
-////        function focus(event) {
-////            removeEventListener("blur", blur, true);
-////            removeEventListener("focus", focus, true);
-////            addEventListener(event.type, anon, true);
-////        }
-////        addEventListener("blur", blur, true);
-////        addEventListener("focus", focus, true);
-////    }// else {
-//////            delete state.focused;
-//////        }
-//}, true);
-
-
 addEventListener("dragstart", function () {
     state.dragging = true;
 }, true);
-/*
-document.body.addEventListener("dragover", function (event) {
-    console.log(event.target);
-}, false);
-
-addEventListener("dragleave", function (event) {
-    console.log(event.target);
-}, false);*/
 
 addEventListener("dragover", function (event) {
-//    console.log(event.target);
     if (!event.defaultPrevented) {
         document.activeElement.blur();
         state.placeholder.remove();
-/*
-        state.placeholder.update();
-
-        var node = document.querySelector(".tab[data-dropindent]");
-        if (node) {
-            node.removeAttribute("data-dropindent");
-            delete node.tab.dropIndent;
-        }*/
     }
 }, false);
 
@@ -554,8 +299,6 @@ var fragment = document.createDocumentFragment();
 
 fragment.appendChild(UI.create("div", function (toolbar) {
     toolbar.id = "toolbar";
-//
-//    state.toolbar = toolbar;
 
     toolbar.appendChild(UI.create("button", function (element) {
         element.id = "button-menu";
@@ -641,7 +384,7 @@ fragment.appendChild(UI.create("div", function (toolbar) {
                 }
             });
 
-            /*menu.submenu("Sort <u>t</u>abs by...", {
+            /*! menu.submenu("Sort <u>t</u>abs by...", {
                 keys: ["T"],
                 onopen: function (menu) {
                     menu.clear();
@@ -688,7 +431,7 @@ fragment.appendChild(UI.create("div", function (toolbar) {
 
             var perform = (function () {
                 function go(macro, info) {
-                    var first, moved, odd/*, parser*/, results;
+                    var first, moved, odd, results;
                     if (macro.search) {
                         results = action.search(info.tabs, macro.search);
 
@@ -843,16 +586,12 @@ fragment.appendChild(UI.create("div", function (toolbar) {
                         var text = [];
 
                         text.push(item.action);
-//
-//                        text.push("<div>");
 
                         if (item.search) {
                             text.push("<strong>" + item.search + "</strong>");
                         } else {
                             text.push("all tabs");
                         }
-//
-//                        text.push("</div><div>");
 
                         if (item.action === "move") {
                             text.push("to");
@@ -867,102 +606,8 @@ fragment.appendChild(UI.create("div", function (toolbar) {
                                 text.push("new window");
                             }
                         }
-//
-//                        text.push("</div>");
-/*
-                        function text(type, content) {
-                            var element = document.createElement(type);
-                            element.textContent = content;
-                            return element;
-                        }*/
 
                         menu.addItem(text.join(" "), {
-/*                            create: function (element) {
-                                element.style.display = "-webkit-box";
-//                                element.style.whiteSpace = "nowrap";
-//
-//                                console.log(element.children);
-
-//                                element.style.display = "table";
-//                                element.style.width = "100%";
-
-                                var strong = element.children[0];
-                                strong.style.overflow = "hidden";
-                                strong.style.textOverflow = "ellipsis";
-//                                strong.style.webkitBoxFlex = "1";
-//                                strong.style.maxWidth = "100%";
-//                                strong.style.display = "table-cell";
-//                                strong.style.textAlign = "left";
-//                                strong.style.width = "100%";
-
-                                var cell = element.children[1];
-                                cell.style.webkitBoxFlex = "1";
-//                                cell.style.display = "table-cell";
-//                                cell.style.textAlign = "left";
-//                                cell.style.width = "100%";
-
-//                                var parent = element.children[0];
-//                                parent.style.display = "-webkit-box";
-//                                parent.style.webkitBoxFlex = "1";
-
-//                                var strong = element.children[0];
-//                                if (strong) {
-////                                    strong.textContent = item.search;
-//                                    strong.style.display = "table-cell";
-////                                    strong.style.maxWidth = "100%";
-//                                    strong.style.overflow = "hidden";
-//                                    strong.style.textOverflow = "ellipsis";
-////                                    strong.style.webkitBoxFlex = "1";
-//                                }
-
-//                                console.log(strong);
-
-
-
-
-//                                var span = element.children[1];
-//                                span.style.webkitBoxFlex = "1";
-
-//                                element.appendChild(UI.create("div", function (element) {
-//                                    element.textContent = item.action + " ";
-
-//                                    if (!item.search) {
-//                                        element.textContent += "all tabs";
-////                                        element.appendChild(text("span", "all tabs"));
-//                                    }
-//                                }));
-
-//                                if (item.search) {
-//                                    element.appendChild(UI.create("strong", function (element) {
-
-//                                    }));
-//                                }
-
-//                                var text = [];
-
-//                                if (item.action === "move") {
-//                                    text.push(" to");
-//                                } else if (item.action === "require") {
-//                                    text.push(" in");
-//                                }
-
-//                                if (item.action !== "close") {
-//                                    if (item.window) {
-//                                        text.push('"' + item.window + '"');
-//                                    } else {
-//                                        text.push("new window");
-//                                    }
-//                                }
-
-//                                var span = document.createElement("span");
-//                                span.textContent = text.join(" ");
-//                                element.appendChild(span);
-//
-//                                element.appendChild(text("span", text.join(" ")));
-//                                item.style.display = "-webkit-box";
-//                                item.children[0].style.webkitBoxFlex = "1";
-//                                console.log();
-                            },*/
                             action: function () {
                                 perform([item]);
                             }
@@ -1230,9 +875,6 @@ fragment.appendChild(UI.create("div", function (toolbar) {
                     item.removeAttribute("hidden");
 
                     if (info.focused) {
-/*                        if (item.hasAttribute("data-focused")) {
-                            focused = item;
-                        }*/
                         var win = item.window;
 
                         if (win.focused || (!focused && last === win.id)) {
@@ -1261,7 +903,6 @@ fragment.appendChild(UI.create("div", function (toolbar) {
 
 
             if (list.length) {
-//                var last = ;
                 list[list.length - 1].setAttribute("data-last", "");
             }
 
@@ -1272,8 +913,6 @@ fragment.appendChild(UI.create("div", function (toolbar) {
             });
 
             if (focused) {
-//                console.log();
-//                debugger;
                 focused.setWindowFocus();
             }
 
@@ -1319,7 +958,7 @@ fragment.appendChild(UI.create("div", function (toolbar) {
         Platform.event.on("tab-indent", state.search);
 
         input.addEventListener("search", function () {
-            state.search({ /*scroll: true, */focused: true });
+            state.search({ focused: true });
         }, true);
 
         addEventListener("keydown", function (event) {
@@ -1652,27 +1291,11 @@ fragment.appendChild(UI.create("div", function (toolbar) {
     var script = document.createElement("script");
     script.src = "/views/" + Options.get("windows.type") + ".js";
 
-//    Options.event.on("change", function (event) {
-//        if (event.name === "windows.type") {
-//            script.src = "/views/" + event.value + ".js";
-//        }
-//    });
 
     var windows = Platform.windows.getAll();
 
     function init() {
-//        console.log(document.readyState);
-    //
-    //    windows.forEach(function (win) {
-    //        win.tabs.forEach(function (tab) {
-    //            indentByID[tab.id] = indent[tab.globalIndex];
-    //        });
-    //    });
-    //
-    //    ({ populate: true }, function (windows) {
         state.createView(windows);
-//
-//        document.body.appendChild(state.toolbar);
 
         var type = Options.get("windows.sort.type");
         if (type !== "date-created") {
@@ -1681,14 +1304,9 @@ fragment.appendChild(UI.create("div", function (toolbar) {
 
         Options.event.on("change", function (event) {
             if (event.name === "windows.sort.type") {
-    //                console.log("foo!");
-                state.search({ /*scroll: true, */focused: true, nodelay: true });
+                state.search({ focused: true, nodelay: true });
             }
         });
-    //
-    //        state.list.forEach(function (item) {
-    //            item.update();
-    //        });
 
         Options.event.on("change", function (event) {
             if (event.name === "window.lastfocused") {
@@ -1701,8 +1319,7 @@ fragment.appendChild(UI.create("div", function (toolbar) {
 
                         state.search({
                             focused: Options.get("popup.type") !== "tab",
-                            nodelay: true//,
-                            //scroll: true
+                            nodelay: true
                         });
                     }
                 }
@@ -1713,10 +1330,6 @@ fragment.appendChild(UI.create("div", function (toolbar) {
             var treestyle = (event.name === "tabs.tree-style.enabled"),
                 location = (event.name === "tabs.close.location"),
                 display = (event.name === "tabs.close.display");
-//
-//            var test = event.name.equals("tabs.tree-style.enabled",
-//                                         "tabs.close.location",
-//                                         "tabs.close.display");
 
             if (treestyle || location || display) {
                 var query = document.querySelectorAll(".tab");

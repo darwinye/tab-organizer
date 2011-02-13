@@ -25,7 +25,6 @@
                           right({ literal: "focused" });
 
             return function (item) {
-//                console.log(cache);
                 if (!cache.range) {
                     seen = 0;
 
@@ -36,7 +35,6 @@
                             return false;
                         }
 
-//                        var name = item.tabIcon.indexText.value;
                         var name = item.window.title;
 
                         if (focused && item.hasAttribute("data-focused")) {
@@ -55,8 +53,6 @@
 
                 if (seen === 2) {
                     for (var i = 0; i < cache.range.length; i += 1) {
-//                        var icon = ;
-//                        var icon = cache.range[i].tabIcon;
                         var icon = cache.range[i];
                         if (icon.window.title === item) {
                             return true;
@@ -68,7 +64,7 @@
     });
 
 
-    parser.prefix({ priority: 30, token: ",",// match: /(,)(?!\s+\S)/,
+    parser.prefix({ priority: 30, token: ",",
         output: function (right) {
             return right;
         }
@@ -125,7 +121,6 @@
 
                 if (!cache.macros) {
                     cache.macros = state.macros.filter(function (item) {
-//                        return true;
                         return item.search;
                     });
 
@@ -289,7 +284,6 @@
                     }
                 }
 
-//                return right(win.tabIcon.indexText.value);
                 return right(win.window.title);
             };
         }
