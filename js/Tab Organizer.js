@@ -914,7 +914,8 @@ Window = {
                                 configurable: true
                             });
 /*
-                            container.isUserTitle = function () {
+                            container.isCustomTitle = function () {
+//                                console.log(state.titles[index]);
                                 return state.titles[index];
                             };*/
 

@@ -97,11 +97,24 @@ var state = {
                 sort(function (a, b) {
                     var test = a.window.title - b.window.title;
 
-                    if (!test) {
+                    if (isNaN(test)) {
                         test = comp(a.window.title, b.window.title);
                     }
 
                     return test;
+/*
+                    var l = a.isCustomTitle(),
+                        r = b.isCustomTitle();
+
+                    return (l && r
+                             ? comp(a.window.title, b.window.title)
+                             : (l
+                                 ? 1
+                                 : (r
+                                     ? -1
+                                     : 0)));*/
+//
+//                    return test;
 /*
                     if (isNaN(test)) {
                         if (!a.isUserTitle()) {
@@ -126,24 +139,46 @@ var state = {
                 sort(function (a, b) {
                     var test = b.window.title - a.window.title;
 
-                    if (!test) {
+                    if (isNaN(test)) {
                         test = comp(b.window.title, a.window.title);
                     }
 
                     return test;
+/*
+                    var l = a.isCustomTitle(),
+                        r = b.isCustomTitle();
+
+                    return (l && r
+                             ? comp(b.window.title, a.window.title)
+                             : (l
+                                 ? -1
+                                 : (r
+                                     ? 1
+                                     : 0)));*/
+//                    if (a.isCustomTitle() || b.isCustomTitle()) {
+//                        return comp(b.window.title, a.window.title);
+//                    } else {
+//                        return 0;
+//                    }
+//
+//                    return test;
                 });
             },
 
             "tab-number <": function () {
                 sort(function (a, b) {
-                    return a.tabList.children.length -
-                           b.tabList.children.length;
+                    return a.window.tabs.length -
+                           b.window.tabs.length;
+//                    return a.tabList.children.length -
+//                           b.tabList.children.length;
                 });
             },
             "tab-number >": function () {
                 sort(function (a, b) {
-                    return b.tabList.children.length -
-                           a.tabList.children.length;
+                    return b.window.tabs.length -
+                           a.window.tabs.length;
+//                    return b.tabList.children.length -
+//                           a.tabList.children.length;
                 });
             },
             /*"starting-tab": function () {
