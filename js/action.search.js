@@ -124,7 +124,12 @@
                 ignore.macro = true;
 
                 if (!cache.macros) {
-                    cache.macros = state.macros.map(function (item) {
+                    cache.macros = state.macros.filter(function (item) {
+//                        return true;
+                        return item.search;
+                    });
+
+                    cache.macros = cache.macros.map(function (item) {
                         return parser.output(item.search);
                     });
                 }
