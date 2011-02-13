@@ -22,7 +22,6 @@
 
     Undo.setRule("rename-window", function (info) {
         info.window.title = info.value;
-//        state.titles[info.index] = info.node.value = info.value;
         info.node.select();
         Undo.reset();
     });

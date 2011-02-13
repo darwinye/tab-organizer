@@ -721,7 +721,6 @@ Window = {
 
                         var element = iter(query, event.which === 38);
                         if (element) {
-//                            Tab.focus(element.tab, false);
                             state.event.trigger("tab-focus", element.tab);
                         }
                     }
@@ -807,21 +806,8 @@ Window = {
                         index = sib.tab.index + 1;
                     }
                 }
-//
-//                console.log(index, !!node);
 
                 state.currentQueue.moveTabs(win, { index: index, child: !!node });
-/*
-                var children = Array.slice(this.tabList.children);
-
-                var index = children.indexOf(node || state.placeholder);
-                if (index !== -1) {
-                    if (node) {
-                        index += 1;
-                    }
-
-                    state.currentQueue.moveTabs(win, { index: index, child: !!node });
-                }*/
             }, true);
 
 
@@ -832,8 +818,6 @@ Window = {
                 container.updateTooltip = function () {
                     var length = win.tabs.length;
                     if (length && win.title) {
-//                        console.log("action");
-//
                         var text = [ win.title ];
 
                         text.push(" (");
@@ -847,7 +831,6 @@ Window = {
 
                         element.title = text.join("");
                     } else {
-//                        console.log("no action");
                         element.title = "";
                     }
                 };
@@ -913,11 +896,6 @@ Window = {
                                 },
                                 configurable: true
                             });
-/*
-                            container.isCustomTitle = function () {
-//                                console.log(state.titles[index]);
-                                return state.titles[index];
-                            };*/
 
                             element.addEventListener("mousedown", function (event) {
                                 if (container.hasAttribute("data-focused")) {
@@ -940,10 +918,8 @@ Window = {
 
                                     if (Options.get("undo.rename-window")) {
                                         Undo.push("rename-window", {
-//                                            focus: container.tabList,
                                             window: win,
                                             value: value,
-//                                            index: index,
                                             node: this
                                         });
 

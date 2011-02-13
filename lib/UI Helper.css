@@ -37,9 +37,6 @@ button.UI-link {
 
 .UI-contextMenu {
     position: absolute;
-/*    top: 0px;
-    left: 0px;*/
-/*    z-index: 9002;*/
 
     top: 100%;
     margin-left: -2px;
@@ -114,8 +111,6 @@ button.UI-link {
     z-index: 2;
     left: 100%;
     top: 0px;
-/*
-    max-width: 100%;*/
 
     padding: 12px;
     padding-right: 20px;

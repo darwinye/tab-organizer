@@ -154,12 +154,10 @@ var action = {
         });
 
         Platform.event.on("tab-remove", function (tab) {
-//            var list, node = state.tabsByID[tab.id];
-//
             var list = state.windows[tab.windowId],
                 node = state.tabsByID[tab.id];
 
-            if (node && list) {//(list = node.parentNode)) {
+            if (node && list) {
                 list.updateTooltip();
 
                 list = list.tabList;
