@@ -908,9 +908,15 @@ Window = {
                                         delete state.titles[index];
                                     }
                                     element.value = action.returnTitle(index);
+
+                                    Platform.event.trigger("window-rename");
                                 },
                                 configurable: true
                             });
+/*
+                            container.isUserTitle = function () {
+                                return state.titles[index];
+                            };*/
 
                             element.addEventListener("mousedown", function (event) {
                                 if (container.hasAttribute("data-focused")) {
@@ -928,14 +934,15 @@ Window = {
                             }, true);
 
                             element.addEventListener("blur", function (event) {
-                                win.title = this.value;
-
                                 if (this.value !== value) {
+                                    win.title = this.value;
+
                                     if (Options.get("undo.rename-window")) {
                                         Undo.push("rename-window", {
-                                            focus: container.tabList,
+//                                            focus: container.tabList,
+                                            window: win,
                                             value: value,
-                                            index: index,
+//                                            index: index,
                                             node: this
                                         });
 

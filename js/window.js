@@ -52,6 +52,19 @@ var state = {
     },*/
 
     sortWindows: (function () {
+/*        function insertsort(array, func) {
+            var output = [];
+
+            for (var i = 1; i < array.length - 1; i += 1) {
+                var key = array[i];
+                while (func(key) > 0) {
+
+                }
+            }
+
+            return output;
+        }
+*/
         function rearrange() {
             var fragment = document.createDocumentFragment();
             state.sorted.forEach(function (item) {
@@ -62,7 +75,8 @@ var state = {
         }
 
         function sort(func) {
-            state.sorted = state.list.slice().sort(func);
+            //state.sorted = state.list.slice().sort(func);
+            state.sorted = KAE.array.stablesort(state.list, func);
             rearrange();
         }
 
@@ -73,16 +87,59 @@ var state = {
     //                            console.log(state.list);
 //                Options.set("windows.sort.type", "date-created");
             },
-            "tab-number >": function () {
+
+            "name <": function () {
+//                console.warn("Sorting");
                 sort(function (a, b) {
-                    return b.tabList.children.length -
-                           a.tabList.children.length;
+                    var test = a.window.title - b.window.title;
+
+                    if (!test) {
+                        test = a.window.title.localeCompare(b.window.title);
+                    }
+
+                    return test;
+/*
+                    if (isNaN(test)) {
+                        if (!a.isUserTitle()) {
+                            return 1;
+                        } else if (!b.isUserTitle()) {
+                            return -1;
+                        } else {
+
+                        }
+                    }
+
+                    return test;*/
+/*
+                    if (!a.isUserTitle() && !b.isUserTitle()) {
+                        return a.window.title - b.window.title;
+                    }
+
+                    return a.window.title.localeCompare(b.window.title);*/
                 });
             },
+            "name >": function () {
+                sort(function (a, b) {
+                    var test = b.window.title - a.window.title;
+
+                    if (!test) {
+                        test = b.window.title.localeCompare(a.window.title);
+                    }
+
+                    return test;
+                });
+            },
+
             "tab-number <": function () {
                 sort(function (a, b) {
                     return a.tabList.children.length -
                            b.tabList.children.length;
+                });
+            },
+            "tab-number >": function () {
+                sort(function (a, b) {
+                    return b.tabList.children.length -
+                           a.tabList.children.length;
                 });
             },
             /*"starting-tab": function () {
@@ -92,30 +149,41 @@ var state = {
             }*/
         };
 
-        var hooks = {
-            "tab-number >": function () {
-                Platform.event.on("tab-create", sorters["tab-number >"]);
-                Platform.event.on("tab-remove", sorters["tab-number >"]);
-                Platform.event.on("tab-attach", sorters["tab-number >"]);
-            },
-            "tab-number <": function () {
-                Platform.event.on("tab-create", sorters["tab-number <"]);
-                Platform.event.on("tab-remove", sorters["tab-number <"]);
-                Platform.event.on("tab-attach", sorters["tab-number <"]);
-            },
-        };
+        var addHooks = {},
+            remHooks = {};
+
+        ["tab-number <", "tab-number >"].forEach(function (name) {
+            addHooks[name] = function () {
+                Platform.event.on("tab-create", sorters[name]);
+                Platform.event.on("tab-remove", sorters[name]);
+                Platform.event.on("tab-attach", sorters[name]);
+            };
+
+            remHooks[name] = function () {
+                Platform.event.remove("tab-create", sorters[name]);
+                Platform.event.remove("tab-remove", sorters[name]);
+                Platform.event.remove("tab-attach", sorters[name]);
+            };
+        });
+
+        ["name <", "name >"].forEach(function (name) {
+            addHooks[name] = function () {
+                Platform.event.on("window-rename", sorters[name]);
+            };
+
+            remHooks[name] = function () {
+                Platform.event.remove("window-rename", sorters[name]);
+            };
+        });
 
         return function (name) {
-            Platform.event.remove("tab-create", sorters["tab-number >"]);
-            Platform.event.remove("tab-remove", sorters["tab-number >"]);
-            Platform.event.remove("tab-attach", sorters["tab-number >"]);
+            var type = Options.get("windows.sort.type");
+            if (remHooks[type]) {
+                remHooks[type]();
+            }
 
-            Platform.event.remove("tab-create", sorters["tab-number <"]);
-            Platform.event.remove("tab-remove", sorters["tab-number <"]);
-            Platform.event.remove("tab-attach", sorters["tab-number <"]);
-
-            if (hooks[name]) {
-                hooks[name]();
+            if (addHooks[name]) {
+                addHooks[name]();
             }
 
             if (sorters[name]) {
@@ -495,8 +563,12 @@ fragment.appendChild(UI.create("div", function (toolbar) {
 
                     var keys = {
                         "date-created": "<u>D</u>efault",
-                        "tab-number >": "Number of tabs >",
-                        "tab-number <": "Number of tabs <"
+
+                        "name <": "Name <",
+                        "name >": "Name >",
+
+                        "tab-number <": "Number of tabs <",
+                        "tab-number >": "Number of tabs >"
                     };
 
                     var type = Options.get("windows.sort.type");
@@ -518,8 +590,13 @@ fragment.appendChild(UI.create("div", function (toolbar) {
 
                     menu.separator();
 
-                    item("tab-number >");
+                    item("name <");
+                    item("name >");
+
+                    menu.separator();
+
                     item("tab-number <");
+                    item("tab-number >");
                 }
             });
 

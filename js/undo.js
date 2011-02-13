@@ -21,7 +21,8 @@
     });
 
     Undo.setRule("rename-window", function (info) {
-        state.titles[info.index] = info.node.value = info.value;
+        info.window.title = info.value;
+//        state.titles[info.index] = info.node.value = info.value;
         info.node.select();
         Undo.reset();
     });
