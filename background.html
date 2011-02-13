@@ -472,7 +472,7 @@
         });
 
         Platform.message.on("lib.keyboard", function (event) {
-            if (event.type === "keyup") {
+            if (event.type === "keydown") {
                 var ctrl = Options.get("popup.hotkey.ctrl");
                 var letter = String.fromCharCode(event.which);
 
