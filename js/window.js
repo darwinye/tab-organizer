@@ -80,6 +80,10 @@ var state = {
             rearrange();
         }
 
+        function comp(a, b) {
+            return a.toLowerCase().localeCompare(b.toLowerCase());
+        }
+
         var sorters = {
             "date-created": function () {
                 state.sorted = state.list;
@@ -94,7 +98,7 @@ var state = {
                     var test = a.window.title - b.window.title;
 
                     if (!test) {
-                        test = a.window.title.localeCompare(b.window.title);
+                        test = comp(a.window.title, b.window.title);
                     }
 
                     return test;
@@ -123,7 +127,7 @@ var state = {
                     var test = b.window.title - a.window.title;
 
                     if (!test) {
-                        test = b.window.title.localeCompare(a.window.title);
+                        test = comp(b.window.title, a.window.title);
                     }
 
                     return test;
@@ -168,10 +172,12 @@ var state = {
 
         ["name <", "name >"].forEach(function (name) {
             addHooks[name] = function () {
+                Platform.event.on("window-create", sorters[name]);
                 Platform.event.on("window-rename", sorters[name]);
             };
 
             remHooks[name] = function () {
+                Platform.event.remove("window-create", sorters[name]);
                 Platform.event.remove("window-rename", sorters[name]);
             };
         });
