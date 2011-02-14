@@ -958,7 +958,7 @@ fragment.appendChild(UI.create("div", function (toolbar) {
         Platform.event.on("tab-indent", state.search);
 
         input.addEventListener("search", function () {
-            state.search({ focused: true });
+            state.search({ focused: true, scroll: true });
         }, true);
 
         addEventListener("keydown", function (event) {
