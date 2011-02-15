@@ -565,10 +565,12 @@
                                 update();
                             };
 
+                            var isnew;
+
                             table.makeRow = function (info) {
                                 if (!info) {
                                     info = { search: "" };
-                                    macros.push(info);
+                                    macros.unshift(info);
                                 }
 
                                 update();
@@ -596,6 +598,11 @@
                                         element.appendChild(UI.create("input", function (element) {
                                             element.type = "checkbox";
 
+                                            if (isnew) {
+                                                element.checked = true;
+                                                trigger(table);
+                                            }
+
                                             element.addEventListener("change", function () {
                                                 trigger(table);
                                             }, true);
@@ -608,7 +615,7 @@
                                         element.style.marginLeft = "2px";
                                         element.style.verticalAlign = "-3px";
 
-                                        ["require", "move", "close"/**, "noop"*/].forEach(function (key) {
+                                        ["ignore", "require", "move", "close"/**, "noop"*/].forEach(function (key) {
                                             element.appendChild(UI.create("option", function (element) {
                                                 element.textContent = key;
 
@@ -629,7 +636,7 @@
                                                 text.textContent = "";
                                             }
 
-                                            if (element.value === "close") {
+                                            if (element.value === "close" || element.value === "ignore") {
                                                 windowName.setAttribute("hidden", "");
                                             } else {
                                                 windowName.removeAttribute("hidden");
@@ -665,14 +672,20 @@
                                     }));
                                 });
 
-                                table.appendChild(row);
+                                if (isnew) {
+                                    table.insertBefore(row, table.firstChild);
+                                    row.scrollIntoView(false);
+                                } else {
+                                    table.appendChild(row);
+                                }
 
                                 trigger(table);
-
-                                row.scrollIntoView(true);
+//
+//                                table.scrollTop = 0;
                             };
 
                             macros.forEach(table.makeRow);
+                            isnew = true;
                         });
 
 
@@ -760,7 +773,7 @@
                                     element.src = "/images/button-up.png";
                                 }));
                             },
-                            action: function () {
+                            onhold: function () {
                                 var boxes = Array.slice(table.children).filter(function (item) {
                                     var input = item.querySelector("input[type=checkbox]");
                                     return input && input.checked;
@@ -780,7 +793,10 @@
                                 table.updateRows();
 
                                 UI.scrollTo(boxes[0], wrapper);
-                            }
+                            }/*,
+                            action: function () {
+
+                            }*/
                         });
 
                         down = container.button({
@@ -805,7 +821,7 @@
                                     element.src = "/images/button-down.png";
                                 }));
                             },
-                            action: function () {
+                            onhold: function () {
                                 var boxes = Array.slice(table.children).filter(function (item) {
                                     var input = item.querySelector("input[type=checkbox]");
                                     return input && input.checked;

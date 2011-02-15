@@ -599,7 +599,7 @@ fragment.appendChild(UI.create("div", function (toolbar) {
                             text.push("in");
                         }
 
-                        if (item.action !== "close") {
+                        if (item.action !== "close" && item.action !== "ignore") {
                             if (item.window) {
                                 text.push('"' + item.window + '"');
                             } else {
