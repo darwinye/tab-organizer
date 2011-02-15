@@ -790,14 +790,28 @@ fragment.appendChild(UI.create("div", function (toolbar) {
         input.setAttribute("incremental", "");
         input.setAttribute("placeholder", "Search");
 
+        input.id = "search-input";
         input.title = "(Ctrl F)";
         input.type = "search";
         input.tabIndex = 1;
 
 
+        var autocomplete = document.createElement("input");
+        autocomplete.setAttribute("spellcheck", "false");
+        autocomplete.setAttribute("results", "");
+
+        autocomplete.id = "search-autocomplete-input";
+        autocomplete.type = "search";
+        autocomplete.disabled = true;
+
+
+        var mask = document.createElement("div");
+        mask.id = "search-autocomplete-mask";
+
+
         var lastinput = localStorage["search.lastinput"];
         if (typeof lastinput === "string") {
-            input.value = lastinput;
+            input.value = /*autocomplete.value = */lastinput;
         }
 
         var cache = {
@@ -805,27 +819,39 @@ fragment.appendChild(UI.create("div", function (toolbar) {
         };
 
         var precoded = {
-            "h": ["has:macro"],
-            "i": ["inurl:", "intitle:", "is:child", "is:image", "is:pinned", "is:favorited", "is:selected", "is:bookmarked"],
-            "l": ["last:moved"],
-            "s": ["same:url", "same:title", "same:domain"],
-            "w": ["window:", "window:focused"]
+            "has:macro": true,
+            "intitle:": true,
+            "inurl:": true,
+            "is:bookmarked": true,
+            "is:child": true,
+            "is:favorited": true,
+            "is:image": true,
+            "is:pinned": true,
+            "is:selected": true,
+            "last:moved": true,
+            "same:domain": true,
+            "same:title": true,
+            "same:url": true,
+            "window:": true,
+            "window:focused": true
         };
 
         function testSpecial(value) {
             input.removeAttribute("data-special");
 
-            var special = precoded[value[0]];
-            if (special) {
-                var is = special.some(function (item) {
-                    return item === value;
-                });
-
-                if (is) {
-                    input.setAttribute("data-special", "");
-                }
+//            var special = precoded[value[0]];
+//            if (special) {
+/*            var is = precoded.some(function (item) {
+                return item === value;
+            });
+*/
+            if (precoded[value]) {
+                input.setAttribute("data-special", "");
             }
+//            }
         }
+//
+//        var windowsVisible;
 
         function search(windows, info) {
             localStorage["search.lastinput"] = input.value;
@@ -900,7 +926,8 @@ fragment.appendChild(UI.create("div", function (toolbar) {
                 return test;
 //!                    return !item.hasAttribute("hidden");
             });
-
+//
+//            windowsVisible = !!list.length;
 
             if (list.length) {
                 list[list.length - 1].setAttribute("data-last", "");
@@ -971,6 +998,8 @@ fragment.appendChild(UI.create("div", function (toolbar) {
             }
         }, true);
 
+        span.appendChild(autocomplete);
+        span.appendChild(mask);
         span.appendChild(input);
 
         setTimeout(function () {
@@ -994,21 +1023,197 @@ fragment.appendChild(UI.create("div", function (toolbar) {
             }, true);
 
 
-            var saved = Options.getObject(localStorage["search.past-queries"]);
+            var saved = Options.get("search.past-queries");
+//!            var special = Object.keys(precoded);
 
-            addEventListener("unload", function () {
-                localStorage["search.past-queries"] = JSON.stringify(saved);
+            if (localStorage["search.past-queries"]) { //!
+                var old = Options.getObject(localStorage["search.past-queries"]);
+
+                Object.keys(old).forEach(function (name) {
+                    if (old[name]) {
+                        old[name].forEach(function (item) {
+//                            console.log(item);
+                            saved.push(item);
+                        });
+                    }
+                });
+
+                delete localStorage["search.past-queries"];
+            }
+/*
+            saved.forEach(function (item) {
+                console.log(item);
+            });*/
+
+
+            input.addEventListener("search", function () {
+                if (!this.value || this.value.length < 2) {
+                    return;
+                }
+/*
+                return;
+
+                var value = this.value.toLowerCase();
+
+                var letter = value[0];
+
+                if (!saved[letter]) {
+                    saved[letter] = [];
+                }
+
+                var keys = saved[letter];
+
+                var length = keys.unshift(value.trim());
+//                console.log(length);
+                if (length > 20) {
+                    keys.length = 20;
+                }*/
+/*
+                keys.sort(function (a, b) {
+                    return b.localeCompare(a);
+                });*/
+/*
+                if (!keys.length) {
+                    delete saved[letter];
+                }*/
+
+                var value = this.value;
+//                var letter = value[0];
+
+                var remove = [];
+
+                saved.forEach(function (item, i) {
+/*                    if (precoded[letter]) {
+                        if (precoded[letter].indexOf(key) !== -1) {
+                            keys.splice(i, 1);
+                        }
+                    }
+*/
+                    if (value.indexOf(item) === 0) {
+                        remove.push(i);
+//                        console.log(value, item);
+//                        saved.splice(i, 1);
+                    }
+                });
+
+                remove.forEach(function (key) {
+                    saved.splice(key, 1);
+                });
+
+                var test = saved.some(function (item) {
+                    return /*item !== value && */item.indexOf(value) === 0;
+                });
+/*
+                var special = precoded.some(function (item) {
+                    return item.indexOf(value) === 0;
+                });*/
+
+                if (!test) {
+                    var length = saved.unshift(value);
+    //                console.log(length);
+                    if (length > 50) {
+                        saved.length = 50;
+                    }
+                }
             }, true);
 
 
-            function filter(value, info) {
-                info = Object(info);
-                value = value.toLowerCase();
+            input.addEventListener("input", function () {
+//                clearTimeout(anon.timer);
+//                anon.timer = setTimeout(function () {
+/*                if (event.ctrlKey || event.altKey || event.metaKey) {
+                    return;
+                }*/
+//
+//                console.log(String.fromCharCode(event.which));
+//
+//                var length = this.value.length;
 
-                var keys, letter, regexp, special;
+//                var key = event.which;
+//                if (key === 32 || (key > 46 && key < 112) || key > 123) {
+//                    console.log(this.value, event);
+    //                console.log(this.getSelection());
+//
+//                    this.value = this.value + "foo";
+//
+                var value = this.value;
+                if (value) {
+                    var next = saved.find(function (item) {
+//                        console.log(item, value);
+                        return item.indexOf(value) === 0;
+                    });
 
+                    autocomplete.value = (next
+                                           ? next
+                                           : value);
+
+                    testSpecial(value);
+                } else {
+                    autocomplete.value = "";
+                }
+
+                filter(value);
+//
+//                autocomplete.setSelectionRange(5, autocomplete.value.length);
+//                    this.setSelectionRange(length, this.value.length);
+    //                filter(this.value);
+//                }
+//                }, 50);
+            }, true);
+
+            input.addEventListener("blur", function () {
+                autocomplete.value = this.value;
+/*!                this.value = autocomplete.value;
+                state.search({ focused: true, scroll: true });*/
+//                input.triggerEvent("search", false, false);
+//
+//                if (!document.activeElement) {
+//                    console.log("foo");
+////                            document.body.focus();
+////                            this.blur();
+//                }
+            }, true);
+
+            input.addEventListener("keydown", function (event) {
+                if (event.shiftKey || event.ctrlKey || event.altKey || event.metaKey) {
+                    return;
+                }
+
+                if (event.which === 9) { //* Tab
+                    if (this.value !== autocomplete.value) {
+                        this.value = autocomplete.value;
+                        event.preventDefault();
+
+                        state.search({ focused: true, scroll: true });
+                        filter(this.value);
+//
+//                        this.blur();
+//                        if (!windowsVisible) {
+//                            event.preventDefault();
+//                        }
+                    }
+                } else if (event.which === 13) { //* Enter
+                    var query = container.querySelector("[data-selected]");
+                    if (!query) {
+                        autocomplete.value = this.value;
+                        filter("");
+                    }
+                }
+            }, true);
+/*
+            addEventListener("unload", function () {
+                localStorage["search.past-queries"] = JSON.stringify(saved);
+            }, true);*/
+
+
+            function filter(value, all) {
+//                info = Object(info);
+//                value = value.toLowerCase();
+//
+//                var /*keys, letter, regexp, */special;
+//
                 container.reset();
-
+/*
                 if (info.all) {
                     keys = [];
 
@@ -1027,7 +1232,11 @@ fragment.appendChild(UI.create("div", function (toolbar) {
                     regexp = new RegExp("^" + value);
                 } else {
                     regexp = new RegExp("^" + value, "i");
-                }
+                }*/
+//
+//                var /*special, */letter = value[0];
+/*
+                special = precoded;
 
                 if (precoded[letter]) {
                     special = precoded[letter];
@@ -1037,37 +1246,51 @@ fragment.appendChild(UI.create("div", function (toolbar) {
                     Object.keys(precoded).forEach(function (key) {
                         special = special.concat(precoded[key]);
                     });
-                }
-
+                }*/
+/*
                 keys.sort(function (a, b) {
                     return a.length - b.length || a.localeCompare(b);
-                });
+                });*/
 
-                keys.forEach(function (key) {
-                    if (regexp.test(key)) {
-                        container.add(key);
-                    }
-                });
+                var dupes = {};
 
-                testSpecial(value);
+                if (value || all) {
+                    saved.forEach(function (key) {
+                        if (key !== value && key.indexOf(value) === 0) {
+                            if (!dupes[key]) {
+                                dupes[key] = true;
+    /*
+                                var test = precoded.some(function (item) {
+                                    return item === key;
+                                });*/
 
-                if (special) {
-                    special.forEach(function (key) {
-                        if (info.list || regexp.test(key)) {
-                            container.add(key, true);
+                                container.add(key, precoded[key]);
+                            }
                         }
                     });
+/*
+    //
+    //                testSpecial(value);
+
+    //                if (special) {
+                    precoded.forEach(function (key) {
+                        if (key !== value && key.indexOf(value) === 0) {//regexp.test(key)) {
+                            container.add(key, true);
+                        }
+                    });*/
                 }
+//                }
             }
 
             function remove(text) {
-                var letter = text[0];
+                saved.remove(text);
+/*                var letter = text[0];
                 var array = saved[letter];
 
                 array.remove(text);
                 if (!array.length) {
                     delete saved[letter];
-                }
+                }*/
 
                 filter(input.value);
             }
@@ -1089,8 +1312,8 @@ fragment.appendChild(UI.create("div", function (toolbar) {
                 if (event.target.className === "past-queries-close") {
                     remove(this.text);
                 } else {
-                    input.value = this.text;
-                    input.triggerEvent("search", false, false);
+                    input.value = autocomplete.value = this.text;
+                    state.search({ focused: true, scroll: true });
 
                     container.reset();
                 }
@@ -1114,15 +1337,15 @@ fragment.appendChild(UI.create("div", function (toolbar) {
                 var text = document.createElement("div");
                 text.className = "search-past-item-text";
                 text.textContent = name;
+                item.appendChild(text);
 
 
+//!                if (!special) {
                 var button = document.createElement("img");
                 button.className = "past-queries-close";
                 button.src = "/images/button-close.png";
-
-
-                item.appendChild(text);
                 item.appendChild(button);
+//!                }
 
                 container.appendChild(item); //! element
                 container.removeAttribute("hidden");
@@ -1142,11 +1365,12 @@ fragment.appendChild(UI.create("div", function (toolbar) {
                     return;
                 }
                 if (event.offsetX < 20) {
-                    if (this.value) {
-                        filter(this.value);
+                    filter(this.value, true);
+/*                    if (this.value) {
+
                     } else {
-                        filter("", { all: true });
-                    }
+                        filter("");//, { all: true });
+                    }*/
                 }
             }, true);
 
@@ -1215,58 +1439,13 @@ fragment.appendChild(UI.create("div", function (toolbar) {
                 }
 
                 if (event.which === 40 || event.which === 46) {
-                    if (this.value) {
-                        filter(this.value);
+                    filter(this.value, true);
+/*                    if (this.value) {
+
                     } else {
-                        filter("", { all: true });
-                    }
+                        filter("");//, { all: true });
+                    }*/
                 }
-            }, true);
-
-
-            input.addEventListener("search", function () {
-                if (!this.value || this.value.length < 2) {
-                    return;
-                }
-
-                var value = this.value.toLowerCase();
-
-                var letter = value[0];
-
-                if (!saved[letter]) {
-                    saved[letter] = [];
-                }
-
-                var keys = saved[letter];
-
-                keys.push(value.trim());
-
-                keys.sort(function (a, b) {
-                    return b.localeCompare(a);
-                });
-
-                keys.forEach(function anon(key, i) {
-                    if (precoded[letter]) {
-                        if (precoded[letter].indexOf(key) !== -1) {
-                            keys.splice(i, 1);
-                        }
-                    }
-
-                    if (anon.key) {
-                        if (anon.key.indexOf(key) === 0) {
-                            keys.splice(i, 1);
-                        }
-                    }
-                    anon.key = key;
-                });
-
-                if (!keys.length) {
-                    delete saved[letter];
-                }
-            }, true);
-
-            input.addEventListener("input", function () {
-                filter(this.value);
             }, true);
         }));
     }));

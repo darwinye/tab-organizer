@@ -153,19 +153,51 @@ body {
 
     white-space: nowrap;
 }
-#search-box > input {
-    -webkit-box-shadow: inset 1px 1px 5px gainsboro;
+#search-input, #search-autocomplete-input {
+    -webkit-appearance: textfield;
 
     width: 100%;
     padding: 1px 2px;
     margin: 0px;
 
-    border-color: #999 #CCC #CCC; /** #e1e1e1 */
     border-width: 1px;
+}
+#search-input {
+    -webkit-box-shadow: inset 1px 1px 1px #f2f2f2;
+
+    position: relative;
+
+    background-color: transparent;
+
+    border-color: #999 #CCC #CCC; /** #e1e1e1 */
     border-radius: 2px;
 }
+#search-autocomplete-mask, #search-autocomplete-input {
+    position: absolute;
+
+    left: 0px;
+    top: 0px;
+
+    background-color: white;
+}
+#search-autocomplete-mask {
+    width: 20px;
+    height: 20px;
+}
+#search-autocomplete-input {
+/*
+    padding-left: 19px;*/
+    color: dimgray;
+    border-color: transparent;
+}
+/*#search-autocomplete-input::-webkit-input-placeholder {
+    color: red;
+    background-color: red;
+}*/
 #search-past {
     -webkit-box-shadow: dimgray 0px 2px 3px;
+/*
+    position: absolute;*/
 
     margin: 0px 1px 0px 1px;
 

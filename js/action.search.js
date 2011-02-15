@@ -174,7 +174,7 @@
             "image": (function () {
                 //! var url = /\.(bmp|gif|jpe?g|mng|a?png|raw|tga|tiff?)(?=\?|$)/i;
                 var title = /\(\d+×\d+\)$/;
-                var url = /\.\w+(?=\?|$)/;
+                var url = /\.\w+(?=[#?]|$)/;
 
                 return function (item) {
                     return url.test(item.tab.url) && title.test(item.tab.title);
