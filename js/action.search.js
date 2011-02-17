@@ -5,10 +5,15 @@
 
     var cache = {}, ignore, tabs;
 
+    function wrap(result) {
+        return result || result === null; //* null means to ignore the result
+    }
+
     parser.prefix({ priority: 50, token: "-",
         output: function (right) {
             return function (item) {
-                if (right(item)) {
+//                var result = right(item);
+                if (wrap(right(item))/*result || result === null*/) {
                     return "";
                 }
                 return "NOT";
@@ -91,8 +96,16 @@
         return function (right) {
             var actions = [];
 
+            var cancel = true;
+
             keys.forEach(function (key) {
                 if (!ignore[key]) {
+                    cancel = false;
+
+/*                    actions.push(function (item) {
+                        return "IGNORE";
+                    });
+                } else {*/
                     var result = right(key);
                     if (result && result !== "NOT") {
                         actions.push(queries[key]);
@@ -104,10 +117,21 @@
                 }
             });
 
+            if (cancel) {
+                return function () {
+                    return null;
+                };
+//                return parser.ignore();
+//                return parser.advance();
+//                return function () {};
+            }
+
             return function (item) {
                 for (var i = 0; i < actions.length; i += 1) {
-                    if (actions[i](item)) {
+//                    var result = ;
+                    if (actions[i](item)/*result*/) {
                         return true;
+//                        return result;
                     }
                 }
             };
@@ -116,25 +140,54 @@
 
     parser.prefix({ priority: 20, token: "has:",
         output: dictionary({
-            "macro": function (item) {
-                ignore.macro = true;
+            "macro": (function () {
+                var stop;
 
-                if (!cache.macros) {
-                    cache.macros = state.macros.filter(function (item) {
-                        return item.search;
-                    });
+                return function (item) {
+                    ignore.macro = true;
 
-                    cache.macros = cache.macros.map(function (item) {
-                        return parser.output(item.search);
-                    });
-                }
+                    stop = false;
 
-                for (var i = 0; i < cache.macros.length; i += 1) {
-                    if (cache.macros[i](item)) {
-                        return true;
+                    if (!cache.macros) {
+                        cache.macros = state.macros.filter(function (item) {
+                            return item.search;
+                        });
+
+                        cache.macros = cache.macros.map(function (item) {
+                            var output = parser.output(item.search);
+
+                            if (item.action === "ignore") {
+                                return function (item) {
+                                    if (output(item)) {
+                                        stop = true;
+                                    }
+                                };
+                            } else {
+                                return output;
+                            }
+    /*                        var output =
+
+                            return function (item) {
+                                return output(item) && (item.action !== "ignore");
+                            };*/
+                        });
                     }
-                }
-            }
+
+                    for (var i = 0; i < cache.macros.length; i += 1) {
+//                        console.log(stop);
+//
+                        if (stop) {
+                            return false;
+                        } else if (cache.macros[i](item)) {
+                            return true;
+/*                            var result = cache.macros[i](item);
+                            if (result) {
+                                return result;
+                            }*/
+                        }
+                    }
+                };
+            }())
         })
     });
 
@@ -293,7 +346,13 @@
     parser.infix({ priority: 20, token: " ", match: /( ) */,
         output: function (left, right) {
             return function (item) {
-                return left(item) && right(item);
+/*                var result = left(item);
+                if (result || result === null) { //* null means to ignore the result
+                    result = right(item);
+                    return result || result === null;
+                }
+*/
+                return wrap(left(item)) && wrap(right(item));
             };
         }
     });
@@ -305,7 +364,7 @@
             return left(item) || right(item);
         };
     }
-    parser.infix({ priority: 10, token: " | ", match: / *( \| ) */, output: OR });
+    parser.infix({ priority: 10, token: " | ",  match: / *( \| ) */, output: OR });
     parser.infix({ priority: 10, token: " OR ", match: / *( OR ) */, output: OR });
 
 
@@ -358,7 +417,8 @@
 
         for (var i = 0; i < array.length; i += 1) {
             var item = array[i];
-            if (test(item)) {
+//            var result = ;
+            if (test(item)/* && result !== "IGNORE"*/) {
                 output.push(item);
             } else {
                 output.inverse.push(item);
@@ -379,6 +439,19 @@
             return split(tabs, filter);
         };
     };
+/*
+    action.output = function (string) {
+        ignore = {};
+
+        var filter = parser.output(string);
+
+        return function (item) {
+            tabs = [ item ];
+            cache = {};
+
+            return filter(item);
+        };
+    };*/
 
     action.search = function (array, string) {
         return action.parse(string)(array);

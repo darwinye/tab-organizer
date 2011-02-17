@@ -169,16 +169,18 @@ var state = {
         };
 
         container.check = function (node, sibling) {
-            var has = state.draggedTab.hasAttribute("data-selected");
+            if (state.draggedTab) {
+                var has = state.draggedTab.hasAttribute("data-selected");
 
-            if (has) {
-                if (node && !node.hasAttribute("data-selected")) {
-                    return true;
-                } else if (sibling && !sibling.hasAttribute("data-selected")) {
+                if (has) {
+                    if (node && !node.hasAttribute("data-selected")) {
+                        return true;
+                    } else if (sibling && !sibling.hasAttribute("data-selected")) {
+                        return true;
+                    }
+                } else if (node !== state.draggedTab && sibling !== state.draggedTab) {
                     return true;
                 }
-            } else if (node !== state.draggedTab && sibling !== state.draggedTab) {
-                return true;
             }
         };
     })

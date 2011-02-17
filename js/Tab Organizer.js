@@ -639,7 +639,9 @@ Window = {
                     }
                 }
 
-                state.currentQueue.moveTabs(win, { index: index, child: !!node });
+                if (state.currentQueue) {
+                    state.currentQueue.moveTabs(win, { index: index, child: !!node });
+                }
             }, true);
 
 
@@ -729,11 +731,21 @@ Window = {
                                 configurable: true
                             });
 
+                            function select() {
+//                                console.log(this.hasAttribute("focused"));
+                                if (this.selectionStart === this.selectionEnd) {
+                                    this.select();
+                                }
+                            }
+
                             element.addEventListener("mousedown", function (event) {
+                                this.removeEventListener("click", select, true);
+
                                 if (container.hasAttribute("data-focused")) {
-                                    element.addEventListener("click", element.select, true);
+//                                    if (this.selectionStart === this.selectionEnd) {
+                                    this.addEventListener("click", select, true);
+//                                    }
                                 } else {
-                                    element.removeEventListener("click", element.select, true);
                                     container.focus();
 
                                     event.preventDefault();
