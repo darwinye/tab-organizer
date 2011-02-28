@@ -829,6 +829,7 @@ Window = {
                     container.addEventListener("keypress", function (event) {
                         if (event.which === 13 && (event.ctrlKey || event.metaKey)) {
                             if (!event.altKey && !event.shiftKey) {
+                                event.preventDefault();
                                 menu.show();
                             }
                         }

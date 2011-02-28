@@ -73,8 +73,8 @@
 
     Options.event.on("change", function (event) {
         var columns = (event.name === "windows.grid.columns"),
-            rows = (event.name === "windows.grid.rows"),
-            type = (event.name === "windows.type");
+            rows    = (event.name === "windows.grid.rows"),
+            type    = (event.name === "windows.type");
 
         if (columns || rows || type) {
             update(function () {

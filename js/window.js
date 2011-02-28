@@ -403,6 +403,42 @@ fragment.appendChild(UI.create("div", function (toolbar) {
 
             element.addEventListener("dragenter", element.focus, true);
             element.addEventListener("dragover", events.stop, false);
+/*
+            addEventListener("keydown", function (event) {
+                if (event.which === 77) {
+                    if (!event.altKey && !event.metaKey && !event.shiftKey) {
+                        if (event.ctrlKey) {
+                            element.focus();
+                            menu.show();
+                        }
+                    }
+                }
+            }, false);*/
+
+            function stopPropagation() {
+                function stop(event) {
+                    this.removeEventListener(event.type, stop, true);
+                    event.stopPropagation();
+                }
+                addEventListener("search", stop, true);
+
+                setTimeout(function () {
+                    removeEventListener("search", stop, true);
+                }, 500);
+            }
+
+            addEventListener("keypress", function (event) {
+                if (!event.defaultPrevented) {
+                    if (event.which === 13 && (event.ctrlKey || event.metaKey)) {
+                        if (!event.altKey && !event.shiftKey) {
+                            stopPropagation(); //! hacky
+
+                            element.focus();
+                            menu.show();
+                        }
+                    }
+                }
+            }, false);
 
 
             menu.addItem("<u>N</u>ew Window", {
@@ -1066,6 +1102,13 @@ fragment.appendChild(UI.create("div", function (toolbar) {
         Platform.event.on("tab-indent", state.search);
 
         input.addEventListener("search", function () {
+//            console.log(event);
+//            if (event.which === 13 && (event.ctrlKey || event.metaKey)) {
+//                if (!event.altKey && !event.shiftKey) {
+//                    return;
+//                }
+//            }
+//
             state.search({ focused: true, scroll: true });
         }, true);
 
@@ -1077,7 +1120,7 @@ fragment.appendChild(UI.create("div", function (toolbar) {
                     input.select();
                 }
             }
-        }, true);
+        }, false);
 
         span.appendChild(autocomplete);
         span.appendChild(mask);
