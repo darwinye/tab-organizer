@@ -185,19 +185,11 @@ body {
     height: 20px;
 }
 #search-autocomplete-input {
-/*
-    padding-left: 19px;*/
     color: dimgray;
     border-color: transparent;
 }
-/*#search-autocomplete-input::-webkit-input-placeholder {
-    color: red;
-    background-color: red;
-}*/
 #search-past {
     -webkit-box-shadow: dimgray 0px 2px 3px;
-/*
-    position: absolute;*/
 
     margin: 0px 1px 0px 1px;
 
@@ -330,9 +322,6 @@ input[data-special], .search-past-item[data-special] {
 }
 .tab-list {
     -webkit-box-flex: 1;
-/*
-    display: -webkit-box;
-    -webkit-box-orient: vertical;*/
 
     padding: 2px;
 

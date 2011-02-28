@@ -732,7 +732,6 @@ Window = {
                             });
 
                             function select() {
-//                                console.log(this.hasAttribute("focused"));
                                 if (this.selectionStart === this.selectionEnd) {
                                     this.select();
                                 }
@@ -742,9 +741,7 @@ Window = {
                                 this.removeEventListener("click", select, true);
 
                                 if (container.hasAttribute("data-focused")) {
-//                                    if (this.selectionStart === this.selectionEnd) {
                                     this.addEventListener("click", select, true);
-//                                    }
                                 } else {
                                     container.focus();
 

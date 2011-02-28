@@ -12,8 +12,7 @@
     parser.prefix({ priority: 50, token: "-",
         output: function (right) {
             return function (item) {
-//                var result = right(item);
-                if (wrap(right(item))/*result || result === null*/) {
+                if (wrap(right(item))) {
                     return "";
                 }
                 return "NOT";
@@ -102,10 +101,6 @@
                 if (!ignore[key]) {
                     cancel = false;
 
-/*                    actions.push(function (item) {
-                        return "IGNORE";
-                    });
-                } else {*/
                     var result = right(key);
                     if (result && result !== "NOT") {
                         actions.push(queries[key]);
@@ -121,17 +116,12 @@
                 return function () {
                     return null;
                 };
-//                return parser.ignore();
-//                return parser.advance();
-//                return function () {};
             }
 
             return function (item) {
                 for (var i = 0; i < actions.length; i += 1) {
-//                    var result = ;
-                    if (actions[i](item)/*result*/) {
+                    if (actions[i](item)) {
                         return true;
-//                        return result;
                     }
                 }
             };
@@ -165,25 +155,14 @@
                             } else {
                                 return output;
                             }
-    /*                        var output =
-
-                            return function (item) {
-                                return output(item) && (item.action !== "ignore");
-                            };*/
                         });
                     }
 
                     for (var i = 0; i < cache.macros.length; i += 1) {
-//                        console.log(stop);
-//
                         if (stop) {
                             return false;
                         } else if (cache.macros[i](item)) {
                             return true;
-/*                            var result = cache.macros[i](item);
-                            if (result) {
-                                return result;
-                            }*/
                         }
                     }
                 };
@@ -258,29 +237,18 @@
 
     parser.prefix({ priority: 20, token: "same:",
         output: dictionary({
-            "domain": /*//(function () {
-//                var regexp = /^[^:]+:\/\/([^\/]*)/;
-
-            return */function (item) {
+            "domain": function (item) {
                 if (!cache.domain) {
                     cache.domain = {};
 
                     tabs.forEach(function (item) {
-//                            var url = regexp.exec(item.tab.url);
-//                            if (url) {
-//                                url = url[1];
-//                                cache.domain[url] = cache.domain[url] + 1 || 1;
-//                            }
                         var url = item.tab.domain;
                         cache.domain[url] = cache.domain[url] + 1 || 1;
                     });
                 }
 
-//                    var url = regexp.exec(item.tab.url)[1];
-//                var url = item.tab.domain;
                 return cache.domain[item.tab.domain] > 1;
             },
-//            }()),
 
             "title": function (item) {
                 if (!cache.titles) {
@@ -349,12 +317,6 @@
     parser.infix({ priority: 20, token: " ", match: /( ) */,
         output: function (left, right) {
             return function (item) {
-/*                var result = left(item);
-                if (result || result === null) { //* null means to ignore the result
-                    result = right(item);
-                    return result || result === null;
-                }
-*/
                 return wrap(left(item)) && wrap(right(item));
             };
         }
@@ -420,8 +382,7 @@
 
         for (var i = 0; i < array.length; i += 1) {
             var item = array[i];
-//            var result = ;
-            if (test(item)/* && result !== "IGNORE"*/) {
+            if (test(item)) {
                 output.push(item);
             } else {
                 output.inverse.push(item);
@@ -442,19 +403,6 @@
             return split(tabs, filter);
         };
     };
-/*
-    action.output = function (string) {
-        ignore = {};
-
-        var filter = parser.output(string);
-
-        return function (item) {
-            tabs = [ item ];
-            cache = {};
-
-            return filter(item);
-        };
-    };*/
 
     action.search = function (array, string) {
         return action.parse(string)(array);
