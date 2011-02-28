@@ -233,14 +233,14 @@ var state = {
             action.type("title", {
                 hooks: ["tab-create", "tab-update", "tab-attach"],
                 sort: function (a, b) {
-                    return a.tab.title.localeCompare(b.tab.title);
+                    return action.comp(a.tab.title, b.tab.title);
                 }
             });
 
             action.type("url", {
                 hooks: ["tab-create", "tab-update", "tab-attach"],
                 sort: function (a, b) {
-                    return a.tab.url.localeCompare(b.tab.url);
+                    return action.comp(a.tab.url, b.tab.url);
                 }
             });
         }
