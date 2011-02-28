@@ -181,13 +181,27 @@ Tab = {
                                         list: range
                                     });
 
-                                    var text = "You selected " +
-                                                range.length +
-                                                (range.length === 1
-                                                    ? " tab."
-                                                    : " tabs.");
+                                    var text = [];
 
-                                    state.undoBar.show(text);
+                                    text.push(Platform.i18n.message("undo_message_selected"));
+
+                                    text.push(range.length);
+//
+//                                    var text =  +
+//                                                range.length +
+//                                                (range.length === 1
+//                                                    ? " tab."
+//                                                    : " tabs.");
+
+                                    text.push(Platform.i18n.message("global_tab"));
+
+                                    if (range.length !== 1) {
+                                        text.push(Platform.i18n.message("global_plural"));
+                                    }
+
+                                    text.push(Platform.i18n.message("global_end"));
+
+                                    state.undoBar.show(text.join(""));
                                 }
                             } else {
                                 delete parent.queue.shiftNode;
@@ -328,7 +342,7 @@ Tab = {
 
                 favorite: UI.create("div", function (element) {
                     element.className = "tab-favorite";
-                    element.title = "Favorite this tab";
+                    element.title = Platform.i18n.message("tab_favorite");
 
                     element.addEventListener("click", events.stop, true);
 
@@ -384,7 +398,7 @@ Tab = {
 
                 close: UI.create("div", function (element) {
                     element.className = "tab-button-close";
-                    element.title = "Close (Alt Click)";
+                    element.title = Platform.i18n.message("tab_close") + "(Alt Click)";
                     element.draggable = true;
 
                     element.addEventListener("dragstart", events.disable, true);
@@ -657,19 +671,19 @@ Window = {
                         text.push(" (");
                         text.push(length);
 
-                        if (length === 1) {
-                            text.push(" tab)");
-                        } else {
-                            text.push(" tabs)");
+                        text.push(Platform.i18n.message("global_tab"));
+
+                        if (length !== 1) {
+                            text.push(Platform.i18n.message("global_plural"));
                         }
+
+                        text.push(")");
 
                         element.title = text.join("");
                     } else {
                         element.title = "";
                     }
                 };
-
-                container.updateTooltip();
 
 
                 function invalid(element, event) {
@@ -714,6 +728,7 @@ Window = {
 
                             element.value = action.returnTitle(index);
 
+
                             Object.defineProperty(win, "title", {
                                 get: function () {
                                     return element.value;
@@ -730,6 +745,9 @@ Window = {
                                 },
                                 configurable: true
                             });
+
+                            container.updateTooltip();
+
 
                             function select() {
                                 if (this.selectionStart === this.selectionEnd) {
@@ -765,9 +783,10 @@ Window = {
                                         });
 
                                         var text =
-                                                "You renamed the window \"" +
-                                                this.value +
-                                                "\".";
+                                                Platform.i18n.message("undo_message_rename") +
+                                                Platform.i18n.message("global_window") +
+                                                " \"" + this.value + "\"" +
+                                                Platform.i18n.message("global_end");
 
                                         state.undoBar.show(text);
                                     }
@@ -799,7 +818,7 @@ Window = {
 
             container.appendChild(UI.create("div", function (element) {
                 element.className = "tab-icon-dropdown";
-                element.title = "Open menu (Ctrl M)";
+                element.title = Platform.i18n.message("window_menu_open") + "(Ctrl M)";
 
                 var contextMenu = UI.contextMenu(function (menu) {
                     element.addEventListener("mousedown", function (event) {
@@ -852,7 +871,7 @@ Window = {
                     menu.addItem("Input <u>M</u>ethods").disable();
                     return;*/
 
-                    menu.addItem("New <u>T</u>ab", {
+                    menu.addItem(Platform.i18n.message("window_menu_new_tab"), {
                         keys: ["T"],
                         action: function () {
                             Platform.tabs.create({
@@ -862,7 +881,9 @@ Window = {
                                     Undo.push("new-tab", {
                                         tab: tab
                                     });
-                                    state.undoBar.show("You created a new tab.");
+                                    state.undoBar.show(Platform.i18n.message("undo_message_create_new") +
+                                                       Platform.i18n.message("global_tab") +
+                                                       Platform.i18n.message("global_end"));
                                 }
                             });
                         }
@@ -870,7 +891,7 @@ Window = {
 
                     menu.separator();
 
-                    menu.addItem("<u>R</u>ename window", {
+                    menu.addItem(Platform.i18n.message("window_menu_rename_window"), {
                         keys: ["R"],
                         action: function (event) {
                             event.preventDefault();
@@ -880,7 +901,7 @@ Window = {
 
                     menu.separator();
 
-                    menu.addItem("Select <u>a</u>ll", {
+                    menu.addItem(Platform.i18n.message("window_menu_select_all"), {
                         keys: ["A"],
                         onshow: function (menu) {
                             var queue = container.tabList.queue.length;
@@ -912,18 +933,28 @@ Window = {
                                         list: range
                                     });
 
-                                    if (range.length === 1) {
-                                        state.undoBar.show("You selected " + range.length + " tab.");
-                                    } else {
-                                        state.undoBar.show("You selected " + range.length + " tabs.");
+                                    var text = [];
+
+                                    text.push(Platform.i18n.message("undo_message_selected"));
+
+                                    text.push(range.length);
+
+                                    text.push(Platform.i18n.message("global_tab"));
+
+                                    if (range.length !== 1) {
+                                        text.push(Platform.i18n.message("global_plural"));
                                     }
+
+                                    text.push(Platform.i18n.message("global_end"));
+
+                                    state.undoBar.show(text.join(""));
                                 }
                             }
                             delete container.tabList.queue.shiftNode;
                         }
                     });
 
-                    menu.addItem("Select <u>n</u>one", {
+                    menu.addItem(Platform.i18n.message("window_menu_select_none"), {
                         keys: ["N"],
                         onshow: function (menu) {
                             if (container.tabList.queue.length) {
@@ -952,11 +983,21 @@ Window = {
                                         list: range
                                     });
 
-                                    if (range.length === 1) {
-                                        state.undoBar.show("You unselected " + range.length + " tab.");
-                                    } else {
-                                        state.undoBar.show("You unselected " + range.length + " tabs.");
+                                    var text = [];
+
+                                    text.push(Platform.i18n.message("undo_message_unselected"));
+
+                                    text.push(range.length);
+
+                                    text.push(Platform.i18n.message("global_tab"));
+
+                                    if (range.length !== 1) {
+                                        text.push(Platform.i18n.message("global_plural"));
                                     }
+
+                                    text.push(Platform.i18n.message("global_end"));
+
+                                    state.undoBar.show(text.join(""));
                                 }
                             }
                             delete container.tabList.queue.shiftNode;
@@ -965,7 +1006,7 @@ Window = {
 
                     menu.separator();
 
-                    menu.submenu("<u>S</u>elected...", {
+                    menu.submenu(Platform.i18n.message("window_menu_selected"), {
                         keys: ["S"],
                         onshow: function (menu) {
                             if (container.tabList.queue.length) {
@@ -975,7 +1016,7 @@ Window = {
                             }
                         },
                         create: function (menu) {
-                            menu.addItem("Re<u>l</u>oad selected", {
+                            menu.addItem(Platform.i18n.message("window_menu_selected_reload"), {
                                 keys: ["L"],
                                 action: function () {
                                     container.tabList.queue.forEach(function (item) {
@@ -989,7 +1030,7 @@ Window = {
                             });
 
 
-                            menu.addItem("<u>C</u>lose selected", {
+                            menu.addItem(Platform.i18n.message("window_menu_selected_close"), {
                                 keys: ["C"],
                                 action: function () {
                                     container.tabList.queue.forEach(function (item) {
@@ -1003,7 +1044,7 @@ Window = {
 
                             menu.separator();
 
-                            menu.addItem("<u>F</u>avorite selected", {
+                            menu.addItem(Platform.i18n.message("window_menu_selected_favorite"), {
                                 keys: ["F"],
                                 onshow: function (menu) {
                                     var some = container.tabList.queue.some(function (item) {
@@ -1026,7 +1067,7 @@ Window = {
                                 }
                             });
 
-                            menu.addItem("<u>U</u>nfavorite selected", {
+                            menu.addItem(Platform.i18n.message("window_menu_selected_unfavorite"), {
                                 keys: ["U"],
                                 onshow: function (menu) {
                                     var some = container.tabList.queue.some(function (item) {
@@ -1052,7 +1093,7 @@ Window = {
 
                     menu.separator();
 
-                    menu.submenu("<u>M</u>ove selected to...", {
+                    menu.submenu(Platform.i18n.message("window_menu_move_selected_to"), {
                         keys: ["M"],
                         onshow: function (menu) {
                             if (container.tabList.queue.length) {
@@ -1064,7 +1105,8 @@ Window = {
                         onopen: function (menu) {
                             menu.clear();
 
-                            menu.addItem("New Window", {
+                            menu.addItem(Platform.i18n.message("toolbar_menu_new_window"), {
+                                keys: ["N"],
                                 action: function () {
                                     Window.create(container.tabList.queue);
                                 }

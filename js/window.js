@@ -1,6 +1,8 @@
 /*global action, events, localStorage, Options, Platform, Queue, Tab, UI, Undo, Window */
 "use strict";
 
+document.title = Platform.i18n.message("global_extension_name");
+
 if (Options.get("popup.type") === "bubble") {
     document.body.style.width = Options.get("popup.width") + "px";
     document.body.style.height = Options.get("popup.height") + "px";
@@ -366,7 +368,8 @@ fragment.appendChild(UI.create("div", function (toolbar) {
     toolbar.appendChild(UI.create("button", function (element) {
         element.id = "button-menu";
         element.className = "Options-button";
-        element.textContent = "Menu";
+        element.title = "(Ctrl M)";
+        element.textContent = Platform.i18n.message("button_toolbar_menu");
         element.tabIndex = 1;
 
         element.appendChild(UI.create("img", function (element) {
@@ -416,7 +419,7 @@ fragment.appendChild(UI.create("div", function (toolbar) {
             }, false);
 
 
-            menu.addItem("<u>N</u>ew Window", {
+            menu.addItem(Platform.i18n.message("toolbar_menu_new_window"), {
                 keys: ["N"],
                 ondrop: function () {
                     Window.create(state.currentQueue);
@@ -426,97 +429,6 @@ fragment.appendChild(UI.create("div", function (toolbar) {
                 }
             });
 
-            menu.separator();
-
-            menu.submenu("Sort <u>t</u>abs by...", {
-                keys: ["T"],
-                onopen: function (menu) {
-                    menu.clear();
-
-                    var keys = {
-                        "index <": "<u>D</u>efault",
-
-                        "title <": "Title <",
-                        "title >": "Title >",
-
-                        "url <": "URL <",
-                        "url >": "URL >"
-                    };
-
-                    var type = Options.get("tabs.sort.type");
-                    keys[type] = "<strong>" + keys[type] + "</strong>";
-
-                    function item(name, key) {
-                        if (key) {
-                            key = [ key ];
-                        }
-                        menu.addItem(keys[name], {
-                            keys: key,
-                            action: function () {
-                                state.sortTabs(name);
-                            }
-                        });
-                    }
-
-                    item("index <", "D");
-
-                    menu.separator();
-
-                    item("url <");
-                    item("url >");
-
-                    menu.separator();
-
-                    item("title <");
-                    item("title >");
-                }
-            });
-
-            menu.space();
-
-            menu.submenu("Sort <u>w</u>indows by...", {
-                keys: ["W"],
-                onopen: function (menu) {
-                    menu.clear();
-
-                    var keys = {
-                        "date-created <": "<u>D</u>efault",
-
-                        "name <": "Name <",
-                        "name >": "Name >",
-
-                        "tab-number <": "Number of tabs <",
-                        "tab-number >": "Number of tabs >"
-                    };
-
-                    var type = Options.get("windows.sort.type");
-                    keys[type] = "<strong>" + keys[type] + "</strong>";
-
-                    function item(name, key) {
-                        if (key) {
-                            key = [ key ];
-                        }
-                        menu.addItem(keys[name], {
-                            keys: key,
-                            action: function () {
-                                state.sortWindows(name);
-                            }
-                        });
-                    }
-
-                    item("date-created <", "D");
-
-                    menu.separator();
-
-                    item("name <");
-                    item("name >");
-
-                    menu.separator();
-
-                    item("tab-number <");
-                    item("tab-number >");
-                }
-            });
 
             menu.separator();
 
@@ -614,42 +526,47 @@ fragment.appendChild(UI.create("div", function (toolbar) {
                     var text = [];
 
                     if (moved.length) {
-                        text.push("You moved ", moved.length, " tab");
+                        text.push(Platform.i18n.message("undo_message_move"),
+                                  moved.length,
+                                  Platform.i18n.message("global_tab"));
 
                         if (moved.length !== 1) {
-                            text.push("s");
+                            text.push(Platform.i18n.message("global_plural"));
                         }
 
 //!                        text.push(" and closed ", closed.length, " tab");
 //!                        if (closed.length !== 1) {
 //!                            text.push("s");
 //!                        }
-                        text.push(".");
+                        text.push(Platform.i18n.message("global_end"));
 
                         state.undoBar.show(text.join(""));
 
                     } else if (closed.length) {
-                        text.push("You closed ", closed.length, " tab");
+                        text.push(Platform.i18n.message("undo_message_closed"),
+                                  closed.length,
+                                  Platform.i18n.message("global_tab"));
 
                         if (closed.length !== 1) {
-                            text.push("s");
+                            text.push(Platform.i18n.message("global_plural"));
                         }
 
 //!                        text.push(" and closed ", closed.length, " tab");
 //!                        if (closed.length !== 1) {
 //!                            text.push("s");
 //!                        }
-                        text.push(".");
+                        text.push(Platform.i18n.message("global_end"));
 
                         state.undoBar.show(text.join(""), { undo: false });
 
                     } else {
-                        state.undoBar.show("Nothing changed.", { undo: false });
+                        state.undoBar.show(Platform.i18n.message("undo_message_noop") +
+                                           Platform.i18n.message("global_end"), { undo: false });
                     }
                 };
             }());
 
-            menu.submenu("<u>M</u>acros...", {
+            menu.submenu(Platform.i18n.message("toolbar_menu_macros"), {
                 keys: ["M"],
                 onshow: function (menu) {
                     if (state.macros.length) {
@@ -661,7 +578,7 @@ fragment.appendChild(UI.create("div", function (toolbar) {
                 onopen: function (menu) {
                     menu.clear();
 
-                    menu.addItem("<u>A</u>pply all macros", {
+                    menu.addItem(Platform.i18n.message("toolbar_menu_macros_apply_all"), {
                         keys: ["A"],
                         action: function () {
                             perform(state.macros);
@@ -677,25 +594,32 @@ fragment.appendChild(UI.create("div", function (toolbar) {
 
                         var text = [];
 
-                        text.push(item.action);
+                        var keys = {
+                            "ignore": Platform.i18n.message("toolbar_menu_macros_ignore"),
+                            "require": Platform.i18n.message("toolbar_menu_macros_require"),
+                            "move": Platform.i18n.message("toolbar_menu_macros_move"),
+                            "close": Platform.i18n.message("toolbar_menu_macros_close"),
+                        };
+
+                        text.push(keys[item.action]);
 
                         if (item.search) {
                             text.push("<strong>" + item.search + "</strong>");
                         } else {
-                            text.push("all tabs");
+                            text.push(Platform.i18n.message("toolbar_menu_macros_all_tabs"));
                         }
 
                         if (item.action === "move") {
-                            text.push("to");
+                            text.push(Platform.i18n.message("toolbar_menu_macros_to"));
                         } else if (item.action === "require") {
-                            text.push("in");
+                            text.push(Platform.i18n.message("toolbar_menu_macros_in"));
                         }
 
                         if (item.action !== "close" && item.action !== "ignore") {
                             if (item.window) {
                                 text.push('"' + item.window + '"');
                             } else {
-                                text.push("new window");
+                                text.push(Platform.i18n.message("toolbar_menu_macros_new_window"));
                             }
                         }
 
@@ -707,6 +631,100 @@ fragment.appendChild(UI.create("div", function (toolbar) {
                     });
                 }
             });
+
+
+            menu.separator();
+
+
+            menu.submenu(Platform.i18n.message("toolbar_menu_sort_tabs"), {
+                keys: ["T"],
+                onopen: function (menu) {
+                    menu.clear();
+
+                    var keys = {
+                        "index <": Platform.i18n.message("toolbar_menu_sort_default"),
+
+                        "title <": Platform.i18n.message("toolbar_menu_sort_tabs_title_lt"),
+                        "title >": Platform.i18n.message("toolbar_menu_sort_tabs_title_gt"),
+
+                        "url <": Platform.i18n.message("toolbar_menu_sort_tabs_url_lt"),
+                        "url >": Platform.i18n.message("toolbar_menu_sort_tabs_url_gt"),
+                    };
+
+                    var type = Options.get("tabs.sort.type");
+                    keys[type] = "<strong>" + keys[type] + "</strong>";
+
+                    function item(name, key) {
+                        if (key) {
+                            key = [ key ];
+                        }
+                        menu.addItem(keys[name], {
+                            keys: key,
+                            action: function () {
+                                state.sortTabs(name);
+                            }
+                        });
+                    }
+
+                    item("index <", "D");
+
+                    menu.separator();
+
+                    item("url <");
+                    item("url >");
+
+                    menu.separator();
+
+                    item("title <");
+                    item("title >");
+                }
+            });
+
+            menu.space();
+
+            menu.submenu(Platform.i18n.message("toolbar_menu_sort_windows"), {
+                keys: ["W"],
+                onopen: function (menu) {
+                    menu.clear();
+
+                    var keys = {
+                        "date-created <": Platform.i18n.message("toolbar_menu_sort_default"),
+
+                        "name <": Platform.i18n.message("toolbar_menu_sort_windows_name_lt"),
+                        "name >": Platform.i18n.message("toolbar_menu_sort_windows_name_gt"),
+
+                        "tab-number <": Platform.i18n.message("toolbar_menu_sort_windows_tab_number_lt"),
+                        "tab-number >": Platform.i18n.message("toolbar_menu_sort_windows_tab_number_gt"),
+                    };
+
+                    var type = Options.get("windows.sort.type");
+                    keys[type] = "<strong>" + keys[type] + "</strong>";
+
+                    function item(name, key) {
+                        if (key) {
+                            key = [ key ];
+                        }
+                        menu.addItem(keys[name], {
+                            keys: key,
+                            action: function () {
+                                state.sortWindows(name);
+                            }
+                        });
+                    }
+
+                    item("date-created <", "D");
+
+                    menu.separator();
+
+                    item("name <");
+                    item("name >");
+
+                    menu.separator();
+
+                    item("tab-number <");
+                    item("tab-number >");
+                }
+            });
         }));
     }));
 
@@ -714,7 +732,7 @@ fragment.appendChild(UI.create("div", function (toolbar) {
     toolbar.appendChild(UI.link(function (element) {
         element.href = "/options.html";
         element.target = "_blank";
-        element.textContent = "Options";
+        element.textContent = Platform.i18n.message("toolbar_options");
         element.tabIndex = 1;
     }));
 
@@ -727,7 +745,7 @@ fragment.appendChild(UI.create("div", function (toolbar) {
         element.href = "http://documentation.tab-organizer.googlecode.com/hg/Tab%20Organizer%20FAQ.html";
         element.target = "_blank";
 
-        element.textContent = "FAQ";
+        element.textContent = Platform.i18n.message("toolbar_faq");
         element.tabIndex = 1;
     }));
 
@@ -812,7 +830,7 @@ fragment.appendChild(UI.create("div", function (toolbar) {
             container.appendChild(UI.link(function (element) {
                 element.id = "Undo-bar-button";
                 element.title = "(Ctrl Z)";
-                element.textContent = "Undo";
+                element.textContent = Platform.i18n.message("toolbar_undo_link");
                 element.tabIndex = 1;
 
                 var should = true;
@@ -880,7 +898,7 @@ fragment.appendChild(UI.create("div", function (toolbar) {
         input.setAttribute("spellcheck", "false");
         input.setAttribute("results", "");
         input.setAttribute("incremental", "");
-        input.setAttribute("placeholder", "Search");
+        input.setAttribute("placeholder", Platform.i18n.message("toolbar_search_placeholder"));
 
         input.id = "search-input";
         input.title = "(Ctrl F)";
@@ -1028,14 +1046,25 @@ fragment.appendChild(UI.create("div", function (toolbar) {
             var length, string = [ cache.title, " (" ];
 
             length = results.length;
-            string.push(length, (length === 1
-                                  ? " tab in "
-                                  : " tabs in "));
+            string.push(length, Platform.i18n.message("global_tab"));
+
+            if (length !== 1) {
+                string.push(Platform.i18n.message("global_plural"));
+            }
+
+
+            string.push(Platform.i18n.message("title_in"));
+
 
             length = list.length;
-            string.push(length, (length === 1
-                                  ? " window)"
-                                  : " windows)"));
+            string.push(length, Platform.i18n.message("global_window"));
+
+            if (length !== 1) {
+                string.push(Platform.i18n.message("global_plural"));
+            }
+
+
+            string.push(")");
 
             document.title = string.join("");
 
@@ -1411,10 +1440,10 @@ fragment.appendChild(UI.create("div", function (toolbar) {
         }
 
         Options.event.on("change", function (event) {
-            var windows = (event.name === "windows.sort.type"),
-                tabs    = (event.name === "tabs.sort.type");
+            if (event.name === "tabs.sort.type") {
+                state.search({ scroll: true, nodelay: true });
 
-            if (windows || tabs) {
+            } else if (event.name === "windows.sort.type") {
                 state.search({ focused: true, scroll: true, nodelay: true });
             }
         });
