@@ -84,7 +84,7 @@ Tab = {
                 state.search();
             };
 
-            container.addEventListener("DOMNodeRemovedFromDocument", container.queueRemove, true); //! Hacky
+//!            container.addEventListener("DOMNodeRemovedFromDocument", container.queueRemove, true); //! Hacky
 
 
             var url = UI.create("span", function (element) {

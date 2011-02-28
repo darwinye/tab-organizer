@@ -258,26 +258,29 @@
 
     parser.prefix({ priority: 20, token: "same:",
         output: dictionary({
-            "domain": (function () {
-                var regexp = /^[^:]+:\/\/([^\/]*)/;
+            "domain": /*//(function () {
+//                var regexp = /^[^:]+:\/\/([^\/]*)/;
 
-                return function (item) {
-                    if (!cache.domain) {
-                        cache.domain = {};
+            return */function (item) {
+                if (!cache.domain) {
+                    cache.domain = {};
 
-                        tabs.forEach(function (item) {
-                            var url = regexp.exec(item.tab.url);
-                            if (url) {
-                                url = url[1];
-                                cache.domain[url] = cache.domain[url] + 1 || 1;
-                            }
-                        });
-                    }
+                    tabs.forEach(function (item) {
+//                            var url = regexp.exec(item.tab.url);
+//                            if (url) {
+//                                url = url[1];
+//                                cache.domain[url] = cache.domain[url] + 1 || 1;
+//                            }
+                        var url = item.tab.domain;
+                        cache.domain[url] = cache.domain[url] + 1 || 1;
+                    });
+                }
 
-                    var url = regexp.exec(item.tab.url)[1];
-                    return cache.domain[url] > 1;
-                };
-            }()),
+//                    var url = regexp.exec(item.tab.url)[1];
+//                var url = item.tab.domain;
+                return cache.domain[item.tab.domain] > 1;
+            },
+//            }()),
 
             "title": function (item) {
                 if (!cache.titles) {

@@ -7,6 +7,109 @@ if (Options.get("popup.type") === "bubble") {
 }
 
 
+function sorter(info) {
+    var sorters = {};
+
+    var addHooks = {},
+        remHooks = {};
+
+    var action = {};
+
+    function hook(name, events) {
+        function fn() {
+            info.sort(action, sorters[name]);
+        }
+
+        addHooks[name] = function () {
+            events.forEach(function (event) {
+                Platform.event.on(event, fn);
+            });
+        };
+
+        remHooks[name] = function () {
+            events.forEach(function (event) {
+                Platform.event.remove(event, fn);
+            });
+        };
+    }
+
+    function reverse(func) {
+        return function (a, b) {
+            var n = func(a, b);
+//            return (n < 0
+//                     ? 1
+//                     : (n > 0
+//                         ? -1
+//                         : n));
+            if (n < 0) {
+                return 1;
+            } else if (n > 0) {
+                return -1;
+            }
+            return n;
+        };
+    }
+//
+//    (def reverse (f)
+//      (fn (a b)
+//        (let n (f a b)
+//          (if (< n 0) 1
+//              (> n 0) -1
+//                      n))))
+
+    function addtype(name, info, rev) {
+        sorters[name] = (rev
+                          ? reverse(info.sort)
+                          : info.sort);
+
+        if (info.hooks) {
+            hook(name, info.hooks);
+        }
+    }
+
+    action.type = function (name, info) {
+        addtype(name + " <", info);
+        addtype(name + " >", info, true);
+    };
+
+    action.rearrange = function (list, parent) {
+        var fragment = document.createDocumentFragment();
+
+        list.forEach(function (item, i) {
+//!            item.style.webkitBoxOrdinalGroup = i + 1;
+//!            item.style.zIndex = i;
+            fragment.appendChild(item);
+        });
+
+        parent.appendChild(fragment);
+    };
+
+    action.comp = function (a, b) {
+        return a.toLowerCase().localeCompare(b.toLowerCase());
+    };
+
+    info.init(action);
+//
+//    console.log(sorters);
+
+    return function (name) {
+        var type = Options.get(info.name);
+        if (remHooks[type]) {
+            remHooks[type]();
+        }
+
+        if (sorters[name]) {
+            if (addHooks[name]) {
+                addHooks[name]();
+            }
+
+            info.sort(action, sorters[name]);
+            Options.set(info.name, name);
+        }
+    };
+}
+
+
 var state = {
     event: KAE.make.events(),
     titles: Options.get("windows.titles"),
@@ -21,113 +124,6 @@ var state = {
     tabsByURL: {},
     visitedByURL: Options.get("tabs.visited.byURL"),
     indent: Options.get("windows.tab-indent"),
-
-    sortWindows: (function () {
-        function rearrange() {
-            var fragment = document.createDocumentFragment();
-            state.sorted.forEach(function (item) {
-                fragment.appendChild(item);
-            });
-            state.windowList.appendChild(fragment);
-        }
-
-        function sort(func) {
-            state.sorted = KAE.array.stablesort(state.list, func);
-            rearrange();
-        }
-
-        function comp(a, b) {
-            return a.toLowerCase().localeCompare(b.toLowerCase());
-        }
-
-        var sorters = {
-            "date-created": function () {
-                state.sorted = state.list;
-                rearrange();
-            },
-
-            "name <": function () {
-                sort(function (a, b) {
-                    var test = a.window.title - b.window.title;
-
-                    if (isNaN(test)) {
-                        test = comp(a.window.title, b.window.title);
-                    }
-
-                    return test;
-                });
-            },
-            "name >": function () {
-                sort(function (a, b) {
-                    var test = b.window.title - a.window.title;
-
-                    if (isNaN(test)) {
-                        test = comp(b.window.title, a.window.title);
-                    }
-
-                    return test;
-                });
-            },
-
-            "tab-number <": function () {
-                sort(function (a, b) {
-                    return a.window.tabs.length -
-                           b.window.tabs.length;
-                });
-            },
-            "tab-number >": function () {
-                sort(function (a, b) {
-                    return b.window.tabs.length -
-                           a.window.tabs.length;
-                });
-            },
-        };
-
-        var addHooks = {},
-            remHooks = {};
-
-        ["tab-number <", "tab-number >"].forEach(function (name) {
-            addHooks[name] = function () {
-                Platform.event.on("tab-create", sorters[name]);
-                Platform.event.on("tab-remove", sorters[name]);
-                Platform.event.on("tab-attach", sorters[name]);
-            };
-
-            remHooks[name] = function () {
-                Platform.event.remove("tab-create", sorters[name]);
-                Platform.event.remove("tab-remove", sorters[name]);
-                Platform.event.remove("tab-attach", sorters[name]);
-            };
-        });
-
-        ["name <", "name >"].forEach(function (name) {
-            addHooks[name] = function () {
-                Platform.event.on("window-create", sorters[name]);
-                Platform.event.on("window-rename", sorters[name]);
-            };
-
-            remHooks[name] = function () {
-                Platform.event.remove("window-create", sorters[name]);
-                Platform.event.remove("window-rename", sorters[name]);
-            };
-        });
-
-        return function (name) {
-            var type = Options.get("windows.sort.type");
-            if (remHooks[type]) {
-                remHooks[type]();
-            }
-
-            if (addHooks[name]) {
-                addHooks[name]();
-            }
-
-            if (sorters[name]) {
-                sorters[name]();
-                Options.set("windows.sort.type", name);
-            }
-        };
-    }()),
 
     createSearchList: function () {
         return Array.slice(document.getElementsByClassName("tab"));
@@ -183,7 +179,86 @@ var state = {
                 }
             }
         };
-    })
+    }),
+
+
+    sortWindows: sorter({
+        name: "windows.sort.type",
+
+        sort: function (action, func) {
+            state.sorted = KAE.array.stablesort(state.list, func);
+            action.rearrange(state.sorted, state.windowList);
+        },
+
+        init: function (action) {
+            action.type("date-created", {
+                sort: function (a, b) {
+                    return a.window.index -
+                           b.window.index;
+                }
+//!                function () {
+//!                    state.sorted = state.list;
+//!                    action.rearrange(state.sorted, state.windowList);
+//!                }
+            });
+
+            action.type("tab-number", {
+                hooks: ["tab-create", "tab-remove", "tab-attach"],
+                sort: function (a, b) {
+                    return a.window.tabs.length -
+                           b.window.tabs.length;
+                }
+            });
+
+            action.type("name", {
+                hooks: ["window-create", "window-rename"],
+                sort: function (a, b) {
+                    var test = a.window.title - b.window.title;
+
+                    if (isNaN(test)) {
+                        test = action.comp(a.window.title, b.window.title);
+                    }
+
+                    return test;
+                }
+            });
+        }
+    }),
+
+
+    sortTabs: sorter({
+        name: "tabs.sort.type",
+
+        sort: function (action, func) {
+            state.list.forEach(function (item) {
+                var array = Array.slice(item.tabList.children);
+                array = KAE.array.stablesort(array, func);
+                action.rearrange(array, item.tabList);
+            });
+        },
+
+        init: function (action) {
+            action.type("index", {
+                sort: function (a, b) {
+                    return a.tab.index - b.tab.index;
+                }
+            });
+
+            action.type("title", {
+                hooks: ["tab-create", "tab-update", "tab-attach"],
+                sort: function (a, b) {
+                    return a.tab.title.localeCompare(b.tab.title);
+                }
+            });
+
+            action.type("url", {
+                hooks: ["tab-create", "tab-update", "tab-attach"],
+                sort: function (a, b) {
+                    return a.tab.url.localeCompare(b.tab.url);
+                }
+            });
+        }
+    }),
 };
 
 state.sorted = state.list;
@@ -340,6 +415,52 @@ fragment.appendChild(UI.create("div", function (toolbar) {
                 }
             });
 
+            menu.separator();
+
+            menu.submenu("Sort <u>t</u>abs by...", {
+                keys: ["T"],
+                onopen: function (menu) {
+                    menu.clear();
+
+                    var keys = {
+                        "index <": "<u>D</u>efault",
+
+                        "title <": "Title <",
+                        "title >": "Title >",
+
+                        "url <": "URL <",
+                        "url >": "URL >"
+                    };
+
+                    var type = Options.get("tabs.sort.type");
+                    keys[type] = "<strong>" + keys[type] + "</strong>";
+
+                    function item(name, key) {
+                        if (key) {
+                            key = [ key ];
+                        }
+                        menu.addItem(keys[name], {
+                            keys: key,
+                            action: function () {
+                                state.sortTabs(name);
+                            }
+                        });
+                    }
+
+                    item("index <", "D");
+
+                    menu.separator();
+
+                    item("url <");
+                    item("url >");
+
+                    menu.separator();
+
+                    item("title <");
+                    item("title >");
+                }
+            });
+
             menu.space();
 
             menu.submenu("Sort <u>w</u>indows by...", {
@@ -348,7 +469,7 @@ fragment.appendChild(UI.create("div", function (toolbar) {
                     menu.clear();
 
                     var keys = {
-                        "date-created": "<u>D</u>efault",
+                        "date-created <": "<u>D</u>efault",
 
                         "name <": "Name <",
                         "name >": "Name >",
@@ -372,7 +493,7 @@ fragment.appendChild(UI.create("div", function (toolbar) {
                         });
                     }
 
-                    item("date-created", "D");
+                    item("date-created <", "D");
 
                     menu.separator();
 
@@ -385,48 +506,6 @@ fragment.appendChild(UI.create("div", function (toolbar) {
                     item("tab-number >");
                 }
             });
-
-            /*! menu.submenu("Sort <u>t</u>abs by...", {
-                keys: ["T"],
-                onopen: function (menu) {
-                    menu.clear();
-
-                    var keys = {
-                        "index": "<u>D</u>efault",
-                        "title >": "Title >",
-                        "title <": "Title <",
-                        "url >": "URL >",
-                        "url <": "URL <"
-                    };
-
-                    var type = Options.get("tabs.sort.type");
-                    keys[type] = "<strong>" + keys[type] + "</strong>";
-
-                    function item(name, key) {
-                        if (key) {
-                            key = [ key ];
-                        }
-                        menu.addItem(keys[name], {
-                            keys: key,
-                            action: function () {
-                                state.sortTabs(name);
-                            }
-                        });
-                    }
-
-                    item("index", "D");
-
-                    menu.separator();
-
-                    item("title >");
-                    item("title <");
-
-                    menu.separator();
-
-                    item("url >");
-                    item("url <");
-                }
-            });*/
 
             menu.separator();
 
@@ -975,12 +1054,12 @@ fragment.appendChild(UI.create("div", function (toolbar) {
                 search(state.sorted, info);
             }
 
+            clearTimeout(anon.timer);
+
             if (info.nodelay) {
                 wrapper();
             } else {
-                clearTimeout(anon.timer);
-
-                anon.timer = setTimeout(wrapper, 0);
+                anon.timer = setTimeout(wrapper, 500);
             }
         };
 
@@ -1478,14 +1557,24 @@ fragment.appendChild(UI.create("div", function (toolbar) {
     function init() {
         state.createView(windows);
 
-        var type = Options.get("windows.sort.type");
-        if (type !== "date-created") {
+        var type;
+
+        type = Options.get("windows.sort.type");
+        if (type !== "date-created <") {
             state.sortWindows(type);
         }
 
+        type = Options.get("tabs.sort.type");
+        if (type !== "index <") {
+            state.sortTabs(type);
+        }
+
         Options.event.on("change", function (event) {
-            if (event.name === "windows.sort.type") {
-                state.search({ focused: true, nodelay: true });
+            var windows = (event.name === "windows.sort.type"),
+                tabs    = (event.name === "tabs.sort.type");
+
+            if (windows || tabs) {
+                state.search({ focused: true, scroll: true, nodelay: true });
             }
         });
 
@@ -1509,8 +1598,8 @@ fragment.appendChild(UI.create("div", function (toolbar) {
 
         Options.event.on("change", function (event) {
             var treestyle = (event.name === "tabs.tree-style.enabled"),
-                location = (event.name === "tabs.close.location"),
-                display = (event.name === "tabs.close.display");
+                location  = (event.name === "tabs.close.location"),
+                display   = (event.name === "tabs.close.display");
 
             if (treestyle || location || display) {
                 var query = document.querySelectorAll(".tab");

@@ -40,12 +40,13 @@
             "tabs.close.display": "hover",
             "tabs.click.type": "focus",
             "tabs.tree-style.enabled": true,
+            "tabs.sort.type": "index <",
 
             "windows.middle-close": false,
             "windows.type": "horizontal",
             "windows.grid.columns": 3,
             "windows.grid.rows": 1.5,
-            "windows.sort.type": "date-created",
+            "windows.sort.type": "date-created <",
 
             "counter.enabled": true,
             "counter.type": "total",
@@ -74,15 +75,29 @@
         Options.setArray("macros.list");
 
 
-        if (Options.get("counter.reset.time.hour") === 0) {
-            Options.set("counter.reset.time.hour", "00");
-        }
-        if (Options.get("counter.reset.time.minute") === 0) {
-            Options.set("counter.reset.time.minute", "00");
-        }
-        if (Options.get("windows.sort.type") === "tab-number") {
-            Options.set("windows.sort.type", "tab-number >");
-        }
+        (function () {
+            var hour = Options.get("counter.reset.time.hour");
+            if (hour === "0" || hour === 0) {
+                Options.set("counter.reset.time.hour", "00");
+            }
+
+            var minute = Options.get("counter.reset.time.minute");
+            if (minute === "0" || minute === 0) {
+                Options.set("counter.reset.time.minute", "00");
+            }
+
+            if (Options.get("windows.sort.type") === "date-created") {
+                Options.set("windows.sort.type", "date-created <");
+            }
+
+            if (Options.get("windows.sort.type") === "tab-number") {
+                Options.set("windows.sort.type", "tab-number >");
+            }
+
+            if (Options.get("tabs.close.display") === "always") {
+                Options.set("tabs.close.display", "every");
+            }
+        }());
 
 
         var config = Options.snapshot().user;
@@ -129,7 +144,7 @@
 
             "Windows": ["windows.type", "windows.grid.columns", "windows.grid.rows"],
 
-            "Statistics": ["windows.sort.type"],
+            "Statistics": ["windows.sort.type", "tabs.sort.type"],
         };
 
         Object.keys(categories).forEach(function (category) {
