@@ -88,47 +88,49 @@ Tab = {
 
 
             var url = UI.create("span", function (element) {
-                var url = tab.url;
-                try {
-                    url = decodeURI(url);
-                } catch (e) {}
-
-                var match = /^([^:]+)(:\/\/)([^\/]*)([^?#]*\/)([^#]*)(#.*)?$/.exec(url);
+//                var url = tab.url;
+//                try {
+//                    url = decodeURI(url);
+//                } catch (e) {}
+//
+//                var match = /^([^:]+)(:\/\/)([^\/]*)([^?#]*\/)([^#]*)(#.*)?$/.exec(url);
                 var secure = {
                     "https": true
                 };
+//
+//                var url = {};
 
-                if (match) {
-                    if (match[1] !== "http") {
-                        element.appendChild(UI.create("span", function (element) {
-                            element.className = "protocol";
-                            if (secure[match[1]]) {
-                                element.setAttribute("data-secure", "");
-                            }
-                            element.textContent = match[1];
-                        }));
-                        element.appendChild(document.createTextNode(match[2]));
-                    }
+//                if (match) {
+                if (tab.location.protocol !== "http") {
                     element.appendChild(UI.create("span", function (element) {
-                        element.className = "domain";
-                        element.textContent = match[3];
+                        element.className = "protocol";
+                        if (secure[tab.location.protocol]) {
+                            element.setAttribute("data-secure", "");
+                        }
+                        element.textContent = tab.location.protocol;
                     }));
-
-                    element.appendChild(document.createTextNode(match[4]));
-
-                    if (match[5]) {
-                        element.appendChild(UI.create("span", function (element) {
-                            element.className = "query";
-                            element.textContent = match[5];
-                        }));
-                    }
-                    if (match[6]) {
-                        element.appendChild(UI.create("span", function (element) {
-                            element.className = "fragment";
-                            element.textContent = match[6];
-                        }));
-                    }
+                    element.appendChild(document.createTextNode(tab.location.separator));
                 }
+                element.appendChild(UI.create("span", function (element) {
+                    element.className = "domain";
+                    element.textContent = tab.location.domain;
+                }));
+
+                element.appendChild(document.createTextNode(tab.location.path));
+
+                if (tab.location.query) {
+                    element.appendChild(UI.create("span", function (element) {
+                        element.className = "query";
+                        element.textContent = tab.location.query;
+                    }));
+                }
+                if (tab.location.hash) {
+                    element.appendChild(UI.create("span", function (element) {
+                        element.className = "fragment";
+                        element.textContent = tab.location.hash;
+                    }));
+                }
+//                }
             });
 
             container.addEventListener("mouseout", function (event) {
@@ -183,7 +185,7 @@ Tab = {
 
                                     var text = [];
 
-                                    text.push(Platform.i18n.message("undo_message_selected"));
+                                    text.push(Platform.i18n.get("undo_message_selected"));
 
                                     text.push(range.length);
 //
@@ -193,13 +195,13 @@ Tab = {
 //                                                    ? " tab."
 //                                                    : " tabs.");
 
-                                    text.push(Platform.i18n.message("global_tab"));
+                                    text.push(Platform.i18n.get("global_tab"));
 
                                     if (range.length !== 1) {
-                                        text.push(Platform.i18n.message("global_plural"));
+                                        text.push(Platform.i18n.get("global_plural"));
                                     }
 
-                                    text.push(Platform.i18n.message("global_end"));
+                                    text.push(Platform.i18n.get("global_end"));
 
                                     state.undoBar.show(text.join(""));
                                 }
@@ -342,7 +344,7 @@ Tab = {
 
                 favorite: UI.create("div", function (element) {
                     element.className = "tab-favorite";
-                    element.title = Platform.i18n.message("tab_favorite");
+                    element.title = Platform.i18n.get("tab_favorite");
 
                     element.addEventListener("click", events.stop, true);
 
@@ -398,7 +400,7 @@ Tab = {
 
                 close: UI.create("div", function (element) {
                     element.className = "tab-button-close";
-                    element.title = Platform.i18n.message("tab_close") + "(Alt Click)";
+                    element.title = Platform.i18n.get("tab_close") + "(Alt Click)";
                     element.draggable = true;
 
                     element.addEventListener("dragstart", events.disable, true);
@@ -654,6 +656,8 @@ Window = {
                 }
 
                 if (state.currentQueue) {
+                    state.search.delay(1000);
+
                     state.currentQueue.moveTabs(win, { index: index, child: !!node });
                 }
             }, true);
@@ -671,10 +675,10 @@ Window = {
                         text.push(" (");
                         text.push(length);
 
-                        text.push(Platform.i18n.message("global_tab"));
+                        text.push(Platform.i18n.get("global_tab"));
 
                         if (length !== 1) {
-                            text.push(Platform.i18n.message("global_plural"));
+                            text.push(Platform.i18n.get("global_plural"));
                         }
 
                         text.push(")");
@@ -783,10 +787,10 @@ Window = {
                                         });
 
                                         var text =
-                                                Platform.i18n.message("undo_message_rename") +
-                                                Platform.i18n.message("global_window") +
+                                                Platform.i18n.get("undo_message_rename") +
+                                                Platform.i18n.get("global_window") +
                                                 " \"" + this.value + "\"" +
-                                                Platform.i18n.message("global_end");
+                                                Platform.i18n.get("global_end");
 
                                         state.undoBar.show(text);
                                     }
@@ -818,7 +822,7 @@ Window = {
 
             container.appendChild(UI.create("div", function (element) {
                 element.className = "tab-icon-dropdown";
-                element.title = Platform.i18n.message("window_menu_open") + "(Ctrl M)";
+                element.title = Platform.i18n.get("window_menu_open") + "(Ctrl M)";
 
                 var contextMenu = UI.contextMenu(function (menu) {
                     element.addEventListener("mousedown", function (event) {
@@ -871,7 +875,7 @@ Window = {
                     menu.addItem("Input <u>M</u>ethods").disable();
                     return;*/
 
-                    menu.addItem(Platform.i18n.message("window_menu_new_tab"), {
+                    menu.addItem(Platform.i18n.get("window_menu_new_tab"), {
                         keys: ["T"],
                         action: function () {
                             Platform.tabs.create({
@@ -881,9 +885,9 @@ Window = {
                                     Undo.push("new-tab", {
                                         tab: tab
                                     });
-                                    state.undoBar.show(Platform.i18n.message("undo_message_create_new") +
-                                                       Platform.i18n.message("global_tab") +
-                                                       Platform.i18n.message("global_end"));
+                                    state.undoBar.show(Platform.i18n.get("undo_message_create_new") +
+                                                       Platform.i18n.get("global_tab") +
+                                                       Platform.i18n.get("global_end"));
                                 }
                             });
                         }
@@ -891,7 +895,7 @@ Window = {
 
                     menu.separator();
 
-                    menu.addItem(Platform.i18n.message("window_menu_rename_window"), {
+                    menu.addItem(Platform.i18n.get("window_menu_rename_window"), {
                         keys: ["R"],
                         action: function (event) {
                             event.preventDefault();
@@ -901,7 +905,7 @@ Window = {
 
                     menu.separator();
 
-                    menu.addItem(Platform.i18n.message("window_menu_select_all"), {
+                    menu.addItem(Platform.i18n.get("window_menu_select_all"), {
                         keys: ["A"],
                         onshow: function (menu) {
                             var queue = container.tabList.queue.length;
@@ -935,17 +939,17 @@ Window = {
 
                                     var text = [];
 
-                                    text.push(Platform.i18n.message("undo_message_selected"));
+                                    text.push(Platform.i18n.get("undo_message_selected"));
 
                                     text.push(range.length);
 
-                                    text.push(Platform.i18n.message("global_tab"));
+                                    text.push(Platform.i18n.get("global_tab"));
 
                                     if (range.length !== 1) {
-                                        text.push(Platform.i18n.message("global_plural"));
+                                        text.push(Platform.i18n.get("global_plural"));
                                     }
 
-                                    text.push(Platform.i18n.message("global_end"));
+                                    text.push(Platform.i18n.get("global_end"));
 
                                     state.undoBar.show(text.join(""));
                                 }
@@ -954,7 +958,7 @@ Window = {
                         }
                     });
 
-                    menu.addItem(Platform.i18n.message("window_menu_select_none"), {
+                    menu.addItem(Platform.i18n.get("window_menu_select_none"), {
                         keys: ["N"],
                         onshow: function (menu) {
                             if (container.tabList.queue.length) {
@@ -985,17 +989,17 @@ Window = {
 
                                     var text = [];
 
-                                    text.push(Platform.i18n.message("undo_message_unselected"));
+                                    text.push(Platform.i18n.get("undo_message_unselected"));
 
                                     text.push(range.length);
 
-                                    text.push(Platform.i18n.message("global_tab"));
+                                    text.push(Platform.i18n.get("global_tab"));
 
                                     if (range.length !== 1) {
-                                        text.push(Platform.i18n.message("global_plural"));
+                                        text.push(Platform.i18n.get("global_plural"));
                                     }
 
-                                    text.push(Platform.i18n.message("global_end"));
+                                    text.push(Platform.i18n.get("global_end"));
 
                                     state.undoBar.show(text.join(""));
                                 }
@@ -1006,7 +1010,7 @@ Window = {
 
                     menu.separator();
 
-                    menu.submenu(Platform.i18n.message("window_menu_selected"), {
+                    menu.submenu(Platform.i18n.get("window_menu_selected"), {
                         keys: ["S"],
                         onshow: function (menu) {
                             if (container.tabList.queue.length) {
@@ -1016,9 +1020,11 @@ Window = {
                             }
                         },
                         create: function (menu) {
-                            menu.addItem(Platform.i18n.message("window_menu_selected_reload"), {
+                            menu.addItem(Platform.i18n.get("window_menu_selected_reload"), {
                                 keys: ["L"],
                                 action: function () {
+                                    state.search.delay(1000);
+
                                     container.tabList.queue.forEach(function (item) {
                                         Platform.tabs.update(item.tab, {
                                             url: item.tab.url
@@ -1030,9 +1036,11 @@ Window = {
                             });
 
 
-                            menu.addItem(Platform.i18n.message("window_menu_selected_close"), {
+                            menu.addItem(Platform.i18n.get("window_menu_selected_close"), {
                                 keys: ["C"],
                                 action: function () {
+                                    state.search.delay(1000);
+
                                     container.tabList.queue.forEach(function (item) {
                                         Platform.tabs.remove(item.tab);
                                     });
@@ -1044,7 +1052,7 @@ Window = {
 
                             menu.separator();
 
-                            menu.addItem(Platform.i18n.message("window_menu_selected_favorite"), {
+                            menu.addItem(Platform.i18n.get("window_menu_selected_favorite"), {
                                 keys: ["F"],
                                 onshow: function (menu) {
                                     var some = container.tabList.queue.some(function (item) {
@@ -1067,7 +1075,7 @@ Window = {
                                 }
                             });
 
-                            menu.addItem(Platform.i18n.message("window_menu_selected_unfavorite"), {
+                            menu.addItem(Platform.i18n.get("window_menu_selected_unfavorite"), {
                                 keys: ["U"],
                                 onshow: function (menu) {
                                     var some = container.tabList.queue.some(function (item) {
@@ -1093,7 +1101,7 @@ Window = {
 
                     menu.separator();
 
-                    menu.submenu(Platform.i18n.message("window_menu_move_selected_to"), {
+                    menu.submenu(Platform.i18n.get("window_menu_move_selected_to"), {
                         keys: ["M"],
                         onshow: function (menu) {
                             if (container.tabList.queue.length) {
@@ -1105,9 +1113,11 @@ Window = {
                         onopen: function (menu) {
                             menu.clear();
 
-                            menu.addItem(Platform.i18n.message("toolbar_menu_new_window"), {
+                            menu.addItem(Platform.i18n.get("toolbar_menu_new_window"), {
                                 keys: ["N"],
                                 action: function () {
+                                    state.search.delay(1000);
+
                                     Window.create(container.tabList.queue);
                                 }
                             });
@@ -1123,6 +1133,8 @@ Window = {
 
                                     menu.addItem(name, {
                                         action: function () {
+                                            state.search.delay(1000);
+
                                             container.tabList.queue.moveTabs(item.window);
                                         }
                                     });

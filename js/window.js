@@ -1,7 +1,7 @@
 /*global action, events, localStorage, Options, Platform, Queue, Tab, UI, Undo, Window */
 "use strict";
 
-document.title = Platform.i18n.message("global_extension_name");
+document.title = Platform.i18n.get("global_extension_name");
 
 if (Options.get("popup.type") === "bubble") {
     document.body.style.width = Options.get("popup.width") + "px";
@@ -369,7 +369,7 @@ fragment.appendChild(UI.create("div", function (toolbar) {
         element.id = "button-menu";
         element.className = "Options-button";
         element.title = "(Ctrl M)";
-        element.textContent = Platform.i18n.message("button_toolbar_menu");
+        element.textContent = Platform.i18n.get("button_toolbar_menu");
         element.tabIndex = 1;
 
         element.appendChild(UI.create("img", function (element) {
@@ -419,7 +419,7 @@ fragment.appendChild(UI.create("div", function (toolbar) {
             }, false);
 
 
-            menu.addItem(Platform.i18n.message("toolbar_menu_new_window"), {
+            menu.addItem(Platform.i18n.get("toolbar_menu_new_window"), {
                 keys: ["N"],
                 ondrop: function () {
                     Window.create(state.currentQueue);
@@ -451,6 +451,8 @@ fragment.appendChild(UI.create("div", function (toolbar) {
                             switch (macro.action) {
                             case "require": //* FALLTHRU
                             case "move":
+                                state.search.delay(1000);
+
                                 if (macro.window) {
                                     first = state.list.find(function (item) {
                                         return item.window.title === macro.window;
@@ -484,6 +486,8 @@ fragment.appendChild(UI.create("div", function (toolbar) {
                                 }
                                 break;
                             case "close":
+                                state.search.delay(1000);
+
                                 info.closed = info.closed.concat(results);
 
                                 results.forEach(function (item) {
@@ -510,6 +514,8 @@ fragment.appendChild(UI.create("div", function (toolbar) {
                     });
 
                     if (info.makeNew.length) {
+                        state.search.delay(1000);
+
                         Window.create(info.makeNew, { undo: false });
 
                         info.moved = info.moved.concat(info.makeNew);
@@ -526,47 +532,47 @@ fragment.appendChild(UI.create("div", function (toolbar) {
                     var text = [];
 
                     if (moved.length) {
-                        text.push(Platform.i18n.message("undo_message_move"),
+                        text.push(Platform.i18n.get("undo_message_move"),
                                   moved.length,
-                                  Platform.i18n.message("global_tab"));
+                                  Platform.i18n.get("global_tab"));
 
                         if (moved.length !== 1) {
-                            text.push(Platform.i18n.message("global_plural"));
+                            text.push(Platform.i18n.get("global_plural"));
                         }
 
 //!                        text.push(" and closed ", closed.length, " tab");
 //!                        if (closed.length !== 1) {
 //!                            text.push("s");
 //!                        }
-                        text.push(Platform.i18n.message("global_end"));
+                        text.push(Platform.i18n.get("global_end"));
 
                         state.undoBar.show(text.join(""));
 
                     } else if (closed.length) {
-                        text.push(Platform.i18n.message("undo_message_closed"),
+                        text.push(Platform.i18n.get("undo_message_closed"),
                                   closed.length,
-                                  Platform.i18n.message("global_tab"));
+                                  Platform.i18n.get("global_tab"));
 
                         if (closed.length !== 1) {
-                            text.push(Platform.i18n.message("global_plural"));
+                            text.push(Platform.i18n.get("global_plural"));
                         }
 
 //!                        text.push(" and closed ", closed.length, " tab");
 //!                        if (closed.length !== 1) {
 //!                            text.push("s");
 //!                        }
-                        text.push(Platform.i18n.message("global_end"));
+                        text.push(Platform.i18n.get("global_end"));
 
                         state.undoBar.show(text.join(""), { undo: false });
 
                     } else {
-                        state.undoBar.show(Platform.i18n.message("undo_message_noop") +
-                                           Platform.i18n.message("global_end"), { undo: false });
+                        state.undoBar.show(Platform.i18n.get("undo_message_noop") +
+                                           Platform.i18n.get("global_end"), { undo: false });
                     }
                 };
             }());
 
-            menu.submenu(Platform.i18n.message("toolbar_menu_macros"), {
+            menu.submenu(Platform.i18n.get("toolbar_menu_macros"), {
                 keys: ["M"],
                 onshow: function (menu) {
                     if (state.macros.length) {
@@ -578,7 +584,7 @@ fragment.appendChild(UI.create("div", function (toolbar) {
                 onopen: function (menu) {
                     menu.clear();
 
-                    menu.addItem(Platform.i18n.message("toolbar_menu_macros_apply_all"), {
+                    menu.addItem(Platform.i18n.get("toolbar_menu_macros_apply_all"), {
                         keys: ["A"],
                         action: function () {
                             perform(state.macros);
@@ -595,10 +601,10 @@ fragment.appendChild(UI.create("div", function (toolbar) {
                         var text = [];
 
                         var keys = {
-                            "ignore": Platform.i18n.message("toolbar_menu_macros_ignore"),
-                            "require": Platform.i18n.message("toolbar_menu_macros_require"),
-                            "move": Platform.i18n.message("toolbar_menu_macros_move"),
-                            "close": Platform.i18n.message("toolbar_menu_macros_close"),
+                            "ignore": Platform.i18n.get("toolbar_menu_macros_ignore"),
+                            "require": Platform.i18n.get("toolbar_menu_macros_require"),
+                            "move": Platform.i18n.get("toolbar_menu_macros_move"),
+                            "close": Platform.i18n.get("toolbar_menu_macros_close"),
                         };
 
                         text.push(keys[item.action]);
@@ -606,20 +612,20 @@ fragment.appendChild(UI.create("div", function (toolbar) {
                         if (item.search) {
                             text.push("<strong>" + item.search + "</strong>");
                         } else {
-                            text.push(Platform.i18n.message("toolbar_menu_macros_all_tabs"));
+                            text.push(Platform.i18n.get("toolbar_menu_macros_all_tabs"));
                         }
 
                         if (item.action === "move") {
-                            text.push(Platform.i18n.message("toolbar_menu_macros_to"));
+                            text.push(Platform.i18n.get("toolbar_menu_macros_to"));
                         } else if (item.action === "require") {
-                            text.push(Platform.i18n.message("toolbar_menu_macros_in"));
+                            text.push(Platform.i18n.get("toolbar_menu_macros_in"));
                         }
 
                         if (item.action !== "close" && item.action !== "ignore") {
                             if (item.window) {
                                 text.push('"' + item.window + '"');
                             } else {
-                                text.push(Platform.i18n.message("toolbar_menu_macros_new_window"));
+                                text.push(Platform.i18n.get("toolbar_menu_macros_new_window"));
                             }
                         }
 
@@ -636,19 +642,19 @@ fragment.appendChild(UI.create("div", function (toolbar) {
             menu.separator();
 
 
-            menu.submenu(Platform.i18n.message("toolbar_menu_sort_tabs"), {
+            menu.submenu(Platform.i18n.get("toolbar_menu_sort_tabs"), {
                 keys: ["T"],
                 onopen: function (menu) {
                     menu.clear();
 
                     var keys = {
-                        "index <": Platform.i18n.message("toolbar_menu_sort_default"),
+                        "index <": Platform.i18n.get("toolbar_menu_sort_default"),
 
-                        "title <": Platform.i18n.message("toolbar_menu_sort_tabs_title_lt"),
-                        "title >": Platform.i18n.message("toolbar_menu_sort_tabs_title_gt"),
+                        "title <": Platform.i18n.get("toolbar_menu_sort_tabs_title_lt"),
+                        "title >": Platform.i18n.get("toolbar_menu_sort_tabs_title_gt"),
 
-                        "url <": Platform.i18n.message("toolbar_menu_sort_tabs_url_lt"),
-                        "url >": Platform.i18n.message("toolbar_menu_sort_tabs_url_gt"),
+                        "url <": Platform.i18n.get("toolbar_menu_sort_tabs_url_lt"),
+                        "url >": Platform.i18n.get("toolbar_menu_sort_tabs_url_gt"),
                     };
 
                     var type = Options.get("tabs.sort.type");
@@ -682,19 +688,19 @@ fragment.appendChild(UI.create("div", function (toolbar) {
 
             menu.space();
 
-            menu.submenu(Platform.i18n.message("toolbar_menu_sort_windows"), {
+            menu.submenu(Platform.i18n.get("toolbar_menu_sort_windows"), {
                 keys: ["W"],
                 onopen: function (menu) {
                     menu.clear();
 
                     var keys = {
-                        "date-created <": Platform.i18n.message("toolbar_menu_sort_default"),
+                        "date-created <": Platform.i18n.get("toolbar_menu_sort_default"),
 
-                        "name <": Platform.i18n.message("toolbar_menu_sort_windows_name_lt"),
-                        "name >": Platform.i18n.message("toolbar_menu_sort_windows_name_gt"),
+                        "name <": Platform.i18n.get("toolbar_menu_sort_windows_name_lt"),
+                        "name >": Platform.i18n.get("toolbar_menu_sort_windows_name_gt"),
 
-                        "tab-number <": Platform.i18n.message("toolbar_menu_sort_windows_tab_number_lt"),
-                        "tab-number >": Platform.i18n.message("toolbar_menu_sort_windows_tab_number_gt"),
+                        "tab-number <": Platform.i18n.get("toolbar_menu_sort_windows_tab_number_lt"),
+                        "tab-number >": Platform.i18n.get("toolbar_menu_sort_windows_tab_number_gt"),
                     };
 
                     var type = Options.get("windows.sort.type");
@@ -732,7 +738,7 @@ fragment.appendChild(UI.create("div", function (toolbar) {
     toolbar.appendChild(UI.link(function (element) {
         element.href = "/options.html";
         element.target = "_blank";
-        element.textContent = Platform.i18n.message("toolbar_options");
+        element.textContent = Platform.i18n.get("toolbar_options");
         element.tabIndex = 1;
     }));
 
@@ -745,7 +751,7 @@ fragment.appendChild(UI.create("div", function (toolbar) {
         element.href = "http://documentation.tab-organizer.googlecode.com/hg/Tab%20Organizer%20FAQ.html";
         element.target = "_blank";
 
-        element.textContent = Platform.i18n.message("toolbar_faq");
+        element.textContent = Platform.i18n.get("toolbar_faq");
         element.tabIndex = 1;
     }));
 
@@ -830,7 +836,7 @@ fragment.appendChild(UI.create("div", function (toolbar) {
             container.appendChild(UI.link(function (element) {
                 element.id = "Undo-bar-button";
                 element.title = "(Ctrl Z)";
-                element.textContent = Platform.i18n.message("toolbar_undo_link");
+                element.textContent = Platform.i18n.get("toolbar_undo_link");
                 element.tabIndex = 1;
 
                 var should = true;
@@ -898,7 +904,7 @@ fragment.appendChild(UI.create("div", function (toolbar) {
         input.setAttribute("spellcheck", "false");
         input.setAttribute("results", "");
         input.setAttribute("incremental", "");
-        input.setAttribute("placeholder", Platform.i18n.message("toolbar_search_placeholder"));
+        input.setAttribute("placeholder", Platform.i18n.get("toolbar_search_placeholder"));
 
         input.id = "search-input";
         input.title = "(Ctrl F)";
@@ -1046,21 +1052,21 @@ fragment.appendChild(UI.create("div", function (toolbar) {
             var length, string = [ cache.title, " (" ];
 
             length = results.length;
-            string.push(length, Platform.i18n.message("global_tab"));
+            string.push(length, Platform.i18n.get("global_tab"));
 
             if (length !== 1) {
-                string.push(Platform.i18n.message("global_plural"));
+                string.push(Platform.i18n.get("global_plural"));
             }
 
 
-            string.push(Platform.i18n.message("title_in"));
+            string.push(Platform.i18n.get("title_in"));
 
 
             length = list.length;
-            string.push(length, Platform.i18n.message("global_window"));
+            string.push(length, Platform.i18n.get("global_window"));
 
             if (length !== 1) {
-                string.push(Platform.i18n.message("global_plural"));
+                string.push(Platform.i18n.get("global_plural"));
             }
 
 
@@ -1073,6 +1079,8 @@ fragment.appendChild(UI.create("div", function (toolbar) {
                 document.body.scrollTop = 0; //* Issue 87
             }
         }
+
+        var timer, delay = 0;
 
         state.search = function anon(info) {
             info = Object(info);
@@ -1088,8 +1096,18 @@ fragment.appendChild(UI.create("div", function (toolbar) {
             if (info.nodelay) {
                 wrapper();
             } else {
-                anon.timer = setTimeout(wrapper, 500);
+                anon.timer = setTimeout(wrapper, delay);
             }
+        };
+
+        state.search.delay = function (n) {
+            delay = n;
+
+            clearTimeout(timer);
+
+            timer = setTimeout(function () {
+                delay = 0;
+            }, n);
         };
 
         Platform.event.on("tab-indent", state.search);

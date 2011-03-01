@@ -242,12 +242,35 @@
                     cache.domain = {};
 
                     tabs.forEach(function (item) {
-                        var url = item.tab.domain;
+                        var url = item.tab.location.domain;
                         cache.domain[url] = cache.domain[url] + 1 || 1;
                     });
                 }
 
-                return cache.domain[item.tab.domain] > 1;
+                return cache.domain[item.tab.location.domain] > 1;
+            },
+
+            "path": function (item) {
+                var location = item.tab.location;
+
+                if (!cache.path) {
+                    cache.path = {};
+
+                    tabs.forEach(function (item) {
+                        var location = item.tab.location,
+                            url      = location.path;
+
+                        if (url.length > 1) {
+                            url = location.domain + url;
+                            cache.path[url] = cache.path[url] + 1 || 1;
+                        }
+                    });
+                }
+
+                var url = location.domain +
+                          location.path;
+
+                return cache.path[url] > 1;
             },
 
             "title": function (item) {
