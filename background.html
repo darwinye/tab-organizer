@@ -313,16 +313,20 @@
                 _gaq.push(["_trackEvent", "Statistics", "tabs.length", tabcount + "", tabcount]);
             }
 
-            Platform.event.on("tab-create", function () {
-                counter.set("total-number", counter.get("total-number") + 1);
-                counter.set("session-number", counter.get("session-number") + 1);
-                counter.update();
+            Platform.event.on("tab-create", function (tab) {
+                if (tab.window.type === "normal") {
+                    counter.set("total-number", counter.get("total-number") + 1);
+                    counter.set("session-number", counter.get("session-number") + 1);
+                    counter.update();
+                }
             });
 
-            Platform.event.on("tab-remove", function () {
-                counter.set("total-number", counter.get("total-number") - 1);
-                counter.set("session-number", counter.get("session-number") - 1);
-                counter.update();
+            Platform.event.on("tab-remove", function (tab) {
+                if (tab.window.type === "normal") {
+                    counter.set("total-number", counter.get("total-number") - 1);
+                    counter.set("session-number", counter.get("session-number") - 1);
+                    counter.update();
+                }
             });
         });
 
