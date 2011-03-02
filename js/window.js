@@ -64,14 +64,32 @@ function sorter(info) {
 
     action.rearrange = function (list, parent) {
         var fragment = document.createDocumentFragment();
+//            selected = document.activeElement;
+//
+//        addEventListener("focus", events.stop, true);
+//        addEventListener("blur", events.stop, true);
 
         list.forEach(function (item, i) {
+//            console.log(item);
+//            if (/*document.activeElement === item*/item.hasAttribute("data-selected")) {
+//                selected = item;
+//            }
+//
 //!            item.style.webkitBoxOrdinalGroup = i + 1;
 //!            item.style.zIndex = i;
             fragment.appendChild(item);
         });
 
         parent.appendChild(fragment);
+//
+//        removeEventListener("focus", events.stop, true);
+//        removeEventListener("blur", events.stop, true);
+//
+//        if (selected) {
+//            selected.focus();
+////            console.log(selected);
+////            selected.setAttribute("data-selected", "");
+//        }
     };
 
     action.comp = function (a, b) {
@@ -174,8 +192,14 @@ var state = {
         name: "windows.sort.type",
 
         sort: function (action, func) {
+            var selected = document.activeElement;
+
             state.sorted = KAE.array.stablesort(state.list, func);
             action.rearrange(state.sorted, state.windowList);
+
+            if (selected/* && selected.className === "window"*/) {
+                selected.focus();
+            }
         },
 
         init: function (action) {
@@ -936,18 +960,24 @@ fragment.appendChild(UI.create("div", function (toolbar) {
 
         var precoded = {
             "has:macro": true,
+
             "intitle:": true,
             "inurl:": true,
+
             "is:bookmarked": true,
+            "is:broken": true,
             "is:child": true,
             "is:favorited": true,
             "is:image": true,
             "is:pinned": true,
             "is:selected": true,
+
             "last:moved": true,
             "same:domain": true,
+            "same:path": true,
             "same:title": true,
             "same:url": true,
+
             "window:": true,
             "window:focused": true
         };

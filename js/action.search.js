@@ -195,6 +195,25 @@
                 return state.bookmarksByURL[item.tab.url] > 0;
             },
 
+            "broken": (function () {
+                var filter, text = [
+                    '"404" | ',
+                    'intitle:r/^Oops! (?:Google Chrome could not|',
+                    'This link appears to be broken)/,',
+                    'r/ is not available$/'
+                ];
+
+                return function (item) {
+//                    ignore.broken = true;
+//
+                    if (!filter) {
+                        filter = parser.output(text.join(""));
+                    }
+
+                    return filter(item);
+                };
+            }()),
+
             "child": function (item) {
                 return item.style.marginLeft;
             },
@@ -278,7 +297,9 @@
                     cache.titles = {};
 
                     tabs.forEach(function (item) {
-                        cache.titles[item.tab.title] = cache.titles[item.tab.title] + 1 || 1;
+                        if (item.tab.title) {
+                            cache.titles[item.tab.title] = cache.titles[item.tab.title] + 1 || 1;
+                        }
                     });
                 }
 
