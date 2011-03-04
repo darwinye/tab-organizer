@@ -40,6 +40,30 @@
         Undo.reset();
     });
 
+    Undo.setRule("pin-tabs", function (info) {
+        var func = (info.type === "unpin"
+                     ? info.list.forEach
+                     : info.list.rightForEach);
+
+        info.queue.forEach(function (item) {
+//            console.log(item);
+//            item.setAttribute("data-selected", "");
+            item.queueAdd();
+        });
+
+        func.call(info.list, function (item) {
+//            item.setAttribute("data-selected", "");
+//
+            if (item.undoState.pinned) {
+                Platform.tabs.update(item.tab, { pinned: true });
+            } else {
+                Platform.tabs.update(item.tab, { pinned: false });
+            }
+        });
+
+        Undo.reset();
+    });
+
     function move(info) {
         var proxy = {};
         var length = info.list.length - 1;

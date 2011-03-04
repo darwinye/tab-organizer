@@ -57,16 +57,20 @@ var action = {
             if (node && (list = node.parentNode)) {
                 state.tabsByURL.remove(old.url, node);
 
-                var selected = node.hasAttribute("data-selected");
+                node.update(tab);
+//
+//                var selected = node.hasAttribute("data-selected");
+//
+//                console.log(node);
+//
+//                var element = Tab.proxy(tab);
+//                list.replaceChild(element, node);
+//
+//                if (selected) {
+//                    element.queueAdd();
+//                }
 
-                var element = Tab.proxy(tab);
-                list.replaceChild(element, node);
-
-                if (selected) {
-                    element.queueAdd();
-                }
-
-                state.search({ tabs: [element] });
+                state.search({ tabs: [node] });
             }
         });
 

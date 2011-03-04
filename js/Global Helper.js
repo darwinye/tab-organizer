@@ -52,6 +52,18 @@
     }());
 
 
+    Array.prototype.rightForEach = function (func) {
+        var t = Object(this);
+        var len = t.length >>> 0;
+
+        var thisp = arguments[1];
+        for (var i = len; i >= 0; i -= 1) {
+            if (i in t) {
+                func.call(thisp, t[i], i, t);
+            }
+        }
+    };
+
     Array.prototype.range = function (min, max) {
         var add, value, array = [];
 

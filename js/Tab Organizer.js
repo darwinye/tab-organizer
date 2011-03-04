@@ -27,21 +27,174 @@ Tab = {
         return UI.create("div", function (container) {
             container.className = "tab";
             container.draggable = true;
-            container.tab = tab;
+//            container.tab = tab;
             container.undoState = {};
 
-            if (state.favorites.get(tab.url)) {
-                container.setAttribute("data-favorited", "");
-            }
-            if (tab.pinned) {
-                container.setAttribute("data-pinned", "");
-            }
-            if (tab.selected) {
-                container.setAttribute("data-focused", "");
-            }
-
-            state.tabsByURL.add(tab.url, container);
             state.tabsByID[tab.id] = container;
+
+
+            var cell = {
+                favicon: UI.create("img", function (element) {
+                    element.className = "tab-favicon";
+                    element.setAttribute("alt", "");
+                }),
+
+                favorite: UI.create("div", function (element) {
+                    element.className = "tab-favorite";
+                    element.title = Platform.i18n.get("tab_favorite");
+
+                    element.addEventListener("click", events.stop, true);
+
+                    element.addEventListener("click", function () {
+                        var tab = container.tab;
+
+                        if (container.hasAttribute("data-favorited")) {
+                            state.favorites.set(tab.url, null);
+                        } else {
+                            state.favorites.set(tab.url, state.tabsByURL[tab.url].length);
+                        }
+                    }, true);
+                }),
+
+                text: UI.create("div", function (element) {
+                    element.className = "tab-text";
+
+                    container.tabText = element;
+
+                    /*! container.addEventListener("dblclick", function (event) {
+                        if (false) {
+                        //! if (event.button === 0 && container.hasAttribute("data-focused")) {
+                            container.draggable = false;
+
+                            element.replaceChild(UI.create("input", function (input) {
+                                input.className = "url-input";
+                                input.type = "text";
+
+                                input.value = tab.url;
+                                input.tabIndex = -1;
+
+                                input.addEventListener("keyup", function (event) {
+                                    if (event.which === 13 || event.which === 27) {
+                                        if (event.which === 13) {
+                                            Tab.gotoURL(tab, this.value);
+                                        }
+                                        container.parentNode.focus();
+                                    }
+                                }, true);
+                                input.addEventListener("blur", function (event) {
+                                    element.replaceChild(span, input);
+
+                                    container.draggable = true;
+                                }, true);
+
+                                setTimeout(function () {
+                                    input.select();
+                                }, 0);
+                            }), span);
+                        }
+                    }, true);*/
+                }),
+
+                close: UI.create("div", function (element) {
+                    element.className = "tab-button-close";
+                    element.title = Platform.i18n.get("tab_close") + "(Alt Click)";
+                    element.draggable = true;
+
+                    element.addEventListener("dragstart", events.disable, true);
+
+                    element.addEventListener("click", function (event) {
+                        event.stopPropagation();
+                        Platform.tabs.remove(container.tab);
+                    }, true);
+                })
+            };
+
+
+            var url;
+
+            container.update = function (tab) {
+                container.tab = tab;
+
+                state.tabsByURL.add(tab.url, container);
+
+                if (state.favorites.get(tab.url)) {
+                    container.setAttribute("data-favorited", "");
+                }
+                if (tab.pinned) {
+                    container.setAttribute("data-pinned", "");
+                }
+                if (tab.selected) {
+                    container.setAttribute("data-focused", "");
+                }
+
+                var text = tab.title || tab.url;
+
+                if (tab.pinned) {
+                    cell.favicon.src = "/images/pinned.png";
+                } else {
+                    cell.favicon.src = "";
+
+                    if (false && tab.window.title !== "~Crashes") {
+//                        console.log(tab);
+//                        return;
+                        cell.favicon.src = "chrome://favicon/" + tab.url;
+                    }
+                }
+
+                cell.favicon.title = text;
+                cell.text.title = text;
+                cell.text.textContent = text;
+
+                url = UI.create("span", function (element) {
+    //                var url = tab.url;
+    //                try {
+    //                    url = decodeURI(url);
+    //                } catch (e) {}
+    //
+    //                var match = /^([^:]+)(:\/\/)([^\/]*)([^?#]*\/)([^#]*)(#.*)?$/.exec(url);
+                    var secure = {
+                        "https": true
+                    };
+    //
+    //                var url = {};
+
+    //                if (match) {
+                    if (tab.location.protocol !== "http") {
+                        element.appendChild(UI.create("span", function (element) {
+                            element.className = "protocol";
+                            if (secure[tab.location.protocol]) {
+                                element.setAttribute("data-secure", "");
+                            }
+                            element.textContent = tab.location.protocol;
+                        }));
+                        element.appendChild(document.createTextNode(tab.location.separator));
+                    }
+                    element.appendChild(UI.create("span", function (element) {
+                        element.className = "domain";
+                        element.textContent = tab.location.domain;
+                    }));
+
+                    element.appendChild(document.createTextNode(tab.location.path));
+
+                    if (tab.location.query) {
+                        element.appendChild(UI.create("span", function (element) {
+                            element.className = "query";
+                            element.textContent = tab.location.query;
+                        }));
+                    }
+                    if (tab.location.hash) {
+                        element.appendChild(UI.create("span", function (element) {
+                            element.className = "fragment";
+                            element.textContent = tab.location.hash;
+                        }));
+                    }
+    //                }
+                });
+//
+//                document.body.setAttribute("hidden", "");
+//                document.body.removeAttribute("hidden");
+            };
+            container.update(tab);
 
 
             container.indent = function (indent) {
@@ -86,52 +239,6 @@ Tab = {
 
 //!            container.addEventListener("DOMNodeRemovedFromDocument", container.queueRemove, true); //! Hacky
 
-
-            var url = UI.create("span", function (element) {
-//                var url = tab.url;
-//                try {
-//                    url = decodeURI(url);
-//                } catch (e) {}
-//
-//                var match = /^([^:]+)(:\/\/)([^\/]*)([^?#]*\/)([^#]*)(#.*)?$/.exec(url);
-                var secure = {
-                    "https": true
-                };
-//
-//                var url = {};
-
-//                if (match) {
-                if (tab.location.protocol !== "http") {
-                    element.appendChild(UI.create("span", function (element) {
-                        element.className = "protocol";
-                        if (secure[tab.location.protocol]) {
-                            element.setAttribute("data-secure", "");
-                        }
-                        element.textContent = tab.location.protocol;
-                    }));
-                    element.appendChild(document.createTextNode(tab.location.separator));
-                }
-                element.appendChild(UI.create("span", function (element) {
-                    element.className = "domain";
-                    element.textContent = tab.location.domain;
-                }));
-
-                element.appendChild(document.createTextNode(tab.location.path));
-
-                if (tab.location.query) {
-                    element.appendChild(UI.create("span", function (element) {
-                        element.className = "query";
-                        element.textContent = tab.location.query;
-                    }));
-                }
-                if (tab.location.hash) {
-                    element.appendChild(UI.create("span", function (element) {
-                        element.className = "fragment";
-                        element.textContent = tab.location.hash;
-                    }));
-                }
-//                }
-            });
 
             container.addEventListener("mouseout", function (event) {
                 state.urlBar.setAttribute("hidden", "");
@@ -213,7 +320,7 @@ Tab = {
                             this.queueAdd();
                         }
                     } else if (event.altKey) {
-                        Platform.tabs.remove(tab);
+                        Platform.tabs.remove(container.tab);
                     } else {
                         switch (Options.get("tabs.click.type")) {
                         case "select-focus":
@@ -238,7 +345,7 @@ Tab = {
 
             container.addEventListener("mouseup", function (event) {
                 if (event.button === 1) {
-                    Platform.tabs.remove(tab);
+                    Platform.tabs.remove(container.tab);
                 }
             }, false);
 
@@ -313,8 +420,8 @@ Tab = {
                 state.urlBar.setAttribute("hidden", "");
 
                 event.dataTransfer.effectAllowed = "move";
-                event.dataTransfer.setData("text/uri-list", tab.url);
-                event.dataTransfer.setData("text/plain", tab.url);
+                event.dataTransfer.setData("text/uri-list", container.tab.url);
+                event.dataTransfer.setData("text/plain", container.tab.url);
 
                 state.highlighted = this;
                 state.currentQueue = this.parentNode.queue;
@@ -331,92 +438,6 @@ Tab = {
             }, true);*/
 
 
-            var text = tab.title || tab.url;
-
-            var cell = {
-                favicon: UI.create("img", function (element) {
-                    element.className = "tab-favicon";
-                    element.title = text;
-                    element.setAttribute("alt", "");
-
-//                    if (tab.window.title === "~Crashes") {
-//                console.log(tab);
-//                return;
-//            }
-
-                    element.src = "chrome://favicon/" + tab.url;
-                }),
-
-                favorite: UI.create("div", function (element) {
-                    element.className = "tab-favorite";
-                    element.title = Platform.i18n.get("tab_favorite");
-
-                    element.addEventListener("click", events.stop, true);
-
-                    element.addEventListener("click", function () {
-                        if (container.hasAttribute("data-favorited")) {
-                            state.favorites.set(tab.url, null);
-                        } else {
-                            state.favorites.set(tab.url, state.tabsByURL[tab.url].length);
-                        }
-                    }, true);
-                }),
-
-                text: UI.create("div", function (element) {
-                    element.className = "tab-text";
-                    element.title = text;
-                    element.textContent = text;
-
-                    container.tabText = element;
-
-                    /*! container.addEventListener("dblclick", function (event) {
-                        if (false) {
-                        //! if (event.button === 0 && container.hasAttribute("data-focused")) {
-                            container.draggable = false;
-
-                            element.replaceChild(UI.create("input", function (input) {
-                                input.className = "url-input";
-                                input.type = "text";
-
-                                input.value = tab.url;
-                                input.tabIndex = -1;
-
-                                input.addEventListener("keyup", function (event) {
-                                    if (event.which === 13 || event.which === 27) {
-                                        if (event.which === 13) {
-                                            Tab.gotoURL(tab, this.value);
-                                        }
-                                        container.parentNode.focus();
-                                    }
-                                }, true);
-                                input.addEventListener("blur", function (event) {
-                                    element.replaceChild(span, input);
-
-                                    container.draggable = true;
-                                }, true);
-
-                                setTimeout(function () {
-                                    input.select();
-                                }, 0);
-                            }), span);
-                        }
-                    }, true);*/
-                }),
-
-                close: UI.create("div", function (element) {
-                    element.className = "tab-button-close";
-                    element.title = Platform.i18n.get("tab_close") + "(Alt Click)";
-                    element.draggable = true;
-
-                    element.addEventListener("dragstart", events.disable, true);
-
-                    element.addEventListener("click", function (event) {
-                        event.stopPropagation();
-                        Platform.tabs.remove(tab);
-                    }, true);
-                })
-            };
-
             function blur() {
                 cell.close.setAttribute("hidden", "");
             }
@@ -431,6 +452,8 @@ Tab = {
                 container.removeEventListener("Platform-blur", blur, true);
                 container.removeEventListener("Platform-focus", focus, true);
 
+
+                var tab = container.tab;
 
                 var indent = state.indent[tab.window.index];
                 if (indent && (indent = indent[tab.index])) {
@@ -923,6 +946,8 @@ Window = {
                             }
                         },
                         action: function () {
+//                            var old = container.tabList.queue.slice();
+//
                             var range = [];
 
                             Array.slice(container.tabList.children).forEach(function (item) {
@@ -933,9 +958,14 @@ Window = {
                                     }
                                 }
                             });
+/*
+                            var range = container.tabList.queue.filter(function (item) {
+                                item.undoState.selected = item.hasAttribute("data-selected");
+                                return !item.undoState.selected;
+                            });*/
 
-                            if (Options.get("undo.select-tabs")) {
-                                if (range.length) {
+                            if (range.length) {
+                                if (Options.get("undo.select-tabs")) {
                                     Undo.push("select-tabs", {
                                         queue: container.tabList.queue,
                                         type: "select",
@@ -959,6 +989,13 @@ Window = {
                                     state.undoBar.show(text.join(""));
                                 }
                             }
+/*
+                                range.forEach(function (item) {
+                                    item.queueAdd();
+                                });*/
+//                            }
+
+//                            container.tabList.queue.reset();
                             delete container.tabList.queue.shiftNode;
                         }
                     });
@@ -973,6 +1010,8 @@ Window = {
                             }
                         },
                         action: function () {
+//                            var old = container.tabList.queue.slice();
+//
                             var range = [];
 
                             Array.slice(container.tabList.children).forEach(function (item) {
@@ -983,9 +1022,14 @@ Window = {
                                     }
                                 }
                             });
+/*
+                            var range = container.tabList.queue.filter(function (item) {
+                                item.undoState.selected = item.hasAttribute("data-selected");
+                                return !item.undoState.selected;
+                            });*/
 
-                            if (Options.get("undo.select-tabs")) {
-                                if (range.length) {
+                            if (range.length) {
+                                if (Options.get("undo.select-tabs")) {
                                     Undo.push("select-tabs", {
                                         queue: container.tabList.queue,
                                         type: "unselect",
@@ -1009,6 +1053,13 @@ Window = {
                                     state.undoBar.show(text.join(""));
                                 }
                             }
+/*
+                                range.forEach(function (item) {
+                                    item.queueAdd();
+                                });*/
+//                            }
+
+//                            container.tabList.queue.reset();
                             delete container.tabList.queue.shiftNode;
                         }
                     });
@@ -1057,6 +1108,120 @@ Window = {
 
                             menu.separator();
 
+                            menu.addItem(Platform.i18n.get("window_menu_selected_pin"), {
+                                keys: ["P"],
+                                onshow: function (menu) {
+                                    var some = container.tabList.queue.some(function (item) {
+                                        return !item.tab.pinned;
+                                    });
+
+                                    if (some) {
+                                        menu.enable();
+                                    } else {
+                                        menu.disable();
+                                    }
+                                },
+                                action: function () {
+                                    var range = container.tabList.queue.filter(function (item) {
+                                        item.undoState.pinned = item.tab.pinned;
+                                        return !item.undoState.pinned;
+                                    });
+
+                                    if (range.length) {
+                                        if (Options.get("undo.pin-tabs")) {
+                                            Undo.push("pin-tabs", {
+                                                queue: container.tabList.queue.slice(),
+                                                type: "pin",
+                                                list: range
+                                            });
+
+                                            var text = [];
+
+                                            text.push(Platform.i18n.get("undo_message_pinned"));
+
+                                            text.push(range.length);
+
+                                            text.push(Platform.i18n.get("global_tab"));
+
+                                            if (range.length !== 1) {
+                                                text.push(Platform.i18n.get("global_plural"));
+                                            }
+
+                                            text.push(Platform.i18n.get("global_end"));
+
+                                            state.undoBar.show(text.join(""));
+                                        }
+
+                                        state.search.delay(1000);
+
+                                        range.forEach(function (item) {
+                                            Platform.tabs.update(item.tab, { pinned: true });
+                                        });
+                                    }
+
+                                    container.tabList.queue.reset();
+                                    delete container.tabList.queue.shiftNode;
+                                }
+                            });
+
+                            menu.addItem(Platform.i18n.get("window_menu_selected_unpin"), {
+                                keys: ["U"],
+                                onshow: function (menu) {
+                                    var some = container.tabList.queue.some(function (item) {
+                                        return item.tab.pinned;
+                                    });
+
+                                    if (some) {
+                                        menu.enable();
+                                    } else {
+                                        menu.disable();
+                                    }
+                                },
+                                action: function () {
+                                    var range = container.tabList.queue.filter(function (item) {
+                                        item.undoState.pinned = item.tab.pinned;
+                                        return item.undoState.pinned;
+                                    });
+
+                                    if (range.length) {
+                                        if (Options.get("undo.pin-tabs")) {
+                                            Undo.push("pin-tabs", {
+                                                queue: container.tabList.queue.slice(),
+                                                type: "unpin",
+                                                list: range
+                                            });
+
+                                            var text = [];
+
+                                            text.push(Platform.i18n.get("undo_message_unpinned"));
+
+                                            text.push(range.length);
+
+                                            text.push(Platform.i18n.get("global_tab"));
+
+                                            if (range.length !== 1) {
+                                                text.push(Platform.i18n.get("global_plural"));
+                                            }
+
+                                            text.push(Platform.i18n.get("global_end"));
+
+                                            state.undoBar.show(text.join(""));
+                                        }
+
+                                        state.search.delay(1000);
+
+                                        range.rightForEach(function (item) {
+                                            Platform.tabs.update(item.tab, { pinned: false });
+                                        });
+                                    }
+
+                                    container.tabList.queue.reset();
+                                    delete container.tabList.queue.shiftNode;
+                                }
+                            });
+
+                            menu.separator();
+
                             menu.addItem(Platform.i18n.get("window_menu_selected_favorite"), {
                                 keys: ["F"],
                                 onshow: function (menu) {
@@ -1077,11 +1242,12 @@ Window = {
                                     });
 
                                     container.tabList.queue.reset();
+                                    delete container.tabList.queue.shiftNode;
                                 }
                             });
 
                             menu.addItem(Platform.i18n.get("window_menu_selected_unfavorite"), {
-                                keys: ["U"],
+                                keys: ["N"],
                                 onshow: function (menu) {
                                     var some = container.tabList.queue.some(function (item) {
                                         return item.hasAttribute("data-favorited");
@@ -1099,6 +1265,7 @@ Window = {
                                     });
 
                                     container.tabList.queue.reset();
+                                    delete container.tabList.queue.shiftNode;
                                 }
                             });
                         }

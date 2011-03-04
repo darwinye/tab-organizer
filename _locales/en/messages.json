@@ -168,6 +168,14 @@
     "message": "You unselected ",
     "description": "Tells the user that they unselected something, like a tab. Should include a space at the end."
   },
+  "undo_message_pinned": {
+    "message": "You pinned ",
+    "description": "Tells the user that they pinned something, like a tab. Should include a space at the end."
+  },
+  "undo_message_unpinned": {
+    "message": "You unpinned ",
+    "description": "Tells the user that they unpinned something, like a tab. Should include a space at the end."
+  },
   "undo_message_rename": {
     "message": "You renamed the",
     "description": "Tells the user that they renamed something, like a window. Do not include a space at the end."
@@ -228,13 +236,21 @@
     "message": "<u>C</u>lose selected",
     "description": "Menu item that causes all the selected tabs in the window to be closed. If possible, underline the letter `c`, but if there is no `c`, then underline nothing."
   },
+  "window_menu_selected_pin": {
+    "message": "<u>P</u>in selected",
+    "description": "Menu item that causes all the selected tabs in the window to become pinned. If possible, underline the letter `p`, but if there is no `p`, then underline nothing."
+  },
+  "window_menu_selected_unpin": {
+    "message": "<u>U</u>npin selected",
+    "description": "Menu item that causes all the selected tabs in the window to become unpinned. If possible, underline the letter `u`, but if there is no `u`, then underline nothing."
+  },
   "window_menu_selected_favorite": {
     "message": "<u>F</u>avorite selected",
     "description": "Menu item that causes all the selected tabs in the window to become favorited. If possible, underline the letter `f`, but if there is no `f`, then underline nothing."
   },
   "window_menu_selected_unfavorite": {
-    "message": "<u>U</u>nfavorite selected",
-    "description": "Menu item that causes all the selected tabs in the window to become unfavorited. If possible, underline the letter `u`, but if there is no `u`, then underline nothing."
+    "message": "U<u>n</u>favorite selected",
+    "description": "Menu item that causes all the selected tabs in the window to become unfavorited. If possible, underline the letter `n`, but if there is no `n`, then underline nothing."
   },
   "window_menu_move_selected_to": {
     "message": "<u>M</u>ove selected to...",
