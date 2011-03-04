@@ -139,8 +139,11 @@ var state = {
         var fragment = document.createDocumentFragment();
 
         windows.forEach(function (win) {
+//            console.log(win);
             if (win.type === "normal") {
+//                if (i < 51 || i > 51) { // 28
                 fragment.appendChild(Window.proxy(win));
+//                }
             }
         });
 

@@ -339,6 +339,11 @@ Tab = {
                     element.title = text;
                     element.setAttribute("alt", "");
 
+//                    if (tab.window.title === "~Crashes") {
+//                console.log(tab);
+//                return;
+//            }
+
                     element.src = "chrome://favicon/" + tab.url;
                 }),
 

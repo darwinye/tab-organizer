@@ -197,10 +197,11 @@
 
             "broken": (function () {
                 var filter, text = [
-                    '"404" | ',
-                    'intitle:r/^Oops! (?:Google Chrome could not|',
-                    'This link appears to be broken)/,',
-                    'r/ is not available$/'
+//                    '"404" | ',
+                    'intitle:r/^404 Not Found$/,',
+                            'r/^Oops! (?:Google Chrome could not |',
+                                        'This link appears to be broken)/,', //! broken$)
+                            'r/ is not available$/'
                 ];
 
                 return function (item) {

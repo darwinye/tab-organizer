@@ -464,10 +464,14 @@
                     visitedByURL.set(key, null);
                 }
             });
+//
+//            console.log(visitedByURL.keys().length);
 
 
             function add(url) {
-                visitedByURL.set(url, Date.now());
+                if (url) {
+                    visitedByURL.set(url, Date.now());
+                }
             }
 
             Platform.event.on("tab-focus", function (tab) {
