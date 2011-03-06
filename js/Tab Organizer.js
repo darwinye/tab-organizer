@@ -134,7 +134,23 @@ Tab = {
                 } else {
                     cell.favicon.src = "";
 
-                    if (false && tab.window.title !== "~Crashes") {
+                    function exclude(x) {
+                        for (var i = 1 ; i < arguments.length; i += 1) {
+                            if (arguments[i] === x) {
+                                return false;
+                            }
+                        }
+                        return true;
+                    }
+
+                    if (tab.window.title === "~Crashes") {
+//                        console.log(tab.title);
+//                        console.log(tab.url);
+                    }
+
+                    if (exclude(tab.window.title, "~Stuff", "~Crashes")/* && (tab.index < 163 || tab.index > 162)*/) {
+                    // "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "50", "52", "Amazon", "Blogs", "Byuu", "CSS", "Emulation", "Eyes", "Games", "GNU/Linux", "Google", "Google Code", "GPA", "JavaScript", "Lisp", "Minecraft", "Mozilla", "Parsing", "Programming", "Python", "StackOverflow", "StarCraft", "Stories", "Tab Organizer", "Torrent", "TV Tropes", "Wikipedia", "YouTube", "~Error", "~Search",
+//                    if (false && tab.window.title !== "~Crashes") {
 //                        console.log(tab);
 //                        return;
                         cell.favicon.src = "chrome://favicon/" + tab.url;
@@ -933,6 +949,72 @@ Window = {
 
                     menu.separator();
 
+
+                    function inqueue(menu) {
+                        if (container.tabList.queue.length) {
+                            menu.enable();
+                        } else {
+                            menu.disable();
+                        }
+                    }
+
+                    function some(func) {
+                        return function (menu) {
+                            var some = container.tabList.queue.some(func);
+
+                            if (some) {
+                                menu.enable();
+                            } else {
+                                menu.disable();
+                            }
+                        };
+                    }
+
+                    function message(range, info) {
+                        if (Options.get(info.option)) {
+                            Undo.push(info.name, info.info);
+
+                            var text = [];
+
+                            text.push(Platform.i18n.get(info.message));
+
+                            text.push(range.length);
+
+                            text.push(Platform.i18n.get("global_tab"));
+
+                            if (range.length !== 1) {
+                                text.push(Platform.i18n.get("global_plural"));
+                            }
+
+                            text.push(Platform.i18n.get("global_end"));
+
+                            state.undoBar.show(text.join(""));
+                        }
+                    }
+
+                    function action(info) {
+                        return function () {
+                            var range = container.tabList.queue.filter(info.filter);
+
+                            if (range.length) {
+                                message(range, {
+                                    option: info.option,
+                                    name: info.name,
+                                    info: info.info(range),
+                                    message: info.message
+                                });
+
+                                state.search.delay(1000);
+
+                                info.action(range);
+                            }
+
+                            container.tabList.queue.reset();
+                            delete container.tabList.queue.shiftNode;
+                        };
+                    }
+
+
                     menu.addItem(Platform.i18n.get("window_menu_select_all"), {
                         keys: ["A"],
                         onshow: function (menu) {
@@ -965,29 +1047,16 @@ Window = {
                             });*/
 
                             if (range.length) {
-                                if (Options.get("undo.select-tabs")) {
-                                    Undo.push("select-tabs", {
+                                message(range, {
+                                    option: "undo.select-tabs",
+                                    name: "select-tabs",
+                                    info: {
                                         queue: container.tabList.queue,
                                         type: "select",
                                         list: range
-                                    });
-
-                                    var text = [];
-
-                                    text.push(Platform.i18n.get("undo_message_selected"));
-
-                                    text.push(range.length);
-
-                                    text.push(Platform.i18n.get("global_tab"));
-
-                                    if (range.length !== 1) {
-                                        text.push(Platform.i18n.get("global_plural"));
-                                    }
-
-                                    text.push(Platform.i18n.get("global_end"));
-
-                                    state.undoBar.show(text.join(""));
-                                }
+                                    },
+                                    message: "undo_message_selected"
+                                });
                             }
 /*
                                 range.forEach(function (item) {
@@ -1002,13 +1071,7 @@ Window = {
 
                     menu.addItem(Platform.i18n.get("window_menu_select_none"), {
                         keys: ["N"],
-                        onshow: function (menu) {
-                            if (container.tabList.queue.length) {
-                                menu.enable();
-                            } else {
-                                menu.disable();
-                            }
-                        },
+                        onshow: inqueue,
                         action: function () {
 //                            var old = container.tabList.queue.slice();
 //
@@ -1029,29 +1092,16 @@ Window = {
                             });*/
 
                             if (range.length) {
-                                if (Options.get("undo.select-tabs")) {
-                                    Undo.push("select-tabs", {
+                                message(range, {
+                                    option: "undo.select-tabs",
+                                    name: "select-tabs",
+                                    info: {
                                         queue: container.tabList.queue,
                                         type: "unselect",
                                         list: range
-                                    });
-
-                                    var text = [];
-
-                                    text.push(Platform.i18n.get("undo_message_unselected"));
-
-                                    text.push(range.length);
-
-                                    text.push(Platform.i18n.get("global_tab"));
-
-                                    if (range.length !== 1) {
-                                        text.push(Platform.i18n.get("global_plural"));
-                                    }
-
-                                    text.push(Platform.i18n.get("global_end"));
-
-                                    state.undoBar.show(text.join(""));
-                                }
+                                    },
+                                    message: "undo_message_unselected"
+                                });
                             }
 /*
                                 range.forEach(function (item) {
@@ -1068,13 +1118,7 @@ Window = {
 
                     menu.submenu(Platform.i18n.get("window_menu_selected"), {
                         keys: ["S"],
-                        onshow: function (menu) {
-                            if (container.tabList.queue.length) {
-                                menu.enable();
-                            } else {
-                                menu.disable();
-                            }
-                        },
+                        onshow: inqueue,
                         create: function (menu) {
                             menu.addItem(Platform.i18n.get("window_menu_selected_reload"), {
                                 keys: ["L"],
@@ -1082,12 +1126,11 @@ Window = {
                                     state.search.delay(1000);
 
                                     container.tabList.queue.forEach(function (item) {
-                                        Platform.tabs.update(item.tab, {
-                                            url: item.tab.url
-                                        });
+                                        Platform.tabs.update(item.tab, { url: item.tab.url });
                                     });
 
                                     container.tabList.queue.reset();
+                                    delete container.tabList.queue.shiftNode;
                                 }
                             });
 
@@ -1110,163 +1153,115 @@ Window = {
 
                             menu.addItem(Platform.i18n.get("window_menu_selected_pin"), {
                                 keys: ["P"],
-                                onshow: function (menu) {
-                                    var some = container.tabList.queue.some(function (item) {
-                                        return !item.tab.pinned;
-                                    });
-
-                                    if (some) {
-                                        menu.enable();
-                                    } else {
-                                        menu.disable();
-                                    }
-                                },
-                                action: function () {
-                                    var range = container.tabList.queue.filter(function (item) {
+                                onshow: some(function (item) {
+                                    return !item.tab.pinned;
+                                }),
+                                action: action({
+                                    filter: function (item) {
                                         item.undoState.pinned = item.tab.pinned;
                                         return !item.undoState.pinned;
-                                    });
-
-                                    if (range.length) {
-                                        if (Options.get("undo.pin-tabs")) {
-                                            Undo.push("pin-tabs", {
-                                                queue: container.tabList.queue.slice(),
-                                                type: "pin",
-                                                list: range
-                                            });
-
-                                            var text = [];
-
-                                            text.push(Platform.i18n.get("undo_message_pinned"));
-
-                                            text.push(range.length);
-
-                                            text.push(Platform.i18n.get("global_tab"));
-
-                                            if (range.length !== 1) {
-                                                text.push(Platform.i18n.get("global_plural"));
-                                            }
-
-                                            text.push(Platform.i18n.get("global_end"));
-
-                                            state.undoBar.show(text.join(""));
-                                        }
-
-                                        state.search.delay(1000);
-
+                                    },
+                                    option: "undo.pin-tabs",
+                                    name: "pin-tabs",
+                                    info: function (range) {
+                                        return {
+                                            queue: container.tabList.queue.slice(),
+                                            type: "pin",
+                                            list: range
+                                        };
+                                    },
+                                    message: "undo_message_pinned",
+                                    action: function (range) {
                                         range.forEach(function (item) {
                                             Platform.tabs.update(item.tab, { pinned: true });
                                         });
                                     }
-
-                                    container.tabList.queue.reset();
-                                    delete container.tabList.queue.shiftNode;
-                                }
+                                })
                             });
 
                             menu.addItem(Platform.i18n.get("window_menu_selected_unpin"), {
                                 keys: ["U"],
-                                onshow: function (menu) {
-                                    var some = container.tabList.queue.some(function (item) {
-                                        return item.tab.pinned;
-                                    });
-
-                                    if (some) {
-                                        menu.enable();
-                                    } else {
-                                        menu.disable();
-                                    }
-                                },
-                                action: function () {
-                                    var range = container.tabList.queue.filter(function (item) {
+                                onshow: some(function (item) {
+                                    return item.tab.pinned;
+                                }),
+                                action: action({
+                                    filter: function (item) {
                                         item.undoState.pinned = item.tab.pinned;
                                         return item.undoState.pinned;
-                                    });
-
-                                    if (range.length) {
-                                        if (Options.get("undo.pin-tabs")) {
-                                            Undo.push("pin-tabs", {
-                                                queue: container.tabList.queue.slice(),
-                                                type: "unpin",
-                                                list: range
-                                            });
-
-                                            var text = [];
-
-                                            text.push(Platform.i18n.get("undo_message_unpinned"));
-
-                                            text.push(range.length);
-
-                                            text.push(Platform.i18n.get("global_tab"));
-
-                                            if (range.length !== 1) {
-                                                text.push(Platform.i18n.get("global_plural"));
-                                            }
-
-                                            text.push(Platform.i18n.get("global_end"));
-
-                                            state.undoBar.show(text.join(""));
-                                        }
-
-                                        state.search.delay(1000);
-
+                                    },
+                                    option: "undo.pin-tabs",
+                                    name: "pin-tabs",
+                                    info: function (range) {
+                                        return {
+                                            queue: container.tabList.queue.slice(),
+                                            type: "unpin",
+                                            list: range
+                                        };
+                                    },
+                                    message: "undo_message_unpinned",
+                                    action: function (range) {
                                         range.rightForEach(function (item) {
                                             Platform.tabs.update(item.tab, { pinned: false });
                                         });
                                     }
-
-                                    container.tabList.queue.reset();
-                                    delete container.tabList.queue.shiftNode;
-                                }
+                                })
                             });
 
                             menu.separator();
 
                             menu.addItem(Platform.i18n.get("window_menu_selected_favorite"), {
                                 keys: ["F"],
-                                onshow: function (menu) {
-                                    var some = container.tabList.queue.some(function (item) {
-                                        return !item.hasAttribute("data-favorited");
-                                    });
-
-                                    if (some) {
-                                        menu.enable();
-                                    } else {
-                                        menu.disable();
+                                onshow: some(function (item) {
+                                    return !item.hasAttribute("data-favorited");
+                                }),
+                                action: action({
+                                    filter: function (item) {
+                                        item.undoState.favorited = item.hasAttribute("data-favorited");
+                                        return !item.undoState.favorited;
+                                    },
+                                    option: "undo.favorite-tabs",
+                                    name: "favorite-tabs",
+                                    info: function (range) {
+                                        return {
+                                            queue: container.tabList.queue.slice(),
+                                            list: range
+                                        };
+                                    },
+                                    message: "undo_message_favorited",
+                                    action: function (range) {
+                                        range.forEach(function (item) {
+                                            var url = item.tab.url;
+                                            state.favorites.set(url, state.tabsByURL[url].length);
+                                        });
                                     }
-                                },
-                                action: function () {
-                                    container.tabList.queue.forEach(function (item) {
-                                        var url = item.tab.url;
-                                        state.favorites.set(url, state.tabsByURL[url].length);
-                                    });
-
-                                    container.tabList.queue.reset();
-                                    delete container.tabList.queue.shiftNode;
-                                }
+                                })
                             });
 
                             menu.addItem(Platform.i18n.get("window_menu_selected_unfavorite"), {
                                 keys: ["N"],
-                                onshow: function (menu) {
-                                    var some = container.tabList.queue.some(function (item) {
-                                        return item.hasAttribute("data-favorited");
-                                    });
-
-                                    if (some) {
-                                        menu.enable();
-                                    } else {
-                                        menu.disable();
+                                onshow: some(function (item) {
+                                    return item.hasAttribute("data-favorited");
+                                }),
+                                action: action({
+                                    filter: function (item) {
+                                        item.undoState.favorited = item.hasAttribute("data-favorited");
+                                        return item.undoState.favorited;
+                                    },
+                                    option: "undo.favorite-tabs",
+                                    name: "favorite-tabs",
+                                    info: function (range) {
+                                        return {
+                                            queue: container.tabList.queue.slice(),
+                                            list: range
+                                        };
+                                    },
+                                    message: "undo_message_unfavorited",
+                                    action: function (range) {
+                                        range.forEach(function (item) {
+                                            state.favorites.set(item.tab.url, null);
+                                        });
                                     }
-                                },
-                                action: function () {
-                                    container.tabList.queue.forEach(function (item) {
-                                        state.favorites.set(item.tab.url, null);
-                                    });
-
-                                    container.tabList.queue.reset();
-                                    delete container.tabList.queue.shiftNode;
-                                }
+                                })
                             });
                         }
                     });
@@ -1275,13 +1270,7 @@ Window = {
 
                     menu.submenu(Platform.i18n.get("window_menu_move_selected_to"), {
                         keys: ["M"],
-                        onshow: function (menu) {
-                            if (container.tabList.queue.length) {
-                                menu.enable();
-                            } else {
-                                menu.disable();
-                            }
-                        },
+                        onshow: inqueue,
                         onopen: function (menu) {
                             menu.clear();
 

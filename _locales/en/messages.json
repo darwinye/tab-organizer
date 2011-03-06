@@ -148,10 +148,6 @@
   },
 
 
-  "undo_message_noop": {
-    "message": "Nothing changed",
-    "description": "Tells the user that nothing happened. Do not include a space at the end."
-  },
   "undo_message_move": {
     "message": "You moved ",
     "description": "Tells the user that they moved something, like a tab. Should include a space at the end."
@@ -175,6 +171,18 @@
   "undo_message_unpinned": {
     "message": "You unpinned ",
     "description": "Tells the user that they unpinned something, like a tab. Should include a space at the end."
+  },
+  "undo_message_favorited": {
+    "message": "You favorited ",
+    "description": "Tells the user that they favorited something, like a tab. Should include a space at the end."
+  },
+  "undo_message_unfavorited": {
+    "message": "You unfavorited ",
+    "description": "Tells the user that they unfavorited something, like a tab. Should include a space at the end."
+  },
+  "undo_message_noop": {
+    "message": "Nothing changed",
+    "description": "Tells the user that nothing happened. Do not include a space at the end."
   },
   "undo_message_rename": {
     "message": "You renamed the",

@@ -40,6 +40,23 @@
         Undo.reset();
     });
 
+    Undo.setRule("favorite-tabs", function (info) {
+        info.queue.forEach(function (item) {
+            item.queueAdd();
+        });
+
+        info.list.forEach(function (item) {
+            var url = item.tab.url;
+            if (item.undoState.favorited) {
+                state.favorites.set(url, state.tabsByURL[url].length);
+            } else {
+                state.favorites.set(url, null);
+            }
+        });
+
+        Undo.reset();
+    });
+
     Undo.setRule("pin-tabs", function (info) {
         var func = (info.type === "unpin"
                      ? info.list.forEach

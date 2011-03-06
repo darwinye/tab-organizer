@@ -902,7 +902,41 @@ fragment.appendChild(UI.create("div", function (toolbar) {
                     }
                 };
 
+
+                var lastfocused;
+
+                addEventListener("blur", function (event) {
+                    lastfocused = event.target;
+//                    console.log(lastfocused);
+                }, true);
+/*
+                element.addEventListener("focus", function () {
+                    console.log(lastfocused);
+                    if (lastfocused) {
+                        lastfocused.focus();
+                    }
+                }, true);*/
+/*
+                function focus(event) {
+                    console.log(event.target);
+                    event.target.focus();
+//                    event.target.triggerEvent("focus", false, false);
+                }*/
+
+                element.addEventListener("mousedown", function () {
+                    addEventListener("blur", events.stop, true);
+                }, true);
+                element.addEventListener("mouseup", function () {
+                    removeEventListener("blur", events.stop, true);
+
+                    if (lastfocused) {
+                        lastfocused.focus();
+                    }
+                }, true);
+
+
                 function undo() {
+//                    console.log(lastfocused);
                     if (should && !state.undoBar.style.opacity) {
                         state.undoBar.hide();
                         Undo.pop();
