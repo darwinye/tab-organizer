@@ -126,6 +126,8 @@ Tab = {
                 if (tab.selected) {
                     container.setAttribute("data-focused", "");
                 }
+//
+//                console.log(tab);
 
                 var text = tab.title || tab.url;
 
@@ -134,27 +136,26 @@ Tab = {
                 } else {
                     cell.favicon.src = "";
 
-                    function exclude(x) {
+                    var exclude = function (x) {
                         for (var i = 1 ; i < arguments.length; i += 1) {
                             if (arguments[i] === x) {
                                 return false;
                             }
                         }
                         return true;
-                    }
-
-                    if (tab.window.title === "~Crashes") {
+                    };
+//
+//                    if (tab.window.title === "~Crashes") {
 //                        console.log(tab.title);
 //                        console.log(tab.url);
-                    }
-
-                    if (exclude(tab.window.title, "~Stuff", "~Crashes")/* && (tab.index < 163 || tab.index > 162)*/) {
-                    // "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "50", "52", "Amazon", "Blogs", "Byuu", "CSS", "Emulation", "Eyes", "Games", "GNU/Linux", "Google", "Google Code", "GPA", "JavaScript", "Lisp", "Minecraft", "Mozilla", "Parsing", "Programming", "Python", "StackOverflow", "StarCraft", "Stories", "Tab Organizer", "Torrent", "TV Tropes", "Wikipedia", "YouTube", "~Error", "~Search",
+//                    }
+//
+//                    if (exclude(tab.window.title, "~Stuff", "~Crashes")/* && (tab.index < 163 || tab.index > 162)*/) {
 //                    if (false && tab.window.title !== "~Crashes") {
 //                        console.log(tab);
 //                        return;
-                        cell.favicon.src = "chrome://favicon/" + tab.url;
-                    }
+                    cell.favicon.src = "chrome://favicon/" + tab.url;
+//                    }
                 }
 
                 cell.favicon.title = text;

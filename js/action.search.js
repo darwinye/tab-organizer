@@ -201,7 +201,8 @@
                     'intitle:r/^404 Not Found$/,',
                             'r/^Oops! (?:Google Chrome could not |',
                                         'This link appears to be broken)/,', //! broken$)
-                            'r/ is not available$/'
+                            'r/ is not available$/,',
+                            'r/ failed to load$/'
                 ];
 
                 return function (item) {
