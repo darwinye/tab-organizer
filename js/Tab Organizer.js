@@ -5,10 +5,20 @@ var Tab, Window;
 
 Tab = {
     focus: function (tab, focus) {
-        var focused = Options.get("window.lastfocused");
+        var focused = Options.get("window.lastfocused"),
+            when    = Options.get("popup.close.when");
+
         var should = (focus !== false && focused !== tab.windowId);
 
         Platform.tabs.focus(tab, should);
+
+        if (!tab.selected || should) {
+            if (when === "switch-tab") {
+                return close();
+            } else if (should && when === "switch-window") {
+                return close();
+            }
+        }
 
         if (should && Options.get("popup.type") !== "tab") {
             Platform.tabs.getCurrent(function (tab) {
@@ -134,8 +144,8 @@ Tab = {
                 if (tab.pinned) {
                     cell.favicon.src = "/images/pinned.png";
                 } else {
-                    cell.favicon.src = "";
-
+//                    cell.favicon.src = "";
+/*
                     var exclude = function (x) {
                         for (var i = 1 ; i < arguments.length; i += 1) {
                             if (arguments[i] === x) {
@@ -143,7 +153,7 @@ Tab = {
                             }
                         }
                         return true;
-                    };
+                    };*/
 //
 //                    if (tab.window.title === "~Crashes") {
 //                        console.log(tab.title);
@@ -285,6 +295,7 @@ Tab = {
                         } else {
                             delete parent.queue.shiftNode;
                         }
+
                     } else if (event.shiftKey) {
                         parent.queue.reset();
 
@@ -336,8 +347,10 @@ Tab = {
                             parent.queue.shiftNode = this;
                             this.queueAdd();
                         }
+
                     } else if (event.altKey) {
                         Platform.tabs.remove(container.tab);
+
                     } else {
                         switch (Options.get("tabs.click.type")) {
                         case "select-focus":

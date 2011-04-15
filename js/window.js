@@ -1606,6 +1606,18 @@ fragment.appendChild(UI.create("div", function (toolbar) {
         if (type !== "index <") {
             state.sortTabs(type);
         }
+/*
+        Platform.event.on("tab-focus", function () {
+            if (Options.get("popup.close.when") === "switch-tab") {
+                close();
+            }
+        });
+
+        Platform.event.on("window-focus", function () {
+            if (Options.get("popup.close.when") === "switch-window") {
+                close();
+            }
+        });*/
 
         Options.event.on("change", function (event) {
             if (event.name === "tabs.sort.type") {

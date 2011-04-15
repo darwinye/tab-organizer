@@ -870,6 +870,25 @@
                         var height = 375;
 
                         container.input("dropdown-list", {
+                            option: "popup.close.when",
+                            text: "Close Tab Organizer",
+                            list: [{
+                                value: "manual",
+                                text: "only when I say so!"
+                            }, {
+                                value: "switch-tab",
+                                text: "when switching tabs"
+                            }, {
+                                value: "switch-window",
+                                text: "when switching windows"
+                            }]
+                        });
+
+//                        container.space({ height: "5px" });
+                        container.separator();
+                        container.space({ height: "5px" });
+
+                        container.input("dropdown-list", {
                             option: "popup.type",
                             text: "Display in a...",
                             list: [{
@@ -884,8 +903,8 @@
                             }]
                         });
 
-                        container.separator();
-                        container.space({ height: "10px" });
+//                        container.separator();
+                        container.space({ height: "5px" });
 
                         container["DOM.Element"].appendChild(UI.create("table", function (element) {
                             element.style.backgroundColor = "slategray";
