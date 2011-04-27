@@ -1646,6 +1646,12 @@ fragment.appendChild(UI.create("div", function (toolbar) {
         });*/
 
         Options.event.on("change", function (event) {
+            if (event.name === "macros.list") {
+                state.search();
+            }
+        });
+
+        Options.event.on("change", function (event) {
             if (event.name === "tabs.sort.type") {
                 state.search({ scroll: true, nodelay: true });
 

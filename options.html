@@ -571,6 +571,10 @@
                                 if (!info) {
                                     info = { search: "" };
                                     macros.unshift(info);
+
+                                    Options.event.trigger("change", {
+                                        name: "macros.list"
+                                    });
                                 }
 
                                 update();
@@ -591,7 +595,15 @@
 
                                         element.addEventListener("keyup", function (element) {
                                             info.window = this.value;
+
+                                            Options.event.trigger("change", {
+                                                name: "macros.list"
+                                            });
                                         }, true);
+/*
+                                        element.addEventListener("change", function () {
+
+                                        }, true);*/
                                     });
 
                                     container.appendChild(UI.create("td", function (element) {
@@ -641,6 +653,10 @@
                                             } else {
                                                 windowName.removeAttribute("hidden");
                                             }
+
+                                            Options.event.trigger("change", {
+                                                name: "macros.list"
+                                            });
                                         }
                                         update();
 
@@ -659,7 +675,15 @@
 
                                             element.addEventListener("keyup", function (element) {
                                                 info.search = this.value;
+
+                                                Options.event.trigger("change", {
+                                                    name: "macros.list"
+                                                });
                                             }, true);
+/*
+                                            element.addEventListener("change", function () {
+
+                                            }, true);*/
                                         }));
                                     }));
 
@@ -779,13 +803,19 @@
 
                                 boxes.forEach(function (item, i) {
                                     var index = macros.indexOf(item.info);
+
                                     if (index !== -1) {
                                         macros.splice(index, 1);
 
                                         if (index <= i) {
                                             index += 1;
                                         }
+
                                         macros.splice(index - 1, 0, item.info);
+
+                                        Options.event.trigger("change", {
+                                            name: "macros.list"
+                                        });
                                     }
                                 });
                                 table.updateRows();
@@ -827,6 +857,10 @@
                                     if (index !== -1) {
                                         macros.splice(index, 1);
                                         macros.splice(index + boxes.length, 0, item.info);
+
+                                        Options.event.trigger("change", {
+                                            name: "macros.list"
+                                        });
                                     }
                                 });
 
@@ -852,7 +886,12 @@
                                     var index = macros.indexOf(item.info);
                                     if (index !== -1) {
                                         macros.splice(index, 1);
+
+                                        Options.event.trigger("change", {
+                                            name: "macros.list"
+                                        });
                                     }
+
                                     table.removeRow(item);
                                 });
 
