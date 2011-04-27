@@ -14,7 +14,7 @@ Tab = {
 
         if (!tab.selected || should) {
             if (when === "switch-tab") {
-                return close();
+                return close(); //! returns to prevent the popup from "flickering"
             } else if (should && when === "switch-window") {
                 return close();
             }

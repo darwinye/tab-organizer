@@ -387,6 +387,96 @@ addEventListener("keydown", function (event) {
 }, false);
 
 
+state.filterWithMacros = (function () {
+    function go(macro, info) {
+        var first, moved, odd, results;
+
+        if (macro.search) {
+            results = action.search(info.tabs, macro.search);
+
+            if (results.length) {
+                info.makeNew = info.makeNew.filter(function (item) {
+                    return results.indexOf(item) === -1;
+                });
+
+                info.tabs = info.tabs.filter(function (item) {
+                    return results.indexOf(item) === -1;
+                });
+
+                switch (macro.action) {
+                case "require": //* FALLTHRU
+                case "move":
+                    state.search.delay(1000);
+
+                    if (macro.window) {
+                        first = state.list.find(function (item) {
+                            return item.window.title === macro.window;
+                        });
+
+                        if (first) {
+                            if (macro.action === "require") {
+                                odd = Array.slice(first.tabList.children);
+
+                                odd = odd.filter(function (item) {
+                                    return info.tabs.indexOf(item) !== -1;
+                                });
+
+                                if (odd.length) {
+                                    info.makeNew = info.makeNew.concat(odd);
+                                }
+                            }
+//
+//                                        moved = results.moveTabs(first.window, { undo: false });//!info.moved);
+//
+//                                        info.moved = info.moved.concat(moved);
+
+                            results = results.filter(function (item) {
+                                return item.tab.window !== first.window;
+                            });
+
+                            info.moved.push({ window: first.window, tabs: results });
+                        } else {
+                            info.moved.push({ title: macro.window, tabs: results });
+//                                        info.moved = info.moved.concat(results);
+//
+//                                        Window.create(results, { title: macro.window, undo: false });
+                        }
+                    } else {
+//                                    info.moved = info.moved.concat(results);
+                        info.makeNew = info.makeNew.concat(results);
+//
+//                                    Window.create(results, { undo: false });
+                    }
+                    break;
+                case "close":
+                    state.search.delay(1000);
+
+                    info.closed = info.closed.concat(results);
+                }
+            }
+        }
+
+        return info;
+    }
+
+    return function (array) {
+        var info = {
+            makeNew: [],
+            closed: [],
+            moved: []
+        };
+
+        info.tabs = state.createSearchList();
+
+        array.forEach(function (item) {
+            info = go(item, info);
+        });
+
+        return info;
+    };
+}());
+
+
 var fragment = document.createDocumentFragment();
 
 fragment.appendChild(UI.create("div", function (toolbar) {
@@ -459,145 +549,81 @@ fragment.appendChild(UI.create("div", function (toolbar) {
 
             menu.separator();
 
+            var perform = function (array) {
+                var info = state.filterWithMacros(array);
 
-            var perform = (function () {
-                function go(macro, info) {
-                    var first, moved, odd, results;
-                    if (macro.search) {
-                        results = action.search(info.tabs, macro.search);
+                if (info.makeNew.length) {
+                    state.search.delay(1000);
 
-                        if (results.length) {
-                            info.makeNew = info.makeNew.filter(function (item) {
-                                return results.indexOf(item) === -1;
-                            });
+                    Window.create(info.makeNew, { undo: false });
 
-                            info.tabs = info.tabs.filter(function (item) {
-                                return results.indexOf(item) === -1;
-                            });
-
-                            switch (macro.action) {
-                            case "require": //* FALLTHRU
-                            case "move":
-                                state.search.delay(1000);
-
-                                if (macro.window) {
-                                    first = state.list.find(function (item) {
-                                        return item.window.title === macro.window;
-                                    });
-
-                                    if (first) {
-                                        if (macro.action === "require") {
-                                            odd = Array.slice(first.tabList.children);
-
-                                            odd = odd.filter(function (item) {
-                                                return info.tabs.indexOf(item) !== -1;
-                                            });
-
-                                            if (odd.length) {
-                                                info.makeNew = info.makeNew.concat(odd);
-                                            }
-                                        }
-
-                                        moved = results.moveTabs(first.window, { undo: false });//!info.moved);
-
-                                        info.moved = info.moved.concat(moved);
-                                    } else {
-                                        info.moved = info.moved.concat(results);
-
-                                        Window.create(results, { title: macro.window, undo: false });
-                                    }
-                                } else {
-                                    info.moved = info.moved.concat(results);
-
-                                    Window.create(results, { undo: false });
-                                }
-                                break;
-                            case "close":
-                                state.search.delay(1000);
-
-                                info.closed = info.closed.concat(results);
-
-                                results.forEach(function (item) {
-                                    Platform.tabs.remove(item.tab);
-                                });
-                            }
-                        }
-                    }
-
-                    return info;
+                    info.moved = info.moved.concat(info.makeNew);
                 }
 
-                return function (array) {
-                    var info = {
-                        makeNew: [],
-                        closed: [],
-                        moved: []
-                    };
+                var closed = info.closed;
+                var moved = [];
 
-                    info.tabs = state.createSearchList();
+                closed.forEach(function (item) {
+                    Platform.tabs.remove(item.tab);
+                });
 
-                    array.forEach(function (item) {
-                        info = go(item, info);
-                    });
+                info.moved.forEach(function (item) {
+                    if (item.title) {
+                        moved = moved.concat(item.tabs);
 
-                    if (info.makeNew.length) {
-                        state.search.delay(1000);
-
-                        Window.create(info.makeNew, { undo: false });
-
-                        info.moved = info.moved.concat(info.makeNew);
-                    }
-
-                    var closed = info.closed;
-                    var moved = info.moved;
-
-                    Undo.push("macro-trigger", {
-                        closed: closed,
-                        moved: moved
-                    });
-
-                    var text = [];
-
-                    if (moved.length) {
-                        text.push(Platform.i18n.get("undo_message_move"),
-                                  moved.length,
-                                  Platform.i18n.get("global_tab"));
-
-                        if (moved.length !== 1) {
-                            text.push(Platform.i18n.get("global_plural"));
-                        }
-
-//!                        text.push(" and closed ", closed.length, " tab");
-//!                        if (closed.length !== 1) {
-//!                            text.push("s");
-//!                        }
-                        text.push(Platform.i18n.get("global_end"));
-
-                        state.undoBar.show(text.join(""));
-
-                    } else if (closed.length) {
-                        text.push(Platform.i18n.get("undo_message_closed"),
-                                  closed.length,
-                                  Platform.i18n.get("global_tab"));
-
-                        if (closed.length !== 1) {
-                            text.push(Platform.i18n.get("global_plural"));
-                        }
-
-//!                        text.push(" and closed ", closed.length, " tab");
-//!                        if (closed.length !== 1) {
-//!                            text.push("s");
-//!                        }
-                        text.push(Platform.i18n.get("global_end"));
-
-                        state.undoBar.show(text.join(""), { undo: false });
-
+                        Window.create(item.tabs, { title: item.title, undo: false });
                     } else {
-                        state.undoBar.show(Platform.i18n.get("undo_message_noop") +
-                                           Platform.i18n.get("global_end"), { undo: false });
+                        moved = moved.concat(item.tabs.moveTabs(item.window, { undo: false }));
                     }
-                };
-            }());
+                });
+
+                Undo.push("macro-trigger", {
+                    closed: closed,
+                    moved: moved
+                });
+
+                var text = [];
+
+                if (moved.length) {
+                    text.push(Platform.i18n.get("undo_message_move"),
+                              moved.length,
+                              Platform.i18n.get("global_tab"));
+
+                    if (moved.length !== 1) {
+                        text.push(Platform.i18n.get("global_plural"));
+                    }
+
+//!                        text.push(" and closed ", closed.length, " tab");
+//!                        if (closed.length !== 1) {
+//!                            text.push("s");
+//!                        }
+                    text.push(Platform.i18n.get("global_end"));
+
+                    state.undoBar.show(text.join(""));
+
+                } else if (closed.length) {
+                    text.push(Platform.i18n.get("undo_message_closed"),
+                              closed.length,
+                              Platform.i18n.get("global_tab"));
+
+                    if (closed.length !== 1) {
+                        text.push(Platform.i18n.get("global_plural"));
+                    }
+
+//!                        text.push(" and closed ", closed.length, " tab");
+//!                        if (closed.length !== 1) {
+//!                            text.push("s");
+//!                        }
+                    text.push(Platform.i18n.get("global_end"));
+
+                    state.undoBar.show(text.join(""), { undo: false });
+
+                } else {
+                    state.undoBar.show(Platform.i18n.get("undo_message_noop") +
+                                       Platform.i18n.get("global_end"), { undo: false });
+                }
+            };
+
 
             menu.submenu(Platform.i18n.get("toolbar_menu_macros"), {
                 keys: ["M"],

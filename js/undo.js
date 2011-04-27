@@ -8,10 +8,15 @@
             state.last.moved = info.list;
         }
     });
+
     Undo.setHook("macro-trigger", function (info) {
         if (info.moved.length) {
             state.last.moved = info.moved;
         }
+    });
+
+    Undo.setHook("rename-window", function (info) {
+        state.search();
     });
 
 

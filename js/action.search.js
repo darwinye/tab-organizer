@@ -256,6 +256,37 @@
     });
 
 
+    parser.prefix({ priority: 20, token: "will:",
+        output: dictionary({
+            "move": function (item) {
+                if (!cache["will:move"]) {
+                    var moved = [];
+//
+//                    ignore.move = true;
+
+                    var info = state.filterWithMacros(state.macros);
+
+                    info.moved.forEach(function (item) {
+                        moved = moved.concat(item.tabs);
+//
+//                        console.log(item.title, item.tabs);
+                    });
+
+                    moved = moved.concat(info.makeNew);
+//
+//                    console.log(info.makeNew);
+
+                    cache["will:move"] = moved;
+                }
+//
+//                console.log(cache["will:move"].length);
+
+                return cache["will:move"].indexOf(item) !== -1;
+            }
+        })
+    });
+
+
     parser.prefix({ priority: 20, token: "same:",
         output: dictionary({
             "domain": function (item) {
