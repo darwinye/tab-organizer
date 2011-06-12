@@ -156,6 +156,9 @@ button.UI-link {
 .UI-contextMenu-submenu[data-selected] .UI-contextMenu-submenu-list,
 .UI-contextMenu-submenu[data-selected] .UI-contextMenu-submenu-mask,
 .UI-contextMenu-submenu[data-selected] .UI-contextMenu-submenu-padding {
+    -webkit-transition: visibility 0s 0.1s;
+    -webkit-transition: opacity 0.105s;
+
     visibility: visible;
     opacity: 1;
 }

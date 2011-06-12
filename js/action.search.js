@@ -355,8 +355,10 @@
                         });
                     }
 
-                    var url = regexp.exec(item.tab.url)[1];
-                    return cache.urls[url] > 1;
+                    var url = regexp.exec(item.tab.url);
+                    if (url) {
+                        return cache.urls[url[1]] > 1;
+                    }
                 };
             }())
         })
