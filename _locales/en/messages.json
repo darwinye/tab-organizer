@@ -209,6 +209,11 @@
     "description": "Tells the user that they can click on the `x` button to close the tab. Should include a space at the end."
   },
 
+  "window_close": {
+    "message": "<u>C</u>lose window",
+    "description": "Tells the user that this will close the entire window. If possible, underline the letter `c`, but if there is no `c`, then underline nothing."
+  },
+
 
   "window_menu_open": {
     "message": "Open menu ",

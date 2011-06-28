@@ -395,31 +395,53 @@ input[data-special], .search-past-item[data-special] {
     cursor: default;
 }
 
-.tab-icon-dropdown, .tab-button-close {
+.tab-icon-dropdown, .tab-button-close, .window-button-close {
     background-position: center;
     background-repeat: no-repeat;
 
     cursor: pointer;
 }
 
-.tab-icon-dropdown {
-    display: none;
-
+.window-button-close, .tab-icon-dropdown {
     position: absolute;
     top: 10px;
     left: 75px; /** 105 - 1 - 17 - 10 */
-    z-index: 1;
 
-    width: 17px;
     height: 16px;
-
-    background-color: white;
 
     border: 1px solid transparent;
     border-radius: 5px;
 }
+
+.window-button-close {
+    z-index: 1;
+    width: 16px;
+
+    margin-left: 1px;
+
+    background-image: url(/images/button-close.png);
+    background-color: rgba(255, 255, 255, 0.75);
+
+    /*width: 50px;
+    background-color: red;*/
+}
+
+.tab-icon-dropdown {
+    display: none;
+
+    z-index: 2;
+    width: 17px;
+
+    background-color: white;
+}
+
 .window[data-focused] .tab-icon-dropdown {
     display: table-cell; /** This fixes a bug with the context menu. */
+}
+
+/*! hacky; should find a better way... */
+.tab-icon-dropdown:hover + .window-button-close {
+    display: none;
 }
 
 .tab-icon-dropdown:hover {

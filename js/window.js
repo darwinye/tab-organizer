@@ -1043,6 +1043,7 @@ fragment.appendChild(UI.create("div", function (toolbar) {
             "same:title": true,
             "same:url": true,
 
+            "will:move": true,
             "window:": true,
             "window:focused": true
         };
@@ -1687,6 +1688,21 @@ fragment.appendChild(UI.create("div", function (toolbar) {
                 var query = document.querySelectorAll(".tab");
                 for (var i = 0; i < query.length; i += 1) {
                     query[i].updateButtonPositions();
+                }
+            }
+        });
+
+        Options.event.on("change", function (event) {
+            var dropdown = (event.name === "windows.button.dropdown"),
+                close    = (event.name === "windows.button.close");
+
+            if (dropdown || close) {
+                var query = (dropdown
+                              ? document.querySelectorAll(".tab-icon-dropdown")
+                              : close &&
+                                document.querySelectorAll(".window-button-close"));
+                for (var i = 0; i < query.length; i += 1) {
+                    query[i].style.display = (event.value ? "" : "none");
                 }
             }
         });

@@ -490,7 +490,7 @@
 
 
                     "Keyboard": function (container) {
-                        container.header("Open popup with: ");
+                        container.header("Open popup with:");
 
                         container.indent(function (container) {
                             container.input("checkbox", {
@@ -908,19 +908,32 @@
                     "Popup": function (container) {
                         var height = 355;
 
-                        container.input("dropdown-list", {
-                            option: "popup.close.when",
-                            text: "Close Tab Organizer",
-                            list: [{
-                                value: "manual",
-                                text: "only when I say so!"
-                            }, {
-                                value: "switch-tab",
-                                text: "when switching tabs"
-                            }, {
-                                value: "switch-window",
-                                text: "when switching windows"
-                            }]
+                        container.group(function (container) {
+                            container.input("dropdown-list", {
+                                option: "popup.switch.action",
+                                list: [{
+                                    value: "minimize",
+                                    text: "Minimize"
+                                }, {
+                                    value: "close",
+                                    text: "Close"
+                                }]
+                            });
+
+                            container.input("dropdown-list", {
+                                option: "popup.close.when",
+                                text: "Tab Organizer",
+                                list: [{
+                                    value: "manual",
+                                    text: "only when I say so!"
+                                }, {
+                                    value: "switch-tab",
+                                    text: "when switching tabs"
+                                }, {
+                                    value: "switch-window",
+                                    text: "when switching windows"
+                                }]
+                            });
                         });
 
 //                        container.space({ height: "5px" });
@@ -1329,6 +1342,22 @@
                                         min: 1
                                     }
                                 });
+                            });
+                        });
+
+                        container.space({ height: "1em" });
+
+                        container.header("Window button:");
+
+                        container.indent(function (container) {
+                            container.input("checkbox", {
+                                option: "windows.button.dropdown",
+                                text: "Dropdown menu"
+                            });
+
+                            container.input("checkbox", {
+                                option: "windows.button.close",
+                                text: "Close button"
                             });
                         });
                     }

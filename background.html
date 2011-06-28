@@ -26,7 +26,8 @@
             "popup.hotkey.alt": false,
             "popup.hotkey.letter": "E",
             "popup.close.escape": false,
-            "popup.close.when": "manual",
+            "popup.switch.action": "minimize",
+            "popup.close.when": "switch-tab", // "manual",
 
             "undo.new-tab": true,
             "undo.rename-window": true,
@@ -50,6 +51,9 @@
             "windows.grid.columns": 3,
             "windows.grid.rows": 1.5,
             "windows.sort.type": "date-created <",
+
+            "windows.button.dropdown": true,
+            "windows.button.close": false,
 
             "counter.enabled": true,
             "counter.type": "total",
@@ -145,7 +149,7 @@
 
             "Undo": ["undo.new-tab", "undo.rename-window", "undo.select-tabs", "undo.pin-tabs", "undo.favorite-tabs", "undo.move-tabs", "undo.close-tabs", "undo.timer"],
 
-            "Windows": ["windows.type", "windows.grid.columns", "windows.grid.rows"],
+            "Windows": ["windows.type", "windows.grid.columns", "windows.grid.rows", "windows.button.dropdown", "windows.button.close"],
 
             "Statistics": ["windows.sort.type", "tabs.sort.type"],
         };

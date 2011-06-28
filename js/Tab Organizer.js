@@ -878,9 +878,22 @@ Window = {
             }));
 
 
+            function closeWindow() {
+                //event.stopPropagation();
+                //
+                state.search.delay(1000);
+
+                Platform.windows.remove(container.window);
+            }
+
+
             container.appendChild(UI.create("div", function (element) {
                 element.className = "tab-icon-dropdown";
                 element.title = Platform.i18n.get("window_menu_open") + "(Ctrl M)";
+
+                if (!Options.get("windows.button.dropdown")) {
+                    element.style.display = "none";
+                }
 
                 var contextMenu = UI.contextMenu(function (menu) {
                     element.addEventListener("mousedown", function (event) {
@@ -959,6 +972,11 @@ Window = {
                             event.preventDefault();
                             container.tabIcon.indexText.select();
                         }
+                    });
+
+                    menu.addItem(Platform.i18n.get("window_close"), {
+                        keys: ["C"],
+                        action: closeWindow
                     });
 
                     menu.separator();
@@ -1320,6 +1338,32 @@ Window = {
                 });
 
                 element.appendChild(contextMenu);
+            }));
+
+
+            container.appendChild(UI.create("div", function (element) {
+                element.className = "window-button-close";
+                //! the title shouldn't have the <u></u> tag in it but the
+                //! menu item should... maybe use a regexp? Or two separate
+                //! items in the translation list? Yeah, the latter sounds
+                //! good
+                element.title = Platform.i18n.get("window_close");
+
+                if (!Options.get("windows.button.close")) {
+                    element.style.display = "none";
+                }
+                //element.draggable = true;
+
+                //element.addEventListener("dragstart", events.disable, true);
+                //element.addEventListener("mousedown", events.stop, true);
+
+                container.addEventListener("mousedown", function (event) {
+                    if (event.target === element) {
+                        event.preventDefault();
+                    }
+                }, true);
+
+                element.addEventListener("click", closeWindow, true);
             }));
 
 
