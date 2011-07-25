@@ -6,21 +6,40 @@ var Tab, Window;
 Tab = {
     focus: function (tab, focus) {
         var focused = Options.get("window.lastfocused"),
-            when    = Options.get("popup.close.when");
+            when    = Options.get("popup.close.when"),
+            action  = Options.get("popup.switch.action");
 
-        var should = (focus !== false && focused !== tab.windowId);
+        var should = (focus   !== false &&
+                      focused !== tab.windowId);
 
-        Platform.tabs.focus(tab, should);
+        Platform.tabs.focus(tab, should || (action  === "minimize"    &&
+                                            when    === "switch-tab") ||
+                                           (action  === "show"        &&
+                                            when    === "switch-window"));
+                                 //should || action === "minimize"
+                                 //should || when === "switch-window"
 
-        if (!tab.selected || should) {
-            if (when === "switch-tab") {
+        /*
+
+        minimize:
+          tab     focus window
+          window  focus window if should
+
+        close:
+          tab     focus window if should + close popup
+          window  focus window if should + close popup if should
+
+        show:
+          tab     focus window if should + focus popup if should
+          window  focus window           + focus popup if should
+
+        */
+
+        if (action === "close" && (!tab.selected || should)) {
+            if (when === "switch-tab" || (should && when === "switch-window")) {
                 return close(); //! returns to prevent the popup from "flickering"
-            } else if (should && when === "switch-window") {
-                return close();
             }
-        }
-
-        if (should && Options.get("popup.type") !== "tab") {
+        } else if (should && action === "show" && Options.get("popup.type") !== "tab") {
             Platform.tabs.getCurrent(function (tab) {
                 Platform.tabs.focus(tab, true);
             });
@@ -139,7 +158,8 @@ Tab = {
 //
 //                console.log(tab);
 
-                var text = tab.title || tab.url;
+                var text     = tab.title || tab.url,
+                    location = tab.location;
 
                 if (tab.pinned) {
                     cell.favicon.src = "/images/pinned.png";
@@ -186,33 +206,34 @@ Tab = {
     //                var url = {};
 
     //                if (match) {
-                    if (tab.location.protocol !== "http") {
+                    if (location.protocol !== "http") {
                         element.appendChild(UI.create("span", function (element) {
                             element.className = "protocol";
-                            if (secure[tab.location.protocol]) {
+                            if (secure[location.protocol]) {
                                 element.setAttribute("data-secure", "");
                             }
-                            element.textContent = tab.location.protocol;
+                            element.textContent = location.protocol;
                         }));
-                        element.appendChild(document.createTextNode(tab.location.separator));
+                        element.appendChild(document.createTextNode(location.separator));
                     }
                     element.appendChild(UI.create("span", function (element) {
                         element.className = "domain";
-                        element.textContent = tab.location.domain;
+                        element.textContent = location.domain;
                     }));
 
-                    element.appendChild(document.createTextNode(tab.location.path));
+                    element.appendChild(document.createTextNode(location.path));
 
-                    if (tab.location.query) {
+                    if (location.query || location.file) {
+                        //console.log(location.query, location.file);
                         element.appendChild(UI.create("span", function (element) {
                             element.className = "query";
-                            element.textContent = tab.location.query;
+                            element.textContent = location.file + location.query;
                         }));
                     }
-                    if (tab.location.hash) {
+                    if (location.hash) {
                         element.appendChild(UI.create("span", function (element) {
                             element.className = "fragment";
-                            element.textContent = tab.location.hash;
+                            element.textContent = location.hash;
                         }));
                     }
     //                }
@@ -624,30 +645,7 @@ Window = {
                     return;
                 }
 
-                if (event.which === 38 || event.which === 40) { //* Up/Down
-                    query = this.querySelector(".tab[data-focused]");
-                    if (query) {
-                        event.preventDefault();
-
-                        var element = iter(query, event.which === 38);
-                        if (element) {
-                            state.event.trigger("tab-focus", element.tab);
-                        }
-                    }
-                } else if (event.which === 37 || event.which === 39) { //* Left/Right
-                    query = this.querySelector(".tab[data-focused]");
-                    if (query) {
-                        event.preventDefault();
-
-                        if (query.previousSibling) {
-                            if (event.which === 37) {
-                                state.indent.sub(query.tab);
-                            } else {
-                                state.indent.add(query.tab);
-                            }
-                        }
-                    }
-                } else if (event.which === 32 || event.which === 13) { //* Space/Enter
+                if (event.which === 32 || event.which === 13) { //* Space/Enter
                     event.preventDefault();
 
                     query = this.querySelector(".tab[data-focused]");
@@ -657,6 +655,31 @@ Window = {
                             event.ctrlKey, event.altKey, event.shiftKey, event.metaKey, 0, null);
 
                         query.dispatchEvent(info);
+                    }
+                } else if (!event.ctrlKey && !event.metaKey) {
+                    if (event.which === 37 || event.which === 39) { //* Left/Right
+                        query = this.querySelector(".tab[data-focused]");
+                        if (query) {
+                            event.preventDefault();
+
+                            if (query.previousSibling) {
+                                if (event.which === 37) {
+                                    state.indent.sub(query.tab);
+                                } else {
+                                    state.indent.add(query.tab);
+                                }
+                            }
+                        }
+                    } else if (event.which === 38 || event.which === 40) { //* Up/Down
+                        query = this.querySelector(".tab[data-focused]");
+                        if (query) {
+                            event.preventDefault();
+
+                            var element = iter(query, event.which === 38);
+                            if (element) {
+                                state.event.trigger("tab-focus", element.tab);
+                            }
+                        }
                     }
                 }
             }, true);
@@ -878,6 +901,35 @@ Window = {
             }));
 
 
+            container.closeButton = UI.create("div", function (element) {
+                element.className = "window-button-close";
+                //! the title shouldn't have the <u></u> tag in it but the
+                //! menu item should... maybe use a regexp? Or two separate
+                //! items in the translation list? Yeah, the latter sounds
+                //! good
+                element.title = Platform.i18n.get("window_close");
+
+                if (!Options.get("windows.button.close")) {
+                    element.setAttribute("hidden", "");
+                    //element.style.display = "none";
+                }
+                //element.draggable = true;
+
+                //element.addEventListener("dragstart", events.disable, true);
+                //element.addEventListener("mousedown", events.stop, true);
+
+                container.addEventListener("mousedown", function (event) {
+                    if (event.target === element) {
+                        event.preventDefault();
+                    }
+                }, true);
+
+                element.addEventListener("click", closeWindow, true);
+            });
+
+            container.appendChild(container.closeButton);
+
+
             function closeWindow() {
                 //event.stopPropagation();
                 //
@@ -887,12 +939,13 @@ Window = {
             }
 
 
-            container.appendChild(UI.create("div", function (element) {
+            container.dropdown = UI.create("div", function (element) {
                 element.className = "tab-icon-dropdown";
                 element.title = Platform.i18n.get("window_menu_open") + "(Ctrl M)";
 
                 if (!Options.get("windows.button.dropdown")) {
-                    element.style.display = "none";
+                    element.setAttribute("hidden", "");
+                    //element.style.display = "none";
                 }
 
                 var contextMenu = UI.contextMenu(function (menu) {
@@ -1338,33 +1391,9 @@ Window = {
                 });
 
                 element.appendChild(contextMenu);
-            }));
+            });
 
-
-            container.appendChild(UI.create("div", function (element) {
-                element.className = "window-button-close";
-                //! the title shouldn't have the <u></u> tag in it but the
-                //! menu item should... maybe use a regexp? Or two separate
-                //! items in the translation list? Yeah, the latter sounds
-                //! good
-                element.title = Platform.i18n.get("window_close");
-
-                if (!Options.get("windows.button.close")) {
-                    element.style.display = "none";
-                }
-                //element.draggable = true;
-
-                //element.addEventListener("dragstart", events.disable, true);
-                //element.addEventListener("mousedown", events.stop, true);
-
-                container.addEventListener("mousedown", function (event) {
-                    if (event.target === element) {
-                        event.preventDefault();
-                    }
-                }, true);
-
-                element.addEventListener("click", closeWindow, true);
-            }));
+            container.appendChild(container.dropdown);
 
 
             container.appendChild(UI.create("div", function (element) {

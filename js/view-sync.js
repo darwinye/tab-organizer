@@ -16,7 +16,8 @@
 
 
     function find(text, func) {
-        var rules = link.sheet.cssRules;
+        var rules = link.sheet.cssRules; // error here:
+                                         // Uncaught TypeError: Cannot read property 'cssRules' of null
 
         for (var i = 0; i < rules.length; i += 1) {
             if (rules[i].selectorText === text) {
@@ -55,7 +56,6 @@
             if (typeof done === "function") {
                 done();
             }
-
         }, true);
 
         return function (action) {

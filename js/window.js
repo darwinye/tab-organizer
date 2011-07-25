@@ -383,6 +383,72 @@ addEventListener("keydown", function (event) {
                 close();
             }
         }
+    } else if (event.ctrlKey || event.metaKey) {
+        if (event.which === 38) { //* Up
+            if (Options.get("windows.type") === "grid") {
+                var elem = document.querySelector(".window[data-focused]"),
+                    num  = Options.get("windows.grid.columns");
+
+                elem = state.sorted[state.sorted.indexOf(elem) - num];
+                if (elem) {
+                    elem.setWindowFocus();
+                    elem.tabList.focus();
+                }
+            }
+
+            event.preventDefault();
+        } else if (event.which === 40) { //* Down
+            if (Options.get("windows.type") === "grid") {
+                var elem = document.querySelector(".window[data-focused]"),
+                    num  = Options.get("windows.grid.columns");
+
+                elem = state.sorted[state.sorted.indexOf(elem) + num];
+                if (elem) {
+                    elem.setWindowFocus();
+                    elem.tabList.focus();
+                }
+            }
+
+            event.preventDefault();
+        } else if (event.which === 37) { //* Left
+            var elem = document.querySelector(".window[data-focused]");
+            elem = elem.previousSibling;
+
+            if (Options.get("windows.type") === "grid") {
+                var index = state.sorted.indexOf(elem),
+                    num   = Options.get("windows.grid.columns");
+
+                if (index % num === num - 1) {
+                    elem = null;
+                }
+            }
+
+            if (elem) {
+                elem.setWindowFocus();
+                elem.tabList.focus();
+            }
+
+            event.preventDefault();
+        } else if (event.which === 39) { //* Right
+            var elem = document.querySelector(".window[data-focused]");
+            elem = elem.nextSibling;
+
+            if (Options.get("windows.type") === "grid") {
+                var index = state.sorted.indexOf(elem),
+                    num   = Options.get("windows.grid.columns");
+
+                if (index % num === 0) {
+                    elem = null;
+                }
+            }
+
+            if (elem) {
+                elem.setWindowFocus();
+                elem.tabList.focus();
+            }
+
+            event.preventDefault();
+        }
     }
 }, false);
 
@@ -552,9 +618,9 @@ fragment.appendChild(UI.create("div", function (toolbar) {
             var perform = function (array) {
                 var info = state.filterWithMacros(array);
 
-                if (info.makeNew.length) {
-                    state.search.delay(1000);
+                state.search.delay(1000);
 
+                if (info.makeNew.length) {
                     Window.create(info.makeNew, { undo: false });
 
                     info.moved = info.moved.concat(info.makeNew);
@@ -568,11 +634,14 @@ fragment.appendChild(UI.create("div", function (toolbar) {
                 });
 
                 info.moved.forEach(function (item) {
+                    //console.log(item);
+                    //state.search.delay(1000);
+
                     if (item.title) {
                         moved = moved.concat(item.tabs);
 
                         Window.create(item.tabs, { title: item.title, undo: false });
-                    } else {
+                    } else if (item.tabs) {
                         moved = moved.concat(item.tabs.moveTabs(item.window, { undo: false }));
                     }
                 });
@@ -1039,6 +1108,7 @@ fragment.appendChild(UI.create("div", function (toolbar) {
 
             "last:moved": true,
             "same:domain": true,
+            "same:file": true,
             "same:path": true,
             "same:title": true,
             "same:url": true,
@@ -1692,17 +1762,70 @@ fragment.appendChild(UI.create("div", function (toolbar) {
             }
         });
 
+
+        /*
+
+        (options-change (e) (windows.button.dropdown
+                             windows.button.close)
+          (let name (if (it 0) 'dropdown 'closeButton)
+          (let name (case it
+                      'windows.button.dropdown 'dropdown
+                      'windows.button.close    'closeButton)
+            (each x state!list
+              (if e!value
+                    (x!appendChild (ref x name))
+                  (x!removeChild (ref x name))))))
+        */
+
+
+        /*
+
+        (mac on-option-change (parms test . body)
+          `(on option-change ,parms
+             (when (in (ref ,(car parms) 'name) ,@test)
+               (let it (map [is _ (ref ,(car parms) 'name)] ',test)
+                 ,@body))))
+
+
+        (on-option-change (e) (windows.button.dropdown
+                               windows.button.close)
+          (let query (if (it 0)
+                           (css ".tab-icon-dropdown")
+                         (css ".window-button-close"))
+            (each x query
+              (if e!value
+                    (show x)
+                  (hide x)))))
+
+        */
+
+
         Options.event.on("change", function (event) {
             var dropdown = (event.name === "windows.button.dropdown"),
                 close    = (event.name === "windows.button.close");
 
+            //var name = (dropdown ? "dropdown" : close && "closeButton");
+
             if (dropdown || close) {
+                /*for (var i = 0; i < state.list.length; i += 1) {
+                    if (event.value) {
+                        state.list[i].appendChild(state.list[i][name]);
+                    } else {
+                        state.list[i].removeChild(state.list[i][name]);
+                    }
+                }*/
                 var query = (dropdown
                               ? document.querySelectorAll(".tab-icon-dropdown")
                               : close &&
                                 document.querySelectorAll(".window-button-close"));
+
                 for (var i = 0; i < query.length; i += 1) {
-                    query[i].style.display = (event.value ? "" : "none");
+                    if (event.value) {
+                        query[i].removeAttribute("hidden");
+                    } else {
+                        query[i].setAttribute("hidden", "");
+                    }
+                    //query[i].style.display = (event.value ? "" : "none");
                 }
             }
         });

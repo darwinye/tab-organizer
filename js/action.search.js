@@ -302,6 +302,31 @@
                 return cache.domain[item.tab.location.domain] > 1;
             },
 
+            "file": function (item) {
+                var location = item.tab.location;
+
+                if (!cache.file) {
+                    cache.file = {};
+
+                    tabs.forEach(function (item) {
+                        var location = item.tab.location,
+                            url      = location.path + location.file;
+
+                        if (url.length > 1) {
+                            url = location.domain + url;
+                            //console.log(url);
+                            cache.file[url] = cache.file[url] + 1 || 1;
+                        }
+                    });
+                }
+
+                var url = location.domain +
+                          location.path +
+                          location.file;
+
+                return cache.file[url] > 1;
+            },
+
             "path": function (item) {
                 var location = item.tab.location;
 
@@ -312,7 +337,9 @@
                         var location = item.tab.location,
                             url      = location.path;
 
-                        if (url.length > 1) {
+                        //console.log(location, item.tab.url);
+
+                        if (url && url.length > 1) {
                             url = location.domain + url;
                             cache.path[url] = cache.path[url] + 1 || 1;
                         }

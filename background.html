@@ -104,6 +104,15 @@
             if (Options.get("tabs.close.display") === "always") {
                 Options.set("tabs.close.display", "every");
             }
+
+            if (Options.get("popup.close.when") === "manual") {
+                Options.set("popup.close.action", "minimize");
+                Options.set("popup.close.when", "switch-tab");
+            }
+
+            /*(when (is (option popup.close.when) "manual")
+                (= (option popup.close.action) "minimize")
+                (= (option popup.close.when) "switch-tab"))*/
         }());
 
 
@@ -137,7 +146,7 @@
 
             "Keyboard": ["popup.hotkey.ctrl", "popup.hotkey.shift", "popup.hotkey.alt", "popup.hotkey.letter"],
 
-            "Popup": ["popup.close.when", "popup.type", "popup.offsetX", "popup.offsetY", "popup.width", "popup.height"],
+            "Popup": ["popup.switch.action", "popup.close.when", "popup.type", "popup.offsetX", "popup.offsetY", "popup.width", "popup.height"],
 
             "Privacy": ["usage-tracking"],
 

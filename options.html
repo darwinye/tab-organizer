@@ -751,6 +751,14 @@
                             text: "New macro",
                             height: "25px", //! 29px
                             action: function () {
+                                var boxes = Array.slice(table.children);
+
+                                boxes.forEach(function (item) {
+                                    var input = item.querySelector("input[type=checkbox]");
+                                    //console.log(input.checked);
+                                    input.checked = false;
+                                });
+
                                 table.makeRow();
                             }
                         });
@@ -917,6 +925,9 @@
                                 }, {
                                     value: "close",
                                     text: "Close"
+                                }, {
+                                    value: "show",
+                                    text: "Show"
                                 }]
                             });
 
@@ -924,9 +935,6 @@
                                 option: "popup.close.when",
                                 text: "Tab Organizer",
                                 list: [{
-                                    value: "manual",
-                                    text: "only when I say so!"
-                                }, {
                                     value: "switch-tab",
                                     text: "when switching tabs"
                                 }, {
@@ -1347,7 +1355,7 @@
 
                         container.space({ height: "1em" });
 
-                        container.header("Window button:");
+                        container.header("Window buttons:");
 
                         container.indent(function (container) {
                             container.input("checkbox", {

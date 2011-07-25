@@ -420,10 +420,15 @@ input[data-special], .search-past-item[data-special] {
     margin-left: 1px;
 
     background-image: url(/images/button-close.png);
-    background-color: rgba(255, 255, 255, 0.75);
+    background-color: white;
+    /*background-color: rgba(255, 255, 255, 0.75);*/
 
     /*width: 50px;
     background-color: red;*/
+}
+
+.window-button-close:not([hidden]) + .tab-icon-dropdown {
+    margin-left: -18px;
 }
 
 .tab-icon-dropdown {
@@ -440,11 +445,11 @@ input[data-special], .search-past-item[data-special] {
 }
 
 /*! hacky; should find a better way... */
-.tab-icon-dropdown:hover + .window-button-close {
+/*.tab-icon-dropdown:hover + .window-button-close {
     display: none;
-}
+}*/
 
-.tab-icon-dropdown:hover {
+.tab-icon-dropdown:hover, .window-button-close:hover {
     /*! -webkit-box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 10px;*/
     border: 1px solid gainsboro;
 }
