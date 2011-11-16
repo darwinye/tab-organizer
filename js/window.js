@@ -376,6 +376,31 @@ addEventListener("dragend", function () {
 }, true);
 
 
+
+function findVisible(x, name) {
+    x = x[name];
+    if (x) {
+        if (x.hasAttribute("hidden")) {
+            return findVisible(x, name);
+        } else {
+            return x;
+        }
+    }
+}
+
+
+function findVertical(x, name, num) {
+    var y = findVisible(x, name);
+    if (y) {
+        if (y.offsetLeft !== num) {
+            return findVertical(y, name, num);
+        } else {
+            return y;
+        }
+    }
+}
+
+
 addEventListener("keydown", function (event) {
     if (event.which === 27) { //* Escape
         if (!event.defaultPrevented) {
@@ -387,12 +412,16 @@ addEventListener("keydown", function (event) {
         if (event.which === 38) { //* Up
             if (Options.get("windows.type") === "grid") {
                 var elem = document.querySelector(".window[data-focused]"),
-                    num  = Options.get("windows.grid.columns");
+                    next = findVertical(elem, "previousSibling", elem.offsetLeft);
+                /*    num  = Options.get("windows.grid.columns");
 
-                elem = state.sorted[state.sorted.indexOf(elem) - num];
-                if (elem) {
-                    elem.setWindowFocus();
-                    elem.tabList.focus();
+                elem = state.sorted[state.sorted.indexOf(elem) - num];*/
+
+                //console.log("up", elem, next);
+
+                if (next) {
+                    next.setWindowFocus();
+                    next.tabList.focus();
                 }
             }
 
@@ -400,51 +429,65 @@ addEventListener("keydown", function (event) {
         } else if (event.which === 40) { //* Down
             if (Options.get("windows.type") === "grid") {
                 var elem = document.querySelector(".window[data-focused]"),
-                    num  = Options.get("windows.grid.columns");
+                    next = findVertical(elem, "nextSibling", elem.offsetLeft);
+                /*    num  = Options.get("windows.grid.columns");
 
-                elem = state.sorted[state.sorted.indexOf(elem) + num];
-                if (elem) {
-                    elem.setWindowFocus();
-                    elem.tabList.focus();
+                elem = state.sorted[state.sorted.indexOf(elem) + num];*/
+
+                //console.log("down", elem, next);
+
+                if (next) {
+                    next.setWindowFocus();
+                    next.tabList.focus();
                 }
             }
 
             event.preventDefault();
         } else if (event.which === 37) { //* Left
-            var elem = document.querySelector(".window[data-focused]");
-            elem = elem.previousSibling;
+            var elem = document.querySelector(".window[data-focused]"),
+                next = findVisible(elem, "previousSibling");
 
-            if (Options.get("windows.type") === "grid") {
-                var index = state.sorted.indexOf(elem),
+            //console.log("left", elem.offsetTop, next.offsetTop);
+
+            if (next && Options.get("windows.type") === "grid") {
+                if (elem.offsetTop !== next.offsetTop) {
+                    next = null;
+                }
+                /*var index = state.sorted.indexOf(elem),
                     num   = Options.get("windows.grid.columns");
 
                 if (index % num === num - 1) {
                     elem = null;
-                }
+                }*/
             }
 
-            if (elem) {
-                elem.setWindowFocus();
-                elem.tabList.focus();
+            if (next) {
+                next.setWindowFocus();
+                next.tabList.focus();
             }
 
             event.preventDefault();
         } else if (event.which === 39) { //* Right
-            var elem = document.querySelector(".window[data-focused]");
-            elem = elem.nextSibling;
+            var elem = document.querySelector(".window[data-focused]"),
+                next = findVisible(elem, "nextSibling");
 
-            if (Options.get("windows.type") === "grid") {
-                var index = state.sorted.indexOf(elem),
+            //console.log("right", elem.offsetTop, next.offsetTop);
+
+            if (next && Options.get("windows.type") === "grid") {
+                if (elem.offsetTop !== next.offsetTop) {
+                    next = null;
+                }
+                /*var index = state.sorted.indexOf(elem),
                     num   = Options.get("windows.grid.columns");
 
                 if (index % num === 0) {
                     elem = null;
-                }
+                }*/
             }
 
-            if (elem) {
-                elem.setWindowFocus();
-                elem.tabList.focus();
+            if (next) {
+                next.setWindowFocus();
+                next.tabList.focus();
             }
 
             event.preventDefault();

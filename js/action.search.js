@@ -75,7 +75,7 @@
     });
 
 
-    parser.infix({ priority: 30, token: ",",
+    parser.infix({ priority: 30, token: ",",// match: /(,) */,
         output: function (left, right) {
             return function (item) {
                 var res = left(item);
@@ -235,7 +235,7 @@
             }()),
 
             "pinned": function (item) {
-                return item.tab.pinned;
+                return item.tab && item.tab.pinned;
             },
 
             "selected": function (item) {
@@ -299,7 +299,11 @@
                     });
                 }
 
-                return cache.domain[item.tab.location.domain] > 1;
+                if (item.tab) {
+                    return cache.domain[item.tab.location.domain] > 1;
+                } else {
+                    console.log(item); // TODO
+                }
             },
 
             "file": function (item) {
@@ -436,6 +440,7 @@
         };
     }
     parser.infix({ priority: 10, token: " | ",  match: / *( \| ) */, output: OR });
+    parser.infix({ priority: 10, token: ", ",   match: /(, ) */,     output: OR });
     parser.infix({ priority: 10, token: " OR ", match: / *( OR ) */, output: OR });
 
 
