@@ -434,13 +434,15 @@
     });
 
 
-    parser.prefix({ priority: 20, token: "window-tab<=:",
+    parser.prefix({ priority: 20, token: "window-tabs<=:",
         output: function (old) {
             var right = old({ regexp: true }).source;
 
             for (var i = right; i > 1; i -= 1) {
                 right = right + "|" + (i - 1);
             }
+            
+            console.log(right);
 
             right = boundtester("(?:" + right + ")");
             //right = function () { return false; };
