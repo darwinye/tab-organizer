@@ -548,8 +548,30 @@
                                 }
                             }
 
-                            table.updateRows = function () {
+                            function sequential(array) {
+                                var old;
+                                return array.every(function (x) {
+                                    if (typeof old === "undefined") {
+                                        old = x;
+                                    } else {
+                                        old++;
+                                    }
+                                    return x === old;
+                                });
+                            }
+
+                            table.updateRows = function (indexes) {
                                 var list = Array.slice(table.children);
+
+                                /*var seq = sequential(indexes);
+                                if (seq && indexes[0] === 0) {
+                                    up.disabled = true;
+                                } else if (seq && indexes[indexes.length - 1] === macros.length) {
+                                    down.disabled = true;
+                                } else {
+                                    up.disabled = false;
+                                    down.disabled = false;
+                                }*/
 
                                 list.sort(function (a, b) {
                                     return macros.indexOf(a.info) - macros.indexOf(b.info);
@@ -716,12 +738,16 @@
                         function update(element) {
                             var boxes = table.querySelectorAll("input[type=checkbox]:checked");
 
+                            /*console.dir(Array.slice(table.children).filter(function (item) {
+                                var input = item.querySelector("input[type=checkbox]");
+                                return input && input.checked;
+                            }));*/
+
                             if (boxes.length) {
                                 element.checked = true;
                                 up.disabled = false;
                                 down.disabled = false;
                                 remove.disabled = false;
-
 
                                 if (boxes.length !== table.children.length) {
                                     element.style.opacity = "0.5";
@@ -735,6 +761,13 @@
                                 remove.disabled = true;
                                 element.style.opacity = "";
                             }
+
+                            /*console.log(index, element);
+                            if (index === 0) {
+                                element.style.opacity = 0.5;
+                            } else {
+                                element.style.opacity = 1;
+                            }*/
                         }
 
                         container["DOM.Element"].appendChild(checkboxbutton({
@@ -803,15 +836,15 @@
                                     element.src = "/images/button-up.png";
                                 }));
                             },
-                            onhold: function () {
+                            onhold: function (element) {
+                                // TODO: simplify this?
                                 var boxes = Array.slice(table.children).filter(function (item) {
                                     var input = item.querySelector("input[type=checkbox]");
                                     return input && input.checked;
                                 });
 
-                                boxes.forEach(function (item, i) {
+                                table.updateRows(boxes.map(function (item, i) {
                                     var index = macros.indexOf(item.info);
-
                                     if (index !== -1) {
                                         macros.splice(index, 1);
 
@@ -824,9 +857,12 @@
                                         Options.event.trigger("change", {
                                             name: "macros.list"
                                         });
+
+                                        /*element.disabled = (index <= 1);
+                                        console.log(index, element.disabled);*/
                                     }
-                                });
-                                table.updateRows();
+                                    return index - 1;
+                                }));
 
                                 UI.scrollTo(boxes[0], wrapper);
                             }
@@ -860,7 +896,7 @@
                                     return input && input.checked;
                                 });
 
-                                boxes.forEach(function (item) {
+                                table.updateRows(boxes.map(function (item, i) {
                                     var index = macros.indexOf(item.info);
                                     if (index !== -1) {
                                         macros.splice(index, 1);
@@ -870,9 +906,8 @@
                                             name: "macros.list"
                                         });
                                     }
-                                });
-
-                                table.updateRows();
+                                    return index + i + 2;
+                                }));
 
                                 UI.scrollTo(boxes[boxes.length - 1], wrapper);
                             }

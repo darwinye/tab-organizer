@@ -191,6 +191,10 @@
 
     parser.prefix({ priority: 20, token: "is:",
         output: dictionary({
+            "any": function (item) {
+                return true;
+            },
+
             "bookmarked": function (item) {
                 return state.bookmarksByURL[item.tab.url] > 0;
             },
@@ -203,13 +207,14 @@
                                         'This link appears to be broken)/,', //! broken$)
                             'r/ is not available$/,',
                             'r/ failed to load$/'
-                ];
+                ].join("");
 
                 return function (item) {
 //                    ignore.broken = true;
 //
                     if (!filter) {
-                        filter = parser.output(text.join(""));
+                        // TODO: can't this be moved up a little...?
+                        filter = parser.output(text);
                     }
 
                     return filter(item);
@@ -407,10 +412,15 @@
 
     parser.prefix({ priority: 20, token: "window:",
         output: function (right) {
-            var focused = right({ literal: "focused" });
+            var focused = right({ literal: "focused" }),
+                unnamed = right({ literal: "unnamed" });
 
             return function (item) {
                 var win = item.parentNode.container;
+
+                if (unnamed) {
+                    return state.titles.indexOf(win.window.title) === -1;
+                }
 
                 if (focused === "" || typeof focused === "boolean") {
                     if (win.hasAttribute("data-focused")) {
@@ -419,6 +429,32 @@
                 }
 
                 return right(win.window.title);
+            };
+        }
+    });
+
+
+    parser.prefix({ priority: 20, token: "window-tab<=:",
+        output: function (old) {
+            var right = old({ regexp: true }).source;
+
+            for (var i = right; i > 1; i -= 1) {
+                right = right + "|" + (i - 1);
+            }
+
+            right = boundtester("(?:" + right + ")");
+            //right = function () { return false; };
+            return function (item) {
+                var win = item.parentNode.container,
+                    len = win.window.tabs.length;
+
+                /*for (var i = len; i > 0; i -= 1) {
+                    if (right(i)) {
+                        return true;
+                    }
+                }*/
+
+                return right(len);
             };
         }
     });
@@ -451,6 +487,8 @@
                     if (item.literal === value) {
                         return true;
                     }
+                } else if (item.regexp) {
+                    return regexp;
                 } else {
                     return regexp.test(item.tab.title) ||
                            regexp.test(item.tab.url);
@@ -461,9 +499,13 @@
         };
     }
 
+    function boundtester(string) {
+        return tester(new RegExp("\\b" + string + "\\b", "i"));
+    }
+
     parser.quotes({ token: '"', match: /(")((?:[^"\n\\]|\\[\s\S])*)(")/,
         output: function (right) {
-            return tester(new RegExp("\\b" + right.escape() + "\\b", "i"));
+            return boundtester(right.escape());
         }
     });
 
@@ -493,7 +535,7 @@
 
         for (var i = 0; i < array.length; i += 1) {
             var item = array[i];
-            if (test(item)) {
+            if (test && test(item)) {
                 output.push(item);
             } else {
                 output.inverse.push(item);

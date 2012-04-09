@@ -1,9 +1,9 @@
 /*global action, events, Options, Platform, state, UI, Undo, window */
 "use strict";
 
-var Tab, Window;
+//var Tab, Window;
 
-Tab = {
+var Tab = {
     focus: function (tab, focus) {
         var focused = Options.get("window.lastfocused"),
             when    = Options.get("popup.close.when"),
@@ -546,7 +546,7 @@ Tab = {
 
 
 
-Window = {
+var Window = {
     create: function (array, info) {
         info = Object(info);
 
