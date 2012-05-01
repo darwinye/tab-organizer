@@ -9,6 +9,23 @@ if (Options.get("popup.type") === "bubble") {
 }
 
 
+addEventListener("blur", function (event) {
+    if (event.target === this &&
+        Options.get("popup.close.when") === "lose-focus") {
+        switch (Options.get("popup.switch.action")) {
+        case "minimize":
+            Platform.minimize();
+            break;
+        case "close":
+            close();
+            break;
+        case "show":
+            Platform.show();
+        }
+    }
+}, true);
+
+
 function sorter(info) {
     var sorters = {};
 
